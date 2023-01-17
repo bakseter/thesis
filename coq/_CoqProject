@@ -1,0 +1,13 @@
+-R src TH
+src/Atom.v
+src/Clause.v
+src/Forward.v
+src/Frontier.v
+src/Geq.v
+src/Main.v
+src/Misc.v
+src/Model.v
+src/Ninfty.v
+src/Sets.v
+src/Vars.v
+src/VarsImp.v

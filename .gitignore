@@ -1,5 +1,11 @@
-**/.tex-build/*
 **/*.aux
 **/.lia.cache
+**/*.vo
+**/*.vok
+**/*.vos
+**/*.glob
+**/*.CoqMakefile.d
+
+**/.tex-build/*
 
 !**/*.pdf
