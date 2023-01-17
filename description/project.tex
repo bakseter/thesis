@@ -4,13 +4,9 @@
 \usepackage{bm}
 \usepackage{amssymb}
 \usepackage{amsmath}
-\usepackage{biblatex}
-\usepackage{babel}
 
 \linespread{1.5}
 \setlength{\parindent}{0em}
-
-\addbibresource{refs.bib}
 
 \title{Project Description}
 \author{Andreas Salhus Bakseter}
@@ -19,30 +15,46 @@
 \begin{document}
 \maketitle
 
-
 \section{Formalization of mathematical problems}
 
+When solving mathematical problems, one often uses proofs
+to assert some claim. Proofs can be written either \textit{informally} or \textit{formally}.
+\\
 
-\section{  } 
+An informal proof is often written in a natural language, where the truth
+of the proof is determined by if the reader is convinced by the proof or not.
+ref (https://softwarefoundations.cis.upenn.edu/lf-current/Induction.html#lab58)
+
+This can lead to mistakes in the proofs reasoning, as it is hard to be 100\%
+certain that every step in the proof is solid (especially with larger ones).
+ref (marc slides)
+
+
+\section{Proof assistants}
+
+A formal proof can be written like a computer program, where all the
+arguments can be checked mechanically; often done using a proof assistant.
+
+Coq is a proof assistant that enables us to write fomal proofs and verify them.
+Coq uses type theory to verify proofs, but can also be used as a functional programming language.
+ref (https://en.wikipedia.org/wiki/Coq)
+
+Other examples of proof assistants include Agda, Isabelle, Lean and HOH.
+
+\section{Type theory \& the Curry-Howard correspondance}
 
 
 
+\section{Our case}
 
-\section*{Goal \& Background}
+\section{Approach \& design choices}
 
-The goal of this master project is to formalize (a part of) the proofs of the following paper,
-and extract algorithms from these formalized proofs: 
-These algorithms shall be tested on a number of carefully chosed benchmarks,
-and their performance will be compared to known algorithms that solve these benchmarks.
-We will anaylyze the results of these experiments as a case study as to whether the methodology of
-extracting programs from proofs is viable.
-The results will be compared to the existing litterature etc...
+\section{Implementation}
 
-\section*{Something else}
+\section{Examples \& results}
 
-The paper above actually solves two problems that occur in dependant type systems where typings depend
-on universe-level constraints.
-We will reinterpret the results of this master project in type theory and dependant type theory, and assess
-their potential to be used in proof assistants such as Coq [ref] and Agda [ref].
+\section{Evaluation}
+
+\section{Conclusion}
 
 \end{document}
