@@ -1,3 +1,5 @@
 **/.tex-build
 **/*.aux
 **/.lia.cache
+
+!*.pdf

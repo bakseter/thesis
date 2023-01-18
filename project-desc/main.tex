@@ -1,4 +1,4 @@
-\documentclass[a4paper,14pt]{article}
+\documentclass[a4paper,12pt]{article}
 
 \usepackage{tabto}
 \usepackage{bm}
@@ -6,6 +6,7 @@
 \usepackage{amsmath}
 \usepackage{biblatex}
 \addbibresource{refs.bib}
+\usepackage[margin=1in]{geometry}
 
 \linespread{1.5}
 \setlength{\parindent}{0em}
@@ -20,66 +21,58 @@
 \section{Formalization of mathematical problems}
 
 When solving mathematical problems, one often uses proofs
-to assert some claim. We can group proofs into two types; \textit{informal} and \textit{formal} proofs.
-An informal proof is often written in a natural language, where the truth
-of the proof is determined by if the reader is convinced by the proof or not.
-\supercite{bpierce}
+to justify some claim. We can group proofs into two types; \textit{informal} and \textit{formal} proofs.
 \\
 
+An informal proof is often written in a natural language, and the proof is adequate if most
+readers are convinced by the proof.
+\supercite{bpierce}
 As a proof grows larger and more complex, it becomes harder to follow, which can
 ultimately lead to errors in the proofs reasoning. This might cause the whole proof
 to be incorrect.
 \supercite{rkhamsi}
+\\
+
+A formal proof is written in a formal language, and can be compared to a computer program
+written in a programming language. Writing a formal proof is harder than writing an informal proof.
 
 
 \section{Proof assistants}
 
-A formal proof can be written like a computer program, where all the
-arguments can be checked mechanically; usually done with a \textit{proof assistant}.
-
-Coq is a proof assistant that enables us to write fomal proofs and verify them.
-Coq uses type theory to verify proofs, but can also be used as a functional programming language.
-\supercite{cintro} Other examples of proof assistants include Agda, Isabelle, Lean and HOH.
+Using a \textit{proof assistant}, we can verify a formal proof mechanically.
+\textit{Coq} is an example of a proof assistant. 
+Coq uses type theory to formulate and verify proofs, but can also be used as a functional programming language. \supercite{cintro}
+Other examples of proof assistants include Agda, Isabelle, Lean and HOL.
 
 \newpage
 
 \section{Type theory \& propositions as types}
 
-Type theory is used to create formal systems that group mathematical objects
-with similar properties together by assigning them a "type".
-% ref. (https://en.wikipedia.org/wiki/Type_theory)
-
-Similarily to types in computer programming, we can use types to represent mathematical
-objects. For example, we can use the type \texttt{nat} to represent natural nubers.
+Type theory groups mathematical objects with similar properties together by assigning them a "type".
+Similarily to data types in computer programming, we can use types to represent mathematical
+objects. For example, we can use the data type \texttt{nat} to represent natural numbers.
 \\
 
 The concept of propositions as types sees the proving of a mathematical proposition
-as the same process as constructing a value of that type. For example, to prove a proposition $P$ whichs states "all integers are divisible by 2",
+as the same process as constructing a value of that type.
+For example, to prove a proposition $P$ which states "all integers are the sum of four squares",
 we must construct a value of the type $P$ that shows that this is true for all integers.
-Since proofs are constructed using logical propositions, we can use this correspondance
-to model a proof as a typed computer program.
+Proofs are mathematical objects; thus a proposition can be viewed as having the type of all its proofs (if any!).
+We can use this correspondance to model a proof as a typed computer program.
 The power of this concept comes from the fact that we can use a type checker to verify that
 our program is typed correctly, and thus that the corresponding proof is valid.
+\\
+
+Coq also enables us to extract and execute programs from our proofs, once they have been verified.
 
 \section{Our case}
 
 We will use the Coq proof assistant to formalize parts of the proofs of the following paper, \textit{\citeauthor{mbezem}}.
-This paper actually solves two problems that occur in dependant type systems where typings depend
-on universe-level constraints.
-\\
-
-...more about the paper/theorems
-
-% \section{Approach \& design choices}
-
-% \section{Implementation}
-
-% \section{Examples \& results}
-
-% \section{Evaluation}
-
-% \section{Conclusion}
-
+This paper solves two problems that occur in dependent type systems where typings depend
+on universe-level constraints. Since this proof is complex enough that mistakes are possible
+it is a good candidate for formalization. We can also use this process to gain further insight
+into the algorithm that lies behind the proof. It might also be interesting to use Coq to
+extract programs from the final proofs.
 
 \newpage
 \printbibliography
