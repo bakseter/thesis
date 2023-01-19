@@ -4,7 +4,7 @@
 \usepackage{bm}
 \usepackage{amssymb}
 \usepackage{amsmath}
-\usepackage{biblatex}
+\usepackage[sorting=none]{biblatex}
 \addbibresource{refs.bib}
 \usepackage[margin=1in]{geometry}
 
@@ -25,12 +25,10 @@ to justify some claim. We can group proofs into two types; \textit{informal} and
 \\
 
 An informal proof is often written in a natural language, and the proof is adequate if most
-readers are convinced by the proof.
-\supercite{bpierce}
+readers are convinced by the proof \cite{bpierce}.
 As a proof grows larger and more complex, it becomes harder to follow, which can
-ultimately lead to errors in the proofs reasoning. This might cause the whole proof
-to be incorrect.
-\supercite{rkhamsi}
+ultimately lead to errors in the proof's reasoning. This might cause the whole proof
+to be incorrect \cite{rkhamsi}.
 \\
 
 A formal proof is written in a formal language, and can be compared to a computer program
@@ -41,7 +39,7 @@ written in a programming language. Writing a formal proof is more difficult than
 
 Using a \textit{proof assistant}, we can verify a formal proof mechanically.
 \textit{Coq} is an example of a proof assistant. 
-Coq uses type theory to formulate and verify proofs, but can also be used as a functional programming language. \supercite{cintro}
+Coq uses type theory to formulate and verify proofs, but can also be used as a functional programming language \cite{cintro}.
 Other examples of proof assistants include Agda, Isabelle, Lean and HOL.
 
 \newpage
@@ -67,7 +65,7 @@ Coq also enables us to extract and execute programs from our proofs, once they h
 
 \section{Our case}
 
-We will use the Coq proof assistant to formalize parts of the proofs of the following paper, \textit{\citeauthor{mbezem}}.
+We will use the Coq proof assistant to formalize parts of the proofs of the following paper, \citeauthor{mbezem} \cite{mbezem}.
 This paper solves two problems that occur in dependent type systems where typings depend
 on universe-level constraints. Since this proof is complex enough that mistakes are possible
 it is a good candidate for formalization. We can also use this process to gain further insight
