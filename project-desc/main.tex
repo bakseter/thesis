@@ -18,7 +18,9 @@
 \begin{document}
 \maketitle
 
-\section{Formalization of mathematical problems}
+\section{Background}
+
+\subsection{Formalization of mathematical problems}
 
 When solving mathematical problems, one often uses proofs
 to justify some claim. We can group proofs into two types; \textit{informal} and \textit{formal} proofs.
@@ -35,7 +37,7 @@ A formal proof is written in a formal language, and can be compared to a compute
 written in a programming language. Writing a formal proof is more difficult than writing an informal proof.
 
 
-\section{Proof assistants}
+\subsection{Proof assistants}
 
 Using a \textit{proof assistant}, we can verify a formal proof mechanically.
 \textit{Coq} is an example of a proof assistant. 
@@ -44,7 +46,7 @@ Other examples of proof assistants include Agda, Isabelle, Lean and HOL.
 
 \newpage
 
-\section{Type theory \& propositions as types}
+\subsection{Type theory \& propositions as types}
 
 Type theory groups mathematical objects with similar properties together by assigning them a "type".
 Similarily to data types in computer programming, we can use types to represent mathematical
@@ -63,7 +65,7 @@ our program is typed correctly, and thus that the corresponding proof is valid.
 
 Coq also enables us to extract and execute programs from our proofs, once they have been verified.
 
-\section{Our case}
+\section{The project}
 
 We will use the Coq proof assistant to formalize parts of the proofs of the following paper, \citeauthor{mbezem} \cite{mbezem}.
 This paper solves two problems that occur in dependent type systems where typings depend

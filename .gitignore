@@ -8,4 +8,9 @@
 
 **/.tex-build/*
 
+coq/src/*.vo
+coq/src/*.vos
+coq/src/*.vok
+coq/src/*.glob
+
 !**/*.pdf

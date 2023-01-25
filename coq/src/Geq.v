@@ -13,6 +13,7 @@ Require Import Sets. Import StringSetsNotation.
 Require Import Atom. Import Atom.
 Require Import Vars. Import Vars.
 Require Import Model. Import Model.
+Require Import VarsImp. Import VarsImp.
 
 Module Geq.
 
@@ -232,6 +233,18 @@ Module Geq.
     apply geq_bool. intros. simpl. destruct (string_dec v h);
     destruct (string_dec v h'); try apply ninfty_geq_refl;
     destruct (v € t); try apply ninfty_geq_refl.
+    apply ninfty_geq_Sinfty.
+  Qed.
+
+  Lemma geq_Sinfty_f2 (Cs : set Clause) (t : set string) (f: Frontier) :
+    geq
+      t
+      (fun v : string => if v € sub_vars_improvable Cs t t f then Sinfty (f v) else f v)
+      f
+    = true.
+  Proof.
+    destruct t as [| h t]; try reflexivity.
+    apply geq_bool. intros. simpl. destruct (v € sub_vars_improvable Cs (h :: t) (h :: t) f); try apply ninfty_geq_refl.
     apply ninfty_geq_Sinfty.
   Qed.
 
