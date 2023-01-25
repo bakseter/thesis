@@ -88,6 +88,14 @@ Module Forward.
     sub_forward Cs V W f = (U, g) -> incl U W.
   Proof. intros. inversion H. apply sub_vars_improvable_incl_W. Qed.
 
+
+  Lemma sub_forward_incl_set_diff {A : Type} (dec : forall x y, {x = y} + {x <> y}) (Cs : set Clause) (f g : Frontier) (V W U : set string) :
+    sub_model Cs V W f = true -> 
+    sub_forward Cs V V f = (U, g) ->
+    incl U (set_diff dec V W).
+  Proof.
+  Admitted.
+
   Example forward_test1 :
     forward [clause_x0y1_x2] frontier_infty = ([], frontier_infty).
   Proof. reflexivity. Qed.

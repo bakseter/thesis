@@ -14,9 +14,7 @@ Module StringSetsNotation.
 
 End StringSetsNotation.
 
-Module Sets.
-
-  Lemma set_add_mem_true {A : Type} (dec : forall x y : A, {x = y} + {x <> y}) (t : set A) (h : A) :
+Module Sets.  Lemma set_add_mem_true {A : Type} (dec : forall x y : A, {x = y} + {x <> y}) (t : set A) (h : A) :
     set_mem dec h t = true -> set_add dec h t = t.
   Proof.
     intros. induction t; simpl in H; try discriminate.
@@ -400,7 +398,6 @@ Module Sets.
           assumption.
   Qed.
 
-
   Lemma set_union_nil_app_incl_iff_lr {A : Type} (dec : forall x y : A, {x = y} + {x <> y}) (V W U : set A) :
     incl (V ++ U) W <-> incl (set_union dec [] V ++ U) W.
   Proof.
@@ -566,5 +563,78 @@ Module Sets.
     intros. induction W as [|h t].
     - simpl in *.
   Admitted.
+
+  (* NOT USED *)
+  Lemma set_union_incl_length {A : Type} (dec : forall x y, {x = y} + {x <> y}) (V W U : set A) :
+    incl W V ->
+    incl U V ->
+    Datatypes.length (set_union dec W U) <= Datatypes.length (nodup dec V).
+  Proof.
+    intros. induction V as [|h t]; destruct W; destruct U; try reflexivity.
+    - apply incl_l_nil_false in H0. contradiction. discriminate.
+    - apply incl_l_nil_false in H. contradiction. discriminate.
+    - apply incl_l_nil_false in H0. contradiction. discriminate.
+    - simpl. lia.
+    - simpl. destruct (in_dec dec h t).
+      + simpl in IHt. apply IHt.
+        * apply incl_nil_l.
+        * apply incl_cons_inv in H0. destruct H0.
+          apply incl_cons. destruct H0.
+          -- subst. apply i.
+          -- assumption.
+          -- apply (incl_cons_In dec U t h).
+             split; assumption.
+      + simpl in IHt. apply incl_cons_inv in H0. destruct H0.
+  Admitted.
+
+
+  Lemma strict_subset_lt_length {A : Type} (dec : forall x y, {x = y} + {x <> y}) (V W : set A) :
+     strict_subset V W ->
+     Datatypes.length (nodup dec V) < Datatypes.length (nodup dec W).
+  Proof.
+    intros. induction V as [|h t]; induction W as [|h' t']; try reflexivity.
+    - unfold strict_subset in H. destruct H. contradiction.
+    - simpl. destruct (in_dec dec h' t').
+      + simpl in *. destruct t'; try contradiction.
+        simpl in *. destruct (in_dec dec a t').
+        * destruct i; subst.
+          ++ apply IHt'. unfold strict_subset. split.
+             ** apply incl_nil_l.
+             ** apply incl_l_nil_false. discriminate.
+          ++ apply IHt'. unfold strict_subset. split.
+             ** apply incl_nil_l.
+             ** apply incl_l_nil_false. discriminate.
+        * apply IHt'. unfold strict_subset. split.
+          ++ apply incl_nil_l.
+          ++ apply incl_l_nil_false. discriminate.
+      + destruct t'; simpl in *; try lia.
+    - unfold strict_subset in H. destruct H. apply incl_l_nil_false in H.
+      contradiction. discriminate.
+    - simpl in *. destruct (in_dec dec h t); destruct (in_dec dec h' t').
+      + apply IHt. unfold strict_subset. unfold strict_subset in H.
+        destruct H. apply incl_cons_inv in H. destruct H. split; try assumption.
+        unfold not. intros. apply H0. apply incl_tl. assumption.
+      + apply IHt. unfold strict_subset. unfold strict_subset in H.
+        destruct H. split.
+        * apply incl_cons_inv in H. apply H.
+        * unfold not. intros. apply H0. apply incl_tl. assumption.
+      + apply IHt'. unfold strict_subset. unfold strict_subset in H.
+        destruct H. split.
+        * apply incl_cons_inv in H. apply incl_cons. destruct H.
+          destruct H; subst; try assumption. destruct H.
+  Admitted.
+
+  Lemma set_diff_incl_lt_length {A : Type} (dec : forall x y, {x = y} + {x <> y}) (u : A) (V W U : set A) :
+    incl W V ->
+    incl (u :: U) (set_diff dec V W) ->
+    Datatypes.length (set_diff dec V (set_union dec W (u :: U))) < Datatypes.length (set_diff dec V W).
+  Proof.
+  Admitted.
+
+  Lemma set_diff_nodup_length {A : Type} (dec : forall x y, {x = y} + {x <> y}) (V W : set A) :
+    Datatypes.length (set_diff dec V W) = Datatypes.length (set_diff dec V (nodup dec W)).
+  Proof.
+  Admitted.
+
 
 End Sets.

@@ -50,7 +50,6 @@ Definition lem_xx (Cs : set Clause) (V W : set string) (f : Frontier) :
 Proof.
 Admitted.
 
-
 Theorem thm_xx (Cs : set Clause) :
   forall n m, pred_P Cs n m.
 Proof.
@@ -93,31 +92,57 @@ Proof.
           destruct (sub_forward Cs V V h) as [U h'] eqn:Hforward.
           assert (sub_forward Cs V V h = (U, h')) by assumption.
           assert (sub_forward Cs V V h = (U, h')) by assumption.
+          eapply (sub_forward_incl_set_diff string_dec) in H9; try apply Hforward.
           inversion Hforward. apply sub_forward_incl in Hforward.
           destruct U as [|u U'] eqn:Hu.
-          -- subst. apply sub_forward_empty in H7.
+          -- apply sub_forward_empty in H7.
              destruct H7. unfold ex_lfp_geq. exists h. split;
              try assumption.
-          -- destruct (list_eq_dec string_dec V (set_union string_dec W U)).
-             ++ rewrite e. unfold ex_lfp_geq. exists frontier_infty. split.
+          -- destruct (incl_dec string_dec V (nodup string_dec (set_union string_dec W U))).
+             ++ unfold ex_lfp_geq. exists frontier_infty. split.
                 ** apply geq_infty.
                 ** apply sub_model_infty.
-             ++ assert (Datatypes.length (set_union string_dec W U) < Datatypes.length (nodup string_dec V)).
+             ++ assert (incl (nodup string_dec (set_union string_dec W U)) V).
                 {
-                  admit.
+                  apply nodup_incl2. eapply incl_set_union; subst; assumption.
                 }
-                assert (Datatypes.length (set_diff string_dec V (set_union string_dec W U)) < Datatypes.length (set_diff string_dec V W) <= S m).
+                assert (Datatypes.length (nodup string_dec (set_union string_dec W U)) < Datatypes.length (nodup string_dec V)).
                 {
-                  admit.
+                  assert (Datatypes.length (nodup string_dec (set_union string_dec W U)) <= Datatypes.length (nodup string_dec V)).
+                  {
+                    eapply NoDup_incl_length. apply NoDup_nodup.
+                    apply nodup_incl. assumption.
+                  }
+                  apply le_lteq in H14. destruct H14; try assumption.
+                  assert (strict_subset (nodup string_dec (set_union string_dec W U)) (nodup string_dec V)).
+                  {
+                    unfold strict_subset. split.
+                    - apply nodup_incl. assumption.
+                    - unfold not. intros. apply n0. apply nodup_incl2 in H15.
+                      assumption.
+                  }
+                  apply (strict_subset_lt_length string_dec). unfold strict_subset in H15.
+                  destruct H15. unfold strict_subset. split.
+                  - apply nodup_incl in H15. apply nodup_incl2 in H15. assumption.
+                  - unfold not. intros. apply n0. apply nodup_incl. assumption.
+                }
+                assert (Datatypes.length (set_diff string_dec V (set_union string_dec (nodup string_dec W) U)) < Datatypes.length (set_diff string_dec V (nodup string_dec W)) <= S m).
+                {
+                  apply conj.
+                  - rewrite Hu. apply set_diff_incl_lt_length;
+                    try assumption. apply nodup_incl2. assumption.
+                  - rewrite <- set_diff_nodup_length. rewrite H3. lia.
                 }
                 apply (ex_lfp_geq_monotone Cs V h' f).
                 eapply (IHm h' V (set_union string_dec W U)).
-                ** admit.
+                ** apply nodup_incl2 in H11. assumption.
                 ** assumption.
-                ** lia.
+                ** apply conj; try lia. inversion H15.
+                   apply le_lteq in H17. destruct H17.
+                   --- apply Arith_prebase.lt_n_Sm_le_stt in H17.
                 ** apply (IHn n h' (set_union string_dec W U) []).
                    --- apply incl_nil_l.
-                   --- admit.
+                   --- 
                    --- (* same as above *)  admit.
                    --- unfold ex_lfp_geq. exists h'.
                        split. apply geq_refl.
