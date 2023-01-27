@@ -140,9 +140,17 @@ Proof.
                 ** apply conj; try lia. inversion H15.
                    apply le_lteq in H17. destruct H17.
                    --- apply Arith_prebase.lt_n_Sm_le_stt in H17.
+                       assert (Datatypes.length (set_diff string_dec V (set_union string_dec W U)) <= Datatypes.length (set_diff string_dec V (set_union string_dec (nodup string_dec W) U))).
+                       exact (asd string_dec V W U).
+                       apply lt_le_incl in H16.
+                       eapply le_trans. apply H18.
+                       eapply le_trans. apply H16. assumption.
+                   --- rewrite H17 in H16. 
+                       assert (Datatypes.length (set_diff string_dec V (set_union string_dec W U)) <= Datatypes.length (set_diff string_dec V (set_union string_dec (nodup string_dec W) U))).
+                       exact (asd string_dec V W U). lia.
                 ** apply (IHn n h' (set_union string_dec W U) []).
                    --- apply incl_nil_l.
-                   --- 
+                   --- admit.
                    --- (* same as above *)  admit.
                    --- unfold ex_lfp_geq. exists h'.
                        split. apply geq_refl.

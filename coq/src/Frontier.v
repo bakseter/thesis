@@ -5,7 +5,7 @@ Require Import Ninfty. Import Ninfty.
 
 Module Frontier.
 
-  Definition Frontier := total_map Ninfty.
+  Definition Frontier := _map Ninfty.
 
   Example frontier_fin_0 : Frontier := fun _ => fin 0.
   Example frontier_fin_1 : Frontier := fun _ => fin 1.

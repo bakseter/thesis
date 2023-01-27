@@ -4,9 +4,9 @@ From Coq Require Import Strings.String.
 
 Module Misc.
 
-  Definition total_map (A : Type) := string -> A.
+  Definition _map (A : Type) := string -> A.
 
-  Lemma sym : forall (A : Type) (x y : A),
+  Lemma eq_sym_iff : forall (A : Type) (x y : A),
     x = y <-> y = x.
   Proof. split; intros; symmetry; assumption. Qed.
 
