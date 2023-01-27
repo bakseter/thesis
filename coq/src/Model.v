@@ -127,13 +127,13 @@ Module Model.
         rewrite <- (nodup_In string_dec) in i. subst. assumption.
       + simpl. subst. destruct (string_dec s s); try reflexivity.
         contradiction.
-      + apply negb_iff. destruct (x € V) eqn:HxV; symmetry.
+      + f_equal. destruct (x € V) eqn:HxV; symmetry.
         * apply set_mem_correct2. unfold set_In. apply set_mem_correct1 in HxV.
           unfold set_In in HxV. rewrite nodup_In. assumption.
         * apply set_mem_complete2. unfold set_In. apply set_mem_complete1 in HxV.
           unfold set_In in HxV. rewrite nodup_In. assumption.
       + simpl. destruct (string_dec x s); subst; try contradiction.
-        apply negb_iff. destruct (x € V) eqn:HxV; symmetry.
+        f_equal. destruct (x € V) eqn:HxV; symmetry.
         * apply set_mem_correct2. unfold set_In. apply set_mem_correct1 in HxV.
           unfold set_In in HxV. rewrite nodup_In. assumption.
         * apply set_mem_complete2. unfold set_In. apply set_mem_complete1 in HxV.

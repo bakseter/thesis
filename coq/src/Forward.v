@@ -62,8 +62,8 @@ Module Forward.
   Qed.
 
   Lemma sub_forward_empty (Cs : set Clause) (V W : set string) (f g : Frontier) :
-    sub_forward Cs V W f = ([], g) -> f = g /\
-    sub_model Cs V W f = true.
+    sub_forward Cs V W f = ([], g) ->
+    f = g /\ sub_model Cs V W f = true.
   Proof.
     split; inversion H.
     - rewrite H1. simpl. apply frontier_lambda.
@@ -88,12 +88,24 @@ Module Forward.
     sub_forward Cs V W f = (U, g) -> incl U W.
   Proof. intros. inversion H. apply sub_vars_improvable_incl_W. Qed.
 
-
-  Lemma sub_forward_incl_set_diff {A : Type} (dec : forall x y, {x = y} + {x <> y}) (Cs : set Clause) (f g : Frontier) (V W U : set string) :
-    sub_model Cs V W f = true -> 
+  Lemma sub_forward_incl_set_diff (Cs : set Clause) (f g : Frontier) (V W U : set string) :
+    sub_model Cs V W f = true ->
     sub_forward Cs V V f = (U, g) ->
-    incl U (set_diff dec V W).
+    incl U (set_diff string_dec V W).
   Proof.
+    intros. induction Cs as [|h t].
+    - unfold incl. intros. inversion H0. subst. contradiction.
+    - unfold incl; intros. apply IHt.
+      + destruct h as [l [x k]]. unfold sub_model in H.
+        fold sub_model in H. apply andb_true_iff in H.
+        destruct H. apply H2.
+      + destruct H0. unfold sub_forward. unfold sub_vars_improvable.
+        fold sub_vars_improvable. destruct h as [l [x k]].
+        unfold sub_model in H. fold sub_model in H.
+        destruct (negb (x € V) || negb (fold_right andb true (map (fun x0 : string => x0 € V) (vars_set_atom l))) || all_shifts_true (l ~> x & k) f).
+        * reflexivity.
+        * destruct U; try contradiction.
+          simpl in H1.
   Admitted.
 
   Example forward_test1 :

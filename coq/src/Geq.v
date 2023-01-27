@@ -327,12 +327,14 @@ Module Geq.
     = false.
   Proof. reflexivity. Qed.
 
-  Definition ex_lfp_geq (Cs : set Clause) (V W : set string) (f : Frontier) : Prop :=
-    exists g, geq V g f = true /\ sub_model Cs V W g = true.
+  Definition ex_lfp_geq (Cs : set Clause) (V W : set string) (f : Frontier) :=
+    sig (fun g : Frontier => prod (geq V g f = true) (sub_model Cs V W g = true)).
 
   Lemma ex_lfp_geq_incl (Cs : set Clause) (V W : set string) :
     incl V W ->
-    forall f, ex_lfp_geq Cs W W f -> ex_lfp_geq Cs V V f.
+    forall f,
+      ex_lfp_geq Cs W W f ->
+      ex_lfp_geq Cs V V f.
   Proof.
     intros. unfold ex_lfp_geq in *.
     destruct H0 as [g [Hg1 Hg2]].
@@ -342,27 +344,31 @@ Module Geq.
   Qed.
 
   Lemma ex_lfp_geq_monotone (Cs : set Clause) (V : set string) (f g : Frontier) :
-    ex_lfp_geq Cs V V f -> geq V f g = true -> ex_lfp_geq Cs V V g.
+    ex_lfp_geq Cs V V f ->
+    geq V f g = true ->
+    ex_lfp_geq Cs V V g.
   Proof.
-    intros. elim H. intros. destruct H1.
+    intros. unfold ex_lfp_geq in H.
+    destruct H as [x [H1 H2]].
     unfold ex_lfp_geq. exists x. split;
     try assumption. eapply geq_trans.
-    apply H1. apply H0.
+    apply H1. assumption.
   Qed.
 
-  Lemma ex_lfp_geq_nodup_iff
-    {A : Type}
-    (Cs : set Clause)
-    (V : set string)
-    (f : Frontier) :
-      ex_lfp_geq Cs V V f <->
-      ex_lfp_geq Cs (nodup string_dec V) (nodup string_dec V) f.
+  Lemma ex_lfp_geq_nodup_iff (Cs : set Clause) (V : set string) (f : Frontier) :
+    let A := ex_lfp_geq Cs V V f in
+    let B := ex_lfp_geq Cs (nodup string_dec V) (nodup string_dec V) f in
+    prod (A -> B) (B -> A).
   Proof.
     split; intros.
-    - unfold ex_lfp_geq in *. setoid_rewrite sub_model_nodup in H.
-      setoid_rewrite geq_nodup_true_iff in H. assumption.
-    - unfold ex_lfp_geq in *. setoid_rewrite sub_model_nodup.
-      setoid_rewrite geq_nodup_true_iff. assumption.
+    - unfold ex_lfp_geq in *. elim H. intros. destruct p.
+      exists x. split.
+      + rewrite <- geq_nodup_true_iff. assumption.
+      + rewrite <- sub_model_nodup. assumption.
+    - unfold ex_lfp_geq in *. elim H. intros. destruct p.
+      exists x. split.
+      + rewrite geq_nodup_true_iff. assumption.
+      + rewrite sub_model_nodup. assumption.
   Qed.
 
 End Geq.

@@ -9,6 +9,8 @@ From Coq Require Import Lists.List. Import ListNotations.
 From Coq Require Import Lists.ListSet.
 From Coq Require Import Strings.String.
 From Coq Require Import Setoids.Setoid.
+From Coq Require Import ExtrHaskellBasic.
+From Coq Require Import ExtrHaskellString.
 Require Import Sets. Import Sets. Import StringSetsNotation.
 Require Import Clause. Import Clause.
 Require Import Atom. Import Atom.
@@ -21,15 +23,19 @@ Require Import Geq. Import Geq.
 Require Import Model. Import Model.
 Require Import Ninfty. Import Ninfty.
 
-Definition pred_P (Cs : set Clause) (n m : nat) : Prop :=
-  forall f, forall V W, incl W V ->
-  Datatypes.length V <= n ->
-  Datatypes.length (set_diff string_dec V W) <= m <= n ->
-  ex_lfp_geq Cs W W f -> ex_lfp_geq Cs V V f.
+Definition pred_P (Cs : set Clause) (n m : nat) : Set :=
+  forall f, forall V W,
+    incl W V ->
+    Datatypes.length V <= n ->
+    Datatypes.length (set_diff string_dec V W) <= m <= n ->
+    ex_lfp_geq Cs W W f -> ex_lfp_geq Cs V V f.
 
 Lemma pred_P_downward (Cs : set Clause) :
-  forall n m n' m', pred_P Cs n m ->
-  n' <= n -> m' <= m -> pred_P Cs n' m'.
+  forall n m n' m',
+    pred_P Cs n m ->
+    n' <= n ->
+    m' <= m ->
+    pred_P Cs n' m'.
 Proof.
   induction n as [|n IHn].
   - intros. unfold pred_P. intros. unfold ex_lfp_geq in *.
@@ -41,22 +47,21 @@ Proof.
       try assumption. destruct H0; apply le_0_r in H3;
       apply length_zero_iff_nil in H3; subst; apply incl_nil_l.
     + unfold pred_P in *. intros.
-      inversion H1. apply le_lteq in H3. destruct H3.
 Admitted.
 
 Definition lem_xx (Cs : set Clause) (V W : set string) (f : Frontier) :
   (* subject to change *)
-  incl W V -> ex_lfp_geq Cs W W f -> ex_lfp_geq Cs V W f.
+  incl W V ->
+  ex_lfp_geq Cs W W f ->
+  ex_lfp_geq Cs V W f.
 Proof.
+  induction Cs as [|h t]; intros.
+  - exists f. split. apply geq_refl. reflexivity.
+  - exists f. split. apply geq_refl. unfold ex_lfp_geq in H0.
+    unfold sub_model in H0. fold sub_model in H0.
 Admitted.
 
-Lemma asd5 :
-  forall n m, n <= S m -> pred n <= m.
-Proof.
-  induction n; lia.
-Qed.
-
-Theorem thm_xx (Cs : set Clause) :
+Definition thm_xx (Cs : set Clause) :
   forall n m, pred_P Cs n m.
 Proof.
   induction n as [|n IHn].
@@ -70,9 +75,9 @@ Proof.
       apply length_zero_iff_nil in H1.
       apply set_diff_nil_incl in H1. assumption.
     + unfold pred_P in *. intros.
-      inversion H1. apply le_lteq in H3. destruct H3.
+      inversion H1. apply le_lt_eq_dec in H3. destruct H3.
       * apply (IHm f V W); try assumption. lia.
-      * rewrite (@ex_lfp_geq_nodup_iff string) in H2.
+      * apply (ex_lfp_geq_nodup_iff) in H2.
         assert (Datatypes.length (nodup string_dec W) <= n).
         { 
            eapply (set_diff_succ string_dec) in H; try apply H3.
@@ -81,13 +86,14 @@ Proof.
            - eapply NoDup_incl_length. apply NoDup_nodup.
              rewrite <- nodup_incl2. apply incl_refl.
            - eapply le_trans in H0. apply H0. assumption.
+           - apply e.
          }
          assert (ex_lfp_geq Cs (nodup string_dec W) (nodup string_dec W) f).
          {
             apply (IHn n f (nodup string_dec W) []);
             try assumption; try apply incl_nil_l.
             - eapply (set_diff_succ string_dec) in H; try apply H3.
-              rewrite set_diff_nil. apply conj; lia.
+              rewrite set_diff_nil. apply conj; lia. apply e.
             - unfold ex_lfp_geq. exists f. split.
               apply geq_refl. apply sub_model_W_empty.
           }
@@ -98,7 +104,7 @@ Proof.
           destruct (sub_forward Cs V V h) as [U h'] eqn:Hforward.
           assert (sub_forward Cs V V h = (U, h')) by assumption.
           assert (sub_forward Cs V V h = (U, h')) by assumption.
-          eapply (sub_forward_incl_set_diff string_dec) in H9; try apply Hforward.
+          apply (sub_forward_incl_set_diff Cs h h' V (nodup string_dec W) U) in H9; try apply Hforward.
           inversion Hforward. apply sub_forward_incl in Hforward.
           destruct U as [|u U'] eqn:Hu.
           -- apply sub_forward_empty in H7.
@@ -119,41 +125,45 @@ Proof.
                     eapply NoDup_incl_length. apply NoDup_nodup.
                     apply nodup_incl. assumption.
                   }
-                  apply le_lteq in H14. destruct H14; try assumption.
+                  apply le_lt_eq_dec in H13. destruct H13; try assumption.
                   assert (strict_subset (nodup string_dec (set_union string_dec W U)) (nodup string_dec V)).
                   {
                     unfold strict_subset. split.
                     - apply nodup_incl. assumption.
-                    - unfold not. intros. apply n0. apply nodup_incl2 in H15.
-                      assumption.
+                    - unfold not. intros. apply n0.
+                      apply nodup_incl2 in H13. assumption.
                   }
-                  apply (strict_subset_lt_length string_dec). unfold strict_subset in H15.
-                  destruct H15. unfold strict_subset. split.
-                  - apply nodup_incl in H15. apply nodup_incl2 in H15. assumption.
-                  - unfold not. intros. apply n0. apply nodup_incl. assumption.
+                  apply (strict_subset_lt_length string_dec).
+                  unfold strict_subset in H13.
+                  destruct H13. unfold strict_subset. split.
+                  - apply nodup_incl in H13.
+                    apply nodup_incl2 in H13. assumption.
+                  - unfold not. intros. apply n0.
+                    apply nodup_incl. assumption.
                 }
                 assert (Datatypes.length (set_diff string_dec V (set_union string_dec (nodup string_dec W) U)) < Datatypes.length (set_diff string_dec V (nodup string_dec W)) <= S m).
                 {
                   apply conj.
                   - rewrite Hu. apply set_diff_incl_lt_length;
                     try assumption. apply nodup_incl2. assumption.
-                  - rewrite <- set_diff_nodup_length. rewrite H3. lia.
+                  - rewrite <- set_diff_nodup_length. rewrite e.
+                    lia.
                 }
                 apply (ex_lfp_geq_monotone Cs V h' f).
                 eapply (IHm h' V (set_union string_dec W U)).
-                ** apply nodup_incl2 in H11. assumption.
+                ** apply nodup_incl2 in H10. assumption.
                 ** assumption.
-                ** apply conj; try lia. inversion H15.
-                   apply le_lteq in H17. destruct H17.
-                   --- apply Arith_prebase.lt_n_Sm_le_stt in H17.
+                ** apply conj; try lia. inversion H14.
+                   apply le_lt_eq_dec in H16. destruct H16.
+                   --- apply Arith_prebase.lt_n_Sm_le_stt in l.
                        assert (Datatypes.length (set_diff string_dec V (set_union string_dec W U)) <= Datatypes.length (set_diff string_dec V (set_union string_dec (nodup string_dec W) U))).
-                       exact (asd string_dec V W U).
-                       apply lt_le_incl in H16.
-                       eapply le_trans. apply H18.
-                       eapply le_trans. apply H16. assumption.
-                   --- rewrite H17 in H16. 
+                       rewrite asd. apply le_refl.
+                       apply lt_le_incl in H15.
+                       eapply le_trans. apply H16.
+                       eapply le_trans. apply H15. assumption.
+                   --- rewrite e0 in H15. 
                        assert (Datatypes.length (set_diff string_dec V (set_union string_dec W U)) <= Datatypes.length (set_diff string_dec V (set_union string_dec (nodup string_dec W) U))).
-                       exact (asd string_dec V W U). lia.
+                       rewrite asd. apply le_refl. lia.
                 ** apply (IHn n h' (set_union string_dec W U) []).
                    --- apply incl_nil_l.
                    --- assert (Datatypes.length (nodup string_dec V) <= Datatypes.length V).
@@ -162,22 +172,39 @@ Proof.
                          apply nodup_incl2. apply incl_refl.
                        }
                        assert (Datatypes.length (set_union string_dec W U) <= Datatypes.length (nodup string_dec (set_union string_dec W U))).
-                       apply (asd4 string_dec).
-                       apply lt_le_pred in H14. eapply le_trans.
-                       apply H17. eapply le_trans. apply H14.
-                       apply asd5 in H0.
+                       rewrite asd4. apply le_refl.
+                       apply lt_le_pred in H13. eapply le_trans.
+                       apply H16. eapply le_trans. apply H13.
+                       apply le_n_Sm_pred_n_m in H0.
                        assert (pred (Datatypes.length (nodup string_dec V)) <= pred (Datatypes.length V)).
                        {
                          apply Nat.pred_le_mono. assumption.
                        }
+                       eapply le_trans. apply H17. assumption.
+                   --- apply conj; try lia.
+                       assert (Datatypes.length (set_diff string_dec (set_union string_dec W U) []) <= Datatypes.length (set_union string_dec W U)).
+                       apply (set_diff_nil_length string_dec).
+                       assert (Datatypes.length (set_union string_dec W U) <= Datatypes.length (nodup string_dec (set_union string_dec W U))).
+                       rewrite asd4. apply le_refl.
+                       eapply le_trans. apply H15. apply lt_le_pred in H13.
+                       eapply le_trans. apply H16. eapply le_trans. apply H13.
+                       assert (Datatypes.length (nodup string_dec V) <= Datatypes.length V).
+                       { 
+                         apply NoDup_incl_length. apply NoDup_nodup.
+                         apply nodup_incl2. apply incl_refl.
+                       }
+                       assert (pred (Datatypes.length (nodup string_dec V)) <= pred (Datatypes.length V)).
+                       {
+                         apply Nat.pred_le_mono. assumption.
+                       }
+                       apply le_n_Sm_pred_n_m in H0.
                        eapply le_trans. apply H18. assumption.
-                   --- apply conj; try lia. admit.
                    --- unfold ex_lfp_geq. exists h'.
                        split. apply geq_refl.
                        apply sub_model_W_empty.
                 ** eapply geq_trans with h; try assumption.
-                   rewrite <- H13. apply geq_Sinfty_f2.
-Admitted.
+                   rewrite <- H12. apply geq_Sinfty_f2.
+Defined.
 
 Theorem pre_thm32 (Cs : set Clause) (n : nat) (m : nat) (V : set string) :
   Datatypes.length V <= n ->
@@ -221,3 +248,14 @@ Lemma lem33 (Cs : set Clause) (W : set string) :
   geq V h f = true /\ sub_model Cs (vars Cs) W h = true.
 Proof.
 Admitted.
+
+Extraction Language Haskell.
+
+Extract Constant map => "Prelude.map".
+Extract Constant fold_right => "Prelude.foldr".
+
+Extract Constant add => "(+)".
+Extract Constant sub => "(-)".
+Extract Constant leb => "(<=)".
+
+Extraction "/home/andreas/Projects/thesis/coq/thm_xx.hs" thm_xx.

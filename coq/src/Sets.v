@@ -6,9 +6,6 @@ From Coq Require Import Lists.ListSet.
 From Coq Require Import Strings.String.
 Require Import Misc. Import Misc.
 
-
-Search (_ <= _ -> pred _ <= pred _).
-
 (* Set-related lemmas and definitions *)
 
 Module StringSetsNotation.
@@ -17,7 +14,8 @@ Module StringSetsNotation.
 
 End StringSetsNotation.
 
-Module Sets.  
+Module Sets.
+
   Lemma set_add_mem_true {A : Type} (dec : forall x y : A, {x = y} + {x <> y}) (t : set A) (h : A) :
     set_mem dec h t = true -> set_add dec h t = t.
   Proof.
@@ -407,7 +405,7 @@ Module Sets.
   Proof.
     split; intros; induction V;
     try apply incl_nil_l;
-    simpl in *. 
+    simpl in *.
   Admitted.
 
   Lemma incl_set_union {A : Type} (dec : forall x y : A, {x = y} + {x <> y}) (V : set A) :
@@ -555,7 +553,7 @@ Module Sets.
   Proof.
     intros. simpl. destruct (set_mem dec h V) eqn:Hmem;
     try reflexivity. apply set_mem_complete1 in Hmem.
-    unfold set_In in Hmem. assert (In h t /\ ~ In h V). 
+    unfold set_In in Hmem. assert (In h t /\ ~ In h V).
     { split; assumption. } rewrite <- set_diff_iff in H0.
     apply (set_add_In dec) in H0. rewrite H0. reflexivity.
   Qed.
@@ -570,7 +568,9 @@ Module Sets.
 
   Lemma set_diff_succ {A : Type} (dec : forall x y, {x = y} + {x <> y}) (V W : set A) (n : nat) :
     incl W V ->
-    Datatypes.length (set_diff dec V W) = S n -> S (Datatypes.length (nodup dec W)) <= Datatypes.length (nodup dec V).  Proof.
+    Datatypes.length (set_diff dec V W) = S n ->
+    S (Datatypes.length (nodup dec W)) <= Datatypes.length (nodup dec V).
+  Proof.
     intros. induction W as [|h t].
     - simpl in *.
   Admitted.
@@ -660,6 +660,18 @@ Module Sets.
     - simpl in *. rewrite IHt. reflexivity.
   Qed.
 
+  Lemma set_union_nodup_In_l {A : Type} (dec : forall x y, {x = y} + {x <> y}) (V W : set A) (u : A) :
+    In u (set_union dec (nodup dec V) W) ->
+    In u (set_union dec V W).
+  Proof.
+  Admitted.
+
+  Lemma set_union_nodup_not_In_l {A : Type} (dec : forall x y, {x = y} + {x <> y}) (V W : set A) (u : A) :
+    ~ In u (set_union dec (nodup dec V) W) ->
+    ~ In u (set_union dec V W).
+  Proof.
+  Admitted.
+
   Lemma set_union_diff_length_le {A : Type} (dec : forall x y, {x = y} + {x <> y}) (V W U : set A) (n : nat) :
     Datatypes.length (set_diff dec V (set_union dec W U)) <= n ->
     Datatypes.length (set_diff dec V (nodup dec W)) <= n.
@@ -681,29 +693,33 @@ Module Sets.
   Admitted.
 
   Lemma asd {A : Type} (dec : forall x y, {x = y} + {x <> y}) (V W U : set A) :
-    Datatypes.length (set_diff dec V (set_union dec W U)) <=
+    Datatypes.length (set_diff dec V (set_union dec W U)) =
     Datatypes.length (set_diff dec V (set_union dec (nodup dec W) U)).
   Proof.
-  Admitted.
-
-  Lemma asd2 {A : Type} (dec : forall x y, {x = y} + {x <> y}) (V W U : set A) :
-    Datatypes.length (set_diff dec V (set_union dec (nodup dec W) U)) <=
-    Datatypes.length (set_diff dec V (set_union dec W U)).
-  Proof.
-  Admitted.
-
-  Lemma asd3 {A : Type} (dec : forall x y, {x = y} + {x <> y}) (W U : set A) :
-    Datatypes.length (nodup dec (set_union dec W U)) <=
-    Datatypes.length (set_union dec W U).
-  Proof.
+    induction W as [|h t]; try reflexivity.
+    simpl. destruct (in_dec dec h t).
   Admitted.
 
   Lemma asd4 {A : Type} (dec : forall x y, {x = y} + {x <> y}) (W U : set A) :
-    Datatypes.length (set_union dec W U) <=
+    Datatypes.length (set_union dec W U) =
     Datatypes.length (nodup dec (set_union dec W U)).
   Proof.
   Admitted.
 
-
+  Lemma set_diff_nil_length {A : Type} (dec : forall x y, {x = y} + {x <> y}) (V : set A) :
+    Datatypes.length (set_diff dec V []) <= Datatypes.length V.
+  Proof.
+    intros. induction V as [|h t]; try reflexivity.
+    simpl in *. destruct (in_dec dec h t).
+    - apply (set_diff_intro dec h t []) in i.
+      + apply (set_add_In dec) in i. rewrite i.
+        apply le_S. assumption.
+      + unfold not. intros. apply H.
+    - assert (~ In h (set_diff dec t [])).
+      + unfold not. intros. apply n.
+        apply (set_diff_elim1 dec h t []). assumption.
+      + apply (set_add_not_In dec) in H. rewrite H.
+        rewrite app_length. simpl. lia.
+  Qed.
 
 End Sets.

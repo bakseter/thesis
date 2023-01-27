@@ -58,7 +58,7 @@ Module VarsImp.
           -- simpl in H. eapply incl_tran. apply IHt. apply incl_refl.
              assumption.
           -- simpl in H. apply negb_false_iff in HxW.
-             apply set_add_mem_true in HxW. 
+             apply set_add_mem_true in HxW.
              apply set_add_elim in H. destruct H.
              ++ contradiction.
              ++ eapply incl_tran. apply IHt. apply incl_refl. assumption.
@@ -79,7 +79,7 @@ Module VarsImp.
     - unfold sub_vars_improvable. fold sub_vars_improvable.
       rewrite Hhtf'. rewrite orb_true_r in *.
       rewrite orb_false_r in *. assumption.
-    - rewrite orb_true_r in *. rewrite orb_false_r in H. 
+    - rewrite orb_true_r in *. rewrite orb_false_r in H.
       destruct (negb (x € W)) eqn:HxW.
       + simpl in H. rewrite <- H.
         unfold sub_vars_improvable. fold sub_vars_improvable.
@@ -94,13 +94,38 @@ Module VarsImp.
           rewrite Hhtf'. rewrite orb_true_r. assumption.
         * apply set_add_not_empty in H. contradiction.
     - unfold sub_vars_improvable. fold sub_vars_improvable.
-      rewrite Hhtf'. rewrite orb_false_r in *. 
+      rewrite Hhtf'. rewrite orb_false_r in *.
       destruct (negb (x' € W));
       simpl; simpl in H; try rewrite orb_false_r in H;
       destruct (negb (x € W)); simpl in H; try assumption;
       destruct (negb (fold_right andb true (map (fun x : string => x € V) (vars_set_atom l))));
       try assumption; apply set_add_not_empty in H; contradiction.
   Qed.
+
+  Lemma sub_vars_improvable_incl_set_diff (Cs : set Clause) (V W : set string) (f : Frontier) :
+    incl (sub_vars_improvable Cs V W f) (set_diff string_dec W V).
+  Proof.
+    induction Cs as [|h t]; try reflexivity.
+    unfold incl; intros. unfold sub_vars_improvable in H.
+    - contradiction.
+    - destruct h as [l [x k]].
+      destruct (all_shifts_true (l ~> x & k) f) eqn:Hhtf.
+      + unfold incl; intros. eapply incl_tran. apply IHt. apply incl_refl.
+        unfold sub_vars_improvable in H. fold sub_vars_improvable in H.
+        rewrite Hhtf in H. rewrite orb_true_r in H. assumption.
+      + unfold incl; intros. eapply incl_tran. apply IHt. apply incl_refl.
+        unfold sub_vars_improvable in H. fold sub_vars_improvable in H.
+        rewrite Hhtf in H. rewrite orb_false_r in H.
+        destruct (negb (x € W)) eqn:HxW;
+        destruct (negb (fold_right andb true (map (fun x : string => x € V) (vars_set_atom l))));
+        simpl in H; try assumption. apply negb_false_iff in HxW.
+        destruct (in_dec string_dec x (sub_vars_improvable t V W f)).
+        * apply (set_add_In string_dec) in i. rewrite i in H.
+          assumption.
+        * exfalso. apply n. apply (set_add_not_In string_dec) in n.
+          rewrite n in H. apply in_app_or in H. destruct H.
+          --
+  Admitted.
 
   Example vars_improvable_test1 :
     vars_improvable [clause_x0y1_x2] frontier_infty = [].

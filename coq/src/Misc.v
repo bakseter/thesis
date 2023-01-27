@@ -1,10 +1,11 @@
 From Coq Require Import Strings.String.
+From Coq Require Import Lia.
 
 (* Misc. lemmas and definitions *)
 
 Module Misc.
 
-  Definition _map (A : Type) := string -> A.
+  Definition _map (A : Set) := string -> A.
 
   Lemma eq_sym_iff : forall (A : Type) (x y : A),
     x = y <-> y = x.
@@ -33,11 +34,8 @@ Module Misc.
     (a, b) = (a', b') -> b = b'.
   Proof. intros. inversion H. reflexivity. Qed.
 
-  Lemma negb_iff (b1 b2 : bool) :
-    negb b1 = negb b2 <-> b1 = b2.
-  Proof.
-    split; intros; destruct b1 eqn:Hb1; destruct b2 eqn:Hb2;
-    try reflexivity; simpl in *; try discriminate.
-  Qed.
+  Lemma le_n_Sm_pred_n_m (n m : nat) :
+    n <= S m -> pred n <= m.
+  Proof. induction n; lia. Qed.
 
 End Misc.

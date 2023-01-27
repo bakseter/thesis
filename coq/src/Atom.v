@@ -12,7 +12,7 @@ Module Atom.
   Inductive Atom : Type :=
     | atom : string -> nat -> Atom.
 
-  Notation "x & k" := (atom x k) (at level 80). (* level ?? *)
+  Notation "x & k" := (atom x k) (at level 80).
 
   Definition x_str := "x"%string.
   Definition y_str := "y"%string.
