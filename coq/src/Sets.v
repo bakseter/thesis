@@ -6,6 +6,9 @@ From Coq Require Import Lists.ListSet.
 From Coq Require Import Strings.String.
 Require Import Misc. Import Misc.
 
+
+Search (_ <= _ -> pred _ <= pred _).
+
 (* Set-related lemmas and definitions *)
 
 Module StringSetsNotation.
@@ -688,5 +691,19 @@ Module Sets.
     Datatypes.length (set_diff dec V (set_union dec W U)).
   Proof.
   Admitted.
+
+  Lemma asd3 {A : Type} (dec : forall x y, {x = y} + {x <> y}) (W U : set A) :
+    Datatypes.length (nodup dec (set_union dec W U)) <=
+    Datatypes.length (set_union dec W U).
+  Proof.
+  Admitted.
+
+  Lemma asd4 {A : Type} (dec : forall x y, {x = y} + {x <> y}) (W U : set A) :
+    Datatypes.length (set_union dec W U) <=
+    Datatypes.length (nodup dec (set_union dec W U)).
+  Proof.
+  Admitted.
+
+
 
 End Sets.

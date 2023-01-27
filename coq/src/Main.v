@@ -50,6 +50,12 @@ Definition lem_xx (Cs : set Clause) (V W : set string) (f : Frontier) :
 Proof.
 Admitted.
 
+Lemma asd5 :
+  forall n m, n <= S m -> pred n <= m.
+Proof.
+  induction n; lia.
+Qed.
+
 Theorem thm_xx (Cs : set Clause) :
   forall n m, pred_P Cs n m.
 Proof.
@@ -150,8 +156,22 @@ Proof.
                        exact (asd string_dec V W U). lia.
                 ** apply (IHn n h' (set_union string_dec W U) []).
                    --- apply incl_nil_l.
-                   --- admit.
-                   --- (* same as above *)  admit.
+                   --- assert (Datatypes.length (nodup string_dec V) <= Datatypes.length V).
+                       { 
+                         apply NoDup_incl_length. apply NoDup_nodup.
+                         apply nodup_incl2. apply incl_refl.
+                       }
+                       assert (Datatypes.length (set_union string_dec W U) <= Datatypes.length (nodup string_dec (set_union string_dec W U))).
+                       apply (asd4 string_dec).
+                       apply lt_le_pred in H14. eapply le_trans.
+                       apply H17. eapply le_trans. apply H14.
+                       apply asd5 in H0.
+                       assert (pred (Datatypes.length (nodup string_dec V)) <= pred (Datatypes.length V)).
+                       {
+                         apply Nat.pred_le_mono. assumption.
+                       }
+                       eapply le_trans. apply H18. assumption.
+                   --- apply conj; try lia. admit.
                    --- unfold ex_lfp_geq. exists h'.
                        split. apply geq_refl.
                        apply sub_model_W_empty.
