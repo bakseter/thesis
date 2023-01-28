@@ -10,6 +10,7 @@ From Coq Require Import Lists.ListSet.
 From Coq Require Import Strings.String.
 From Coq Require Import Setoids.Setoid.
 From Coq Require Import ExtrHaskellBasic.
+From Coq Require Import ExtrHaskellNatNum.
 From Coq Require Import ExtrHaskellString.
 Require Import Sets. Import Sets. Import StringSetsNotation.
 Require Import Clause. Import Clause.
@@ -23,8 +24,8 @@ Require Import Geq. Import Geq.
 Require Import Model. Import Model.
 Require Import Ninfty. Import Ninfty.
 
-Definition pred_P (Cs : set Clause) (n m : nat) : Set :=
-  forall f, forall V W,
+Definition pred_P (Cs : set Clause) (n m : nat) : Type :=
+  forall f : Frontier, forall V W : set string,
     incl W V ->
     Datatypes.length V <= n ->
     Datatypes.length (set_diff string_dec V W) <= m <= n ->
@@ -37,16 +38,6 @@ Lemma pred_P_downward (Cs : set Clause) :
     m' <= m ->
     pred_P Cs n' m'.
 Proof.
-  induction n as [|n IHn].
-  - intros. unfold pred_P. intros. unfold ex_lfp_geq in *.
-    exists f. split. apply geq_refl. apply le_0_r in H0.
-    subst. inversion H3. apply length_zero_iff_nil in H6.
-    rewrite H6. apply sub_model_W_empty.
-  - induction n' as [|n' IHn'].
-    + unfold pred_P in *. intros. apply (ex_lfp_geq_incl Cs V W);
-      try assumption. destruct H0; apply le_0_r in H3;
-      apply length_zero_iff_nil in H3; subst; apply incl_nil_l.
-    + unfold pred_P in *. intros.
 Admitted.
 
 Definition lem_xx (Cs : set Clause) (V W : set string) (f : Frontier) :
@@ -55,10 +46,13 @@ Definition lem_xx (Cs : set Clause) (V W : set string) (f : Frontier) :
   ex_lfp_geq Cs W W f ->
   ex_lfp_geq Cs V W f.
 Proof.
-  induction Cs as [|h t]; intros.
-  - exists f. split. apply geq_refl. reflexivity.
-  - exists f. split. apply geq_refl. unfold ex_lfp_geq in H0.
-    unfold sub_model in H0. fold sub_model in H0.
+  induction W as [|w W]; induction V as [|v V]; intros.
+  - unfold ex_lfp_geq in *. exists f. split.
+    apply geq_refl. apply sub_model_W_empty.
+  - unfold ex_lfp_geq in *. exists f. split.
+    apply geq_refl. apply sub_model_W_empty.
+  - apply incl_l_nil_false in H. contradiction.
+    discriminate.
 Admitted.
 
 Definition thm_xx (Cs : set Clause) :
@@ -254,8 +248,7 @@ Extraction Language Haskell.
 Extract Constant map => "Prelude.map".
 Extract Constant fold_right => "Prelude.foldr".
 
-Extract Constant add => "(+)".
-Extract Constant sub => "(-)".
-Extract Constant leb => "(<=)".
+Extract Inductive nat => "Prelude.Integer" ["0" "Prelude.succ"]
+  "(\fO fS n -> if n Prelude.== 0 then fO () else fS (n Prelude.- 1))".
 
 Extraction "/home/andreas/Projects/thesis/coq/thm_xx.hs" thm_xx.

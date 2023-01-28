@@ -409,7 +409,10 @@ Module Sets.
   Admitted.
 
   Lemma incl_set_union {A : Type} (dec : forall x y : A, {x = y} + {x <> y}) (V : set A) :
-    forall W U, incl W V -> incl U V -> incl (set_union dec W U) V.
+    forall W U,
+      incl W V ->
+      incl U V ->
+      incl (set_union dec W U) V.
   Proof.
     induction V as [|h t]; intros.
     - destruct W; destruct U.
@@ -448,7 +451,8 @@ Module Sets.
   Qed.
 
   Lemma set_add_not_In_length_S_n {A : Type} (dec : forall x y, {x = y} + {x <> y}) (x : A) (V : set A) :
-    ~ In x V <-> Datatypes.length (set_add dec x V) = S (Datatypes.length V).
+    ~ In x V <->
+    Datatypes.length (set_add dec x V) = S (Datatypes.length V).
   Proof.
     split; induction V as [|h t];
     try reflexivity; intros; simpl in *.
@@ -472,7 +476,8 @@ Module Sets.
   Qed.
 
   Lemma set_add_In_length_n {A : Type} (dec : forall x y, {x = y} + {x <> y}) (x : A) (V : set A) :
-    In x V <-> Datatypes.length (set_add dec x V) = Datatypes.length V.
+    In x V <->
+    Datatypes.length (set_add dec x V) = Datatypes.length V.
   Proof.
     split; induction V as [|h t];
     intros; simpl in *; try contradiction; try discriminate.
@@ -487,8 +492,8 @@ Module Sets.
 
   Lemma set_add_le_length {A : Type} (dec : forall x y, {x = y} + {x <> y}) (V : set A) (x : A) :
     forall n,
-    Datatypes.length (set_add dec x V) = n ->
-    Datatypes.length V <= n.
+      Datatypes.length (set_add dec x V) = n ->
+      Datatypes.length V <= n.
   Proof.
     induction V as [|h t]; intros; simpl in *; try lia.
     destruct (dec x h); simpl in *.
@@ -520,7 +525,7 @@ Module Sets.
       + unfold incl. intros. apply set_union_intro2. right. apply H.
   Qed.
 
-  Lemma set_diff_length_nodup {A : Type} (dec : forall x y : A, {x = y} + {x <> y}) (V : set A) :
+  Lemma set_diff_nil_length_nodup {A : Type} (dec : forall x y : A, {x = y} + {x <> y}) (V : set A) :
     Datatypes.length (set_diff dec V []) = Datatypes.length (nodup dec V).
   Proof.
     induction V; try reflexivity.
@@ -692,12 +697,23 @@ Module Sets.
           apply IHt in H.
   Admitted.
 
+  Lemma set_union_diff_length_cons_l {A : Type} (dec : forall x y, {x = y} + {x <> y}) (V W t : set A) (h : A) :
+    In h t ->
+    Datatypes.length (set_diff dec V (set_union dec (h :: t) W)) =
+    Datatypes.length (set_diff dec V (set_union dec t W)).
+  Proof.
+    intros.
+  Admitted.
+
   Lemma asd {A : Type} (dec : forall x y, {x = y} + {x <> y}) (V W U : set A) :
     Datatypes.length (set_diff dec V (set_union dec W U)) =
     Datatypes.length (set_diff dec V (set_union dec (nodup dec W) U)).
   Proof.
     induction W as [|h t]; try reflexivity.
     simpl. destruct (in_dec dec h t).
+    - rewrite <- IHt.
+      apply (set_union_diff_length_cons_l dec V U) in i.
+      assumption.
   Admitted.
 
   Lemma asd4 {A : Type} (dec : forall x y, {x = y} + {x <> y}) (W U : set A) :
