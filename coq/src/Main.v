@@ -40,7 +40,7 @@ Lemma pred_P_downward (Cs : set Clause) :
 Proof.
 Admitted.
 
-Definition lem_xx (Cs : set Clause) (V W : set string) (f : Frontier) :
+Definition lem_32 (Cs : set Clause) (V W : set string) (f : Frontier) :
   (* subject to change *)
   incl W V ->
   ex_lfp_geq Cs W W f ->
@@ -55,7 +55,7 @@ Proof.
     discriminate.
 Admitted.
 
-Definition thm_xx (Cs : set Clause) :
+Definition thm_32 (Cs : set Clause) :
   forall n m, pred_P Cs n m.
 Proof.
   induction n as [|n IHn].
@@ -93,7 +93,7 @@ Proof.
           }
           assert (H': incl W V) by assumption.
           apply (nodup_incl2 string_dec) in H.
-          apply (lem_xx Cs V (nodup string_dec W) f) in H;
+          apply (lem_32 Cs V (nodup string_dec W) f) in H;
           try assumption. elim H. intros h [H8 H9].
           destruct (sub_forward Cs V V h) as [U h'] eqn:Hforward.
           assert (sub_forward Cs V V h = (U, h')) by assumption.
@@ -200,39 +200,7 @@ Proof.
                    rewrite <- H12. apply geq_Sinfty_f2.
 Defined.
 
-Theorem pre_thm32 (Cs : set Clause) (n : nat) (m : nat) (V : set string) :
-  Datatypes.length V <= n ->
-  (forall f : Frontier,
-    (forall W : set string, strict_subset W V ->
-      Datatypes.length (set_diff string_dec V W) <= m ->
-      forall g : Frontier, geq W g f = true ->
-      (sub_model Cs W W g = true) -> exists h, geq W h g = true /\ sub_model Cs V W h = true)
-(* main implication *) ->
-    exists h : Frontier, geq V h f = true /\ sub_model Cs (vars Cs) V h = true).
-Proof.
-  intros. induction n.
-  - exists f. apply le_0_r in H.
-    apply length_zero_iff_nil in H. rewrite H.
-    split; try reflexivity. apply sub_model_W_empty.
-  - destruct (sub_forward Cs V V f) as [W g] eqn:Hforward.
-    apply (sub_forward_incl Cs f) in Hforward.
-Admitted.
-
-Theorem thm32 (Cs : set Clause) (f : Frontier) :
-  exists h : Frontier,
-    geq (vars Cs) h f = true /\ model Cs h = true.
-Proof.
-  intros. setoid_rewrite <- sub_model_eq_model;
-  try apply incl_refl.
-  apply (pre_thm32 Cs (List.length (vars Cs)) 0 (vars Cs)).
-  intros; try reflexivity; try apply incl_refl.
-  intros. exists g. split. apply geq_refl.
-  apply le_0_r in H0. apply length_zero_iff_nil in H0.
-  unfold strict_subset in H. destruct H as [H H'].
-  apply set_diff_nil_incl in H0. contradiction.
-Qed.
-
-Lemma lem33 (Cs : set Clause) (W : set string) :
+Lemma lem_33 (Cs : set Clause) (W : set string) :
   let V := vars Cs in
   let V_m_W := set_diff string_dec V W in
   strict_subset W V ->
@@ -251,4 +219,4 @@ Extract Constant fold_right => "Prelude.foldr".
 Extract Inductive nat => "Prelude.Integer" ["0" "Prelude.succ"]
   "(\fO fS n -> if n Prelude.== 0 then fO () else fS (n Prelude.- 1))".
 
-Extraction "/home/andreas/Projects/thesis/coq/thm_xx.hs" thm_xx.
+Extraction "/home/andreas/Projects/thesis/coq/thm_32.hs" thm_32.
