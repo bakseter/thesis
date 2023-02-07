@@ -135,7 +135,7 @@ Proof.
                     - apply nodup_incl. assumption.
                     - unfold not. intros. apply n0.
                       apply nodup_incl2 in H13. 
-                      rewrite set_union_nodup_r. assumption.
+                      rewrite set_union_nodup_l. assumption.
                   }
                   apply (strict_subset_lt_length string_dec).
                   unfold strict_subset in H13.

@@ -409,12 +409,32 @@ Module Sets.
           assumption.
   Qed.
 
-  Lemma set_union_nil_app_incl_iff_lr {A : Type} (dec : forall x y : A, {x = y} + {x <> y}) (V W U : set A) :
-    incl (V ++ U) W <-> incl (set_union dec [] V ++ U) W.
+  Lemma set_add_not_empty_incl {A : Type} (dec : forall x y : A, {x = y} + {x <> y}) (V : set A) (a : A) :
+     ~ incl (set_add dec a V) [].
   Proof.
-    split; intros; induction V;
-    try apply incl_nil_l;
-    simpl in *.
+    assert (set_add dec a V <> []) as H.
+    - unfold not. intros. apply set_add_not_empty in H.
+      contradiction.
+    - unfold not. intros.
+  Admitted.
+
+  Lemma set_union_nil_app_incl_iff_lr {A : Type} (dec : forall x y : A, {x = y} + {x <> y}) (W : set A) :
+    forall V U,
+      incl (V ++ U) W <->
+      incl (set_union dec [] V ++ U) W.
+  Proof.
+    induction W as [|h t]; split; intros.
+    - apply incl_app. destruct V; simpl; try apply incl_refl.
+      + unfold incl. intros. simpl in H. apply incl_cons_inv in H.
+        destruct H. contradiction.
+      + destruct U; try apply incl_refl.
+        apply incl_app_inv in H. destruct H.
+        apply incl_cons_inv in H0. destruct H0. contradiction.
+    - apply incl_app_inv in H. destruct H.
+      destruct U; destruct V; try apply incl_refl.
+      + simpl in *. assert (set_add dec a (set_union dec [] V) <> []).
+        destruct (set_add dec a (set_union dec [] V)) eqn:Hsa; try discriminate.
+        apply set_add_not_empty in Hsa. contradiction.
   Admitted.
 
   Lemma incl_set_union {A : Type} (dec : forall x y : A, {x = y} + {x <> y}) (V : set A) :
@@ -668,6 +688,8 @@ Module Sets.
     In h t ->
     set_union dec (h :: t) V = set_union dec t V.
   Proof.
+    induction V; intros.
+    - simpl.
   Admitted.
 
   Lemma set_add_add {A : Type} (dec : forall x y, {x = y} + {x <> y}) (h : A) (V W : set A) :

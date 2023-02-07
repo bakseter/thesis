@@ -88,6 +88,15 @@ Module Forward.
     sub_forward Cs V W f = (U, g) -> incl U W.
   Proof. intros. inversion H. apply sub_vars_improvable_incl_W. Qed.
 
+  Lemma sub_forward_nodup (Cs : set Clause) (f g : Frontier) (V W U: set string) :
+    NoDup Cs ->
+    sub_forward Cs V W f = (U, g) ->
+    NoDup U.
+  Proof.
+    intros. inversion H0.
+    apply sub_vars_improvable_nodup. assumption.
+  Qed.
+
   Lemma sub_forward_incl_set_diff (Cs : set Clause) (f g : Frontier) (V W U : set string) :
     sub_model Cs V W f = true ->
     sub_forward Cs V V f = (U, g) ->
@@ -105,7 +114,7 @@ Module Forward.
         destruct (negb (x € V) || negb (fold_right andb true (map (fun x0 : string => x0 € V) (vars_set_atom l))) || all_shifts_true (l ~> x & k) f).
         * reflexivity.
         * destruct U; try contradiction.
-          simpl in H1.
+          simpl in H1. destruct H1; subst.
   Admitted.
 
   Example forward_test1 :

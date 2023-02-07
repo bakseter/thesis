@@ -30,6 +30,23 @@ Module VarsImp.
         else set_add string_dec x (sub_vars_improvable t V W f)
     end.
 
+  Lemma sub_vars_improvable_nodup (Cs : set Clause) (f : Frontier) :
+    forall V W,
+      NoDup Cs ->
+      NoDup (sub_vars_improvable Cs V W f).
+  Proof.
+    induction Cs as [|h t]; intros.
+    - simpl. apply NoDup_nil.
+    - unfold sub_vars_improvable. destruct h as [l [x k]].
+      fold sub_vars_improvable.
+      destruct (negb (x € W)
+                || negb (fold_right andb true (map (fun x0 : string => x0 € V) (vars_set_atom l))) 
+                || all_shifts_true (l ~> x & k) f).
+    + apply IHt. apply NoDup_cons_iff in H. destruct H. assumption.
+    + apply set_add_nodup. apply IHt. apply NoDup_cons_iff in H.
+      destruct H. assumption.
+  Qed.
+
   Lemma sub_vars_improvable_incl_W (Cs : set Clause) (V W : set string) (f : Frontier) :
     incl (sub_vars_improvable Cs V W f) W.
   Proof.
