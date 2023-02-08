@@ -151,6 +151,11 @@ Module Model.
       + rewrite H1. reflexivity.
   Qed.
 
+  Lemma sub_model_update_infty_V (Cs : set Clause) (V : set string) (f : Frontier) :
+    sub_model Cs V V (update_infty_V V f) = true.
+  Proof.
+  Admitted.
+
   Example sub_model_test1 :
     sub_model
       [clause_x0y1_x2]

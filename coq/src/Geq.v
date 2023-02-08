@@ -263,6 +263,13 @@ Module Geq.
       + apply IHt; assumption.
   Qed.
 
+  Lemma geq_update_infty_V (V : set string) (f : Frontier) :
+    geq V (update_infty_V V f) f = true.
+  Proof.
+    induction V as [| h t]; try reflexivity.
+    unfold geq. fold geq. destruct (update_infty_V (h :: t) f h) eqn:Hfh.
+  Admitted.
+
   Example geq_test1 :
     geq [x_str] (frontier_fin_1) (frontier_infty) = false.
   Proof. reflexivity. Qed.
@@ -353,6 +360,14 @@ Module Geq.
     unfold ex_lfp_geq. exists x. split;
     try assumption. eapply geq_trans.
     apply H1. assumption.
+  Qed.
+
+  Lemma ex_lfp_geq_empty (Cs : set Clause) (f : Frontier) :
+    ex_lfp_geq Cs [] [] f.
+  Proof.
+    unfold ex_lfp_geq. exists f. split; try reflexivity.
+    induction Cs; try reflexivity.
+    simpl. destruct a. destruct a. assumption.
   Qed.
 
   Lemma ex_lfp_geq_nodup_iff (Cs : set Clause) (V : set string) (f : Frontier) :

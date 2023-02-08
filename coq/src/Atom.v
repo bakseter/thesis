@@ -17,6 +17,7 @@ Module Atom.
   Definition x_str := "x"%string.
   Definition y_str := "y"%string.
   Definition z_str := "z"%string.
+  Definition u_str := "u"%string.
 
   Example atom_x0 : Atom := "x" & 0.
   Example atom_x1 : Atom := "x" & 1.
@@ -24,6 +25,12 @@ Module Atom.
   Example atom_y0 : Atom := "y" & 0.
   Example atom_y1 : Atom := "y" & 1.
   Example atom_y2 : Atom := "y" & 2.
+  Example atom_z0 : Atom := "z" & 0.
+  Example atom_z1 : Atom := "z" & 1.
+  Example atom_z2 : Atom := "z" & 2.
+  Example atom_u0 : Atom := "u" & 0.
+  Example atom_u1 : Atom := "u" & 1.
+  Example atom_u2 : Atom := "u" & 2.
 
   Definition atom_true (a : Atom) (f : Frontier) : bool :=
     match a with

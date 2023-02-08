@@ -7,9 +7,9 @@ src/Clause.vos src/Clause.vok src/Clause.required_vos: src/Clause.v src/Atom.vos
 src/Forward.vo src/Forward.glob src/Forward.v.beautified src/Forward.required_vo: src/Forward.v src/Sets.vo src/Clause.vo src/Atom.vo src/Frontier.vo src/Vars.vo src/VarsImp.vo src/Misc.vo src/Ninfty.vo src/Geq.vo src/Model.vo
 src/Forward.vio: src/Forward.v src/Sets.vio src/Clause.vio src/Atom.vio src/Frontier.vio src/Vars.vio src/VarsImp.vio src/Misc.vio src/Ninfty.vio src/Geq.vio src/Model.vio
 src/Forward.vos src/Forward.vok src/Forward.required_vos: src/Forward.v src/Sets.vos src/Clause.vos src/Atom.vos src/Frontier.vos src/Vars.vos src/VarsImp.vos src/Misc.vos src/Ninfty.vos src/Geq.vos src/Model.vos
-src/Frontier.vo src/Frontier.glob src/Frontier.v.beautified src/Frontier.required_vo: src/Frontier.v src/Misc.vo src/Ninfty.vo
-src/Frontier.vio: src/Frontier.v src/Misc.vio src/Ninfty.vio
-src/Frontier.vos src/Frontier.vok src/Frontier.required_vos: src/Frontier.v src/Misc.vos src/Ninfty.vos
+src/Frontier.vo src/Frontier.glob src/Frontier.v.beautified src/Frontier.required_vo: src/Frontier.v src/Misc.vo src/Sets.vo src/Ninfty.vo
+src/Frontier.vio: src/Frontier.v src/Misc.vio src/Sets.vio src/Ninfty.vio
+src/Frontier.vos src/Frontier.vok src/Frontier.required_vos: src/Frontier.v src/Misc.vos src/Sets.vos src/Ninfty.vos
 src/Geq.vo src/Geq.glob src/Geq.v.beautified src/Geq.required_vo: src/Geq.v src/Frontier.vo src/Clause.vo src/Ninfty.vo src/Sets.vo src/Atom.vo src/Vars.vo src/Model.vo src/VarsImp.vo
 src/Geq.vio: src/Geq.v src/Frontier.vio src/Clause.vio src/Ninfty.vio src/Sets.vio src/Atom.vio src/Vars.vio src/Model.vio src/VarsImp.vio
 src/Geq.vos src/Geq.vok src/Geq.required_vos: src/Geq.v src/Frontier.vos src/Clause.vos src/Ninfty.vos src/Sets.vos src/Atom.vos src/Vars.vos src/Model.vos src/VarsImp.vos

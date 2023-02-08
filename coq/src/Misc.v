@@ -5,8 +5,6 @@ From Coq Require Import Lia.
 
 Module Misc.
 
-  Definition _map (A : Set) := string -> A.
-
   Lemma eq_sym_iff : forall (A : Type) (x y : A),
     x = y <-> y = x.
   Proof. split; intros; symmetry; assumption. Qed.

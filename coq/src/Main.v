@@ -40,19 +40,12 @@ Lemma pred_P_downward (Cs : set Clause) :
 Proof.
 Admitted.
 
-Definition lem_32 (Cs : set Clause) (V W : set string) (f : Frontier) :
+Definition lem_33 (Cs : set Clause) (V W : set string) (f : Frontier) :
   (* subject to change *)
   incl W V ->
   ex_lfp_geq Cs W W f ->
   ex_lfp_geq Cs V W f.
 Proof.
-  induction W as [|w W]; induction V as [|v V]; intros.
-  - unfold ex_lfp_geq in *. exists f. split.
-    apply geq_refl. apply sub_model_W_empty.
-  - unfold ex_lfp_geq in *. exists f. split.
-    apply geq_refl. apply sub_model_W_empty.
-  - apply incl_l_nil_false in H. contradiction.
-    discriminate.
 Admitted.
 
 Definition thm_32 (Cs : set Clause) :
@@ -93,7 +86,7 @@ Proof.
           }
           assert (H': incl W V) by assumption.
           apply (nodup_incl2 string_dec) in H.
-          apply (lem_32 Cs V (nodup string_dec W) f) in H;
+          apply (lem_33 Cs V (nodup string_dec W) f) in H;
           try assumption. elim H. intros h [H8 H9].
           destruct (sub_forward Cs V V h) as [U h'] eqn:Hforward.
           assert (sub_forward Cs V V h = (U, h')) by assumption.
@@ -105,9 +98,9 @@ Proof.
              destruct H7. unfold ex_lfp_geq. exists h. split;
              try assumption.
           -- destruct (incl_dec string_dec V (nodup string_dec (set_union string_dec W U))).
-             ++ unfold ex_lfp_geq. exists frontier_infty. split.
-                ** apply geq_infty.
-                ** apply sub_model_infty.
+             ++ unfold ex_lfp_geq. exists (update_infty_V V f). split.
+                ** apply geq_update_infty_V.
+                ** apply sub_model_update_infty_V.
              ++ assert (incl (nodup string_dec (set_union string_dec W U)) V).
                 {
                   apply nodup_incl2. eapply incl_set_union; subst; assumption.
@@ -200,16 +193,108 @@ Proof.
                    rewrite <- H12. apply geq_Sinfty_f2.
 Defined.
 
-Lemma lem_33 (Cs : set Clause) (W : set string) :
-  let V := vars Cs in
-  let V_m_W := set_diff string_dec V W in
-  strict_subset W V ->
-  forall f : Frontier, exists g : Frontier, (geq W g f) && sub_model Cs W W g = true ->
-  forall f : Frontier, (forall v : string, (v € V_m_W) = true -> is_infty (f v) = true) ->
-  exists h : Frontier, (forall v : string, (v € V_m_W) = true -> (h v) = (f v)) /\
-  geq V h f = true /\ sub_model Cs (vars Cs) W h = true.
-Proof.
-Admitted.
+(* a -> a *)
+
+Example Cs_ex_1 := [([atom_x0] ~> atom_x0)].
+Example f_ex_1 := frontier_fin_0.
+Example thm_32_example1 :=
+    thm_32
+      Cs_ex_1
+      1
+      1
+      f_ex_1
+      [x_str]
+      [].
+Example ex_lfp_geq_empty_1 :=
+  ex_lfp_geq_empty Cs_ex_1 f_ex_1.
+
+(* a -> a+1 *)
+
+Example Cs_ex_2 := [([atom_x0] ~> atom_x1)].
+Example f_ex_2 := frontier_fin_0.
+Example thm_32_example2 :=
+  thm_32
+    Cs_ex_2
+    1
+    1
+    f_ex_2
+    [x_str]
+    [].
+Example ex_lfp_geq_empty_2 :=
+  ex_lfp_geq_empty Cs_ex_2 f_ex_2.
+
+(* a -> b+1 *)
+
+Example Cs_ex_3 := [([atom_x0] ~> atom_y1)].
+Example f_ex_3 := frontier_fin_0.
+Example thm_32_example3 :=
+  thm_32
+    Cs_ex_3
+    2
+    2
+    f_ex_3
+    [x_str; y_str]
+    [].
+Example ex_lfp_geq_empty_3 :=
+  ex_lfp_geq_empty Cs_ex_3 f_ex_3.
+
+(* a -> b+1 og c -> a+1 *)
+
+Example Cs_ex_4 := [([atom_x0] ~> atom_y1); ([atom_z0] ~> atom_x1)].
+Example f_ex_4 := frontier_fin_0.
+Example thm_32_example4 :=
+  thm_32
+    Cs_ex_4
+    3
+    3
+    f_ex_4
+    [x_str; y_str; z_str]
+    [].
+Example ex_lfp_geq_empty_4 :=
+  ex_lfp_geq_empty Cs_ex_4 f_ex_4.
+
+(* a,b -> a+1 og a,b -> b+1 *)
+
+Example Cs_ex_5 := [([atom_x0; atom_y0] ~> atom_x1); ([atom_x0; atom_y0] ~> atom_y1)].
+Example f_ex_5 := frontier_fin_0.
+Example thm_32_example5 :=
+  thm_32
+    Cs_ex_5
+    2
+    2
+    f_ex_5
+    [x_str; y_str]
+    [].
+Example ex_lfp_geq_empty_5 :=
+  ex_lfp_geq_empty Cs_ex_5 f_ex_5.
+
+(* a -> b+1 og b,c -> c+1 *)
+
+Example Cs_ex_6 := [([atom_x0] ~> atom_y1); ([atom_y0; atom_z0] ~> atom_z1)].
+Example f_ex_6 := frontier_fin_0.
+Example thm_32_example6 :=
+  thm_32
+    Cs_ex_6
+    3
+    3
+    f_ex_6
+    [x_str; y_str; z_str]
+    [].
+Example ex_lfp_geq_empty_6 :=
+  ex_lfp_geq_empty Cs_ex_6 f_ex_6.
+
+Example Cs_ex_7 := [([atom_x0] ~> atom_x1); ([atom_y0] ~> atom_z1); ([atom_z0] ~> atom_u1)].
+Example f_ex_7 := frontier_fin_0.
+Example thm_32_example7 :=
+  thm_32
+    Cs_ex_7
+    4
+    4
+    f_ex_7
+    [x_str; y_str; z_str; u_str]
+    [].
+Example ex_lfp_geq_empty_7 :=
+  ex_lfp_geq_empty Cs_ex_7 f_ex_7.
 
 Extraction Language Haskell.
 
@@ -219,4 +304,31 @@ Extract Constant fold_right => "Prelude.foldr".
 Extract Inductive nat => "Prelude.Integer" ["0" "Prelude.succ"]
   "(\fO fS n -> if n Prelude.== 0 then fO () else fS (n Prelude.- 1))".
 
-Extraction "/home/andreas/Projects/thesis/coq/thm_32.hs" thm_32.
+Extraction "/home/andreas/Projects/thesis/coq/thm_32.hs"
+  thm_32
+  thm_32_example1
+  thm_32_example2
+  thm_32_example3
+  thm_32_example4
+  thm_32_example5
+  thm_32_example6
+  thm_32_example7
+  x_str
+  y_str
+  z_str
+  u_str
+  atom_x0
+  atom_x1
+  atom_y0
+  atom_y1
+  atom_z0
+  atom_z1
+  atom_u0
+  atom_u1
+  ex_lfp_geq_empty_1
+  ex_lfp_geq_empty_2
+  ex_lfp_geq_empty_3
+  ex_lfp_geq_empty_4
+  ex_lfp_geq_empty_5
+  ex_lfp_geq_empty_6
+  ex_lfp_geq_empty_7.

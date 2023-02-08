@@ -1,11 +1,13 @@
 From Coq Require Import Strings.String.
+From Coq Require Import Lists.ListSet.
 From Coq Require Import Logic.FunctionalExtensionality.
 Require Import Misc. Import Misc.
+Require Import Sets. Import Sets. Import StringSetsNotation.
 Require Import Ninfty. Import Ninfty.
 
 Module Frontier.
 
-  Definition Frontier := _map Ninfty.
+  Definition Frontier := string -> Ninfty.
 
   Example frontier_fin_0 : Frontier := fun _ => fin 0.
   Example frontier_fin_1 : Frontier := fun _ => fin 1.
@@ -15,5 +17,8 @@ Module Frontier.
   Lemma frontier_lambda (f : Frontier) :
     (fun v : string => f v) = f.
   Proof. apply functional_extensionality. intros. reflexivity. Qed.
+
+  Definition update_infty_V (V : set string) (f : Frontier) : Frontier :=
+    fun x => if x € V then infty else f x.
 
 End Frontier.
