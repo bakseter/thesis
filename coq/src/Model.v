@@ -2,12 +2,16 @@ From Coq Require Import Bool.Bool.
 From Coq Require Import Lists.List. Import ListNotations.
 From Coq Require Import Lists.ListSet.
 From Coq Require Import Strings.String.
+From Coq Require Import Arith.PeanoNat.
+From Coq Require Import Lia.
+From Coq Require Import Logic.FunctionalExtensionality.
 Require Import Sets. Import Sets. Import StringSetsNotation.
 Require Import Clause. Import Clause.
 Require Import Atom. Import Atom.
 Require Import Frontier. Import Frontier.
 Require Import Vars. Import Vars.
 Require Import Misc. Import Misc.
+Require Import Ninfty. Import Ninfty.
 
 Module Model.
 
@@ -154,6 +158,23 @@ Module Model.
   Lemma sub_model_update_infty_V (Cs : set Clause) (V : set string) (f : Frontier) :
     sub_model Cs V V (update_infty_V V f) = true.
   Proof.
+    induction V as [|h t].
+    - unfold update_infty_V. simpl.
+      assert ((fun x : string => f x) = f).
+      + apply functional_extensionality. intros. reflexivity.
+      + rewrite H. induction Cs as [|c Cs]; try reflexivity.
+        destruct c as [l [x k]]. simpl. assumption.
+    - unfold update_infty_V. fold update_infty_V.
+      assert ((fun x : string => f x) = f).
+      + apply functional_extensionality. intros. reflexivity.
+      + rewrite H. induction Cs as [|c Cs]; try reflexivity.
+        destruct c as [l [x k]]. simpl. rewrite orb_true_r. reflexivity.
+
+    induction Cs as [|h t]; try reflexivity.
+    unfold sub_model. fold sub_model. destruct h as [l [x k]].
+    apply andb_true_iff. split; try assumption.
+    apply orb_true_iff. right.
+
   Admitted.
 
   Example sub_model_test1 :
@@ -192,4 +213,4 @@ Module Model.
     = true.
   Proof. reflexivity. Qed.
 
-End Model.
+End Model

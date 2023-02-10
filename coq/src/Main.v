@@ -313,18 +313,6 @@ Extraction "/home/andreas/Projects/thesis/coq/thm_32.hs"
   thm_32_example5
   thm_32_example6
   thm_32_example7
-  x_str
-  y_str
-  z_str
-  u_str
-  atom_x0
-  atom_x1
-  atom_y0
-  atom_y1
-  atom_z0
-  atom_z1
-  atom_u0
-  atom_u1
   ex_lfp_geq_empty_1
   ex_lfp_geq_empty_2
   ex_lfp_geq_empty_3

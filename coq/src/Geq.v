@@ -6,6 +6,7 @@ From Coq Require Import Lists.List. Import ListNotations.
 From Coq Require Import Lists.ListSet.
 From Coq Require Import Strings.String.
 From Coq Require Import Logic.FunctionalExtensionality.
+From Coq Require Import Setoids.Setoid.
 Require Import Frontier. Import Frontier.
 Require Import Clause. Import Clause.
 Require Import Ninfty. Import Ninfty.
@@ -263,11 +264,46 @@ Module Geq.
       + apply IHt; assumption.
   Qed.
 
+  Lemma geq_conditional_infty_true (V : set string) (f : Frontier) :
+    forall b : bool,
+      geq V (fun x : string => if b then infty else f x) f = true.
+  Proof.
+    destruct b.
+    - induction V as [|h t]; try reflexivity.
+      simpl. assumption.
+    - induction V as [|h t]; try reflexivity.
+      simpl. destruct (f h) eqn:Hfh; try assumption.
+      apply andb_true_iff. split.
+      + apply leb_refl.
+      + assumption.
+  Qed.
+
   Lemma geq_update_infty_V (V : set string) (f : Frontier) :
     geq V (update_infty_V V f) f = true.
   Proof.
     induction V as [| h t]; try reflexivity.
-    unfold geq. fold geq. destruct (update_infty_V (h :: t) f h) eqn:Hfh.
+    unfold geq. fold geq.
+    destruct (update_infty_V (h :: t) f h) eqn:HuiV.
+    - unfold update_infty_V in *. simpl in HuiV.
+      erewrite <- (geq_conditional_infty_true t f (_ € h :: t)).
+      f_equal. apply functional_extensionality. intros.
+      simpl. instantiate (1 := h). destruct (string_dec x h).
+      destruct (string_dec h h); try reflexivity; try contradiction.
+      destruct (string_dec h h); try reflexivity; try contradiction.
+      destruct (x € t) eqn:HxT; try reflexivity.
+      erewrite <- (geq_conditional_infty_true t f (x € t)) in IHt.
+      simpl.
+    - destruct (f h) eqn:Hfh.
+      + unfold update_infty_V in HuiV. simpl in HuiV.
+        destruct (string_dec h h). discriminate.
+        contradiction.
+      + apply andb_true_iff. split.
+        * unfold update_infty_V in HuiV. simpl in HuiV.
+          destruct (string_dec h h). discriminate.
+          contradiction.
+        * unfold update_infty_V in HuiV. simpl in HuiV.
+          destruct (string_dec h h). discriminate.
+          contradiction.
   Admitted.
 
   Example geq_test1 :
