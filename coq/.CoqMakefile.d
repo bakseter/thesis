@@ -19,9 +19,9 @@ src/Main.vos src/Main.vok src/Main.required_vos: src/Main.v src/Sets.vos src/Cla
 src/Misc.vo src/Misc.glob src/Misc.v.beautified src/Misc.required_vo: src/Misc.v 
 src/Misc.vio: src/Misc.v 
 src/Misc.vos src/Misc.vok src/Misc.required_vos: src/Misc.v 
-src/Model.vo src/Model.glob src/Model.v.beautified src/Model.required_vo: src/Model.v src/Sets.vo src/Clause.vo src/Atom.vo src/Frontier.vo src/Vars.vo src/Misc.vo
-src/Model.vio: src/Model.v src/Sets.vio src/Clause.vio src/Atom.vio src/Frontier.vio src/Vars.vio src/Misc.vio
-src/Model.vos src/Model.vok src/Model.required_vos: src/Model.v src/Sets.vos src/Clause.vos src/Atom.vos src/Frontier.vos src/Vars.vos src/Misc.vos
+src/Model.vo src/Model.glob src/Model.v.beautified src/Model.required_vo: src/Model.v src/Sets.vo src/Clause.vo src/Atom.vo src/Frontier.vo src/Vars.vo src/Misc.vo src/Ninfty.vo
+src/Model.vio: src/Model.v src/Sets.vio src/Clause.vio src/Atom.vio src/Frontier.vio src/Vars.vio src/Misc.vio src/Ninfty.vio
+src/Model.vos src/Model.vok src/Model.required_vos: src/Model.v src/Sets.vos src/Clause.vos src/Atom.vos src/Frontier.vos src/Vars.vos src/Misc.vos src/Ninfty.vos
 src/Ninfty.vo src/Ninfty.glob src/Ninfty.v.beautified src/Ninfty.required_vo: src/Ninfty.v 
 src/Ninfty.vio: src/Ninfty.v 
 src/Ninfty.vos src/Ninfty.vok src/Ninfty.required_vos: src/Ninfty.v 

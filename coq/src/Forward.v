@@ -117,6 +117,13 @@ Module Forward.
           simpl in H1. destruct H1; subst.
   Admitted.
 
+  Lemma sub_forward_nodup_eq {A : Type} (dec : forall x y, {x = y} + {x <> y}) (Cs : set Clause) (f : Frontier) (V : set string) :
+    sub_forward Cs (nodup dec V) (nodup dec V) f = sub_forward Cs V V f.
+  Proof.
+    induction Cs as [|h t]; try reflexivity.
+    unfold sub_forward.
+  Admitted.
+
   Example forward_test1 :
     forward [clause_x0y1_x2] frontier_infty = ([], frontier_infty).
   Proof. reflexivity. Qed.

@@ -292,7 +292,7 @@ Module Geq.
       destruct (string_dec h h); try reflexivity; try contradiction.
       destruct (x € t) eqn:HxT; try reflexivity.
       erewrite <- (geq_conditional_infty_true t f (x € t)) in IHt.
-      simpl.
+      simpl. admit.
     - destruct (f h) eqn:Hfh.
       + unfold update_infty_V in HuiV. simpl in HuiV.
         destruct (string_dec h h). discriminate.

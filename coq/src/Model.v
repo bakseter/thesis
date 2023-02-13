@@ -31,6 +31,22 @@ Module Model.
         ) && sub_model t V W f
     end.
 
+  Lemma fold_right_andb_true_map_incl_iff (V W : set string) :
+    incl W V <->
+    fold_right andb true (map (fun x => x € V) W) = true.
+  Proof.
+    split; intros; induction W as [|h t];
+    try reflexivity; try apply incl_nil_l.
+    - apply incl_cons_inv in H. destruct H as [H1 H2].
+      simpl. apply andb_true_iff. split.
+      + apply set_mem_correct2. unfold set_In. apply H1.
+      + apply IHt. apply H2.
+    - simpl in H. apply andb_true_iff in H. destruct H as [H1 H2].
+      apply set_mem_correct1 in H1. unfold set_In in H1.
+      apply incl_cons; try assumption.
+      apply IHt. assumption.
+  Qed.
+
   Lemma sub_model_W_empty (Cs : set Clause) (V : set string) (f : Frontier) :
     sub_model Cs V [] f = true.
   Proof.
@@ -165,16 +181,18 @@ Module Model.
       + rewrite H. induction Cs as [|c Cs]; try reflexivity.
         destruct c as [l [x k]]. simpl. assumption.
     - unfold update_infty_V. fold update_infty_V.
-      assert ((fun x : string => f x) = f).
-      + apply functional_extensionality. intros. reflexivity.
-      + rewrite H. induction Cs as [|c Cs]; try reflexivity.
-        destruct c as [l [x k]]. simpl. rewrite orb_true_r. reflexivity.
-
-    induction Cs as [|h t]; try reflexivity.
-    unfold sub_model. fold sub_model. destruct h as [l [x k]].
-    apply andb_true_iff. split; try assumption.
-    apply orb_true_iff. right.
-
+      + induction Cs as [|c Cs]; try reflexivity.
+        destruct c as [l [x k]]. unfold sub_model. fold sub_model.
+        apply andb_true_iff. split.
+        * rewrite orb_true_iff. right.
+          unfold sub_model in IHt. fold sub_model in IHt.
+          apply andb_true_iff in IHt. destruct IHt as [IHt1 IHt2].
+          rewrite orb_true_iff in IHt1. destruct IHt1.
+          -- admit.
+          -- admit.
+        * apply IHCs. unfold sub_model in IHt. fold sub_model in IHt.
+          apply andb_true_iff in IHt. destruct IHt as [IHt1 IHt2].
+          apply IHt2.
   Admitted.
 
   Example sub_model_test1 :
@@ -213,4 +231,4 @@ Module Model.
     = true.
   Proof. reflexivity. Qed.
 
-End Model
+End Model.

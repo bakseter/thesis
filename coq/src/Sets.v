@@ -16,6 +16,21 @@ End StringSetsNotation.
 
 Module Sets.
 
+  Lemma nodup_rm (A : Type) (dec : forall x y : A, {x = y} + {x <> y}) (l : set A) :
+    nodup dec (nodup dec l) = nodup dec l.
+  Proof.
+    assert (NoDup (nodup dec l)) by apply NoDup_nodup.
+    apply (nodup_fixed_point dec). assumption.
+  Qed.
+
+  Lemma set_diff_NoDup {A : Type} (dec : forall x y : A, {x = y} + {x <> y}) (V W U : set A) :
+    NoDup (set_diff dec V W).
+  Proof.
+    induction V as [|h t]; try apply NoDup_nil.
+    simpl. destruct (set_mem dec h W) eqn:Hmem; try assumption.
+    apply set_add_nodup. assumption.
+  Qed.
+
   Lemma set_add_mem_true {A : Type} (dec : forall x y : A, {x = y} + {x <> y}) (t : set A) (h : A) :
     set_mem dec h t = true -> set_add dec h t = t.
   Proof.
@@ -106,15 +121,6 @@ Module Sets.
     - right. apply IHt. assumption.
   Qed.
 
-  Lemma set_diff_nodup_eq {A : Type} (dec : forall x y : A, {x = y} + {x <> y}) (V W : set A) :
-    set_diff dec (nodup dec V) (nodup dec W) = set_diff dec V W.
-  Proof.
-    induction V as [|h t]; try reflexivity.
-    simpl. destruct (in_dec dec h t).
-    + simpl. destruct (set_mem dec h W) eqn:HhW; try assumption.
-      * apply set_mem_complete1 in HhW. unfold set_In in HhW.
-      * 
-
   Lemma set_diff_nil_incl {A : Type} (dec : forall x y : A, {x = y} + {x <> y}) (V W : set A) :
     set_diff dec V W = [] <-> incl V W.
   Proof.
@@ -158,6 +164,7 @@ Module Sets.
     - unfold incl. intros. rewrite H1 in H0.
       assumption.
   Qed.
+
 
   Lemma In_incl_singleton {A : Type} (a : A) (V : set A) :
     In a V <-> incl [a] V.
@@ -316,6 +323,25 @@ Module Sets.
       assumption.
   Qed.
 
+  Lemma set_diff_nodup_eq {A : Type} (dec : forall x y : A, {x = y} + {x <> y}) (V W : set A) :
+    set_diff dec (nodup dec V) (nodup dec W) = set_diff dec V W.
+  Proof.
+    induction V as [|h t]; try reflexivity.
+    simpl. destruct (in_dec dec h t).
+    + simpl. destruct (set_mem dec h W) eqn:HhW; try assumption.
+      apply set_mem_complete1 in HhW. unfold set_In in HhW.
+      rewrite IHt. eapply (set_diff_intro dec) in HhW.
+      apply (set_add_In dec) in HhW. rewrite HhW. reflexivity.
+      assumption.
+    + simpl. destruct (set_mem dec h W) eqn:HhW; destruct (set_mem dec h (nodup dec W)) eqn:HhWn.
+      * rewrite IHt. reflexivity.
+      * apply set_mem_complete1 in HhWn. apply set_mem_correct1 in HhW.
+        unfold set_In in *. rewrite nodup_In in HhWn. contradiction.
+      * apply set_mem_correct1 in HhWn. apply set_mem_complete1 in HhW.
+        unfold set_In in *. rewrite nodup_In in HhWn. contradiction.
+      * rewrite IHt. reflexivity.
+  Qed.
+
   Lemma set_union_nil_incl_l {A : Type} (dec : forall x y : A, {x = y} + {x <> y}) (V : set A) :
     incl (set_union dec [] V) V.
   Proof.
@@ -408,34 +434,6 @@ Module Sets.
           apply incl_app_inv in H. destruct H. apply IHV in H.
           assumption.
   Qed.
-
-  Lemma set_add_not_empty_incl {A : Type} (dec : forall x y : A, {x = y} + {x <> y}) (V : set A) (a : A) :
-     ~ incl (set_add dec a V) [].
-  Proof.
-    assert (set_add dec a V <> []) as H.
-    - unfold not. intros. apply set_add_not_empty in H.
-      contradiction.
-    - unfold not. intros.
-  Admitted.
-
-  Lemma set_union_nil_app_incl_iff_lr {A : Type} (dec : forall x y : A, {x = y} + {x <> y}) (W : set A) :
-    forall V U,
-      incl (V ++ U) W <->
-      incl (set_union dec [] V ++ U) W.
-  Proof.
-    induction W as [|h t]; split; intros.
-    - apply incl_app. destruct V; simpl; try apply incl_refl.
-      + unfold incl. intros. simpl in H. apply incl_cons_inv in H.
-        destruct H. contradiction.
-      + destruct U; try apply incl_refl.
-        apply incl_app_inv in H. destruct H.
-        apply incl_cons_inv in H0. destruct H0. contradiction.
-    - apply incl_app_inv in H. destruct H.
-      destruct U; destruct V; try apply incl_refl.
-      + simpl in *. assert (set_add dec a (set_union dec [] V) <> []).
-        destruct (set_add dec a (set_union dec [] V)) eqn:Hsa; try discriminate.
-        apply set_add_not_empty in Hsa. contradiction.
-  Admitted.
 
   Lemma incl_set_union {A : Type} (dec : forall x y : A, {x = y} + {x <> y}) (V : set A) :
     forall W U,
@@ -592,46 +590,20 @@ Module Sets.
     apply (set_add_In dec) in H0. rewrite H0. reflexivity.
   Qed.
 
-  Lemma set_diff_In_consL {A : Type} (dec : forall x y, {x = y} + {x <> y}) (h : A) (t V : set A) :
-    In h t -> set_diff dec V (h :: t) = set_diff dec V t.
+  Lemma set_diff_succ {A : Type} (dec : forall x y, {x = y} + {x <> y}) (V : set A) (n : nat) :
+    forall W,
+      incl W V ->
+      Datatypes.length (set_diff dec (nodup dec V) (nodup dec W)) = S n ->
+      S (Datatypes.length (nodup dec W)) <= Datatypes.length (nodup dec V).
   Proof.
-    intros. induction V as [|h' t']; try reflexivity.
-    simpl. destruct (dec h' h); subst.
-    - destruct (set_mem dec h t); try assumption.
+    induction W as [|h t]; intros.
+    - simpl in *. rewrite set_diff_nil_length_nodup in H0.
+      rewrite nodup_rm in H0. rewrite H0. lia.
+    - apply incl_cons_inv in H. destruct H.
+      simpl in *. destruct (in_dec dec h t); try assumption.
+      + apply IHt. assumption. assumption.
+      + simpl in *.
   Admitted.
-
-  Lemma set_diff_succ {A : Type} (dec : forall x y, {x = y} + {x <> y}) (V W : set A) (n : nat) :
-    incl W V ->
-    Datatypes.length (set_diff dec (nodup dec V) (nodup dec W)) = S n ->
-    S (Datatypes.length (nodup dec W)) <= Datatypes.length (nodup dec V).
-  Proof.
-    intros. induction W as [|h t].
-    - simpl in *.
-  Admitted.
-
-  (* NOT USED *)
-  Lemma set_union_incl_length {A : Type} (dec : forall x y, {x = y} + {x <> y}) (V W U : set A) :
-    incl W V ->
-    incl U V ->
-    Datatypes.length (set_union dec W U) <= Datatypes.length (nodup dec V).
-  Proof.
-    intros. induction V as [|h t]; destruct W; destruct U; try reflexivity.
-    - apply incl_l_nil_false in H0. contradiction. discriminate.
-    - apply incl_l_nil_false in H. contradiction. discriminate.
-    - apply incl_l_nil_false in H0. contradiction. discriminate.
-    - simpl. lia.
-    - simpl. destruct (in_dec dec h t).
-      + simpl in IHt. apply IHt.
-        * apply incl_nil_l.
-        * apply incl_cons_inv in H0. destruct H0.
-          apply incl_cons. destruct H0.
-          -- subst. apply i.
-          -- assumption.
-          -- apply (incl_cons_In dec U t h).
-             split; assumption.
-      + simpl in IHt. apply incl_cons_inv in H0. destruct H0.
-  Admitted.
-
 
   Lemma strict_subset_lt_length {A : Type} (dec : forall x y, {x = y} + {x <> y}) (V W : set A) :
      strict_subset V W ->
@@ -669,35 +641,13 @@ Module Sets.
           destruct H; subst; try assumption. destruct H.
   Admitted.
 
-  Lemma set_diff_incl_lt_length {A : Type} (dec : forall x y, {x = y} + {x <> y}) (u : A) (V W U : set A) :
-    incl W V ->
-    incl (u :: U) (set_diff dec V W) ->
-    Datatypes.length (set_diff dec V (set_union dec W (u :: U))) < Datatypes.length (set_diff dec V W).
-  Proof.
-  Admitted.
-
-  Lemma set_diff_nodup_length {A : Type} (dec : forall x y, {x = y} + {x <> y}) (V W : set A) :
-    Datatypes.length (set_diff dec V W) = Datatypes.length (set_diff dec V (nodup dec W)).
-  Proof.
-    intros. induction W as [|h t]; try reflexivity.
-    simpl. destruct (in_dec dec h t).
-    - rewrite <- IHt. f_equal.
-  Admitted.
-
-  Lemma set_union_In_consL {A : Type} (dec : forall x y, {x = y} + {x <> y}) (h : A) (V t : set A) :
-    In h t ->
-    set_union dec (h :: t) V = set_union dec t V.
-  Proof.
-    induction V; intros.
-    - simpl.
-  Admitted.
-
   Lemma set_add_add {A : Type} (dec : forall x y, {x = y} + {x <> y}) (h : A) (V W : set A) :
     (~ In h V /\ ~ In h W) \/
     (In h V /\ In h W) ->
     set_add dec h V = set_add dec h W ->
     V = W.
-  Proof. intros. destruct H as [[H1 H2] | [H1 H2]].
+  Proof.
+    intros. destruct H as [[H1 H2] | [H1 H2]].
   - apply (set_add_not_In dec) in H1, H2.
     rewrite H1, H2 in H0. apply app_inv_tail in H0.
     assumption.
@@ -715,104 +665,20 @@ Module Sets.
     - simpl in *. rewrite IHt. reflexivity.
   Qed.
 
-  Lemma set_union_cons_rm {A : Type} (dec : forall x y, {x = y} + {x <> y}) (h : A) (W : set A) :
-    forall V U,
+  Lemma set_union_cons_rm_r {A : Type} (dec : forall x y, {x = y} + {x <> y}) (h : A) :
+    forall V U W,
       set_union dec V W = set_union dec U W ->
-      set_union dec (h :: V) W = set_union dec (h :: U) W.
+      set_union dec V (h :: W) = set_union dec U (h :: W).
   Proof.
-   induction W as [|w W]; intros.
-    - simpl in *. subst. reflexivity.
-    - simpl in *.
-      destruct (in_dec dec w (set_union dec (h :: V) W));
-      destruct (in_dec dec w (set_union dec (h :: U) W)).
-      + assert (In w (set_union dec (h :: V) W)) by assumption.
-        assert (In w (set_union dec (h :: U) W)) by assumption.
-        apply (set_add_In dec) in i, i0.
-        rewrite i, i0. eapply (set_add_add dec).
-        * right. split.
-          -- apply H0.
-          -- apply H1.
-        * apply (set_add_intro1 dec w w) in H0, H1.
-          eapply (set_add_add dec).
-          -- right. split.
-             ++ apply H0.
-             ++ apply H1.
-          -- f_equal. rewrite i, i0. apply IHW.
-             eapply (set_add_add dec).
-             ++ right. split.
-                ** apply set_add_elim2 in H0.
-                   apply set_add_elim2 in H1.
-                   --- 
-  Admitted.
+    intros. simpl. f_equal. apply H.
+  Qed.
 
   Lemma set_union_nodup_l {A : Type} (dec : forall x y, {x = y} + {x <> y}) (V W : set A) :
     set_union dec (nodup dec V) W = set_union dec V W.
   Proof.
     intros. induction V as [|h t]; try reflexivity.
     simpl. destruct (in_dec dec h t).
-    - rewrite IHt. apply (set_union_In_consL dec h W t) in i.
-      symmetry. assumption.
-    - simpl in *. destruct t; try reflexivity.
-      simpl in *. destruct (in_dec dec a t).
-      + apply (set_union_cons_rm dec h). assumption.
-      + apply (set_union_cons_rm dec h). assumption.
-  Qed.
-
-  Lemma set_union_nodup_In_l {A : Type} (dec : forall x y, {x = y} + {x <> y}) (V W : set A) (u : A) :
-    In u (set_union dec (nodup dec V) W) ->
-    In u (set_union dec V W).
-  Proof.
-  Admitted.
-
-  Lemma set_union_nodup_not_In_l {A : Type} (dec : forall x y, {x = y} + {x <> y}) (V W : set A) (u : A) :
-    ~ In u (set_union dec (nodup dec V) W) ->
-    ~ In u (set_union dec V W).
-  Proof.
-  Admitted.
-
-  Lemma set_union_diff_length_le {A : Type} (dec : forall x y, {x = y} + {x <> y}) (V W U : set A) (n : nat) :
-    Datatypes.length (set_diff dec V (set_union dec W U)) <= n ->
-    Datatypes.length (set_diff dec V (nodup dec W)) <= n.
-  Proof.
-    intros. induction V as [|h t]; simpl; try lia.
-    destruct (set_mem dec h (nodup dec W)) eqn:Hmem.
-    - apply IHt. simpl in H. apply set_mem_correct1 in Hmem.
-      apply nodup_In in Hmem. apply (set_union_intro1 dec h W U) in Hmem.
-      apply (set_mem_correct2 dec) in Hmem. rewrite Hmem in H.
-      assumption.
-    - simpl in H. destruct (set_mem dec h (set_union dec W U)) eqn:Hmem'.
-      + destruct U.
-        * simpl in *. apply set_mem_complete1 in Hmem.
-          apply set_mem_correct1 in Hmem'. rewrite nodup_In in Hmem.
-          contradiction.
-        * simpl in *. apply set_mem_correct1 in Hmem'.
-          apply (set_add_In dec) in Hmem'. subst. rewrite <- Hmem' in *.
-          apply IHt in H.
-  Admitted.
-
-  Lemma set_union_diff_length_cons_l {A : Type} (dec : forall x y, {x = y} + {x <> y}) (V W t : set A) (h : A) :
-    In h t ->
-    Datatypes.length (set_diff dec V (set_union dec (h :: t) W)) =
-    Datatypes.length (set_diff dec V (set_union dec t W)).
-  Proof.
-    intros.
-  Admitted.
-
-  Lemma asd {A : Type} (dec : forall x y, {x = y} + {x <> y}) (V W U : set A) :
-    Datatypes.length (set_diff dec V (set_union dec W U)) =
-    Datatypes.length (set_diff dec V (set_union dec (nodup dec W) U)).
-  Proof.
-    induction W as [|h t]; try reflexivity.
-    simpl. destruct (in_dec dec h t).
-    - rewrite <- IHt.
-      apply (set_union_diff_length_cons_l dec V U) in i.
-      assumption.
-  Admitted.
-
-  Lemma asd4 {A : Type} (dec : forall x y, {x = y} + {x <> y}) (W U : set A) :
-    Datatypes.length (set_union dec W U) =
-    Datatypes.length (nodup dec (set_union dec W U)).
-  Proof.
+    - rewrite IHt.
   Admitted.
 
   Lemma set_diff_nil_length {A : Type} (dec : forall x y, {x = y} + {x <> y}) (V : set A) :
@@ -830,5 +696,38 @@ Module Sets.
       + apply (set_add_not_In dec) in H. rewrite H.
         rewrite app_length. simpl. lia.
   Qed.
+
+  Lemma set_diff_nodup_l {A : Type} (dec : forall x y : A, {x = y} + {x <> y}) (V W : set A) :
+    set_diff dec V W = set_diff dec (nodup dec V) W.
+  Proof.
+    induction V as [|h t]; try reflexivity.
+    simpl. destruct (set_mem dec h W) eqn:Hmem.
+    - destruct (in_dec dec h t); simpl; try rewrite Hmem; assumption.
+    - apply set_mem_complete1 in Hmem. unfold set_In in *. destruct (in_dec dec h t). 
+      + apply (set_diff_intro dec h t W) in Hmem; try assumption.
+        apply (set_add_In dec) in Hmem. rewrite Hmem. assumption.
+      + simpl. apply (set_mem_complete2 dec) in Hmem. rewrite Hmem.
+        f_equal. assumption.
+  Qed.
+
+  Lemma set_diff_nodup_r {A : Type} (dec : forall x y : A, {x = y} + {x <> y}) (V W : set A) :
+    set_diff dec V W = set_diff dec V (nodup dec W).
+  Proof.
+    induction V as [|h t]; try reflexivity.
+    simpl. destruct (set_mem dec h W) eqn:Hmem.
+    - apply set_mem_correct1 in Hmem. rewrite <- (nodup_In dec) in Hmem.
+      apply (set_mem_correct2 dec) in Hmem. rewrite Hmem.
+      assumption.
+    - apply set_mem_complete1 in Hmem. rewrite <- (nodup_In dec) in Hmem.
+      apply (set_mem_complete2 dec) in Hmem. rewrite Hmem.
+      f_equal. assumption.
+  Qed.
+
+  Lemma set_diff_incl_lt_length {A : Type} (dec : forall x y, {x = y} + {x <> y}) (u : A) (V W U : set A) :
+    incl W V ->
+    incl (u :: U) (set_diff dec V W) ->
+    Datatypes.length (set_diff dec V (set_union dec W (u :: U))) < Datatypes.length (set_diff dec V W).
+  Proof.
+  Admitted.
 
 End Sets.
