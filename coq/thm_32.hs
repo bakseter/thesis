@@ -156,6 +156,7 @@ incl_dec dec v w =
 data Ninfty =
    Infty
  | Fin Prelude.Integer
+ deriving (Prelude.Show)
 
 sinfty :: Ninfty -> Ninfty
 sinfty x =
@@ -345,8 +346,8 @@ sub_forward cs v w f =
 
 lem_33 :: (Set Clause0) -> (Set Prelude.String) -> (Set Prelude.String) ->
           Frontier -> Ex_lfp_geq -> Ex_lfp_geq
-lem_33 =
-  Prelude.error "AXIOM TO BE REALIZED"
+lem_33 _ _ _ _ x =
+    x
 
 thm_32 :: (Set Clause0) -> Prelude.Integer -> Prelude.Integer -> Frontier ->
           (Set Prelude.String) -> (Set Prelude.String) -> Ex_lfp_geq ->

@@ -118,7 +118,8 @@ Module Forward.
   Admitted.
 
   Lemma sub_forward_nodup_eq {A : Type} (dec : forall x y, {x = y} + {x <> y}) (Cs : set Clause) (f : Frontier) (V : set string) :
-    sub_forward Cs (nodup dec V) (nodup dec V) f = sub_forward Cs V V f.
+    sub_forward Cs (nodup dec V) (nodup dec V) f =
+    sub_forward Cs V V f.
   Proof.
     induction Cs as [|h t]; try reflexivity.
     unfold sub_forward.
