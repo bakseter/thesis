@@ -590,6 +590,21 @@ Module Sets.
     apply (set_add_In dec) in H0. rewrite H0. reflexivity.
   Qed.
 
+  Lemma set_diff_In_consL {A : Type} (dec : forall x y, {x = y} + {x <> y}) (h : A) (t V : set A) :
+    In h t -> set_diff dec V (h :: t) = set_diff dec V t.
+  Proof.
+    intros. induction V; try reflexivity.
+    - simpl. destruct (dec a h).
+      + subst. destruct (set_mem dec h t) eqn:Hmem.
+        * assumption.
+        * apply set_mem_complete1 in Hmem.
+          unfold set_In in Hmem. contradiction.
+      + destruct (set_mem dec h t) eqn:Hmem1;
+        destruct (set_mem dec a t) eqn:Hmem2; try assumption.
+        * f_equal. assumption.
+        * f_equal. assumption.
+  Qed.
+
   Lemma set_diff_succ {A : Type} (dec : forall x y, {x = y} + {x <> y}) (V : set A) (n : nat) :
     forall W,
       incl W V ->
@@ -729,5 +744,15 @@ Module Sets.
     Datatypes.length (set_diff dec V (set_union dec W (u :: U))) < Datatypes.length (set_diff dec V W).
   Proof.
   Admitted.
+
+
+  Lemma set_diff_refl_nil {A : Type} (dec : forall x y : A, {x = y} + {x <> y}) (l : set A) :
+    set_diff dec l l = [].
+  Proof.
+    induction l; try reflexivity.
+    simpl. destruct (dec a a); try contradiction.
+    rewrite set_diff_nil_incl. apply incl_tl.
+    apply incl_refl.
+  Qed.
 
 End Sets.

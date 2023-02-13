@@ -94,7 +94,7 @@ Module Forward.
     NoDup U.
   Proof.
     intros. inversion H0.
-    apply sub_vars_improvable_nodup. assumption.
+    apply sub_vars_improvable_NoDup_Cs. assumption.
   Qed.
 
   Lemma sub_forward_incl_set_diff (Cs : set Clause) (f g : Frontier) (V W U : set string) :
@@ -117,12 +117,26 @@ Module Forward.
           simpl in H1. destruct H1; subst.
   Admitted.
 
-  Lemma sub_forward_nodup_eq {A : Type} (dec : forall x y, {x = y} + {x <> y}) (Cs : set Clause) (f : Frontier) (V : set string) :
-    sub_forward Cs (nodup dec V) (nodup dec V) f =
+  Lemma sub_forward_nodup_eq (Cs : set Clause) (f : Frontier) (V : set string) :
+    sub_forward Cs (nodup string_dec V) (nodup string_dec V) f =
     sub_forward Cs V V f.
   Proof.
     induction Cs as [|h t]; try reflexivity.
-    unfold sub_forward.
+    unfold sub_forward. f_equal. unfold sub_vars_improvable.
+    fold sub_vars_improvable. destruct h as [l [x k]].
+    destruct 
+    (negb (x € nodup string_dec V)
+    || negb
+         (fold_right andb true
+            (map (fun x0 : string => x0 € nodup string_dec V) (vars_set_atom l)))
+    || all_shifts_true (l ~> x & k) f) eqn:Hor;
+    destruct (negb (x € V)
+    || negb
+         (fold_right andb true
+            (map (fun x0 : string => x0 € V) (vars_set_atom l)))
+    || all_shifts_true (l ~> x & k) f) eqn:Hor'.
+    - symmetry. apply sub_vars_improvable_nodup.
+    - 
   Admitted.
 
   Example forward_test1 :

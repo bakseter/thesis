@@ -31,6 +31,6 @@ src/Sets.vos src/Sets.vok src/Sets.required_vos: src/Sets.v src/Misc.vos
 src/Vars.vo src/Vars.glob src/Vars.v.beautified src/Vars.required_vo: src/Vars.v src/Atom.vo src/Clause.vo src/Frontier.vo src/Ninfty.vo src/Misc.vo src/Sets.vo
 src/Vars.vio: src/Vars.v src/Atom.vio src/Clause.vio src/Frontier.vio src/Ninfty.vio src/Misc.vio src/Sets.vio
 src/Vars.vos src/Vars.vok src/Vars.required_vos: src/Vars.v src/Atom.vos src/Clause.vos src/Frontier.vos src/Ninfty.vos src/Misc.vos src/Sets.vos
-src/VarsImp.vo src/VarsImp.glob src/VarsImp.v.beautified src/VarsImp.required_vo: src/VarsImp.v src/Clause.vo src/Atom.vo src/Frontier.vo src/Sets.vo src/Vars.vo
-src/VarsImp.vio: src/VarsImp.v src/Clause.vio src/Atom.vio src/Frontier.vio src/Sets.vio src/Vars.vio
-src/VarsImp.vos src/VarsImp.vok src/VarsImp.required_vos: src/VarsImp.v src/Clause.vos src/Atom.vos src/Frontier.vos src/Sets.vos src/Vars.vos
+src/VarsImp.vo src/VarsImp.glob src/VarsImp.v.beautified src/VarsImp.required_vo: src/VarsImp.v src/Clause.vo src/Atom.vo src/Frontier.vo src/Sets.vo src/Vars.vo src/Model.vo
+src/VarsImp.vio: src/VarsImp.v src/Clause.vio src/Atom.vio src/Frontier.vio src/Sets.vio src/Vars.vio src/Model.vio
+src/VarsImp.vos src/VarsImp.vok src/VarsImp.required_vos: src/VarsImp.v src/Clause.vos src/Atom.vos src/Frontier.vos src/Sets.vos src/Vars.vos src/Model.vos

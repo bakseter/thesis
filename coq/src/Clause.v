@@ -168,13 +168,11 @@ Module Clause.
   Qed.
 
   Lemma all_shifts_true_complete (c : Clause) (f : Frontier) :
-     all_shifts_true (c : Clause) (f : Frontier) = false ->
-     exists (n: nat), clause_true (shift_clause n c) f = false.
-  Proof with simpl.
-    intros. unfold clause_true.
-    destruct c as [conds conc]...
-    destruct conc as [x k]...
-    simpl in H. destruct (f x) as [|n'].
+     all_shifts_true c f = false ->
+     exists n, clause_true (shift_clause n c) f = false.
+  Proof.
+    intros. unfold clause_true. destruct c as [conds conc].
+    destruct conc as [x k]. simpl in *. destruct (f x) as [|n'].
     - exists 0. rewrite if_b_then_a_or_true.
       + assumption.
       + reflexivity.
@@ -182,15 +180,15 @@ Module Clause.
   Qed.
 
   Definition all_shifts_dec (c : Clause) (f : Frontier):
-    (forall n : nat, clause_true (shift_clause n c) f = true) +
-    sig (fun n : nat => clause_true (shift_clause n c) f = false).
-  Proof with simpl.
+    (forall n, clause_true (shift_clause n c) f = true) +
+    sig (fun n => clause_true (shift_clause n c) f = false).
+  Proof.
     destruct (all_shifts_true c f) eqn:H.
     - left. intro n. apply all_shifts_true_sound. assumption.
     - right. intros. unfold clause_true.
-      destruct c as [conds conc]... destruct conc as [x k]...
-      simpl in H. destruct (f x) as [|n'].
-      * exists 0. rewrite if_b_then_a_or_true...
+      destruct c as [conds conc]. destruct conc as [x k].
+      simpl in *. destruct (f x) as [|n'].
+      * exists 0. rewrite if_b_then_a_or_true.
         + assumption.
         + discriminate.
       * exists (n' + 1 - k). assumption.
@@ -209,7 +207,7 @@ Module Clause.
 
   Lemma all_shifts_func_tt_sound (c : Clause) (f : Frontier) :
     all_shifts_func c f = inl tt ->
-    forall (n : nat), clause_true (shift_clause n c) f = true.
+    forall n, clause_true (shift_clause n c) f = true.
   Proof.
     intros H n. destruct c as [cond [x k]].
     destruct (all_shifts_func (cond ~> x & k) f) eqn:Cases.
@@ -223,7 +221,7 @@ Module Clause.
   Qed.
 
   Lemma all_shifts_func_n_sound (c : Clause) (f : Frontier) :
-    forall (n : nat), all_shifts_func c f = inr n ->
+    forall n, all_shifts_func c f = inr n ->
     clause_true (shift_clause n c) f = false.
   Proof.
     intros n H. destruct c as [conds [x k]].
