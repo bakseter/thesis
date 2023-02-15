@@ -1,0 +1,55 @@
+\chapter{Background}
+
+\section{Formalizing Mathematical Problems}
+
+\subsection{Proofs}
+
+When solving mathematical problems, one often uses proofs
+to justify some claim. We can group proofs into two types; \textit{informal} and \textit{formal} proofs.
+
+\subsubsection{Informal proofs}
+An informal proof is often written in a natural language, and the proof is adequate if most
+readers are convinced by the proof \cite{bpierce}.
+As a proof grows larger and more complex, it becomes harder to follow, which can
+ultimately lead to errors in the proof's reasoning. This might cause the whole proof
+to be incorrect \cite{rkhamsi}.
+
+\subsubsection{Formal proofs}
+A formal proof is written in a formal language, and can be compared to a computer program
+written in a programming language. Writing a formal proof is more difficult than writing an informal proof.
+
+\section{Proof assistants}
+
+Using a \textit{proof assistant}, we can verify a formal proof mechanically.
+
+\subsection{Coq}
+\textit{Coq} is an example of a proof assistant. 
+Coq uses type theory to formulate and verify proofs, but can also be used as a functional programming language \cite{cintro}.
+
+\subsection{Agda}
+
+\subsection{Isabelle}
+
+\subsection{Lean}
+
+\subsection{Higher-Order Logic}
+
+\section{Type theory}
+
+Type theory groups mathematical objects with similar properties together by assigning them a "type".
+Similarily to data types in computer programming, we can use types to represent mathematical
+objects. For example, we can use the data type \texttt{nat} to represent natural numbers.
+
+\subsection{Propositions as types}
+The concept of propositions as types sees the proving of a mathematical proposition
+as the same process as constructing a value of that type.
+For example, to prove a proposition $P$ which states "all integers are the sum of four squares",
+we must construct a value of the type $P$ that shows that this is true for all integers.
+Proofs are mathematical objects; thus a proposition can be viewed as having the type of all its proofs (if any!).
+We can use this correspondance to model a proof as a typed computer program.
+The power of this concept comes from the fact that we can use a type checker to verify that
+our program is typed correctly, and thus that the corresponding proof is valid.
+
+\subsection{Extraction of programs from verified proofs}
+
+Coq also enables us to extract and execute programs from our proofs, once they have been verified.
