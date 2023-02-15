@@ -193,10 +193,6 @@ z_str :: Prelude.String
 z_str =
   "z"
 
-u_str :: Prelude.String
-u_str =
-  "u"
-
 atom_x0 :: Atom0
 atom_x0 =
   Atom "x" 0
@@ -220,10 +216,6 @@ atom_z0 =
 atom_z1 :: Atom0
 atom_z1 =
   Atom "z" (Prelude.succ 0)
-
-atom_u1 :: Atom0
-atom_u1 =
-  Atom "u" (Prelude.succ 0)
 
 atom_true :: Atom0 -> Frontier -> Prelude.Bool
 atom_true a f =
@@ -571,8 +563,8 @@ ex_lfp_geq_empty_6 =
 
 cs_ex_7 :: ([]) Clause0
 cs_ex_7 =
-  (:) (Clause ((:) atom_x0 ([])) atom_x1) ((:) (Clause ((:) atom_y0 ([]))
-    atom_z1) ((:) (Clause ((:) atom_z0 ([])) atom_u1) ([])))
+  (:) (Clause ((:) atom_x0 ([])) atom_x1) ((:) (Clause ((:) atom_x0 ((:)
+    atom_y0 ([]))) atom_y1) ([]))
 
 f_ex_7 :: Frontier
 f_ex_7 =
@@ -580,9 +572,8 @@ f_ex_7 =
 
 thm_32_example7 :: Ex_lfp_geq -> Ex_lfp_geq
 thm_32_example7 x =
-  thm_32 cs_ex_7 (Prelude.succ (Prelude.succ (Prelude.succ (Prelude.succ
-    0)))) (Prelude.succ (Prelude.succ (Prelude.succ (Prelude.succ 0))))
-    f_ex_7 ((:) x_str ((:) y_str ((:) z_str ((:) u_str ([]))))) ([]) x
+  thm_32 cs_ex_7 (Prelude.succ (Prelude.succ 0)) (Prelude.succ (Prelude.succ
+    0)) f_ex_7 ((:) x_str ((:) y_str ([]))) ([]) x
 
 ex_lfp_geq_empty_7 :: Ex_lfp_geq
 ex_lfp_geq_empty_7 =

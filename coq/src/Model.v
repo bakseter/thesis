@@ -47,6 +47,16 @@ Module Model.
       apply IHt. assumption.
   Qed.
 
+  Lemma fold_right_andb_false_map_not_incl_iff (V W : set string) :
+    ~ incl W V <->
+    fold_right andb true (map (fun x => x € V) W) = false.
+  Proof.
+    rewrite fold_right_andb_true_map_incl_iff.
+    split; intros.
+    - apply not_true_is_false in H. assumption.
+    - unfold not. intros. rewrite H in H0. discriminate.
+  Qed.
+
   Lemma sub_model_W_empty (Cs : set Clause) (V : set string) (f : Frontier) :
     sub_model Cs V [] f = true.
   Proof.
@@ -171,6 +181,7 @@ Module Model.
       + rewrite H1. reflexivity.
   Qed.
 
+  (* needed for thm_32 in Main *)
   Lemma sub_model_update_infty_V (Cs : set Clause) (V : set string) (f : Frontier) :
     sub_model Cs V V (update_infty_V V f) = true.
   Proof.

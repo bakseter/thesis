@@ -97,6 +97,7 @@ Module Forward.
     apply sub_vars_improvable_NoDup_Cs. assumption.
   Qed.
 
+  (* needed for thm_32 in Main *)
   Lemma sub_forward_incl_set_diff (Cs : set Clause) (f g : Frontier) (V W U : set string) :
     sub_model Cs V W f = true ->
     sub_forward Cs V V f = (U, g) ->
@@ -111,32 +112,70 @@ Module Forward.
       + destruct H0. unfold sub_forward. unfold sub_vars_improvable.
         fold sub_vars_improvable. destruct h as [l [x k]].
         unfold sub_model in H. fold sub_model in H.
-        destruct (negb (x € V) || negb (fold_right andb true (map (fun x0 : string => x0 € V) (vars_set_atom l))) || all_shifts_true (l ~> x & k) f).
-        * reflexivity.
-        * destruct U; try contradiction.
-          simpl in H1. destruct H1; subst.
+        apply andb_true_iff in H. destruct H.
+        f_equal.
+        * destruct (negb (x € V)) eqn:HxV; try reflexivity.
+          rewrite orb_false_l.
+          destruct (negb (fold_right andb true (map (fun x0 : string => x0 € V) (vars_set_atom l)))) eqn:HlV;
+          try reflexivity. rewrite orb_false_l.
+          destruct (all_shifts_true (l ~> x & k) f) eqn:Hl; try reflexivity.
+          simpl. apply negb_false_iff in HxV. apply set_mem_correct1 in HxV.
+          unfold set_In in HxV.
+          destruct (negb (x € V) || negb (fold_right andb true (map (fun x0 : string => x0 € V) (vars_set_atom l))) || all_shifts_true (l ~> x & k) f) eqn:Hor.
   Admitted.
 
+  Lemma negb_nodup_set_mem (V : set string) (x : string) :
+    negb (x € nodup string_dec V) = negb (x € V).
+  Proof.
+    f_equal. destruct (x € V) eqn:HxV.
+    - apply set_mem_correct1 in HxV.
+      rewrite <- (nodup_In string_dec) in HxV.
+      apply (set_mem_correct2 string_dec) in HxV.
+      assumption.
+    - apply set_mem_complete1 in HxV.
+      rewrite <- (nodup_In string_dec) in HxV.
+      apply (set_mem_complete2 string_dec) in HxV.
+      assumption.
+  Qed.
+
+  Lemma f_equal_negb (V : set string) (l : set Atom) :
+    (negb (fold_right andb true (map (fun x0 : string => x0 € V) (vars_set_atom l)))) =
+    (negb (fold_right andb true (map (fun x0 : string => x0 € nodup string_dec V) (vars_set_atom l)))).
+  Proof.
+    f_equal. destruct (fold_right andb true (map (fun x0 : string => x0 € V) (vars_set_atom l))) eqn:HlV.
+    - symmetry. rewrite <- fold_right_andb_true_map_incl_iff.
+      rewrite <- fold_right_andb_true_map_incl_iff in HlV.
+      apply nodup_incl. assumption.
+    - rewrite <- fold_right_andb_false_map_not_incl_iff in HlV.
+      symmetry. rewrite <- fold_right_andb_false_map_not_incl_iff.
+      rewrite nodup_incl. assumption.
+  Qed.
+
+  (* needed for thm_32 in Main *)
   Lemma sub_forward_nodup_eq (Cs : set Clause) (f : Frontier) (V : set string) :
     sub_forward Cs (nodup string_dec V) (nodup string_dec V) f =
     sub_forward Cs V V f.
   Proof.
     induction Cs as [|h t]; try reflexivity.
-    unfold sub_forward. f_equal. unfold sub_vars_improvable.
+    unfold sub_forward.
+    unfold sub_vars_improvable.
     fold sub_vars_improvable. destruct h as [l [x k]].
-    destruct 
-    (negb (x € nodup string_dec V)
-    || negb
-         (fold_right andb true
-            (map (fun x0 : string => x0 € nodup string_dec V) (vars_set_atom l)))
-    || all_shifts_true (l ~> x & k) f) eqn:Hor;
-    destruct (negb (x € V)
-    || negb
-         (fold_right andb true
-            (map (fun x0 : string => x0 € V) (vars_set_atom l)))
-    || all_shifts_true (l ~> x & k) f) eqn:Hor'.
-    - symmetry. apply sub_vars_improvable_nodup.
-    - 
+    destruct (all_shifts_true (l ~> x & k) f) eqn:Hhtf.
+    - rewrite orb_true_r. destruct (negb (x € V)) eqn:HxV.
+      + rewrite orb_true_l. apply IHt.
+      + rewrite orb_false_l. rewrite orb_true_r. apply IHt.
+    - rewrite orb_false_r. destruct (negb (x € V)) eqn:HxV.
+      + assert (HxV' := HxV). rewrite <- negb_nodup_set_mem in HxV'.
+        rewrite HxV'. rewrite orb_true_l. apply IHt.
+      + assert (HxV' := HxV). rewrite <- negb_nodup_set_mem in HxV'.
+        rewrite HxV'. rewrite orb_false_l. rewrite orb_false_l.
+        rewrite orb_false_r.
+        destruct (negb (fold_right andb true (map (fun x0 : string => x0 € V) (vars_set_atom l)))) eqn:HlV.
+        * assert (HlV' := HlV). rewrite f_equal_negb in HlV'.
+          rewrite HlV'. apply IHt.
+        * assert (HlV' := HlV). rewrite f_equal_negb in HlV'.
+          rewrite HlV'.
+          (* stuck *)
   Admitted.
 
   Example forward_test1 :

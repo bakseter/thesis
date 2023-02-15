@@ -278,6 +278,7 @@ Module Geq.
       + assumption.
   Qed.
 
+  (* needed for thm_32 in Main *)
   Lemma geq_update_infty_V (V : set string) (f : Frontier) :
     geq V (update_infty_V V f) f = true.
   Proof.

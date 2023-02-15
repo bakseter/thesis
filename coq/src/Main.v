@@ -102,7 +102,7 @@ Proof.
                 ** rewrite <- sub_model_nodup. apply sub_model_update_infty_V.
              ++ assert (incl (nodup string_dec (set_union string_dec W U)) V).
                 {
-                  apply nodup_incl2. eapply incl_set_union.
+                  apply nodup_incl2. eapply incl_set_union_trans.
                   assumption. apply nodup_incl in Hforward.
                   rewrite Hu. assumption.
                 }
@@ -272,15 +272,15 @@ Example thm_32_example6 :=
 Example ex_lfp_geq_empty_6 :=
   ex_lfp_geq_empty Cs_ex_6 f_ex_6.
 
-Example Cs_ex_7 := [([atom_x0] ~> atom_x1); ([atom_y0] ~> atom_z1); ([atom_z0] ~> atom_u1)].
+Example Cs_ex_7 := [([atom_x0] ~> atom_x1); ([atom_x0; atom_y0] ~> atom_y1)].
 Example f_ex_7 := frontier_fin_0.
 Example thm_32_example7 :=
   thm_32
     Cs_ex_7
-    4
-    4
+    2
+    2
     f_ex_7
-    [x_str; y_str; z_str; u_str]
+    [x_str; y_str]
     [].
 Example ex_lfp_geq_empty_7 :=
   ex_lfp_geq_empty Cs_ex_7 f_ex_7.

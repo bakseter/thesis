@@ -165,7 +165,6 @@ Module Sets.
       assumption.
   Qed.
 
-
   Lemma In_incl_singleton {A : Type} (a : A) (V : set A) :
     In a V <-> incl [a] V.
   Proof.
@@ -435,35 +434,47 @@ Module Sets.
           assumption.
   Qed.
 
-  Lemma incl_set_union {A : Type} (dec : forall x y : A, {x = y} + {x <> y}) (V : set A) :
+  Lemma incl_set_union_intro1 {A : Type} (dec : forall x y : A, {x = y} + {x <> y}) (V : set A) :
     forall W U,
-      incl W V ->
-      incl U V ->
-      incl (set_union dec W U) V.
+      incl V W ->
+      incl V (set_union dec W U).
   Proof.
-    induction V as [|h t]; intros.
-    - destruct W; destruct U.
-      + simpl. apply incl_refl.
-      + apply incl_l_nil_false in H0.
-        contradiction. discriminate.
-      + apply incl_l_nil_false in H.
-        contradiction. discriminate.
-      + apply incl_l_nil_false in H.
-        contradiction. discriminate.
-    - induction W as [|a W]; induction U as [|b U].
-      + simpl. apply incl_nil_l.
-      + simpl. destruct (in_dec dec b (set_union dec [] U)).
-        * apply (set_add_In dec) in i. rewrite i.
-          rewrite <- (set_union_nil_incl_iff_lr dec).
-          apply incl_cons_inv in H0. apply H0.
-        * apply (set_add_not_In dec) in n. rewrite n.
-          apply incl_cons_inv in H0. destruct H0. apply incl_app.
-          -- rewrite <- (set_union_nil_incl_iff_lr dec). assumption.
-          -- apply In_incl_singleton. assumption.
-      + simpl. assumption.
-      + simpl in *. apply incl_cons_inv in H. destruct H.
-        apply incl_cons_inv in H0. destruct H0.
+    induction V as [|h t]; intros; try apply incl_nil_l.
+    apply incl_cons_inv in H. destruct H. apply incl_cons.
+    - apply set_union_intro1. assumption.
+    - apply IHt. assumption.
+  Qed.
+
+  Lemma incl_set_union_intro2 {A : Type} (dec : forall x y : A, {x = y} + {x <> y}) (V W U : set A) :
+    incl V W ->
+    incl V (set_union dec U W).
+  Proof.
+    induction V as [|h t]; intros; try apply incl_nil_l.
+    apply incl_cons_inv in H. destruct H. apply incl_cons.
+    - apply set_union_intro2. assumption.
+    - apply IHt. assumption.
+  Qed.
+
+  Lemma incl_set_union_elim1 {A : Type} (dec : forall x y : A, {x = y} + {x <> y}) (V W U : set A) :
+    incl (set_union dec V W) U ->
+    incl V U.
+  Proof.
+    induction W as [|h t]; intros.
+    - simpl in *. assumption.
+    - simpl in *. apply incl_set_add_reduce in H.
+      apply IHt in H. assumption.
+  Qed.
+
+  Lemma incl_set_union_elim2 {A : Type} (dec : forall x y : A, {x = y} + {x <> y}) (V W U : set A) :
+    incl (set_union dec V W) U ->
+    incl W U.
+  Proof.
+    induction W as [|h t]; intros; try apply incl_nil_l.
+    simpl in *. apply incl_cons.
+    - admit.
+    - apply IHt. apply incl_set_add_reduce in H. assumption.
   Admitted.
+
 
   Lemma set_diff_not_In {A : Type} (dec : forall x y : A, {x = y} + {x <> y}) (x : A) (V : set A) :
     ~ In x V -> ~ In x (set_diff dec V []).
@@ -693,7 +704,9 @@ Module Sets.
   Proof.
     intros. induction V as [|h t]; try reflexivity.
     simpl. destruct (in_dec dec h t).
-    - rewrite IHt.
+    - assert (In h t) by assumption.
+      apply (set_union_intro1 dec h t W) in i.
+      apply (set_add_In dec) in i. rewrite IHt. rewrite <- i.
   Admitted.
 
   Lemma set_diff_nil_length {A : Type} (dec : forall x y, {x = y} + {x <> y}) (V : set A) :
@@ -741,10 +754,21 @@ Module Sets.
   Lemma set_diff_incl_lt_length {A : Type} (dec : forall x y, {x = y} + {x <> y}) (u : A) (V W U : set A) :
     incl W V ->
     incl (u :: U) (set_diff dec V W) ->
-    Datatypes.length (set_diff dec V (set_union dec W (u :: U))) < Datatypes.length (set_diff dec V W).
+    Datatypes.length (set_diff dec V (set_union dec W (u :: U))) <
+      Datatypes.length (set_diff dec V W).
   Proof.
+    intros. induction V as [|h t].
+    - simpl in *. apply incl_l_nil_false in H0.
+      contradiction. discriminate.
+    - simpl.
+      destruct (set_mem dec h (set_add dec u (set_union dec W U))) eqn:Hmu.
+      destruct (set_mem dec h W) eqn:HmW.
+      + simpl in *. rewrite HmW in H0.
+        eapply IHt in H0. assumption. apply set_mem_correct1 in HmW.
+        unfold set_In in HmW. assert (In h W) by assumption.
+        apply In_incl_singleton in H1. eapply incl_tran.
+        apply H.
   Admitted.
-
 
   Lemma set_diff_refl_nil {A : Type} (dec : forall x y : A, {x = y} + {x <> y}) (l : set A) :
     set_diff dec l l = [].
@@ -754,5 +778,68 @@ Module Sets.
     rewrite set_diff_nil_incl. apply incl_tl.
     apply incl_refl.
   Qed.
+
+  Lemma incl_set_union_nil_l {A : Type} (dec : forall x y : A, {x = y} + {x <> y}) (V W : set A) :
+    incl V W ->
+    incl V (set_union dec W []).
+  Proof.
+    intros. induction W as [|h t]; simpl; try assumption.
+  Qed.
+
+  Lemma incl_set_union_nil_r {A : Type} (dec : forall x y : A, {x = y} + {x <> y}) (V W : set A) :
+    incl V W ->
+    incl V (set_union dec [] W).
+  Proof.
+    intros. induction W as [|h t]; simpl; try assumption.
+    apply (incl_set_add_reduce dec h).
+  Admitted.
+
+  Lemma incl_set_union_trans {A : Type} (dec : forall x y : A, {x = y} + {x <> y}) (V W U : set A) :
+    incl W V ->
+    incl U V ->
+    incl (set_union dec W U) V.
+  Proof.
+    induction V as [|v V]; induction W as [|w W]; induction U as [|u U];
+    intros; simpl.
+    - apply incl_refl.
+    - apply incl_l_nil_false in H0. contradiction. discriminate.
+    - apply incl_l_nil_false in H. contradiction. discriminate.
+    - apply incl_l_nil_false in H. contradiction. discriminate.
+    - apply incl_nil_l.
+    - simpl in *. apply incl_cons_inv in H0. destruct H0.
+      apply incl_set_add_iff. apply incl_cons; try assumption.
+      apply IHU.
+      + intros.
+        (*
+
+    induction V as [|h t]; intros.
+    - destruct W; destruct U.
+      + simpl. apply incl_refl.
+      + apply incl_l_nil_false in H0.
+        contradiction. discriminate.
+      + apply incl_l_nil_false in H.
+        contradiction. discriminate.
+      + apply incl_l_nil_false in H.
+        contradiction. discriminate.
+    - simpl.
+      + 
+
+      apply (incl_set_union_elim1 dec U W (h :: t)) in H. apply incl_set_union_intro2 in H0.
+
+      induction W as [|a W]; induction U as [|b U].
+      + simpl. apply incl_nil_l.
+      + simpl. destruct (in_dec dec b (set_union dec [] U)).
+        * apply (set_add_In dec) in i. rewrite i.
+          rewrite <- (set_union_nil_incl_iff_lr dec).
+          apply incl_cons_inv in H0. apply H0.
+        * apply (set_add_not_In dec) in n. rewrite n.
+          apply incl_cons_inv in H0. destruct H0. apply incl_app.
+          -- rewrite <- (set_union_nil_incl_iff_lr dec). assumption.
+          -- apply In_incl_singleton. assumption.
+      + simpl. assumption.
+      + simpl in *. apply incl_cons_inv in H. destruct H.
+        apply incl_cons_inv in H0. destruct H0. apply IHW.
+         *)
+  Admitted.
 
 End Sets.
