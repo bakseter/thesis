@@ -731,7 +731,7 @@ Module Sets.
     induction V as [|h t]; try reflexivity.
     simpl. destruct (set_mem dec h W) eqn:Hmem.
     - destruct (in_dec dec h t); simpl; try rewrite Hmem; assumption.
-    - apply set_mem_complete1 in Hmem. unfold set_In in *. destruct (in_dec dec h t). 
+    - apply set_mem_complete1 in Hmem. unfold set_In in *. destruct (in_dec dec h t).
       + apply (set_diff_intro dec h t W) in Hmem; try assumption.
         apply (set_add_In dec) in Hmem. rewrite Hmem. assumption.
       + simpl. apply (set_mem_complete2 dec) in Hmem. rewrite Hmem.
@@ -822,7 +822,6 @@ Module Sets.
       + apply incl_l_nil_false in H.
         contradiction. discriminate.
     - simpl.
-      + 
 
       apply (incl_set_union_elim1 dec U W (h :: t)) in H. apply incl_set_union_intro2 in H0.
 

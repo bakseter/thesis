@@ -67,10 +67,10 @@ Proof.
       * apply (IHm f V W); try assumption. lia.
       * apply (ex_lfp_geq_nodup_iff) in H2.
         assert (Datatypes.length (nodup string_dec W) <= n).
-        { 
+        {
            eapply (set_diff_succ string_dec) in H; try apply H3.
            apply succ_le_mono. eapply le_trans.
-           apply H. 
+           apply H.
            - eapply le_trans in H0. apply H0. apply le_refl.
            - apply e.
          }
@@ -90,7 +90,7 @@ Proof.
           destruct (sub_forward Cs (nodup string_dec V) (nodup string_dec V) h) as [U h'] eqn:Hforward.
           assert (sub_forward Cs (nodup string_dec V) (nodup string_dec V) h = (U, h')) by assumption.
           assert (sub_forward Cs (nodup string_dec V) (nodup string_dec V) h = (U, h')) by assumption.
-          rewrite nodup_rm in H9.      
+          rewrite nodup_rm in H9.
           apply (sub_forward_incl_set_diff Cs h h' (nodup string_dec V) (nodup string_dec W) U) in H9; try apply Hforward.
           inversion Hforward. apply sub_forward_incl in Hforward.
           destruct U as [|u U'] eqn:Hu.
@@ -119,7 +119,7 @@ Proof.
                     unfold strict_subset. split.
                     - apply nodup_incl. assumption.
                     - unfold not. intros. apply n0.
-                      apply nodup_incl2 in H13. 
+                      apply nodup_incl2 in H13.
                       rewrite set_union_nodup_l. assumption.
                   }
                   apply (strict_subset_lt_length string_dec).
@@ -151,7 +151,7 @@ Proof.
                 ** apply (IHn n h' (nodup string_dec (set_union string_dec W U)) []).
                    --- apply incl_nil_l.
                    --- assert (Datatypes.length (nodup string_dec V) <= Datatypes.length V).
-                       { 
+                       {
                          apply NoDup_incl_length. apply NoDup_nodup.
                          apply nodup_incl2. apply incl_refl.
                        }
@@ -160,7 +160,7 @@ Proof.
                    --- apply conj; try lia.
                        assert (Datatypes.length (set_diff string_dec (nodup string_dec (set_union string_dec W U)) []) <= Datatypes.length (nodup string_dec (set_union string_dec W U))).
                        apply (set_diff_nil_length string_dec).
-                       eapply le_trans. 
+                       eapply le_trans.
                        rewrite set_diff_nodup_eq. apply H15. apply lt_le_pred in H13.
                        eapply le_trans. apply H13.
                        assert (Datatypes.length (nodup string_dec V) <= Datatypes.length V).
@@ -272,6 +272,8 @@ Example thm_32_example6 :=
 Example ex_lfp_geq_empty_6 :=
   ex_lfp_geq_empty Cs_ex_6 f_ex_6.
 
+(* a -> a+1 og a,b -> b+1 *)
+
 Example Cs_ex_7 := [([atom_x0] ~> atom_x1); ([atom_x0; atom_y0] ~> atom_y1)].
 Example f_ex_7 := frontier_fin_0.
 Example thm_32_example7 :=
@@ -284,6 +286,21 @@ Example thm_32_example7 :=
     [].
 Example ex_lfp_geq_empty_7 :=
   ex_lfp_geq_empty Cs_ex_7 f_ex_7.
+
+(* a,b -> b+1 og c -> d+1 og d,b -> b+1 *)
+
+Example Cs_ex_8 := [([atom_x0; atom_y0] ~> atom_y1); ([atom_z0] ~> atom_u1); ([atom_u0; atom_y0] ~> atom_y1)].
+Example f_ex_8 := (fun x : string => if string_dec x x_str then infty else fin 0).
+Example thm_32_example8 :=
+  thm_32
+    Cs_ex_8
+    4
+    4
+    f_ex_8
+    [x_str; y_str; z_str; u_str]
+    [].
+Example ex_lfp_geq_empty_8 :=
+  ex_lfp_geq_empty Cs_ex_8 f_ex_8.
 
 Extraction Language Haskell.
 
@@ -302,10 +319,12 @@ Extraction "/home/andreas/Projects/thesis/coq/thm_32.hs"
   thm_32_example5
   thm_32_example6
   thm_32_example7
+  thm_32_example8
   ex_lfp_geq_empty_1
   ex_lfp_geq_empty_2
   ex_lfp_geq_empty_3
   ex_lfp_geq_empty_4
   ex_lfp_geq_empty_5
   ex_lfp_geq_empty_6
-  ex_lfp_geq_empty_7.
+  ex_lfp_geq_empty_7
+  ex_lfp_geq_empty_8.

@@ -156,7 +156,6 @@ incl_dec dec v w =
 data Ninfty =
    Infty
  | Fin Prelude.Integer
- deriving (Prelude.Show)
 
 sinfty :: Ninfty -> Ninfty
 sinfty x =
@@ -193,6 +192,10 @@ z_str :: Prelude.String
 z_str =
   "z"
 
+u_str :: Prelude.String
+u_str =
+  "u"
+
 atom_x0 :: Atom0
 atom_x0 =
   Atom "x" 0
@@ -216,6 +219,14 @@ atom_z0 =
 atom_z1 :: Atom0
 atom_z1 =
   Atom "z" (Prelude.succ 0)
+
+atom_u0 :: Atom0
+atom_u0 =
+  Atom "u" 0
+
+atom_u1 :: Atom0
+atom_u1 =
+  Atom "u" (Prelude.succ 0)
 
 atom_true :: Atom0 -> Frontier -> Prelude.Bool
 atom_true a f =
@@ -578,4 +589,27 @@ thm_32_example7 x =
 ex_lfp_geq_empty_7 :: Ex_lfp_geq
 ex_lfp_geq_empty_7 =
   ex_lfp_geq_empty cs_ex_7 f_ex_7
+
+cs_ex_8 :: ([]) Clause0
+cs_ex_8 =
+  (:) (Clause ((:) atom_x0 ((:) atom_y0 ([]))) atom_y1) ((:) (Clause ((:)
+    atom_z0 ([])) atom_u1) ((:) (Clause ((:) atom_u0 ((:) atom_y0 ([])))
+    atom_y1) ([])))
+
+f_ex_8 :: Prelude.String -> Ninfty
+f_ex_8 x =
+  case ((Prelude.==) :: Prelude.String -> Prelude.String -> Prelude.Bool) x
+         x_str of {
+   Prelude.True -> Infty;
+   Prelude.False -> Fin 0}
+
+thm_32_example8 :: Ex_lfp_geq -> Ex_lfp_geq
+thm_32_example8 x =
+  thm_32 cs_ex_8 (Prelude.succ (Prelude.succ (Prelude.succ (Prelude.succ
+    0)))) (Prelude.succ (Prelude.succ (Prelude.succ (Prelude.succ 0))))
+    f_ex_8 ((:) x_str ((:) y_str ((:) z_str ((:) u_str ([]))))) ([]) x
+
+ex_lfp_geq_empty_8 :: Ex_lfp_geq
+ex_lfp_geq_empty_8 =
+  ex_lfp_geq_empty cs_ex_8 f_ex_8
 
