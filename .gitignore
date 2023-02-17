@@ -15,4 +15,4 @@ coq/src/*.glob
 
 !**/*.pdf
 
-_minted-main/
+.minted_cache

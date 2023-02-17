@@ -1,5 +1,5 @@
-\usepackage[utf8]{inputenc} % This defines the font-\usepackage[utf8]{inputenc}
-\usepackage{url}
+\usepackage[utf8]{inputenc} % This defines the font-
+\usepackage[utf8]{inputenc} \usepackage{url}
 \def\UrlBreaks{\do\/\do-}
 \usepackage[square, numbers]{natbib}
 \usepackage{booktabs}
@@ -32,8 +32,6 @@
 \usepackage{fullpage}
 \graphicspath{{figures/}}
 
-\usepackage{listings}
-
 \newlength\glsdescwidth
   \setlength{\glsdescwidth}{1\hsize}
 
@@ -61,4 +59,9 @@
 
 \usepackage[acronym,nonumberlist,toc,nogroupskip]{glossaries}
 
-\usepackage{minted}
+\usepackage[newfloat=true, cachedir=\detokenize{.minted_cache}]{minted}
+\usemintedstyle{tango}
+\newminted{coq}{
+    linenos,
+    frame=single
+}

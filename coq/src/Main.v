@@ -302,6 +302,21 @@ Example thm_32_example8 :=
 Example ex_lfp_geq_empty_8 :=
   ex_lfp_geq_empty Cs_ex_8 f_ex_8.
 
+(* a -> a+1 og a -> b *)
+
+Example Cs_ex_9 := [([atom_x0] ~> atom_x1); ([atom_x0] ~> atom_y0)].
+Example f_ex_9 := frontier_fin_0.
+Example thm_32_example9 :=
+  thm_32
+    Cs_ex_9
+    2
+    2
+    f_ex_9
+    [x_str; y_str]
+    [].
+Example ex_lfp_geq_empty_9 :=
+  ex_lfp_geq_empty Cs_ex_9 f_ex_9.
+
 Extraction Language Haskell.
 
 Extract Constant map => "Prelude.map".
@@ -320,6 +335,7 @@ Extraction "/home/andreas/Projects/thesis/coq/thm_32.hs"
   thm_32_example6
   thm_32_example7
   thm_32_example8
+  thm_32_example9
   ex_lfp_geq_empty_1
   ex_lfp_geq_empty_2
   ex_lfp_geq_empty_3
@@ -327,4 +343,5 @@ Extraction "/home/andreas/Projects/thesis/coq/thm_32.hs"
   ex_lfp_geq_empty_5
   ex_lfp_geq_empty_6
   ex_lfp_geq_empty_7
-  ex_lfp_geq_empty_8.
+  ex_lfp_geq_empty_8
+  ex_lfp_geq_empty_9.

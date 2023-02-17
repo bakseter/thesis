@@ -54,7 +54,7 @@ length l =
 
 type Sig a = a
   -- singleton inductive, whose constructor was exist
-  
+
 sig_rect :: (a1 -> () -> a2) -> a1 -> a2
 sig_rect f s =
   f s __
@@ -156,6 +156,7 @@ incl_dec dec v w =
 data Ninfty =
    Infty
  | Fin Prelude.Integer
+ deriving (Prelude.Show)
 
 sinfty :: Ninfty -> Ninfty
 sinfty x =
@@ -612,4 +613,22 @@ thm_32_example8 x =
 ex_lfp_geq_empty_8 :: Ex_lfp_geq
 ex_lfp_geq_empty_8 =
   ex_lfp_geq_empty cs_ex_8 f_ex_8
+
+cs_ex_9 :: ([]) Clause0
+cs_ex_9 =
+  (:) (Clause ((:) atom_x0 ([])) atom_x1) ((:) (Clause ((:) atom_x0 ([]))
+    atom_y0) ([]))
+
+f_ex_9 :: Frontier
+f_ex_9 =
+  frontier_fin_0
+
+thm_32_example9 :: Ex_lfp_geq -> Ex_lfp_geq
+thm_32_example9 x =
+  thm_32 cs_ex_9 (Prelude.succ (Prelude.succ 0)) (Prelude.succ (Prelude.succ
+    0)) f_ex_9 ((:) x_str ((:) y_str ([]))) ([]) x
+
+ex_lfp_geq_empty_9 :: Ex_lfp_geq
+ex_lfp_geq_empty_9 =
+  ex_lfp_geq_empty cs_ex_9 f_ex_9
 
