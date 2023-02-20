@@ -8,71 +8,141 @@ to use, there are often tradeoffs to consider.
 
 \section{Modeling Sets in Coq}
 
-https://stackoverflow.com/questions/36588263/how-to-define-set-in-coq-without-defining-set-as-a-list-of-elements
+Sets in mathematics are seeminlgy simple structures.
+A set is a collection of elements, where the elements are of a similiar type.
+The set cannot contain more than one of the same element (\textit{no duplicates}), and the elements are not arranged in any
+specific order (\textit{no order}). This is the most basic definition, ignoring more complex paradoxes and different set theories etc...
 
-\subsection{List \& ListSet}
-
-As is common in most programming languages, Coq gives us a simple inductive definition of a list;
-defined in the Coq standard library in the \textbf{List} module.
-A list can have duplicates, and the order of the elements are preserved. This is different from how we normally
-define a set in mathematics, as a set in mathematics do not allow duplicates, and order is not preserved.
-A list is defined as either an empty list, or an element prepended to another list.
-Because of this definition, it is very easy to construct proofs using induction; we only need to check two cases.
+Sets are easy to work with when writing informal proofs.
+We do not care about how our elements or sets are represented, we only care about their properties.
+This does not hold for formal proofs though. In a formal proof, we need to specify exactly what happens
+when you take the union of two sets, or how you determine if a set contains an element.
 
 \newpage
 
+One of the most important data structures in functional computer programming is the \textit{list}.
+Unlike a set, a list \textit{can} contain more than one of the same element, and the elements \textit{are} arranged in a
+specific order.
+List also has a simple definition, but it is also a formal one. The definition from Coq's standard library is as follows:
+
+\begin{lstlisting}[language=Coq, label=list_def, caption={The definition of a list in Coq}]
+Inductive list {A : Type} : list A :=
+    | nil : list
+    | cons : A -> list -> list.
+\end{lstlisting}
+
+Using the \lstinline[language=Coq]{cons} constructor, we can easily define any list containing any elements of the same type;
+we can even have lists of lists.
+The problem is of course that lists are not sets. We want to find a way to include the two important properties
+of \textit{no duplicates} and \textit{no order} into our definition of lists.
+In Coq, there are several ways to do this.
+
+% https://stackoverflow.com/questions/36588263/how-to-define-set-in-coq-without-defining-set-as-a-list-of-elements
+
+\subsection{List \& ListSet}
+
+As stated previously, Coq gives us a traditional definition of a list in the \textbf{List} module of the standard library.
+Due to the nature of its definition, it is very easy to construct proofs using induction on lists; we only need to check two cases.
+The list is polymorphic, meaning any type can be used to construct a list. We do not need to give Coq any more information
+about the properites of the type of the elements other than the type itself.
+
 The \textbf{List} module also gives us a tool to combat the possibility of duplicates in a list,
-with \mintinline{Coq}{NoDup} and \mintinline{Coq}{nodup}. \mintinline{Coq}{NoDup} is an inductively defined proposition that gives evidence (?)
-on whether a list has duplicates or not. \mintinline{Coq}{nodup} is a function that takes in a list and returns a list without duplicates.
+with \lstinline[language=Coq]{NoDup} and \lstinline[language=Coq]{nodup}.
+\lstinline[language=Coq]{NoDup} is an inductively defined proposition that gives evidence (?)
+on whether a list has duplicates or not.
+\lstinline[language=Coq]{nodup} is a function that takes in a list and returns a list without duplicates.
+These can be used effectively in proofs, since we still keep the underlying list type.
 
 Having just the implementation of the set structure is rarely enough; we also want to do operations on the set, and reason about these.
-That is were the \textbf{ListSet} module comes in.
-The implementation of a set in this module is just an alias for list from the \textbf{List} module,
-but the module also contains some useful functions. Most of these treat the input as a mathematical set,
-meaning that they try to preserve the properties of \textit{no duplicates} and \textit{order}.
-Examples of some of these functions are \mintinline{Coq}{set_add}, \mintinline{Coq}{set_mem}, \mintinline{Coq}{set_diff},
-and \mintinline{Coq}{set_union}.
+That is were the \textbf{ListSet} module comes in, which defines a new type called \lstinline[language=Coq]{set}.
+This type is just an alias for the \lstinline[language=Coq]{list} type from the \textbf{List} module,
+but the module also contains some useful functions.
+Most of these treat the input as a mathematical set,
+meaning that they try to preserve the properties of \textit{no duplicates} and \textit{no order}.
+Examples of some of these functions are \lstinline[language=Coq]{set_add}, \lstinline[language=Coq]{set_mem},
+\lstinline[language=Coq]{set_diff}, and \lstinline[language=Coq]{set_union}.
 We also get useful lemmas that prove common properties about these functions.
-One thing to note is that all these functions use \mintinline{Coq}{bool} when reasoning about if something is true or false.
+One thing to note is that all these functions use \lstinline[language=Coq]{bool} when reasoning about if something is true or false.
 This makes them decidable, but it also requires the equality of the underlying type of the set to be decidable.
 A proof of the decidability of the underlying type must be supplied as an argument to all the functions.
-See listing \ref{lst:string_eq_dec} for an example of such a proof.
+An example of such a proof for the \lstinline[language=Coq]{string} type would be:
 
-These proofs are often given for the standard types in Coq such as \mintinline{Coq}{nat}, \mintinline{Coq}{bool} and \mintinline{Coq}{string}.
+\begin{lstlisting}[language=Coq, label=lst:string_eq_dec]
+Lemma string_eq_dec :
+    forall x y : string, {x = y} + {x <> y}.
+Proof.
+Admitted.
+\end{lstlisting}
+
+These proofs are often given for the standard types in Coq such as \lstinline[language=Coq]{nat},
+\lstinline[language=Coq]{bool} and \lstinline[language=Coq]{string}.
 As such, they can just be passed to the functions as arguments.
 This convention of always passing the proof as an argument can be cumbersome and make the code hard to read,
 but it is a necessary evil to get the properties we want.
 
-Many of these set functions, such as \mintinline{Coq}{set_union}, take in two sets as arguments and pattern match on the structure of one of them.
-\mintinline{Coq}{set_union} pattern matches on the second set given as an argument.
-This makes proofs where we destruct or use induction on the second argument easy, see listing \ref{lst:set_union_nodup_r}.
-The downside is that even easy and seamingly trivial proofs that reason about the other argument are frustratingly hard,
-see lisitng \ref{lst:set_union_nodup_l}.
+Many of these set functions, such as \lstinline[language=Coq]{set_union},
+take in two sets as arguments and pattern match on the structure of one of them.
+For example, \lstinline[language=Coq]{set_union} pattern matches on the second set given as an argument.
+This makes proofs where we destruct or use induction on the second argument easy, such as this example:
+\begin{lstlisting}[language=Coq, label=lst:set_union_nodup_l]
+Lemma set_union_nodup_l (dec : forall x y : A, {x = y} + {x <> y}) :
+    forall s1 s2,
+        set_union dec s1 s2 = set_union dec s1 (nodup dec s2).
+Proof.
+Admitted.
+\end{lstlisting}
 
-This still leaves the problem with order of elements in the list. This implementation gives us no concrete way to combat this,
-but there are ways to circumvent the problem. Since we often reason about if an element is in a list, or if the list has
-a certain length, we do not care about the order of the elements. If we construct our proofs with this in mind, \mintinline{Coq}{list} is a viable
-implementation. There might however be cases where strict equality of two lists are needed, and that is where this implementation falls short.
+The downside is that even easy and seamingly trivial proofs that reason about the other argument are frustratingly hard,
+for example:
+
+\begin{lstlisting}[language=Coq, label=lst:set_union_nodup_r]
+Lemma set_union_nodup_r (dec : forall x y : A, {x = y} + {x <> y}) :
+    forall s1 s2,
+        set_union dec s1 s2 = set_union dec (nodup dec s1) s2.
+Proof.
+Admitted.
+\end{lstlisting}
+
+With all this, we still have the problem with order of elements in the list.
+The \textbf{ListSet} module gives us no concrete way to combat this, but there are ways to circumvent the problem.
+Since we often reason about if an element is in a list, or if the list has a certain length,
+we do not care about the order of the elements.
+If we construct our proofs with this in mind, \textbf{ListSet} is a viable implementation.
+There might however be cases where strict equality of two lists are needed, and that is where this implementation falls short.
+
+Another thing to note is because of the polymorphic nature of the set type, any additional lemmas proven about a set can be
+used for any decidable type. This is useful if one needs sets of different types of elements.
 
 \subsection{MSetWeakList}
 
 The Coq standard library also gives us another implementation of sets, \textbf{MSetWeakList}.
-This implementation is a bit more complicated than the previous one, but gives us more guarantees in regards to the set having no duplicates
-and order not being preserved. The module is expressed as a functor.
+This implementation is a bit more complicated than the previous one,
+but gives us more guarantees in regards to the set having no duplicates and order not being preserved.
+The module is expressed as a functor.
 The functor, in this case, is a function that takes in a module as an argument, and again returns a module.
-The module we give to the functor must define some basic properites about the type we want to create a set of, namely equality,
-decidability of equality and the equivalence of equality.
-The output from the functor is a module containing functions and lemmas about set operations, with our input type being the type of the elements of the set.
+The module we give to the functor must define some basic properites about the type we want to create a set of,
+namely equality, decidability of equality and the equivalence relation on equality.
+The output from the functor is a module containing functions and lemmas about set operations,
+with our input type being the type of the elements of the set.
 
 This means that for every type we want to use as an element in the set, we have to go through this process.
-In \textbf{List} and \textbf{ListSet}, we just had to pass in the proof of the equality of the type as an argument to the functions.
+In \textbf{List} and \textbf{ListSet}, we just had to pass in the proof of the equality of the type as an argument to the set functions and lemmas.
 The structure of the sets in \textbf{MSetWeakList} is also a lot more complicated than the simple and intuitive definition of \textbf{List}.
 This makes it harder to reason about the sets in proofs.
 
-
 \subsection{Ensembles}
 
-\subsection{math-comp}
+Another implementation of sets is given by the \textbf{Ensembles} module, which defines the structure of a set as inductive propositions.
+This means it uses \lstinline[language=Coq]{Prop} instead of \lstinline[language=Coq]{bool},
+making \textbf{Ensembles} useful for proofs where we do not care about decidability.
+The biggest downside to this implementation, is that we cannot reason about the size of the set.
+We can only determine if an element is in the set, not how big the set is.
+In our case, this makes the \textbf{Ensembles} module useless, since the theorem we are formalizing requires us to reason about the
+size of the set.
+
+\subsection{finset}
+
+If we venture past Coq's standard library and into the \textit{Mathematical Components} library, we find the \textbf{finset} module.
 
 
 \section{Prop vs. Bool}
