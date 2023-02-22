@@ -120,7 +120,11 @@ Proof.
                     - apply nodup_incl. assumption.
                     - unfold not. intros. apply n0.
                       apply nodup_incl2 in H13.
-                      rewrite set_union_nodup_l. assumption.
+                      assert (incl (nodup string_dec (set_union string_dec W U)) (nodup string_dec V)).
+                      {
+                        apply nodup_incl. assumption.
+                      }
+                      rewrite (incl_set_union_nodup_l string_dec). assumption.
                   }
                   apply (strict_subset_lt_length string_dec).
                   unfold strict_subset in H13.
@@ -128,7 +132,8 @@ Proof.
                   - apply nodup_incl in H13.
                     apply nodup_incl2 in H13. assumption.
                   - unfold not. intros. apply n0.
-                    apply nodup_incl. rewrite set_union_nodup_l. assumption.
+                    rewrite (incl_set_union_nodup_l string_dec).
+                    apply nodup_incl. assumption.
                 }
                 assert (Datatypes.length (set_diff string_dec V (set_union string_dec (nodup string_dec W) U)) < Datatypes.length (set_diff string_dec V (nodup string_dec W)) <= S m).
                 {
@@ -145,9 +150,11 @@ Proof.
                 ** apply conj; try lia. inversion H14.
                    apply le_lt_eq_dec in H16. destruct H16.
                    --- rewrite nodup_rm. rewrite set_diff_nodup_eq in *.
-                       rewrite set_union_nodup_l in *. lia.
+                       rewrite <- length_set_diff_set_union_nodup_l.
+                       lia.
                    --- rewrite nodup_rm. rewrite set_diff_nodup_eq in *.
-                       rewrite set_union_nodup_l in *. lia.
+                       rewrite <- length_set_diff_set_union_nodup_l.
+                       lia.
                 ** apply (IHn n h' (nodup string_dec (set_union string_dec W U)) []).
                    --- apply incl_nil_l.
                    --- assert (Datatypes.length (nodup string_dec V) <= Datatypes.length V).

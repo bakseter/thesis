@@ -97,7 +97,7 @@ Module Forward.
     apply sub_vars_improvable_NoDup_Cs. assumption.
   Qed.
 
-  (* needed for thm_32 in Main *)
+  (* NEEDED *)
   Lemma sub_forward_incl_set_diff (Cs : set Clause) (f g : Frontier) (V W U : set string) :
     sub_model Cs V W f = true ->
     sub_forward Cs V V f = (U, g) ->
@@ -151,7 +151,7 @@ Module Forward.
       rewrite nodup_incl. assumption.
   Qed.
 
-  (* needed for thm_32 in Main *)
+  (* NEEDED *)
   Lemma sub_forward_nodup_eq (Cs : set Clause) (f : Frontier) (V : set string) :
     sub_forward Cs (nodup string_dec V) (nodup string_dec V) f =
     sub_forward Cs V V f.
