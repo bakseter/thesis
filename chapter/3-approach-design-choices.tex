@@ -2,7 +2,7 @@
 
 When translating an informal proof to a formal proof or specification,
 one often has to decide how to model certain mathematical objects
-and/or properties. For example, in Coq, there are several implementations
+and their properties. For example, in Coq, there are several implementations
 of the mathematical notion of a \textit{set}. When choosing which implementation
 to use, there are often tradeoffs to consider.
 
@@ -43,8 +43,8 @@ In Coq, there are several ways to do this.
 
 As stated previously, Coq gives us a traditional definition of a list in the \textbf{List} module of the standard library.
 Due to the nature of its definition, it is very easy to construct proofs using induction on lists; we only need to check two cases.
-The list is polymorphic, meaning any type can be used to construct a list. We do not need to give Coq any more information
-about the properites of the type of the elements other than the type itself.
+The list is polymorphic, meaning any type can be used to construct a list of that type.
+We do not need to give Coq any more information about the properties of the underlying type of the list other than the type itself.
 
 The \textbf{List} module also gives us a tool to combat the possibility of duplicates in a list,
 with \lstinline[language=Coq]{NoDup} and \lstinline[language=Coq]{nodup}.
@@ -103,14 +103,15 @@ Proof.
 Admitted.
 \end{lstlisting}
 
-With all this, we still have the problem with order of elements in the list.
+This helps us deal with duplicates, but that still leaves us with the problem of order of elements in the list.
 The \textbf{ListSet} module gives us no concrete way to combat this, but there are ways to circumvent the problem.
 Since we often reason about if an element is in a list, or if the list has a certain length,
 we do not care about the order of the elements.
 If we construct our proofs with this in mind, \textbf{ListSet} is a viable implementation.
-There might however be cases where strict equality of two lists are needed, and that is where this implementation falls short.
+There might however be cases where the order of the elements in the lists come into play (i.e. strict equality of two lists),
+and that is where this implementation falls short.
 
-Another thing to note is because of the polymorphic nature of the set type, any additional lemmas proven about a set can be
+Another thing to note is because of the polymorphic nature of the \lstinline{set} type, any additional lemmas proven about a set can be
 used for any decidable type. This is useful if one needs sets of different types of elements.
 
 \subsection{MSetWeakList}
