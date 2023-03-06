@@ -243,18 +243,6 @@ Module Sets.
         apply incl_refl.
   Qed.
 
-  Lemma incl_cons_In {A : Type} (dec : forall x y : A, {x = y} + {x <> y}) (V t : set A) (h : A) :
-    In h t /\ incl V (h :: t) -> incl V t.
-  Proof.
-    intros. destruct H. induction V as [|h' t'];
-    try apply incl_nil_l. apply incl_cons; simpl in *.
-    - destruct (dec h' h); subst; try assumption.
-      apply incl_cons_inv in H0. destruct H0.
-      simpl in H0. destruct H0; subst; assumption.
-    - apply IHt'. apply incl_cons_inv in H0. destruct H0.
-      apply H1.
-  Qed.
-
   Lemma nodup_incl2 {A : Type} (dec : forall x y, {x = y} + {x <> y}) (V W : set A) :
     incl V W <-> incl (nodup dec V) W.
   Proof.
@@ -581,7 +569,8 @@ Module Sets.
   Qed.
 
   Lemma set_diff_In_consR {A : Type} (dec : forall x y, {x = y} + {x <> y}) (h : A) (t V : set A) :
-    In h t -> set_diff dec (h :: t) V = set_diff dec t V.
+    In h t ->
+    set_diff dec (h :: t) V = set_diff dec t V.
   Proof.
     intros. simpl. destruct (set_mem dec h V) eqn:Hmem;
     try reflexivity. apply set_mem_complete1 in Hmem.
@@ -591,7 +580,8 @@ Module Sets.
   Qed.
 
   Lemma set_diff_In_consL {A : Type} (dec : forall x y, {x = y} + {x <> y}) (h : A) (t V : set A) :
-    In h t -> set_diff dec V (h :: t) = set_diff dec V t.
+    In h t ->
+    set_diff dec V (h :: t) = set_diff dec V t.
   Proof.
     intros. induction V; try reflexivity.
     - simpl. destruct (dec a h).
@@ -611,52 +601,6 @@ Module Sets.
       Datatypes.length (set_diff dec (nodup dec V) (nodup dec W)) = S n ->
       S (Datatypes.length (nodup dec W)) <= Datatypes.length (nodup dec V).
   Proof.
-    induction W as [|h t]; intros.
-    - simpl in *. rewrite set_diff_nil_length_nodup in H0.
-      rewrite nodup_rm in H0. rewrite H0. lia.
-    - apply incl_cons_inv in H. destruct H.
-      simpl in *. destruct (in_dec dec h t); try assumption.
-      + apply IHt. assumption. assumption.
-      + assert (H2 := H1).
-        simpl in *. assert (Datatypes.length (nodup dec t) <= Datatypes.length (nodup dec V)).
-        { rewrite <- (nodup_incl dec) in H2.
-          rewrite (nodup_incl2 dec) in H2.
-  Admitted.
-
-  Lemma strict_subset_lt_length {A : Type} (dec : forall x y, {x = y} + {x <> y}) (V W : set A) :
-     strict_subset V W ->
-     Datatypes.length (nodup dec V) < Datatypes.length (nodup dec W).
-  Proof.
-    intros. induction V as [|h t]; induction W as [|h' t']; try reflexivity.
-    - unfold strict_subset in H. destruct H. contradiction.
-    - simpl. destruct (in_dec dec h' t').
-      + simpl in *. destruct t'; try contradiction.
-        simpl in *. destruct (in_dec dec a t').
-        * destruct i; subst.
-          ++ apply IHt'. unfold strict_subset. split.
-             ** apply incl_nil_l.
-             ** apply incl_l_nil_false. discriminate.
-          ++ apply IHt'. unfold strict_subset. split.
-             ** apply incl_nil_l.
-             ** apply incl_l_nil_false. discriminate.
-        * apply IHt'. unfold strict_subset. split.
-          ++ apply incl_nil_l.
-          ++ apply incl_l_nil_false. discriminate.
-      + destruct t'; simpl in *; try lia.
-    - unfold strict_subset in H. destruct H. apply incl_l_nil_false in H.
-      contradiction. discriminate.
-    - simpl in *. destruct (in_dec dec h t); destruct (in_dec dec h' t').
-      + apply IHt. unfold strict_subset. unfold strict_subset in H.
-        destruct H. apply incl_cons_inv in H. destruct H. split; try assumption.
-        unfold not. intros. apply H0. apply incl_tl. assumption.
-      + apply IHt. unfold strict_subset. unfold strict_subset in H.
-        destruct H. split.
-        * apply incl_cons_inv in H. apply H.
-        * unfold not. intros. apply H0. apply incl_tl. assumption.
-      + apply IHt'. unfold strict_subset. unfold strict_subset in H.
-        destruct H. split.
-        * apply incl_cons_inv in H. apply incl_cons. destruct H.
-          destruct H; subst; try assumption. destruct H.
   Admitted.
 
   Lemma set_add_add {A : Type} (dec : forall x y, {x = y} + {x <> y}) (h : A) (V W : set A) :
@@ -743,6 +687,35 @@ Module Sets.
       apply (set_mem_complete2 dec) in Hmem. rewrite Hmem.
       f_equal. assumption.
   Qed.
+
+  Lemma set_add_length_not_nil {A : Type} (dec : forall x y, {x = y} + {x <> y}) (h : A) (V : set A) :
+    Datatypes.length (set_add dec h V) <> 0.
+  Proof.
+    intros. destruct V as [|h' V]; try discriminate.
+    simpl. destruct (dec h h'); try discriminate.
+  Qed.
+
+  Lemma set_diff_length_cons_nil {A : Type} (dec : forall x y, {x = y} + {x <> y}) (h : A) (V t : set A) :
+    Datatypes.length (set_diff dec V (h :: t)) = 0 ->
+    V = [] \/ In h V.
+  Admitted.
+
+  Lemma set_diff_length_zero {A : Type} (dec : forall x y : A, {x = y} + {x <> y}) (V W : set A) :
+    Datatypes.length (set_diff dec V W) = 0 ->
+    nodup dec V = nodup dec W.
+  Proof.
+    generalize dependent V.
+    induction W as [|w W]; intros.
+    - destruct V as [|v V]; try reflexivity.
+      simpl in *. destruct (in_dec dec v V);
+      apply set_add_length_not_nil in H; contradiction.
+    - simpl in *. destruct (in_dec dec w W).
+      + apply IHW. apply (set_diff_In_consL dec w W V) in i.
+        rewrite i in H. assumption.
+      + simpl in *. apply set_diff_length_cons_nil in H.
+        destruct H.
+        * subst. simpl.
+  Admitted.
 
   (* NEEDED *)
   Lemma set_diff_incl_lt_length {A : Type} (dec : forall x y, {x = y} + {x <> y}) (u : A) (V W U : set A) :
@@ -875,6 +848,18 @@ Module Sets.
       + apply (set_union_intro2 dec v W U) in H.
         apply (set_mem_correct2 dec) in H. rewrite H.
         apply IHV.
+  Admitted.
+
+  (* NEEDED *)
+  Lemma strict_subset_lt_length {A : Type} (dec : forall x y, {x = y} + {x <> y}) (V W : set A) :
+     strict_subset V W ->
+     Datatypes.length (nodup dec V) < Datatypes.length (nodup dec W).
+  Proof.
+    intros. unfold strict_subset in H. destruct H.
+    assert (H1 := H). apply (nodup_incl_length dec) in H1.
+    apply le_lt_eq_dec in H1. destruct H1; try assumption.
+    eapply (set_diff_succ dec) in H; try lia.
+    unfold not. intros.
   Admitted.
 
 End Sets.

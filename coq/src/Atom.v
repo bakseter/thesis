@@ -43,7 +43,7 @@ Module Atom.
 
   Definition shift_atom (n : nat) (a : Atom)  : Atom :=
     match a with
-    | (x & k) => (x & (n+k))
+    | (x & k) => (x & (n + k))
     end.
 
   Lemma shift_atom_0 (a : Atom) :

@@ -25,7 +25,7 @@ Unlike a set, a list \textit{can} contain more than one of the same element, and
 specific order.
 List also has a simple definition, but it is also a formal one. The definition from Coq's standard library is as follows:
 
-\begin{lstlisting}[language=Coq, label=list_def, caption={The definition of a list in Coq}]
+\begin{lstlisting}[language=Coq, label={lst:list_def}, caption={Def. of a list in Coq}]
 Inductive list {A : Type} : list A :=
     | nil : list
     | cons : A -> list -> list.
@@ -67,10 +67,11 @@ This makes them decidable, but it also requires the equality of the underlying t
 A proof of the decidability of the underlying type must be supplied as an argument to all the functions.
 An example of such a proof for the \lstinline[language=Coq]{string} type would be:
 
-\begin{lstlisting}[language=Coq, label=lst:string_eq_dec]
+\begin{lstlisting}[language=Coq, label={lst:string_eq_dec}, caption={Decidability proof for string equality in Coq}]
 Lemma string_eq_dec :
     forall x y : string, {x = y} + {x <> y}.
 Proof.
+    (* proof goes here *)
 Admitted.
 \end{lstlisting}
 
@@ -84,23 +85,17 @@ Many of these set functions, such as \lstinline[language=Coq]{set_union},
 take in two sets as arguments and pattern match on the structure of one of them.
 For example, \lstinline[language=Coq]{set_union} pattern matches on the second set given as an argument.
 This makes proofs where we destruct or use induction on the second argument easy, such as this example:
-\begin{lstlisting}[language=Coq, label=lst:set_union_nodup_l]
-Lemma set_union_nodup_l (dec : forall x y : A, {x = y} + {x <> y}) :
-    forall s1 s2,
-        set_union dec s1 s2 = set_union dec s1 (nodup dec s2).
-Proof.
-Admitted.
+\begin{lstlisting}[language=Coq, label={lst:set_op_ex1}, caption={Easy proof of lemma in \lstinline{ListSet}}]
+
+(* example 1 *)
+
 \end{lstlisting}
 
 The downside is that even easy and seamingly trivial proofs that reason about the other argument are frustratingly hard,
 for example:
 
-\begin{lstlisting}[language=Coq, label=lst:set_union_nodup_r]
-Lemma set_union_nodup_r (dec : forall x y : A, {x = y} + {x <> y}) :
-    forall s1 s2,
-        set_union dec s1 s2 = set_union dec (nodup dec s1) s2.
-Proof.
-Admitted.
+\begin{lstlisting}[language=Coq, label={lst:set_op_ex2}, caption={Hard proof of lemma in \lstinline{ListSet}}]
+(* example 2 *)
 \end{lstlisting}
 
 This helps us deal with duplicates, but that still leaves us with the problem of order of elements in the list.

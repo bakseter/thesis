@@ -1,9 +1,89 @@
 \chapter{Implementation}
 
-
 \section{Choice of set implementation}
 
 The simplest set (or set-like) implementation in Coq are the \textbf{List} and \textbf{ListSet} modules.
 These require minimal knowledge of advanced Coq syntax and behave like lists, making proofs by induction easy.
+They are also polymorphic, meaning ease of use when making sets of different or self-defined types.
+Because of these reasons, we chose to go with \textbf{List} and \textbf{ListSet}.
 
-\section{Atom \& Clause}
+\newpage
+
+\section{Atom, Clause and Frontier}
+
+The paper [ref. here] uses heavily Horn clauses, which it (and we) simply call clauses.
+Following the definition of a Horn clause, a clause contains a body of a set of atomic formulas,
+or atoms, and a single atom as the head.
+
+We also define the atoms in the clauses as containing one string and one natural number,
+since this is sufficient for our implementation.
+
+\begin{lstlisting}[language=Coq, label={lst:atom_clause_def}, caption={Def. of \lstinline{Atom} and \lstinline{Clause} in Coq}]
+Inductive Atom : Type :=
+  | atom : string -> nat -> Atom.
+
+Notation "x & k" := (atom x k) (at level 80).
+
+Inductive Clause : Type :=
+  | clause : set Atom -> Atom -> Clause.
+
+Notation "ps ~> c" := (clause ps c) (at level 81).
+\end{lstlisting}
+
+Note also the \lstinline{Notation}-syntax, which allows us to define a custom notation,
+making the code easier to read. The expression on the left-hand side of the \lstinline{:=} in quotation marks
+is equivalent to the expression on the right-hand side in parentheses.
+The level determines which notation should take precedence, with a higher level equaling a higher precedence.
+
+We also want to model functions of the form $f : V \rightarrow \mathbb{N}^{\infty}$, where $V$ is the set of strings (variables)
+and $\mathbb{N}^{\infty}$ is the set of natural numbers $\mathbb{N}$
+extended by $\infty$, totally ordered by $n < \infty$ for all $n \in \mathbb{N}$.
+
+We implement this in Coq using two types, \lstinline{Ninfty} and \lstinline{Frontier}.
+\lstinline{Ninfty} is either a natural number or infinity.
+\lstinline{Frontier} is a function from a string (variable) to \lstinline{Ninfty}.
+
+\begin{lstlisting}[language=Coq, label={lst:ninfty_frontier_def}, caption={Def. of \lstinline{Ninfty} and \lstinline{Frontier} in Coq}]
+Inductive Ninfty : Type :=
+  | infty : Ninfty
+  | fin   : nat -> Ninfty.
+
+Definition Frontier := string -> Ninfty.
+\end{lstlisting}
+
+Using these definitions of \lstinline{Atom}, \lstinline{Clause} and \lstinline{Frontier},
+we can define functions that check whether any given atom or clause is satisfied for any frontier.
+
+\begin{lstlisting}[language=Coq, label={lst:atom_clause_true_def}, caption={Def. of \lstinline{atom_true} and \lstinline{clause_true} in Coq}]
+Definition atom_true (a : Atom) (f : Frontier) : bool :=
+  match a with
+  | (x & k) =>
+    match f x with
+    | infty => true
+    | fin n => k <=? n
+    end
+  end.
+
+  Definition clause_true (c : Clause) (f : Frontier) : bool :=
+    match c with
+    | (conds ~> conc) =>
+      if fold_right andb true (map (fun a => atom_true a f) conds)
+      then (atom_true conc f)
+      else true
+    end.
+\end{lstlisting}
+
+We can also define functions that "shift" the number value of atoms or whole clauses by some amount \lstinline{n : nat}.
+
+\begin{lstlisting}[language=Coq, label={lst:shift_atom_clause_true}, caption={Def. of \lstinline{shift_atom} and \lstinline{shift_clause} in Coq}]
+Definition shift_atom (n : nat) (a : Atom)  : Atom :=
+  match a with
+  | (x & k) => (x & (n + k))
+end.
+
+Definition shift_clause (n : nat) (c : Clause) : Clause :=
+  match c with
+  | conds ~> conc =>
+    (map (shift_atom n) conds) ~> (shift_atom n conc)
+  end.
+\end{lstlisting}
