@@ -9,7 +9,8 @@ Because of these reasons, we chose to go with \textbf{List} and \textbf{ListSet}
 
 \newpage
 
-\section{Atom, Clause and Frontier}
+\section{The Basics}
+\subsection{Atom, Clause and Frontier}
 
 The paper [ref. here] uses heavily Horn clauses, which it (and we) simply call clauses.
 Following the definition of a Horn clause, a clause contains a body of a set of atomic formulas,
@@ -87,3 +88,79 @@ Definition shift_clause (n : nat) (c : Clause) : Clause :=
     (map (shift_atom n) conds) ~> (shift_atom n conc)
   end.
 \end{lstlisting}
+
+\newpage
+
+Using these definitions, we can now define an important property that will be used
+later; the notion of whether a set of clauses is true for any shift of \lstinline{n : nat}.
+
+\begin{lstlisting}[language=Coq, label={lst:all_shifts_true}, caption={Def. of \lstinline{all_shifts_true}}]
+Definition all_shifts_true (c : Clause) (f : Frontier) : bool :=
+  match c with
+  | (conds ~> conc) =>
+      match conc with
+      | (x & k) =>
+          match f x with
+          | infty => true
+          | fin n => clause_true (shift_clause (n + 1 - k) c) f
+          end
+      end
+  end.
+\end{lstlisting}
+
+\section{Model}
+
+\subsection{\lstinline{sub_model}}
+
+Given any set of clauses and a function assigning values to the variables,
+we can determine if this is a valid model (reword?).
+
+We translate this propery to Coq as the recursive function \lstinline{sub_model}.
+We have two additional arguments \lstinline{V} and \lstinline{W}; these are
+the set of variables (strings) from the set of clauses, and ???, respectively.
+The function \lstinline{vars_set_atom} simply returns all the variables used
+in a set of atoms as a set of strings.
+
+\begin{lstlisting}[language=Coq, label={lst:sub_model_def}, caption={Def. of \lstinline{sub_model}}]
+Fixpoint sub_model (Cs : set Clause) (V W : set string) (f : Frontier) : bool :=
+  match Cs with
+  | []      => true
+  | (l ~> (x & k)) :: t  =>
+    (negb (set_mem string_dec x W) ||
+     negb (fold_right andb true (map (fun x => set_mem string_dec x V) (vars_set_atom l))) ||
+     all_shifts_true (l ~> (x & k)) f
+    ) && sub_model t V W f
+  end.
+\end{lstlisting}
+
+\subsection{\lstinline{geq}}
+
+We want to determine whether the all the values assigned to a set of variables
+from one frontier are greater than or equal to all the values assigned to a set of variables
+from another frontier. The values are of the type \lstinline{Ninfty}, and the function
+only returns true if \textbf{all} the values from the first frontier are greater than
+the values from the second frontier.
+
+\begin{lstlisting}[language=Coq, label={lst:geq_def}, caption={Def. of \lstinline{geq}}]
+Fixpoint geq (V : set string) (g f : Frontier) : bool :=
+  match V with
+  | []      => true
+  | h :: t  =>
+    match g h with
+    | infty => geq t g f
+    | fin n =>
+        match f h with
+        | infty => false
+        | fin k => (k <=? n) && geq t g f
+        end
+    end
+  end.
+\end{lstlisting}
+
+\subsection{\lstinline{ex_lfp_geq}}
+
+
+
+
+
+
