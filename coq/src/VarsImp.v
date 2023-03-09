@@ -39,7 +39,7 @@ Module VarsImp.
     - unfold sub_vars_improvable. destruct h as [l [x k]].
       fold sub_vars_improvable.
       destruct (negb (x € W)
-                || negb (fold_right andb true (map (fun x0 : string => x0 € V) (vars_set_atom l))) 
+                || negb (fold_right andb true (map (fun x0 : string => x0 € V) (vars_set_atom l)))
                 || all_shifts_true (l ~> x & k) f).
     + apply IHt. apply NoDup_cons_iff in H. destruct H. assumption.
     + apply set_add_nodup. apply IHt. apply NoDup_cons_iff in H.

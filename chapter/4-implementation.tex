@@ -8,7 +8,6 @@ They are also polymorphic, meaning ease of use when making sets of different or 
 Because of these reasons, we chose to go with \textbf{List} and \textbf{ListSet}.
 
 \newpage
-
 \section{The Basics}
 \subsection{Atom, Clause and Frontier}
 
@@ -65,13 +64,13 @@ Definition atom_true (a : Atom) (f : Frontier) : bool :=
     end
   end.
 
-  Definition clause_true (c : Clause) (f : Frontier) : bool :=
-    match c with
-    | (conds ~> conc) =>
-      if fold_right andb true (map (fun a => atom_true a f) conds)
-      then (atom_true conc f)
-      else true
-    end.
+Definition clause_true (c : Clause) (f : Frontier) : bool :=
+  match c with
+  | (conds ~> conc) =>
+    if fold_right andb true (map (fun a => atom_true a f) conds)
+    then (atom_true conc f)
+    else true
+  end.
 \end{lstlisting}
 
 We can also define functions that "shift" the number value of atoms or whole clauses by some amount \lstinline{n : nat}.
@@ -89,10 +88,8 @@ Definition shift_clause (n : nat) (c : Clause) : Clause :=
   end.
 \end{lstlisting}
 
-\newpage
-
 Using these definitions, we can now define an important property that will be used
-later; the notion of whether a set of clauses is true for any shift of \lstinline{n : nat}.
+later; whether a set of clauses is true for any shift of \lstinline{n : nat}.
 
 \begin{lstlisting}[language=Coq, label={lst:all_shifts_true}, caption={Def. of \lstinline{all_shifts_true}}]
 Definition all_shifts_true (c : Clause) (f : Frontier) : bool :=
@@ -108,6 +105,7 @@ Definition all_shifts_true (c : Clause) (f : Frontier) : bool :=
   end.
 \end{lstlisting}
 
+\newpage
 \section{Model}
 
 \subsection{\lstinline{sub_model}}
@@ -117,7 +115,7 @@ we can determine if this is a valid model (reword?).
 
 We translate this propery to Coq as the recursive function \lstinline{sub_model}.
 We have two additional arguments \lstinline{V} and \lstinline{W}; these are
-the set of variables (strings) from the set of clauses, and ???, respectively.
+the set of variables (strings) from the set of clauses, and all changed variables (expand on this), respectively.
 The function \lstinline{vars_set_atom} simply returns all the variables used
 in a set of atoms as a set of strings.
 
@@ -127,7 +125,10 @@ Fixpoint sub_model (Cs : set Clause) (V W : set string) (f : Frontier) : bool :=
   | []      => true
   | (l ~> (x & k)) :: t  =>
     (negb (set_mem string_dec x W) ||
-     negb (fold_right andb true (map (fun x => set_mem string_dec x V) (vars_set_atom l))) ||
+     negb (
+       fold_right andb true
+         (map (fun x => set_mem string_dec x V) (vars_set_atom l))
+     ) ||
      all_shifts_true (l ~> (x & k)) f
     ) && sub_model t V W f
   end.
@@ -159,8 +160,35 @@ Fixpoint geq (V : set string) (g f : Frontier) : bool :=
 
 \subsection{\lstinline{ex_lfp_geq}}
 
+We can now combine \lstinline{sub_model} and \lstinline{geq} to make a lemma
+stating that there exists a frontier \lstinline{g} that is a model of the set of clauses \lstinline{Cs}
+and is greater than or equal to another frontier \lstinline{f}.
 
+\begin{lstlisting}[language=Coq, label={lst:ex_lfp_geq_def}, caption={Multiple defs. of \lstinline{ex_lfp_geq}}]
+Lemma ex_lfp_geq_P (Cs : set Clause) (V W : set string) (f : Frontier) : Prop :=
+  exists g : Frontier, geq V g f = true /\ sub_model Cs V W g = true.
 
+Definition ex_lfp_geq_T (Cs : set Clause) (V W : set string) (f : Frontier) : Type :=
+  sig (fun g : Frontier => prod (geq V g f = true) (sub_model Cs V W g = true)).
 
+(* we can also use Set, this def. is equivalent to the def. above *)
+Definition ex_lfp_geq_S (Cs : set Clause) (V W : set string) (f : Frontier) : Set :=
+  sig (fun g : Frontier => prod (geq V g f = true) (sub_model Cs V W g = true)).
+\end{lstlisting}
 
+One thing to note here is that we can define this lemma either as a \lstinline{Prop} or as a \lstinline{Type}.
+When using \lstinline{Prop}, we define it as a proposition, using standard FOL syntax.
 
+When using \lstinline{Type}, we define it as a type,
+using the \lstinline{sig} type constructor in place of \lstinline{exists}.
+We also use the \lstinline{prod} type constructor to represent the conjunction of two propositions.
+
+One thing to note is the difference between \lstinline{Lemma} and \lstinline{Definition}.
+The former is used to define a proposition, while the latter is (usually) used to define a type or a non-recursive function.
+In this case, we could actually use \lstinline{Definition} instead of \lstinline{Lemma},
+but not the other way around.
+
+The reason for defining \lstinline{ex_lfp_geq} as a \lstinline{Type}, is that we can then use
+Coq's extraction feature to generate Haskell code from the Coq definitions.
+Since \lstinline{ex_lfp_geq} plays a central part in the proof of the main theorem,
+it must be defined as a \lstinline{Type} (or as a \lstinline{Set}!) to avoid universe inconsistencies.
