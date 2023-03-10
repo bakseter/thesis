@@ -348,6 +348,14 @@ Module Sets.
     set_union dec V [] = V.
   Proof. destruct V; try reflexivity. Qed.
 
+  Lemma set_union_incl_nil {A : Type} (dec : forall x y, {x = y} + {x <> y}) (V W : set A) :
+    V = [] ->
+    W = [] ->
+    incl (set_union dec V W) [].
+  Proof.
+    intros. subst. simpl. apply incl_refl.
+  Qed.
+
   Definition incl_dec {A : Type} (dec : forall x y : A, {x = y} + {x <> y}) (V W : set A) :
     {incl V W} + {~ incl V W}.
   Proof.
@@ -746,30 +754,12 @@ Module Sets.
     apply incl_refl.
   Qed.
 
-  Lemma incl_set_union_nil_l {A : Type} (dec : forall x y : A, {x = y} + {x <> y}) (V W : set A) :
+  Lemma incl_set_union_l_nil {A : Type} (dec : forall x y : A, {x = y} + {x <> y}) (V W : set A) :
     incl V W ->
     incl V (set_union dec W []).
   Proof.
     intros. induction W as [|h t]; simpl; try assumption.
   Qed.
-
-  (* NEEDED *)
-  Lemma incl_set_union_trans {A : Type} (dec : forall x y : A, {x = y} + {x <> y}) (V W U : set A) :
-    incl W V ->
-    incl U V ->
-    incl (set_union dec W U) V.
-  Proof.
-    induction V as [|v V]; induction W as [|w W]; induction U as [|u U];
-    intros; simpl.
-    - apply incl_refl.
-    - apply incl_l_nil_false in H0. contradiction. discriminate.
-    - apply incl_l_nil_false in H. contradiction. discriminate.
-    - apply incl_l_nil_false in H. contradiction. discriminate.
-    - apply incl_nil_l.
-    - simpl in *. apply incl_cons_inv in H0. destruct H0.
-      apply incl_set_add_iff. apply incl_cons; try assumption.
-      apply IHU.
-  Admitted.
 
   Lemma incl_set_add_reduce2 {A : Type} (dec : forall x y : A, {x = y} + {x <> y}) (w : A) (V W : set A) :
     incl V W ->
@@ -780,6 +770,49 @@ Module Sets.
     apply incl_cons.
     - apply set_add_intro1. assumption.
     - apply IHV. assumption.
+  Qed.
+
+  Lemma incl_set_union_nil_l {A : Type} (dec : forall x y : A, {x = y} + {x <> y}) (V W : set A) :
+    incl V W ->
+    incl (set_union dec [] V) W.
+  Proof.
+    intros. induction V as [|h t]; try apply incl_nil_l.
+    simpl. apply incl_cons_inv in H. destruct H.
+    apply incl_set_add_iff. apply incl_cons.
+    assumption. apply IHt. assumption.
+  Qed.
+
+  (* CAN BE USED AS EXAMPLE FOR SET_UNION HARD PROOF *)
+  Lemma incl_set_add_set_union_nil {A : Type} (dec : forall x y : A, {x = y} + {x <> y}) (h : A) (V t : set A) :
+    incl (set_add dec h t) V ->
+    incl (set_add dec h (set_union dec [] t)) V.
+  Proof.
+    intros. apply incl_set_add_iff. apply incl_set_add_iff in H.
+    induction V as [|h' t'].
+    - apply incl_l_nil_false in H. contradiction.
+      discriminate.
+    - apply incl_cons_inv in H. destruct H.
+      apply incl_cons; try assumption.
+      apply (incl_set_union_nil_l dec). assumption.
+  Qed.
+
+  Lemma incl_set_union_trans {A : Type} (dec : forall x y : A, {x = y} + {x <> y}) (V W U : set A) :
+    incl W V ->
+    incl U V ->
+    incl (set_union dec W U) V.
+  Proof.
+    intros. destruct V as [|v V].
+    - simpl. apply set_union_incl_nil.
+      + destruct W; try reflexivity.
+        apply incl_l_nil_false in H. contradiction.
+        discriminate.
+      + destruct U; try reflexivity.
+        apply incl_l_nil_false in H0. contradiction.
+        discriminate.
+    - unfold incl in *. intros.
+      apply (set_union_elim dec) in H1. destruct H1.
+      + apply H in H1. assumption.
+      + apply H0 in H1. assumption.
   Qed.
 
   Lemma set_union_nil_iff {A : Type} (dec : forall x y : A, {x = y} + {x <> y}) (V W : set A) :
