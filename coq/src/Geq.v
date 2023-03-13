@@ -371,7 +371,7 @@ Module Geq.
     = false.
   Proof. reflexivity. Qed.
 
-  Definition ex_lfp_geq (Cs : set Clause) (V W : set string) (f : Frontier) : Type :=
+  Definition ex_lfp_geq (Cs : set Clause) (V W : set string) (f : Frontier) : Set :=
     sig (fun g : Frontier => prod (geq V g f = true) (sub_model Cs V W g = true)).
 
   Definition ex_lfp_geq_Prop (Cs : set Clause) (V W : set string) (f : Frontier) : Prop :=
