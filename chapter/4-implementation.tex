@@ -7,7 +7,6 @@ These require minimal knowledge of advanced Coq syntax and behave like lists, ma
 They are also polymorphic, meaning ease of use when making sets of different or self-defined types.
 Because of these reasons, we chose to go with \textbf{List} and \textbf{ListSet}.
 
-\newpage
 \section{The Basics}
 \subsection{Atom, Clause and Frontier}
 
@@ -18,6 +17,7 @@ or atoms, and a single atom as the head.
 We also define the atoms in the clauses as containing one string and one natural number,
 since this is sufficient for our implementation.
 
+\begin{minipage}{\linewidth}
 \begin{lstlisting}[language=Coq, label={lst:atom_clause_def}, caption={Def. of \lstinline{Atom} and \lstinline{Clause} in Coq}]
 Inductive Atom : Type :=
   | atom : string -> nat -> Atom.
@@ -29,6 +29,7 @@ Inductive Clause : Type :=
 
 Notation "ps ~> c" := (clause ps c) (at level 81).
 \end{lstlisting}
+\end{minipage}
 
 Note also the \lstinline{Notation}-syntax, which allows us to define a custom notation,
 making the code easier to read. The expression on the left-hand side of the \lstinline{:=} in quotation marks
@@ -43,6 +44,7 @@ We implement this in Coq using two types, \lstinline{Ninfty} and \lstinline{Fron
 \lstinline{Ninfty} is either a natural number or infinity.
 \lstinline{Frontier} is a function from a string (variable) to \lstinline{Ninfty}.
 
+\begin{minipage}{\linewidth}
 \begin{lstlisting}[language=Coq, label={lst:ninfty_frontier_def}, caption={Def. of \lstinline{Ninfty} and \lstinline{Frontier} in Coq}]
 Inductive Ninfty : Type :=
   | infty : Ninfty
@@ -50,10 +52,12 @@ Inductive Ninfty : Type :=
 
 Definition Frontier := string -> Ninfty.
 \end{lstlisting}
+\end{minipage}
 
 Using these definitions of \lstinline{Atom}, \lstinline{Clause} and \lstinline{Frontier},
 we can define functions that check whether any given atom or clause is satisfied for any frontier.
 
+\begin{minipage}{\linewidth}
 \begin{lstlisting}[language=Coq, label={lst:atom_clause_true_def}, caption={Def. of \lstinline{atom_true} and \lstinline{clause_true} in Coq}]
 Definition atom_true (a : Atom) (f : Frontier) : bool :=
   match a with
@@ -72,9 +76,15 @@ Definition clause_true (c : Clause) (f : Frontier) : bool :=
     else true
   end.
 \end{lstlisting}
+\end{minipage}
+
+The infix function \lstinline{<=?} is the boolean (and decidable) version of the
+Coq function \lstinline{<=}, which uses \lstinline{Prop} and is not decidable without
+additional lemmas/work/proofs (wording?).
 
 We can also define functions that "shift" the number value of atoms or whole clauses by some amount \lstinline{n : nat}.
 
+\begin{minipage}{\linewidth}
 \begin{lstlisting}[language=Coq, label={lst:shift_atom_clause_true}, caption={Def. of \lstinline{shift_atom} and \lstinline{shift_clause} in Coq}]
 Definition shift_atom (n : nat) (a : Atom)  : Atom :=
   match a with
@@ -87,10 +97,12 @@ Definition shift_clause (n : nat) (c : Clause) : Clause :=
     (map (shift_atom n) conds) ~> (shift_atom n conc)
   end.
 \end{lstlisting}
+\end{minipage}
 
 Using these definitions, we can now define an important property that will be used
 later; whether a set of clauses is true for any shift of \lstinline{n : nat}.
 
+\begin{minipage}{\linewidth}
 \begin{lstlisting}[language=Coq, label={lst:all_shifts_true}, caption={Def. of \lstinline{all_shifts_true}}]
 Definition all_shifts_true (c : Clause) (f : Frontier) : bool :=
   match c with
@@ -104,8 +116,8 @@ Definition all_shifts_true (c : Clause) (f : Frontier) : bool :=
       end
   end.
 \end{lstlisting}
+\end{minipage}
 
-\newpage
 \section{Model}
 
 \subsection{\lstinline{sub_model}}
@@ -119,6 +131,7 @@ the set of variables (strings) from the set of clauses, and all changed variable
 The function \lstinline{vars_set_atom} simply returns all the variables used
 in a set of atoms as a set of strings.
 
+\begin{minipage}{\linewidth}
 \begin{lstlisting}[language=Coq, label={lst:sub_model_def}, caption={Def. of \lstinline{sub_model}}]
 Fixpoint sub_model (Cs : set Clause) (V W : set string) (f : Frontier) : bool :=
   match Cs with
@@ -133,6 +146,7 @@ Fixpoint sub_model (Cs : set Clause) (V W : set string) (f : Frontier) : bool :=
     ) && sub_model t V W f
   end.
 \end{lstlisting}
+\end{minipage}
 
 \subsection{\lstinline{geq}}
 
@@ -142,6 +156,7 @@ from another frontier. The values are of the type \lstinline{Ninfty}, and the fu
 only returns true if \textbf{all} the values from the first frontier are greater than
 the values from the second frontier.
 
+\begin{minipage}{\linewidth}
 \begin{lstlisting}[language=Coq, label={lst:geq_def}, caption={Def. of \lstinline{geq}}]
 Fixpoint geq (V : set string) (g f : Frontier) : bool :=
   match V with
@@ -157,13 +172,15 @@ Fixpoint geq (V : set string) (g f : Frontier) : bool :=
     end
   end.
 \end{lstlisting}
+\end{minipage}
 
 \subsection{\lstinline{ex_lfp_geq}}
 
-We can now combine \lstinline{sub_model} and \lstinline{geq} to make a lemma
+We can now combine \lstinline{sub_model} and \lstinline{geq} to construct a lemma
 stating that there exists a frontier \lstinline{g} that is a model of the set of clauses \lstinline{Cs}
 and is greater than or equal to another frontier \lstinline{f}.
 
+\begin{minipage}{\linewidth}
 \begin{lstlisting}[language=Coq, label={lst:ex_lfp_geq_def}, caption={Multiple defs. of \lstinline{ex_lfp_geq}}]
 Lemma ex_lfp_geq_P (Cs : set Clause) (V W : set string) (f : Frontier) : Prop :=
   exists g : Frontier, geq V g f = true /\ sub_model Cs V W g = true.
@@ -175,6 +192,7 @@ Definition ex_lfp_geq_T (Cs : set Clause) (V W : set string) (f : Frontier) : Ty
 Definition ex_lfp_geq_S (Cs : set Clause) (V W : set string) (f : Frontier) : Set :=
   sig (fun g : Frontier => prod (geq V g f = true) (sub_model Cs V W g = true)).
 \end{lstlisting}
+\end{minipage}
 
 One thing to note here is that we can define this lemma either as a \lstinline{Prop} or as a \lstinline{Type}.
 When using \lstinline{Prop}, we define it as a proposition, using standard FOL syntax.
@@ -192,3 +210,33 @@ The reason for defining \lstinline{ex_lfp_geq} as a \lstinline{Type}, is that we
 Coq's extraction feature to generate Haskell code from the Coq definitions.
 Since \lstinline{ex_lfp_geq} plays a central part in the proof of the main theorem,
 it must be defined as a \lstinline{Type} (or as a \lstinline{Set}!) to avoid universe inconsistencies.
+
+\section{Theorem 3.2}
+
+We can now formulate the main theorem, which is theorem 3.2 from the paper (ref.).
+
+\begin{minipage}{\linewidth}
+\begin{lstlisting}[language=Coq, label={lst:thm_32}, caption={Theorem 3.2 in Coq}]
+Definition thm_32 :
+  forall Cs : set Clause,
+  forall n m : nat,
+  forall f : Frontier,
+  forall V W : set string,
+    incl W V ->
+    Datatypes.length (nodup string_dec V) <= n ->
+    Datatypes.length (
+      set_diff string_dec (nodup string_dec V) (nodup string_dec W)
+    ) <= m <= n ->
+    ex_lfp_geq Cs (nodup string_dec W) (nodup string_dec W) f ->
+    ex_lfp_geq Cs (nodup string_dec V) (nodup string_dec V) f.
+Proof.
+    (* ... *)
+Defined.
+\end{lstlisting}
+\end{minipage}
+
+The type annotations for the universal quantifiers are added for clarity; they could all be combined
+into to one \lstinline{forall} and the type annotiations could be removed.
+Note the use of \lstinline{Definition} instead of \lstinline{Lemma} or \lstinline{Theorem}.
+This is for the same reason as with \lstinline{ex_lfp_geq}, namely that we want to be able to extract
+Haskell code from the definition.

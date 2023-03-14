@@ -25,11 +25,13 @@ Unlike a set, a list \textit{can} contain more than one of the same element, and
 specific order.
 List also has a simple definition, but it is also a formal one. The definition from Coq's standard library is as follows:
 
+\begin{minipage}{\linewidth}
 \begin{lstlisting}[language=Coq, label={lst:list_def}, caption={Def. of a list in Coq}]
 Inductive list {A : Type} : list A :=
     | nil : list
     | cons : A -> list -> list.
 \end{lstlisting}
+\end{minipage}
 
 Using the \lstinline[language=Coq]{cons} constructor, we can easily define any list containing any elements of the same type;
 we can even have lists of lists.
@@ -67,6 +69,7 @@ This makes them decidable, but it also requires the equality of the underlying t
 A proof of the decidability of the underlying type must be supplied as an argument to all the functions.
 An example of such a proof for the \lstinline[language=Coq]{string} type would be:
 
+\begin{minipage}{\linewidth}
 \begin{lstlisting}[language=Coq, label={lst:string_eq_dec}, caption={Decidability proof for string equality in Coq}]
 Lemma string_eq_dec :
     forall x y : string, {x = y} + {x <> y}.
@@ -74,6 +77,7 @@ Proof.
     (* proof goes here *)
 Admitted.
 \end{lstlisting}
+\end{minipage}
 
 These proofs are often given for the standard types in Coq such as \lstinline[language=Coq]{nat},
 \lstinline[language=Coq]{bool} and \lstinline[language=Coq]{string}.
@@ -85,18 +89,21 @@ Many of these set functions, such as \lstinline[language=Coq]{set_union},
 take in two sets as arguments and pattern match on the structure of one of them.
 For example, \lstinline[language=Coq]{set_union} pattern matches on the second set given as an argument.
 This makes proofs where we destruct or use induction on the second argument easy, such as this example:
+
+\begin{minipage}{\linewidth}
 \begin{lstlisting}[language=Coq, label={lst:set_op_ex1}, caption={Easy proof of lemma in \lstinline{ListSet}}]
-
 (* example 1 *)
-
 \end{lstlisting}
+\end{minipage}
 
 The downside is that even easy and seamingly trivial proofs that reason about the other argument are frustratingly hard,
 for example:
 
+\begin{minipage}{\linewidth}
 \begin{lstlisting}[language=Coq, label={lst:set_op_ex2}, caption={Hard proof of lemma in \lstinline{ListSet}}]
 (* example 2 *)
 \end{lstlisting}
+\end{minipage}
 
 This helps us deal with duplicates, but that still leaves us with the problem of order of elements in the list.
 The \textbf{ListSet} module gives us no concrete way to combat this, but there are ways to circumvent the problem.
@@ -138,6 +145,5 @@ size of the set.
 \subsection{finset}
 
 If we venture past Coq's standard library and into the \textit{Mathematical Components} library, we find the \textbf{finset} module.
-
 
 \section{Prop vs. Bool}

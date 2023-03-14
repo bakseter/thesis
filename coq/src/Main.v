@@ -24,23 +24,6 @@ Require Import Geq. Import Geq.
 Require Import Model. Import Model.
 Require Import Ninfty. Import Ninfty.
 
-Definition pred_P (Cs : set Clause) (n m : nat) : Type :=
-  forall f : Frontier, forall V W : set string,
-    incl W V ->
-    Datatypes.length (nodup string_dec V) <= n ->
-    Datatypes.length (set_diff string_dec (nodup string_dec V) (nodup string_dec W)) <= m <= n ->
-    ex_lfp_geq Cs (nodup string_dec W) (nodup string_dec W) f ->
-    ex_lfp_geq Cs (nodup string_dec V) (nodup string_dec V) f.
-
-Lemma pred_P_downward (Cs : set Clause) :
-  forall n m n' m',
-    pred_P Cs n m ->
-    n' <= n ->
-    m' <= m ->
-    pred_P Cs n' m'.
-Proof.
-Admitted.
-
 Definition lem_33 (Cs : set Clause) (V W : set string) (f : Frontier) :
   (* subject to change *)
   incl W V ->
@@ -49,21 +32,32 @@ Definition lem_33 (Cs : set Clause) (V W : set string) (f : Frontier) :
 Proof.
 Admitted.
 
-Definition thm_32 (Cs : set Clause) :
-  forall n m, pred_P Cs n m.
+Definition thm_32 :
+  forall Cs : set Clause,
+  forall n m : nat,
+  forall f : Frontier,
+  forall V W : set string,
+    incl W V ->
+    Datatypes.length (nodup string_dec V) <= n ->
+    Datatypes.length (
+      set_diff string_dec (nodup string_dec V)(nodup string_dec W)
+    ) <= m <= n ->
+    ex_lfp_geq Cs (nodup string_dec W) (nodup string_dec W) f ->
+    ex_lfp_geq Cs (nodup string_dec V) (nodup string_dec V) f.
 Proof.
   induction n as [|n IHn].
-  - intros. unfold pred_P. intros. unfold ex_lfp_geq in *.
+  - intros. unfold ex_lfp_geq in *.
     exists f. split. apply geq_refl. apply le_0_r in H0.
     apply length_zero_iff_nil in H0. rewrite H0.
     apply sub_model_W_empty.
   - induction m as [|m IHm].
-    + unfold pred_P in *. intros. apply (ex_lfp_geq_incl Cs (nodup string_dec V) (nodup string_dec W));
+    + intros.
+      apply (ex_lfp_geq_incl Cs (nodup string_dec V) (nodup string_dec W));
       try assumption. destruct H1. apply le_0_r in H1.
       apply length_zero_iff_nil in H1.
       apply set_diff_nil_incl in H1. assumption.
-    + unfold pred_P in *. intros.
-      inversion H1. apply le_lt_eq_dec in H3. destruct H3.
+    + intros. inversion H1.
+      apply le_lt_eq_dec in H3. destruct H3.
       * apply (IHm f V W); try assumption. lia.
       * apply (ex_lfp_geq_nodup_iff) in H2.
         assert (Datatypes.length (nodup string_dec W) <= n).

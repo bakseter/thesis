@@ -69,7 +69,6 @@
 
 % lstlisting coq style (inspired from a file of Assia Mahboubi)
 \lstdefinelanguage{Coq}{
-    numbers=left,
     tabsize=1,
     % Anything betweeen $ becomes LaTeX math mode
     mathescape=true,
@@ -168,15 +167,13 @@
     {\\mapsto}{{$\mapsto\;$}}1
     {\\hline}{{\rule{\linewidth}{0.5pt}}}1
     {~>}{{$\leadsto\;$}}1
+    {<=}{{$\leq\;$}}1
     %
 }[keywords,comments,strings]
 
 \lstset{
-    frame=single,
     basicstyle=\linespread{0.8}\footnotesize\ttfamily,
     keywordstyle=\color{red},
-    numbers=left,
-    numbersep=5pt,
     showstringspaces=false,
     stringstyle=\color{blue},
     commentstyle=\color{gray},
@@ -184,5 +181,7 @@
     breaklines=true,
     postbreak=\mbox{\textcolor{violet}{$\hookrightarrow$}\space},
     tabsize=4,
-    language=Coq
+    language=Coq,
+    xleftmargin=0.5cm,
+    abovecaptionskip=0.5cm
 }
