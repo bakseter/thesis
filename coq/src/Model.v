@@ -185,7 +185,8 @@ Module Model.
   Lemma sub_model_update_infty_V (Cs : set Clause) (V : set string) (f : Frontier) :
     sub_model Cs V V (update_infty_V V f) = true.
   Proof.
-    induction V as [|h t].
+    generalize dependent f.
+    induction V as [|h t]; intros.
     - unfold update_infty_V. simpl.
       assert ((fun x : string => f x) = f).
       + apply functional_extensionality. intros. reflexivity.
@@ -195,12 +196,9 @@ Module Model.
       + induction Cs as [|c Cs]; try reflexivity.
         destruct c as [l [x k]]. unfold sub_model. fold sub_model.
         apply andb_true_iff. split.
-        * rewrite orb_true_iff. right.
+        * repeat rewrite orb_true_iff. right.
           unfold sub_model in IHt. fold sub_model in IHt.
-          apply andb_true_iff in IHt. destruct IHt as [IHt1 IHt2].
-          rewrite orb_true_iff in IHt1. destruct IHt1.
-          -- admit.
-          -- admit.
+          admit.
         * apply IHCs. unfold sub_model in IHt. fold sub_model in IHt.
           apply andb_true_iff in IHt. destruct IHt as [IHt1 IHt2].
           apply IHt2.

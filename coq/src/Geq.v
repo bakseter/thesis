@@ -6,7 +6,6 @@ From Coq Require Import Lists.List. Import ListNotations.
 From Coq Require Import Lists.ListSet.
 From Coq Require Import Strings.String.
 From Coq Require Import Logic.FunctionalExtensionality.
-From Coq Require Import Setoids.Setoid.
 Require Import Frontier. Import Frontier.
 Require Import Clause. Import Clause.
 Require Import Ninfty. Import Ninfty.

@@ -6,14 +6,20 @@
 
 \subsection{Proofs}
 
-When solving mathematical problems, one often uses proofs
-to justify some claim. We can group proofs into two types; \textit{informal} and \textit{formal} proofs.
+When solving mathematical problems, we often use proofs
+to either \textbf{warrant} a claim or to \textbf{explain} why the claim is true.
+We can group proofs into two types; \textit{informal} and \textit{formal} proofs.
+
+Traditional informal proofs emphasize the latter, and they take for grated that this is sufficent from the former.
+Formal proofs on the other hand, ??? on the former; depending on the formalism used they have some
+explanatory merit as well.
 
 An informal proof is often written in a natural language, and the proof is adequate if most
 readers are convinced by the proof \cite{bpierce}.
-As a proof grows larger and more complex, it becomes harder to follow, which can
-ultimately lead to errors in the proof's reasoning. This might cause the whole proof
-to be incorrect \cite{rkhamsi}.
+
+As proofs grows larger and more complex, they becomes harder to follow, which can
+ultimately lead to errors in the proofs' reasoning. This might cause the whole proof
+to be incorrect \cite{rkhamsi}, and even the result of the proof might be wrong.
 
 A formal proof is written in a formal language, and can be compared to a computer program
 written in a programming language. Writing a formal proof is more difficult than writing an informal proof.
@@ -25,10 +31,14 @@ Similarily to data types in computer programming, we can use types to represent 
 objects. For example, we can use the data type \texttt{nat} to represent natural numbers.
 
 \subsection{Propositions as types}
-The concept of propositions as types sees the proving of a mathematical proposition
+
+% https://homepages.inf.ed.ac.uk/wadler/papers/propositions-as-types/propositions-as-types.pdf
+
+The concept of propositions as types sees proving a mathematical proposition
 as the same process as constructing a value of that type.
 For example, to prove a proposition $P$ which states "all integers are the sum of four squares",
 we must construct a value of the type $P$ that shows that this is true for all integers.
+Such a value is a function that for any input $n$ returns a proof that $n$ is the sum of four squares.
 Proofs are mathematical objects; thus a proposition can be viewed as having the type of all its proofs (if any!).
 We can use this correspondance to model a proof as a typed computer program.
 The power of this concept comes from the fact that we can use a type checker to verify that
@@ -37,7 +47,7 @@ our program is typed correctly, and thus that the corresponding proof is valid.
 
 \section{Proof assistants}
 
-Using a \textit{proof assistant}, we can verify a formal proof mechanically.
+Using a \textit{proof assistant}, we can get computer support for continuity and verify a formal proof mechanically.
 
 \subsection{Coq}
 \textit{Coq} is an example of a proof assistant.

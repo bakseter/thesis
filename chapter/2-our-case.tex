@@ -1,8 +1,8 @@
 \chapter{Our case}
 
-We will use the Coq proof assistant to formalize parts of the proofs of the following paper, \citeauthor{mbezem} \cite{mbezem}.
+We have used the Coq proof assistant to formalize parts of the proofs of the following paper, \citeauthor{mbezem} \cite{mbezem}.
 This paper solves two problems that occur in dependent type systems where typings depend
-on universe-level constraints. Since this proof is complex enough that mistakes are possible
-it is a good candidate for formalization. We can also use this process to gain further insight
-into the algorithm that lies behind the proof. It might also be interesting to use Coq to
-extract programs from the final proofs.
+on universe-level constraints. We focused on formalizing the proof of theorem 3.2 from the paper.
+Since this proof is complex enough that mistakes are possible, it was a good candidate for formalization.
+It also has direct applications to the formalization and verification of the \lstinline{Coq} proof assistant itself,
+since the algorithm outlined in the proof is being tested [ref to coq/metacoq github?] for use in checking loops in Coqs type system.
