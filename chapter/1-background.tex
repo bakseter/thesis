@@ -1,7 +1,5 @@
 \chapter{Background}
 
-% https://www.ams.org/notices/200811/200811FullIssue.pdf
-
 \section{Formalizing Mathematical Problems}
 
 \subsection{Proofs}
@@ -10,19 +8,23 @@ When solving mathematical problems, we often use proofs
 to either \textbf{warrant} a claim or to \textbf{explain} why the claim is true.
 We can group proofs into two types; \textit{informal} and \textit{formal} proofs.
 
-Traditional informal proofs emphasize the latter, and they take for grated that this is sufficent from the former.
-Formal proofs on the other hand, ??? on the former; depending on the formalism used they have some
-explanatory merit as well.
+% Traditional informal proofs emphasize the latter, and they take for grated that this is sufficent from the former.
+% Formal proofs on the other hand, ??? on the former; depending on the formalism used they have some
+% explanatory merit as well.
 
 An informal proof is often written in a natural language, and the proof is adequate if most
-readers are convinced by the proof \cite{bpierce}.
-
-As proofs grows larger and more complex, they becomes harder to follow, which can
-ultimately lead to errors in the proofs' reasoning. This might cause the whole proof
+readers are convinced by the proof \cite{bpierce}. They rely heavily on the readers intuition
+and often omit logical steps, so as to make them easier to understand for humans \cite{ams:formal-proof}.
+As these proofs grow larger and more complex, they becomes harder for humans to follow,
+which can ultimately lead to errors in the proofs' reasoning. This might cause the whole proof
 to be incorrect \cite{rkhamsi}, and even the result of the proof might be wrong.
 
 A formal proof is written in a formal language, and can be compared to a computer program
 written in a programming language. Writing a formal proof is more difficult than writing an informal proof.
+Formal proofs include every logical step, and nothing is left for the reader to assume.
+This can make them extremely verbose, but the amount of logical errors are reduced \cite{ams:formal-proof}.
+
+\subsection{Formalization}
 
 \section{Type theory}
 
@@ -44,14 +46,73 @@ We can use this correspondance to model a proof as a typed computer program.
 The power of this concept comes from the fact that we can use a type checker to verify that
 our program is typed correctly, and thus that the corresponding proof is valid.
 
-
 \section{Proof assistants}
 
 Using a \textit{proof assistant}, we can get computer support for continuity and verify a formal proof mechanically.
 
 \subsection{Coq}
-\textit{Coq} is an example of a proof assistant.
-Coq uses type theory to formulate and verify proofs, but can also be used as a functional programming language \cite{cintro}.
+Coq is based on the higher-order type theory \textit{Calculus of Inductive Constructions} (CoC), and
+functions as both a proof assistant and a functional programming language.
+Coq also allows us to extract certified programs from the proofs of their specification to
+the programming langauges OCaml and Haskell \cite{cintro}.
+Coq implements a specification language called \textit{Gallina}, which is
+- an extension of CoC? or based on CoC?
+- used to define terms?
+- something else?
+
+This is an example of the syntax of Gallina:
+
+\begin{minipage}{\linewidth}
+\begin{lstlisting}[language=Coq, label={lst:gallina_ex}, caption={Example of Gallina syntax}]
+Inductive nat : set :=
+| O
+| S : nat -> nat.
+
+Definition lt_n_S_n :=
+  (fun n : nat => le_n (S n)) : forall n : nat, n < S n.
+\end{lstlisting}
+\end{minipage}
+
+Looking at the final definition in the example, we can see the
+concept of propositions as types in action.
+\lstinline{lt_n_S_n} defines a function which takes a natural number \lstinline{n}
+as input, and returns a value of the type \lstinline{forall n : nat, n < S n},
+denoted by the colon before the type itself.
+The return value is therefore a proof of \lstinline{forall n : nat, n < S n}, and since
+the definition has been type-checked by Coq, we know that this proof is valid!
+In this case, the function is
+\lstinline{fun : nat => le_s (S n)}, where \lstinline{le_n} is a constructor
+of the type \lstinline{forall n : nat, n <= n}. By applying this constructor
+to \lstinline{S n}, we get a value of the type (and a proof) of
+\lstinline{forall n : nat, S n <= S n}. By Coq's definition of \lstinline{<},
+our initial theorem can be rewritten as \lstinline{forall n : nat, S n <= S n}.
+This matches the type of our function, and the proof is complete.
+
+Proving theorems like this is not really intutive for a human prover,
+and that is why Coq gives us the \textit{Ltac} meta-language.
+Ltac provides us with tactics, which are shorthand syntax for defining Gallina terms (reword, is this correct?) \cite{cltac}.
+Using Ltac, we can rewrite the proof from \ref{lst:gallina_ex} as such:
+
+\begin{minipage}{\linewidth}
+\begin{lstlisting}[language=Coq, label={lst:ltac_ex}, caption={Example of Ltac syntax}]
+Theorem lt_n_S_n : forall n : nat, n < S n.
+Proof.
+  intro n. destruct n.
+  - apply le_n.
+  - apply le_n_S. apply le_n.
+Qed.
+\end{lstlisting}
+\end{minipage}
+
+When developing proofs using Ltac, each tactic is executed or "played" one by one,
+much like an interpreter. The tactics are separated by punctuation marks.
+When the use of a tactic causes the proof to depend on the solving of multiple sub-proofs (called "goals"),
+we can use symbols like "-", "+", and "*" to branch into these sub-proofs and solve their goals independently.
+Once a goal has been solved, we can move on the the next. When there are no more goals, the proof is complete.
+Coq provides us with tooling that gives us the ability to see our goals and the proof state
+to further simplify the process \cite{cide}.
+Ltac is not the only tactic langauge, with another example being \textit{SSReflect} \cite{cssr}.
+
 
 \subsection{Agda}
 
