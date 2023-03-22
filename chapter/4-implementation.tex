@@ -80,7 +80,7 @@ Definition clause_true (c : Clause) (f : Frontier) : bool :=
 
 The infix function \lstinline{<=?} is the boolean (and decidable) version of the
 Coq function \lstinline{<=}, which uses \lstinline{Prop} and is not decidable without
-additional lemmas/work/proofs (wording?).
+additional lemmas/work/proofs \textcolor{red}{(wording?)}.
 
 We can also define functions that "shift" the number value of atoms or whole clauses by some amount \lstinline{n : nat}.
 
@@ -123,7 +123,7 @@ Definition all_shifts_true (c : Clause) (f : Frontier) : bool :=
 \subsection{\lstinline{sub_model}}
 
 Given any set of clauses and a function assigning values to the variables,
-we can determine if this is a valid model (reword?).
+we can determine if this is a valid model \textcolor{red}{(reword?)}.
 
 We translate this propery to Coq as the recursive function \lstinline{sub_model}.
 We have two additional arguments \lstinline{V} and \lstinline{W}; these are

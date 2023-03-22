@@ -49,7 +49,7 @@ We do not need to give Coq any more information about the properties of the unde
 
 The \textbf{List} module also gives us a tool to combat the possibility of duplicates in a list,
 with \lstinline{NoDup} and \lstinline{nodup}.
-\lstinline{NoDup} is an inductively defined proposition that gives evidence (?)
+\lstinline{NoDup} is an inductively defined proposition that gives evidence \textcolor{red}{(is this correct?)}
 on whether a list has duplicates or not.
 \lstinline{nodup} is a function that takes in a list and returns a list without duplicates.
 These two can be used effectively in proofs since we still keep the underlying list type,
@@ -127,7 +127,7 @@ This implementation is a bit more complicated than the previous one,
 but gives us more guarantees about the properties of the set.
 The module is expressed as a functor, which in this case is a "function" that takes in a module as an argument, and again returns a module.
 The module we give to the functor must define some basic properties about the type we want to create a set of,
-namely equality, decidability of equality and the equivalence relation of (on?) equality.
+namely equality, decidability of equality and the equivalence relation of \textcolor{red}{(or on?)} equality.
 The output from the functor is a module containing functions and lemmas about set operations,
 with our input type being the type of the elements of the set.
 

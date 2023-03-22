@@ -46,27 +46,67 @@ We can use this correspondance to model a proof as a typed computer program.
 The power of this concept comes from the fact that we can use a type checker to verify that
 our program is typed correctly, and thus that the corresponding proof is valid.
 
+\subsection{Depedenent types}
+
+\textcolor{red}{(should redo this section probably, too early for Coq example? also find source)}
+
+In most programming languages, the data type of a variable does not indicate anything about the value of the variable.
+Dependent types allows us to define types which depend on the value of the type itself.
+
+Example:
+
+\begin{minipage}{\linewidth}
+\begin{lstlisting}[language=Coq, label={lst:dep_type_le}, caption={Def. of \lstinline{le} in Coq, using dependent types}]
+Inductive le : nat -> nat -> Prop :=
+  | le_n : forall n, le n n
+  | le_S : forall n m, le n m -> le n (S m).
+\end{lstlisting}
+\end{minipage}
+
+Here, the type \lstinline{le} has two constructors which depend on the value of the two arguments given to the type.
+Two natural numbers satisfies the definition of \lstinline{le} if
+\begin{enumerate}
+    \item they are the same number
+    \item the second number is a successor of \lstinline{m},
+        provided that the first number is less than or equal to \lstinline{m}
+\end{enumerate}
+
+Both constructors thus depend on the value of the input;
+we can check whether the definition holds by repeatedly applying
+either of the two constructors. If we have done every combination of
+application and we are still left with a term that can no longer be reduced,
+we can conclude that the first number is \textbf{not} less than or equal to the second number.
+
 \section{Proof assistants}
 
-Using a \textit{proof assistant}, we can get computer support for continuity and verify a formal proof mechanically.
+Propositions as types allows us to bridge the gap between logic and computing,
+while dependent types allows us to define more rigorous types which depends on values.
+The former is a crucial aspect of \textit{proof assistants}, while the latter gives
+us more expressive power when constructing proofs using a proof assistant.
+The purpose of a proof assistant is to get computer support for continuity and verify a formal proof mechanically.
 
 \subsection{Coq}
 Coq is based on the higher-order type theory \textit{Calculus of Inductive Constructions} (CoC), and
-functions as both a proof assistant and a functional programming language.
+functions as both a proof assistant and a dependently typed functional programming language.
 Coq also allows us to extract certified programs from the proofs of their specification to
 the programming langauges OCaml and Haskell \cite{cintro}.
 Coq implements a specification language called \textit{Gallina}, which is
-- an extension of CoC? or based on CoC?
-- used to define terms?
-- something else?
+
+\textcolor{red}{
+    \begin{itemize}
+        \item an extension of CoC? or based on CoC?
+        \item used to define terms?
+        \item something else?
+    \end{itemize}
+}
 
 This is an example of the syntax of Gallina:
 
 \begin{minipage}{\linewidth}
 \begin{lstlisting}[language=Coq, label={lst:gallina_ex}, caption={Example of Gallina syntax}]
-Inductive nat : set :=
-| O
-| S : nat -> nat.
+Inductive nat : Type :=
+  | O
+  | S : nat -> nat.
 
 Definition lt_n_S_n :=
   (fun n : nat => le_n (S n)) : forall n : nat, n < S n.
@@ -89,8 +129,8 @@ our initial theorem can be rewritten as \lstinline{forall n : nat, S n <= S n}.
 This matches the type of our function, and the proof is complete.
 
 Proving theorems like this is not really intutive for a human prover,
-and that is why Coq gives us the \textit{Ltac} meta-language.
-Ltac provides us with tactics, which are shorthand syntax for defining Gallina terms (reword, is this correct?) \cite{cltac}.
+and that is why Coq gives us the \textit{Ltac} meta-language for writing proofs.
+Ltac provides us with tactics, which are shorthand syntax for defining Gallina terms \textcolor{red}{(is this correct?) \cite{cltac}.
 Using Ltac, we can rewrite the proof from \ref{lst:gallina_ex} as such:
 
 \begin{minipage}{\linewidth}
@@ -111,7 +151,7 @@ we can use symbols like "-", "+", and "*" to branch into these sub-proofs and so
 Once a goal has been solved, we can move on the the next. When there are no more goals, the proof is complete.
 Coq provides us with tooling that gives us the ability to see our goals and the proof state
 to further simplify the process \cite{cide}.
-Ltac is not the only tactic langauge, with another example being \textit{SSReflect} \cite{cssr}.
+Ltac is not the only proof langauge, with another example being \textit{SSReflect} \cite{cssr}.
 
 
 \subsection{Agda}

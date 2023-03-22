@@ -200,8 +200,8 @@ Module Model.
           unfold sub_model in IHt. fold sub_model in IHt.
           admit.
         * apply IHCs. unfold sub_model in IHt. fold sub_model in IHt.
-          apply andb_true_iff in IHt. destruct IHt as [IHt1 IHt2].
-          apply IHt2.
+          setoid_rewrite andb_true_iff in IHt. intros.
+          destruct (IHt f0) as [IHt1 IHt2]. apply IHt2.
   Admitted.
 
   Example sub_model_test1 :
