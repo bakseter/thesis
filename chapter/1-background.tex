@@ -14,8 +14,8 @@ We can group proofs into two types; \textit{informal} and \textit{formal} proofs
 
 An informal proof is often written in a natural language, and the proof is adequate if most
 readers are convinced by the proof \cite{bpierce}. They rely heavily on the readers intuition
-and often omit logical steps, so as to make them easier to understand for humans \cite{ams:formal-proof}.
-As these proofs grow larger and more complex, they becomes harder for humans to follow,
+and often omit logical steps to make them easier to understand for humans \cite{ams:formal-proof}.
+As these proofs grow larger and more complex, they become harder for humans to follow,
 which can ultimately lead to errors in the proofs' reasoning. This might cause the whole proof
 to be incorrect \cite{rkhamsi}, and even the result of the proof might be wrong.
 
@@ -46,12 +46,12 @@ We can use this correspondance to model a proof as a typed computer program.
 The power of this concept comes from the fact that we can use a type checker to verify that
 our program is typed correctly, and thus that the corresponding proof is valid.
 
-\subsection{Depedenent types}
+\subsection{Dependent types}
 
 \textcolor{red}{(should redo this section probably, too early for Coq example? also find source)}
 
 In most programming languages, the data type of a variable does not indicate anything about the value of the variable.
-Dependent types allows us to define types which depend on the value of the type itself.
+Dependent types allow us to define types which depend on the value of the type itself.
 
 Example:
 
@@ -74,13 +74,13 @@ Two natural numbers satisfies the definition of \lstinline{le} if
 Both constructors thus depend on the value of the input;
 we can check whether the definition holds by repeatedly applying
 either of the two constructors. If we have done every combination of
-application and we are still left with a term that can no longer be reduced,
+application, and we are still left with a term that can no longer be reduced,
 we can conclude that the first number is \textbf{not} less than or equal to the second number.
 
 \section{Proof assistants}
 
-Propositions as types allows us to bridge the gap between logic and computing,
-while dependent types allows us to define more rigorous types which depends on values.
+Propositions as types allow us to bridge the gap between logic and computing,
+while dependent types allow us to define more rigorous types which depends on values.
 The former is a crucial aspect of \textit{proof assistants}, while the latter gives
 us more expressive power when constructing proofs using a proof assistant.
 The purpose of a proof assistant is to get computer support for continuity and verify a formal proof mechanically.
@@ -88,7 +88,7 @@ The purpose of a proof assistant is to get computer support for continuity and v
 \subsection{Coq}
 Coq is based on the higher-order type theory \textit{Calculus of Inductive Constructions} (CoC), and
 functions as both a proof assistant and a dependently typed functional programming language.
-Coq also allows us to extract certified programs from the proofs of their specification to
+Coq also allow us to extract certified programs from the proofs of their specification to
 the programming langauges OCaml and Haskell \cite{cintro}.
 Coq implements a specification language called \textit{Gallina}, which is
 
@@ -145,10 +145,10 @@ Qed.
 \end{minipage}
 
 When developing proofs using Ltac, each tactic is executed or "played" one by one,
-much like an interpreter. The tactics are separated by punctuation marks.
+much like an interpreter. The tactics are seperated by punctuation marks.
 When the use of a tactic causes the proof to depend on the solving of multiple sub-proofs (called "goals"),
 we can use symbols like "-", "+", and "*" to branch into these sub-proofs and solve their goals independently.
-Once a goal has been solved, we can move on the the next. When there are no more goals, the proof is complete.
+Once a goal has been solved, we can move on the next. When there are no more goals, the proof is complete.
 Coq provides us with tooling that gives us the ability to see our goals and the proof state
 to further simplify the process \cite{cide}.
 Ltac is not the only proof langauge, with another example being \textit{SSReflect} \cite{cssr}.

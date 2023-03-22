@@ -50,13 +50,13 @@ We do not need to give Coq any more information about the properties of the unde
 The \textbf{List} module also gives us a tool to combat the possibility of duplicates in a list,
 with \lstinline{NoDup} and \lstinline{nodup}.
 \lstinline{NoDup} is an inductively defined proposition that gives evidence \textcolor{red}{(is this correct?)}
-on whether a list has duplicates or not.
+of whether a list has duplicates or not.
 \lstinline{nodup} is a function that takes in a list and returns a list without duplicates.
 These two can be used effectively in proofs since we still keep the underlying list type,
 but we also gain additional information about whether the list has duplicates or not.
 
 Having just the implementation of the set structure is rarely enough; we also want to do operations on the set, and reason about these.
-That is were the \textbf{ListSet} module comes in, which defines a new type called \lstinline{set}.
+That is where the \textbf{ListSet} module comes in, which defines a new type called \lstinline{set}.
 This type is just an alias for the \lstinline{list} type from the \textbf{List} module,
 but the module also contains some useful functions.
 Most of these functions treat the input as a set in the traditional sense,
