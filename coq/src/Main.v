@@ -44,7 +44,7 @@ Proof.
         -- apply n. assumption.
 Qed.
 
-Definition pre_thm (Cs : set Clause) (V W : set string) (f : Frontier) (n m : nat) : Type :=
+Definition pre_thm (Cs : set Clause) (V W : set string) (f : Frontier) (n m : nat) :=
   incl W V ->
   Datatypes.length (nodup string_dec V) <= n ->
   Datatypes.length
@@ -77,14 +77,18 @@ the premiss.
 
 Matthieu Sozeau has a formal proof of termination in this case. *)
 
-Definition lem_33 (Cs : set Clause) (V W : set string) (f : Frontier) (m : nat) :
-  pre_thm Cs V W f (Datatypes.length (nodup string_dec V) - 1) m ->
-  incl W V ->
-  ex_lfp_geq Cs (nodup string_dec W) (nodup string_dec W) f ->
-  ex_lfp_geq Cs (nodup string_dec V) (nodup string_dec W) f.
+Lemma lem_33 :
+  forall Cs : set Clause,
+  forall V W : set string,
+  forall f : Frontier,
+  forall m : nat,
+    pre_thm Cs V W f (Datatypes.length (nodup string_dec V) - 1) m ->
+    incl W V ->
+    ex_lfp_geq Cs (nodup string_dec W) (nodup string_dec W) f ->
+    ex_lfp_geq Cs (nodup string_dec V) (nodup string_dec W) f.
 Admitted.
 
-Definition thm_32 :
+Theorem thm_32 :
   forall Cs : set Clause,
   forall n m : nat,
   forall f : Frontier,
@@ -228,7 +232,7 @@ Proof.
              apply conj; try lia. rewrite nodup_rm in H8.
              lia.
           -- rewrite nodup_rm. assumption.
-Defined.
+Qed.
 
 (* a -> a *)
 

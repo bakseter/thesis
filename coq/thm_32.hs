@@ -312,7 +312,9 @@ sub_vars_improvable cs v w f =
             ((Prelude.==) :: Prelude.String -> Prelude.String -> Prelude.Bool)
             x (sub_vars_improvable t v w f)}}}}
 
-type Ex_lfp_geq = Frontier
+type Ex_lfp_geq_S = Frontier
+
+type Ex_lfp_geq = Ex_lfp_geq_S
 
 ex_lfp_geq_incl :: (Set Clause0) -> (Set Prelude.String) -> (Set
                    Prelude.String) -> Frontier -> Ex_lfp_geq -> Ex_lfp_geq
