@@ -24,12 +24,63 @@ Require Import Geq. Import Geq.
 Require Import Model. Import Model.
 Require Import Ninfty. Import Ninfty.
 
+Lemma infty_in_V_dec (V : set string) (f : Frontier) :
+  {exists v, In v V /\ f v = infty} +
+  {forall v, In v V -> f v <> infty}.
+Proof.
+  induction V as [|h t]; simpl.
+  - right. intros. contradiction.
+  - destruct IHt.
+    + left. destruct e. exists x. split.
+      * right. apply H.
+      * apply H.
+    + destruct (f h) eqn:Hfh.
+      * left. exists h.
+        split; try assumption.
+        left. reflexivity.
+      * right. intros. destruct H.
+        -- subst. unfold not. intros.
+           rewrite H in Hfh. discriminate.
+        -- apply n. assumption.
+Qed.
+
+(* informal proof sketch, cf. TCS note.
+Given Cs, V, W, and f, distinguish the following cases:
+
+1. Some v in V has f(v)=Infty. Then we can simplify Cs
+by eliminating all clauses with v in the conclusion, and
+simplifying clauses by eliminating atoms with v in the premiss.
+It may be that the premiss of a clause becomes empty, in which
+case we know that also the variable in the conclusion is Infty.
+We continue this process until the clause set cannot be simplified
+any more. Call the remaining clause set Cs', with variables in V',
+which is a strict subset of V. Now apply the first condition of
+lem33 to Cs', V'and W' empty to get a model of Cs' restricted to V'.
+Then we can extend this with value Infty for variables in V\V'
+to a model of Cs restricted to V.
+
+2. Not 1, so f: V->N. Now we can apply the method from the TCS note
+and termination is guaranteed since variables in V-W have values in N
+which do not change, and "bound" clauses having such a variable in
+the premiss.
+
+Matthieu Sozeau has a formal proof of termination in this case. *)
+
 Definition lem_33 (Cs : set Clause) (V W : set string) (f : Frontier) :
-  (* subject to change *)
+  (forall (m : nat) (f' : Frontier) (V' W' : set string),
+      incl W' V' ->
+      Datatypes.length (nodup string_dec V') < Datatypes.length (nodup string_dec V) ->
+      Datatypes.length
+        (set_diff string_dec (nodup string_dec V') (nodup string_dec W')) <=
+      m < Datatypes.length (nodup string_dec V) ->
+      ex_lfp_geq Cs (nodup string_dec W') (nodup string_dec W') f' ->
+      ex_lfp_geq Cs (nodup string_dec V') (nodup string_dec V') f'
+  ) ->
   incl W V ->
   ex_lfp_geq Cs (nodup string_dec W) (nodup string_dec W) f ->
   ex_lfp_geq Cs (nodup string_dec V) (nodup string_dec W) f.
 Proof.
+  intros. destruct (infty_in_V_dec V f).
 Admitted.
 
 Definition thm_32 :
@@ -142,15 +193,12 @@ Proof.
                 eapply (IHm h' V (nodup string_dec (set_union string_dec W U)));
                 try assumption.
                 ** apply conj; try lia. inversion H14.
-                   apply le_lt_eq_dec in H16. destruct H16.
-                   --- rewrite nodup_rm. rewrite set_diff_nodup_eq in *.
-                       rewrite <- length_set_diff_set_union_nodup_l.
-                       lia.
-                   --- rewrite nodup_rm. rewrite set_diff_nodup_eq in *.
-                       rewrite <- length_set_diff_set_union_nodup_l.
-                       lia.
-                ** apply (IHn n h' (nodup string_dec (set_union string_dec W U)) []).
-                   --- apply incl_nil_l.
+                   apply le_lt_eq_dec in H16. destruct H16;
+                   rewrite nodup_rm; rewrite set_diff_nodup_eq in *;
+                   rewrite <- length_set_diff_set_union_nodup_l;
+                   lia.
+                ** apply (IHn n h' (nodup string_dec (set_union string_dec W U)) []);
+                   try apply incl_nil_l.
                    --- assert (Datatypes.length (nodup string_dec V) <= Datatypes.length V).
                        {
                          apply NoDup_incl_length. apply NoDup_nodup.
@@ -180,6 +228,8 @@ Proof.
                 ** eapply geq_trans with h; try assumption.
                    rewrite <- H12.
                    apply geq_Sinfty_f2.
+          -- intros. apply (IHn m0 f' V' W');
+             try assumption; try lia.
           -- rewrite nodup_rm. assumption.
 Defined.
 
