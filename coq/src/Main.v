@@ -44,6 +44,17 @@ Proof.
         -- apply n. assumption.
 Qed.
 
+Definition pre_thm (Cs : set Clause) (V W : set string) (f : Frontier) (n m : nat) : Type :=
+  incl W V ->
+  Datatypes.length (nodup string_dec V) <= n ->
+  Datatypes.length
+    (set_diff string_dec
+      (nodup string_dec V)
+      (nodup string_dec W)
+    ) <= m <= n ->
+  ex_lfp_geq Cs (nodup string_dec W) (nodup string_dec W) f ->
+  ex_lfp_geq Cs (nodup string_dec V) (nodup string_dec V) f.
+
 (* informal proof sketch, cf. TCS note.
 Given Cs, V, W, and f, distinguish the following cases:
 
@@ -66,21 +77,11 @@ the premiss.
 
 Matthieu Sozeau has a formal proof of termination in this case. *)
 
-Definition lem_33 (Cs : set Clause) (V W : set string) (f : Frontier) :
-  (forall (m : nat) (f' : Frontier) (V' W' : set string),
-      incl W' V' ->
-      Datatypes.length (nodup string_dec V') < Datatypes.length (nodup string_dec V) ->
-      Datatypes.length
-        (set_diff string_dec (nodup string_dec V') (nodup string_dec W')) <=
-      m < Datatypes.length (nodup string_dec V) ->
-      ex_lfp_geq Cs (nodup string_dec W') (nodup string_dec W') f' ->
-      ex_lfp_geq Cs (nodup string_dec V') (nodup string_dec V') f'
-  ) ->
+Definition lem_33 (Cs : set Clause) (V W : set string) (f : Frontier) (m : nat) :
+  pre_thm Cs V W f (Datatypes.length (nodup string_dec V) - 1) m ->
   incl W V ->
   ex_lfp_geq Cs (nodup string_dec W) (nodup string_dec W) f ->
   ex_lfp_geq Cs (nodup string_dec V) (nodup string_dec W) f.
-Proof.
-  intros. destruct (infty_in_V_dec V f).
 Admitted.
 
 Definition thm_32 :
@@ -88,16 +89,10 @@ Definition thm_32 :
   forall n m : nat,
   forall f : Frontier,
   forall V W : set string,
-    incl W V ->
-    Datatypes.length (nodup string_dec V) <= n ->
-    Datatypes.length (
-      set_diff string_dec (nodup string_dec V)(nodup string_dec W)
-    ) <= m <= n ->
-    ex_lfp_geq Cs (nodup string_dec W) (nodup string_dec W) f ->
-    ex_lfp_geq Cs (nodup string_dec V) (nodup string_dec V) f.
+    pre_thm Cs V W f n m.
 Proof.
-  induction n as [|n IHn].
-  - intros. unfold ex_lfp_geq in *.
+  unfold pre_thm. induction n as [|n IHn].
+  - unfold ex_lfp_geq in *. intros.
     exists f. split. apply geq_refl. apply le_0_r in H0.
     apply length_zero_iff_nil in H0. rewrite H0.
     apply sub_model_W_empty.
@@ -130,7 +125,7 @@ Proof.
           }
           assert (H': incl W V) by assumption.
           apply (nodup_incl2 string_dec) in H.
-          apply (lem_33 Cs V (nodup string_dec W) f) in H;
+          apply (lem_33 Cs V (nodup string_dec W) f m) in H;
           try assumption. elim H. intros h [H8 H9].
           destruct (sub_forward Cs (nodup string_dec V) (nodup string_dec V) h) as [U h'] eqn:Hforward.
           assert (sub_forward Cs (nodup string_dec V) (nodup string_dec V) h = (U, h')) by assumption.
@@ -228,8 +223,10 @@ Proof.
                 ** eapply geq_trans with h; try assumption.
                    rewrite <- H12.
                    apply geq_Sinfty_f2.
-          -- intros. apply (IHn m0 f' V' W');
+          -- unfold pre_thm. intros. apply (IHn m f V W);
              try assumption; try lia.
+             apply conj; try lia. rewrite nodup_rm in H8.
+             lia.
           -- rewrite nodup_rm. assumption.
 Defined.
 

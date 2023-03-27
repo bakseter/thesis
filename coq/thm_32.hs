@@ -348,9 +348,11 @@ sub_forward cs v w f =
   in
   (,) x f'
 
+type Pre_thm = () -> () -> () -> Ex_lfp_geq -> Ex_lfp_geq
+
 lem_33 :: (Set Clause0) -> (Set Prelude.String) -> (Set Prelude.String) ->
-          Frontier -> Ex_lfp_geq -> Ex_lfp_geq
-lem_33 _ _ _ _ x =
+          Frontier -> Prelude.Integer -> Pre_thm -> Ex_lfp_geq -> Ex_lfp_geq
+lem_33 _ _ _ _ _ _ x =
     x
 
 thm_32 :: (Set Clause0) -> Prelude.Integer -> Prelude.Integer -> Frontier ->
@@ -386,7 +388,7 @@ thm_32 cs n m f v w x =
          h = lem_33 cs v0
                (nodup
                  ((Prelude.==) :: Prelude.String -> Prelude.String -> Prelude.Bool)
-                 w0) f0
+                 w0) f0 m1 (\_ _ _ _ -> iHn m1 f0 v0 w0 __ __ __ h5)
                (eq_rec_r
                  (nodup
                    ((Prelude.==) :: Prelude.String -> Prelude.String -> Prelude.Bool)
