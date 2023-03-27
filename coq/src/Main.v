@@ -86,6 +86,7 @@ Lemma lem_33 :
     incl W V ->
     ex_lfp_geq Cs (nodup string_dec W) (nodup string_dec W) f ->
     ex_lfp_geq Cs (nodup string_dec V) (nodup string_dec W) f.
+Proof.
 Admitted.
 
 Theorem thm_32 :

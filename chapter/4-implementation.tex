@@ -182,7 +182,7 @@ and is greater than or equal to another frontier \lstinline{f}.
 
 \begin{minipage}{\linewidth}
 \begin{lstlisting}[language=Coq, label={lst:ex_lfp_geq_def}, caption={Multiple defs. of \lstinline{ex_lfp_geq}}]
-Lemma ex_lfp_geq_P (Cs : set Clause) (V W : set string) (f : Frontier) : Prop :=
+Definition ex_lfp_geq_P (Cs : set Clause) (V W : set string) (f : Frontier) : Prop :=
   exists g : Frontier, geq V g f = true /\ sub_model Cs V W g = true.
 
 Definition ex_lfp_geq_T (Cs : set Clause) (V W : set string) (f : Frontier) : Type :=
@@ -202,41 +202,107 @@ using the \lstinline{sig} type constructor in place of \lstinline{exists}.
 We also use the \lstinline{prod} type constructor to represent the conjunction of two propositions.
 
 Another thing to note is the difference between \lstinline{Lemma} and \lstinline{Definition}.
-The former is used to define a proposition, while the latter is (usually) used to define a type or a non-recursive function.
-In this case, we could actually use \lstinline{Definition} instead of \lstinline{Lemma},
-but not the other way around.
+
+\textcolor{red}{
+    \textbf{NOT QUITE CORRECT!}
+
+    The former is used to define a proposition, while the latter is (usually) used to define a type or a non-recursive function.
+    In this case, we could actually use \lstinline{Definition} instead of \lstinline{Lemma},
+    but not the other way around.
+}
 
 The reason for defining \lstinline{ex_lfp_geq} as a \lstinline{Type}, is that we can then use
 Coq's extraction feature to generate Haskell code from the Coq definitions.
 Since \lstinline{ex_lfp_geq} plays a central part in the proof of the main theorem,
 it must be defined as a \lstinline{Type} (or as a \lstinline{Set}!) to avoid universe inconsistencies.
 
-\section{Theorem 3.2}
+\section{The Main Proofs}
 
-We can now formulate the main theorem, which is theorem 3.2 from the paper \cite{mbezem}.
+We have now laid the groundwork for the formalization of theorem 3.2 from the paper \cite{mbezem}.
+We preceed the definition of theorem 3.2 with two additional definitions, which helps us simplify its
+definition and proof the theorem itself.
+
+\subsection{\lstinline{pre_thm}}
+
+Since (in our case) the formal definitions of lemma 3.3, which will be expanded on shortly,
+and theorem 3.2 share some structure, we define a propsition \lstinline{pre_thm}:
+
+\begin{minipage}{\linewidth}
+\begin{lstlisting}[language=Coq, label={lst:pre_thm_def}, caption={Def. of \lstinline{pre_thm}}]
+Definition pre_thm (Cs : set Clause) (V W : set string) (f : Frontier) (n m : nat) :=
+  incl W V ->
+  Datatypes.length (nodup string_dec V) <= n ->
+  Datatypes.length
+    (set_diff string_dec
+      (nodup string_dec V)
+      (nodup string_dec W)
+    ) <= m <= n ->
+  ex_lfp_geq Cs (nodup string_dec W) (nodup string_dec W) f ->
+  ex_lfp_geq Cs (nodup string_dec V) (nodup string_dec V) f.
+\end{lstlisting}
+\end{minipage}
+
+\subsection{Lemma 3.3}
+
+Lemma 3.3 from the paper \cite{mbezem} is used in the proof of theorem 3.2 to solve \textcolor{red}{fill inn explanation here...}
+
+We define it using \lstinline{pre_thm} as follows:
+
+\begin{minipage}{\linewidth}
+\begin{lstlisting}[language=Coq, label={lst:lem_33}, caption={Lemma 3.3 in Coq}]
+Lemma lem_33 :
+  forall Cs : set Clause,
+  forall V W : set string,
+  forall f : Frontier,
+  forall m : nat,
+    pre_thm Cs V W f (Datatypes.length (nodup string_dec V) - 1) m ->
+    incl W V ->
+    ex_lfp_geq Cs (nodup string_dec W) (nodup string_dec W) f ->
+    ex_lfp_geq Cs (nodup string_dec V) (nodup string_dec W) f.
+Proof.
+ (* ... *)
+Qed.
+\end{lstlisting}
+\end{minipage}
+
+\subsection{Theorem 3.2}
+
+We can now formulate theorem 3.2 using \lstinline{pre_thm}:
 
 \begin{minipage}{\linewidth}
 \begin{lstlisting}[language=Coq, label={lst:thm_32}, caption={Theorem 3.2 in Coq}]
-Definition thm_32 :
+Theorem thm_32 :
   forall Cs : set Clause,
   forall n m : nat,
   forall f : Frontier,
   forall V W : set string,
-    incl W V ->
-    Datatypes.length (nodup string_dec V) <= n ->
-    Datatypes.length (
-      set_diff string_dec (nodup string_dec V) (nodup string_dec W)
-    ) <= m <= n ->
-    ex_lfp_geq Cs (nodup string_dec W) (nodup string_dec W) f ->
-    ex_lfp_geq Cs (nodup string_dec V) (nodup string_dec V) f.
+    pre_thm Cs V W f n m.
 Proof.
-    (* ... *)
-Defined.
+  (* ... *)
+Qed.
 \end{lstlisting}
 \end{minipage}
 
-The type annotations for the universal quantifiers are added for clarity; they could all be combined
-into to one \lstinline{forall} and the type annotiations could be removed.
-Note the use of \lstinline{Definition} instead of \lstinline{Lemma} or \lstinline{Theorem}.
-This is for the same reason as with \lstinline{ex_lfp_geq}, namely that we want to be able to extract
-Haskell code from the definition.
+\section{Extraction to Haskell}
+
+Using Coq's code extraction feature, we can extract Haskell code from our Coq definitions.
+
+\begin{minipage}{\linewidth}
+\begin{lstlisting}[language=Coq, label={lst:extraction}, caption={Extraction of Coq definitions to Haskell}]
+Extraction Language Haskell.
+
+Extract Constant map => "Prelude.map".
+Extract Constant fold_right => "Prelude.foldr".
+
+Extraction "/home/user/path/to/code/ex.hs"
+  thm_32
+  lem_33.
+\end{lstlisting}
+\end{minipage}
+
+Coq will automatically determine definitions which depend on one another when doing extraction.
+In the example above, we would not have needed to specify \lstinline{lem_33} to be extracted,
+since \lstinline{thm_32} already depends on it.
+
+In the next chapter we will go more into detail about the results of the extraction,
+and the results of the Haskell code ran on some example input.
