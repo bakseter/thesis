@@ -353,23 +353,25 @@ sub_forward cs v w f =
 type Pre_thm = () -> () -> () -> Ex_lfp_geq -> Ex_lfp_geq
 
 lem_33 :: (Set Clause0) -> (Set Prelude.String) -> (Set Prelude.String) ->
-          Frontier -> Prelude.Integer -> Pre_thm -> Ex_lfp_geq -> Ex_lfp_geq
-lem_33 _ _ _ _ _ _ x =
+          Frontier -> ((Set Clause0) -> (Set Prelude.String) -> (Set
+          Prelude.String) -> Frontier -> Prelude.Integer -> Pre_thm) ->
+          Ex_lfp_geq -> Ex_lfp_geq
+lem_33 _ _ _ _ _ x =
     x
 
-thm_32 :: (Set Clause0) -> Prelude.Integer -> Prelude.Integer -> Frontier ->
-          (Set Prelude.String) -> (Set Prelude.String) -> Ex_lfp_geq ->
-          Ex_lfp_geq
-thm_32 cs n m f v w x =
-  nat_rect (\_ f0 _ _ _ _ _ _ -> f0) (\n0 iHn m0 ->
-    nat_rect (\f0 v0 w0 _ _ _ h2 ->
-      ex_lfp_geq_incl cs
+thm_32 :: Prelude.Integer -> Prelude.Integer -> (Set Clause0) -> (Set
+          Prelude.String) -> (Set Prelude.String) -> Frontier -> Ex_lfp_geq
+          -> Ex_lfp_geq
+thm_32 n m cs v w f x =
+  nat_rect (\_ _ _ _ f0 _ _ _ _ -> f0) (\n0 iHn m0 ->
+    nat_rect (\cs0 v0 w0 f0 _ _ _ h2 ->
+      ex_lfp_geq_incl cs0
         (nodup
           ((Prelude.==) :: Prelude.String -> Prelude.String -> Prelude.Bool)
           v0)
         (nodup
           ((Prelude.==) :: Prelude.String -> Prelude.String -> Prelude.Bool)
-          w0) f0 h2) (\m1 iHm f0 v0 w0 _ _ _ h2 ->
+          w0) f0 h2) (\m1 iHm cs0 v0 w0 f0 _ _ _ h2 ->
       let {
        h3 = le_lt_eq_dec
               (length
@@ -383,14 +385,15 @@ thm_32 cs n m f v w x =
                     w0))) (Prelude.succ m1)}
       in
       case h3 of {
-       Prelude.True -> iHm f0 v0 w0 __ __ __ h2;
+       Prelude.True -> iHm cs0 v0 w0 f0 __ __ __ h2;
        Prelude.False ->
-        let {h5 = iHn n0 f0 w0 ([]) __ __ __ f0} in
+        let {h5 = iHn n0 cs0 w0 ([]) f0 __ __ __ f0} in
         let {
-         h = lem_33 cs v0
+         h = lem_33 cs0 v0
                (nodup
                  ((Prelude.==) :: Prelude.String -> Prelude.String -> Prelude.Bool)
-                 w0) f0 m1 (\_ _ _ _ -> iHn m1 f0 v0 w0 __ __ __ h5)
+                 w0) f0 (\cs' v' w' f' m2 _ _ _ h9 ->
+               iHn m2 cs' v' w' f' __ __ __ h9)
                (eq_rec_r
                  (nodup
                    ((Prelude.==) :: Prelude.String -> Prelude.String -> Prelude.Bool)
@@ -403,7 +406,7 @@ thm_32 cs n m f v w x =
         in
         sig_rec (\h0 _ ->
           let {
-           p = sub_forward cs
+           p = sub_forward cs0
                  (nodup
                    ((Prelude.==) :: Prelude.String -> Prelude.String -> Prelude.Bool)
                    v0)
@@ -414,7 +417,7 @@ thm_32 cs n m f v w x =
           case p of {
            (,) a b ->
             eq_rect
-              (sub_vars_improvable cs
+              (sub_vars_improvable cs0
                 (nodup
                   ((Prelude.==) :: Prelude.String -> Prelude.String -> Prelude.Bool)
                   v0)
@@ -425,7 +428,7 @@ thm_32 cs n m f v w x =
                 case set_mem
                        ((Prelude.==) :: Prelude.String -> Prelude.String -> Prelude.Bool)
                        v1
-                       (sub_vars_improvable cs
+                       (sub_vars_improvable cs0
                          (nodup
                            ((Prelude.==) :: Prelude.String -> Prelude.String -> Prelude.Bool)
                            v0)
@@ -452,23 +455,23 @@ thm_32 cs n m f v w x =
                    case s of {
                     Prelude.True -> update_infty_V v0 f0;
                     Prelude.False ->
-                     ex_lfp_geq_monotone cs
+                     ex_lfp_geq_monotone cs0
                        (nodup
                          ((Prelude.==) :: Prelude.String -> Prelude.String -> Prelude.Bool)
                          v0) b f0
-                       (iHm b v0
+                       (iHm cs0 v0
                          (nodup
                            ((Prelude.==) :: Prelude.String -> Prelude.String -> Prelude.Bool)
                            (set_union
                              ((Prelude.==) :: Prelude.String -> Prelude.String -> Prelude.Bool)
-                             w0 a)) __ __ __
-                         (iHn n0 b
+                             w0 a)) b __ __ __
+                         (iHn n0 cs0
                            (nodup
                              ((Prelude.==) :: Prelude.String -> Prelude.String -> Prelude.Bool)
                              (set_union
                                ((Prelude.==) :: Prelude.String -> Prelude.String -> Prelude.Bool)
-                               w0 a)) ([]) __ __ __ b))}}) b) a __}) h}) m0)
-    n m f v w __ __ __ x
+                               w0 a)) ([]) b __ __ __ b))}}) b) a __}) h}) m0)
+    n m cs v w f __ __ __ x
 
 cs_ex_1 :: ([]) Clause0
 cs_ex_1 =
@@ -480,8 +483,8 @@ f_ex_1 =
 
 thm_32_example1 :: Ex_lfp_geq -> Ex_lfp_geq
 thm_32_example1 x =
-  thm_32 cs_ex_1 (Prelude.succ 0) (Prelude.succ 0) f_ex_1 ((:) x_str ([]))
-    ([]) x
+  thm_32 (Prelude.succ 0) (Prelude.succ 0) cs_ex_1 ((:) x_str ([])) ([])
+    f_ex_1 x
 
 ex_lfp_geq_empty_1 :: Ex_lfp_geq
 ex_lfp_geq_empty_1 =
@@ -497,8 +500,8 @@ f_ex_2 =
 
 thm_32_example2 :: Ex_lfp_geq -> Ex_lfp_geq
 thm_32_example2 x =
-  thm_32 cs_ex_2 (Prelude.succ 0) (Prelude.succ 0) f_ex_2 ((:) x_str ([]))
-    ([]) x
+  thm_32 (Prelude.succ 0) (Prelude.succ 0) cs_ex_2 ((:) x_str ([])) ([])
+    f_ex_2 x
 
 ex_lfp_geq_empty_2 :: Ex_lfp_geq
 ex_lfp_geq_empty_2 =
@@ -514,8 +517,8 @@ f_ex_3 =
 
 thm_32_example3 :: Ex_lfp_geq -> Ex_lfp_geq
 thm_32_example3 x =
-  thm_32 cs_ex_3 (Prelude.succ (Prelude.succ 0)) (Prelude.succ (Prelude.succ
-    0)) f_ex_3 ((:) x_str ((:) y_str ([]))) ([]) x
+  thm_32 (Prelude.succ (Prelude.succ 0)) (Prelude.succ (Prelude.succ 0))
+    cs_ex_3 ((:) x_str ((:) y_str ([]))) ([]) f_ex_3 x
 
 ex_lfp_geq_empty_3 :: Ex_lfp_geq
 ex_lfp_geq_empty_3 =
@@ -532,9 +535,9 @@ f_ex_4 =
 
 thm_32_example4 :: Ex_lfp_geq -> Ex_lfp_geq
 thm_32_example4 x =
-  thm_32 cs_ex_4 (Prelude.succ (Prelude.succ (Prelude.succ 0))) (Prelude.succ
-    (Prelude.succ (Prelude.succ 0))) f_ex_4 ((:) x_str ((:) y_str ((:) z_str
-    ([])))) ([]) x
+  thm_32 (Prelude.succ (Prelude.succ (Prelude.succ 0))) (Prelude.succ
+    (Prelude.succ (Prelude.succ 0))) cs_ex_4 ((:) x_str ((:) y_str ((:) z_str
+    ([])))) ([]) f_ex_4 x
 
 ex_lfp_geq_empty_4 :: Ex_lfp_geq
 ex_lfp_geq_empty_4 =
@@ -551,8 +554,8 @@ f_ex_5 =
 
 thm_32_example5 :: Ex_lfp_geq -> Ex_lfp_geq
 thm_32_example5 x =
-  thm_32 cs_ex_5 (Prelude.succ (Prelude.succ 0)) (Prelude.succ (Prelude.succ
-    0)) f_ex_5 ((:) x_str ((:) y_str ([]))) ([]) x
+  thm_32 (Prelude.succ (Prelude.succ 0)) (Prelude.succ (Prelude.succ 0))
+    cs_ex_5 ((:) x_str ((:) y_str ([]))) ([]) f_ex_5 x
 
 ex_lfp_geq_empty_5 :: Ex_lfp_geq
 ex_lfp_geq_empty_5 =
@@ -569,9 +572,9 @@ f_ex_6 =
 
 thm_32_example6 :: Ex_lfp_geq -> Ex_lfp_geq
 thm_32_example6 x =
-  thm_32 cs_ex_6 (Prelude.succ (Prelude.succ (Prelude.succ 0))) (Prelude.succ
-    (Prelude.succ (Prelude.succ 0))) f_ex_6 ((:) x_str ((:) y_str ((:) z_str
-    ([])))) ([]) x
+  thm_32 (Prelude.succ (Prelude.succ (Prelude.succ 0))) (Prelude.succ
+    (Prelude.succ (Prelude.succ 0))) cs_ex_6 ((:) x_str ((:) y_str ((:) z_str
+    ([])))) ([]) f_ex_6 x
 
 ex_lfp_geq_empty_6 :: Ex_lfp_geq
 ex_lfp_geq_empty_6 =
@@ -588,8 +591,8 @@ f_ex_7 =
 
 thm_32_example7 :: Ex_lfp_geq -> Ex_lfp_geq
 thm_32_example7 x =
-  thm_32 cs_ex_7 (Prelude.succ (Prelude.succ 0)) (Prelude.succ (Prelude.succ
-    0)) f_ex_7 ((:) x_str ((:) y_str ([]))) ([]) x
+  thm_32 (Prelude.succ (Prelude.succ 0)) (Prelude.succ (Prelude.succ 0))
+    cs_ex_7 ((:) x_str ((:) y_str ([]))) ([]) f_ex_7 x
 
 ex_lfp_geq_empty_7 :: Ex_lfp_geq
 ex_lfp_geq_empty_7 =
@@ -610,9 +613,9 @@ f_ex_8 x =
 
 thm_32_example8 :: Ex_lfp_geq -> Ex_lfp_geq
 thm_32_example8 x =
-  thm_32 cs_ex_8 (Prelude.succ (Prelude.succ (Prelude.succ (Prelude.succ
-    0)))) (Prelude.succ (Prelude.succ (Prelude.succ (Prelude.succ 0))))
-    f_ex_8 ((:) x_str ((:) y_str ((:) z_str ((:) u_str ([]))))) ([]) x
+  thm_32 (Prelude.succ (Prelude.succ (Prelude.succ (Prelude.succ 0))))
+    (Prelude.succ (Prelude.succ (Prelude.succ (Prelude.succ 0)))) cs_ex_8
+    ((:) x_str ((:) y_str ((:) z_str ((:) u_str ([]))))) ([]) f_ex_8 x
 
 ex_lfp_geq_empty_8 :: Ex_lfp_geq
 ex_lfp_geq_empty_8 =
@@ -629,8 +632,8 @@ f_ex_9 =
 
 thm_32_example9 :: Ex_lfp_geq -> Ex_lfp_geq
 thm_32_example9 x =
-  thm_32 cs_ex_9 (Prelude.succ (Prelude.succ 0)) (Prelude.succ (Prelude.succ
-    0)) f_ex_9 ((:) x_str ((:) y_str ([]))) ([]) x
+  thm_32 (Prelude.succ (Prelude.succ 0)) (Prelude.succ (Prelude.succ 0))
+    cs_ex_9 ((:) x_str ((:) y_str ([]))) ([]) f_ex_9 x
 
 ex_lfp_geq_empty_9 :: Ex_lfp_geq
 ex_lfp_geq_empty_9 =

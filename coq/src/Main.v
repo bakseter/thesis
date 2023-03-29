@@ -24,27 +24,7 @@ Require Import Geq. Import Geq.
 Require Import Model. Import Model.
 Require Import Ninfty. Import Ninfty.
 
-Lemma infty_in_V_dec (V : set string) (f : Frontier) :
-  {exists v, In v V /\ f v = infty} +
-  {forall v, In v V -> f v <> infty}.
-Proof.
-  induction V as [|h t]; simpl.
-  - right. intros. contradiction.
-  - destruct IHt.
-    + left. destruct e. exists x. split.
-      * right. apply H.
-      * apply H.
-    + destruct (f h) eqn:Hfh.
-      * left. exists h.
-        split; try assumption.
-        left. reflexivity.
-      * right. intros. destruct H.
-        -- subst. unfold not. intros.
-           rewrite H in Hfh. discriminate.
-        -- apply n. assumption.
-Qed.
-
-Definition pre_thm (Cs : set Clause) (V W : set string) (f : Frontier) (n m : nat) :=
+Definition pre_thm (n m : nat) (Cs : set Clause) (V W : set string) (f : Frontier) :=
   incl W V ->
   Datatypes.length (nodup string_dec V) <= n ->
   Datatypes.length
@@ -81,8 +61,12 @@ Lemma lem_33 :
   forall Cs : set Clause,
   forall V W : set string,
   forall f : Frontier,
-  forall m : nat,
-    pre_thm Cs V W f (Datatypes.length (nodup string_dec V) - 1) m ->
+    (forall Cs' : set Clause,
+     forall V' W' : set string,
+     forall f' : Frontier,
+     forall m : nat,
+      pre_thm (Datatypes.length (nodup string_dec V) - 1) m Cs' V' W' f'
+    ) ->
     incl W V ->
     ex_lfp_geq Cs (nodup string_dec W) (nodup string_dec W) f ->
     ex_lfp_geq Cs (nodup string_dec V) (nodup string_dec W) f.
@@ -90,11 +74,11 @@ Proof.
 Admitted.
 
 Theorem thm_32 :
-  forall Cs : set Clause,
   forall n m : nat,
-  forall f : Frontier,
+  forall Cs : set Clause,
   forall V W : set string,
-    pre_thm Cs V W f n m.
+  forall f : Frontier,
+    pre_thm n m Cs V W f.
 Proof.
   unfold pre_thm. induction n as [|n IHn].
   - unfold ex_lfp_geq in *. intros.
@@ -109,7 +93,7 @@ Proof.
       apply set_diff_nil_incl in H1. assumption.
     + intros. inversion H1.
       apply le_lt_eq_dec in H3. destruct H3.
-      * apply (IHm f V W); try assumption. lia.
+      * apply (IHm Cs V W f); try assumption. lia.
       * apply (ex_lfp_geq_nodup_iff) in H2.
         assert (Datatypes.length (nodup string_dec W) <= n).
         {
@@ -121,7 +105,7 @@ Proof.
          }
          assert (ex_lfp_geq Cs (nodup string_dec W) (nodup string_dec W) f).
          {
-            apply (IHn n f W []);
+            apply (IHn n Cs W [] f);
             try assumption; try apply incl_nil_l.
             - eapply (set_diff_succ string_dec) in H; try apply H3.
               simpl. rewrite set_diff_nil. apply conj; lia. apply e.
@@ -130,7 +114,7 @@ Proof.
           }
           assert (H': incl W V) by assumption.
           apply (nodup_incl2 string_dec) in H.
-          apply (lem_33 Cs V (nodup string_dec W) f m) in H;
+          apply (lem_33 Cs V (nodup string_dec W) f) in H;
           try assumption. elim H. intros h [H8 H9].
           destruct (sub_forward Cs (nodup string_dec V) (nodup string_dec V) h) as [U h'] eqn:Hforward.
           assert (sub_forward Cs (nodup string_dec V) (nodup string_dec V) h = (U, h')) by assumption.
@@ -190,14 +174,14 @@ Proof.
                     rewrite <- set_diff_nodup_eq. rewrite e. lia.
                 }
                 apply (ex_lfp_geq_monotone Cs (nodup string_dec V) h' f).
-                eapply (IHm h' V (nodup string_dec (set_union string_dec W U)));
+                eapply (IHm Cs V (nodup string_dec (set_union string_dec W U)) h');
                 try assumption.
                 ** apply conj; try lia. inversion H14.
                    apply le_lt_eq_dec in H16. destruct H16;
                    rewrite nodup_rm; rewrite set_diff_nodup_eq in *;
                    rewrite <- length_set_diff_set_union_nodup_l;
                    lia.
-                ** apply (IHn n h' (nodup string_dec (set_union string_dec W U)) []);
+                ** apply (IHn n Cs (nodup string_dec (set_union string_dec W U)) [] h');
                    try apply incl_nil_l.
                    --- assert (Datatypes.length (nodup string_dec V) <= Datatypes.length V).
                        {
@@ -228,10 +212,8 @@ Proof.
                 ** eapply geq_trans with h; try assumption.
                    rewrite <- H12.
                    apply geq_Sinfty_f2.
-          -- unfold pre_thm. intros. apply (IHn m f V W);
+          -- unfold pre_thm. intros. apply (IHn m0 Cs' V' W' f');
              try assumption; try lia.
-             apply conj; try lia. rewrite nodup_rm in H8.
-             lia.
           -- rewrite nodup_rm. assumption.
 Qed.
 
@@ -241,12 +223,12 @@ Example Cs_ex_1 := [([atom_x0] ~> atom_x0)].
 Example f_ex_1 := frontier_fin_0.
 Example thm_32_example1 :=
     thm_32
+      1
+      1
       Cs_ex_1
-      1
-      1
-      f_ex_1
       [x_str]
-      [].
+      []
+      f_ex_1.
 Example ex_lfp_geq_empty_1 :=
   ex_lfp_geq_empty Cs_ex_1 f_ex_1.
 
@@ -256,12 +238,12 @@ Example Cs_ex_2 := [([atom_x0] ~> atom_x1)].
 Example f_ex_2 := frontier_fin_0.
 Example thm_32_example2 :=
   thm_32
+    1
+    1
     Cs_ex_2
-    1
-    1
-    f_ex_2
     [x_str]
-    [].
+    []
+    f_ex_2.
 Example ex_lfp_geq_empty_2 :=
   ex_lfp_geq_empty Cs_ex_2 f_ex_2.
 
@@ -271,12 +253,12 @@ Example Cs_ex_3 := [([atom_x0] ~> atom_y1)].
 Example f_ex_3 := frontier_fin_0.
 Example thm_32_example3 :=
   thm_32
+    2
+    2
     Cs_ex_3
-    2
-    2
-    f_ex_3
     [x_str; y_str]
-    [].
+    []
+    f_ex_3.
 Example ex_lfp_geq_empty_3 :=
   ex_lfp_geq_empty Cs_ex_3 f_ex_3.
 
@@ -286,12 +268,12 @@ Example Cs_ex_4 := [([atom_x0] ~> atom_y1); ([atom_z0] ~> atom_x1)].
 Example f_ex_4 := frontier_fin_0.
 Example thm_32_example4 :=
   thm_32
+    3
+    3
     Cs_ex_4
-    3
-    3
-    f_ex_4
     [x_str; y_str; z_str]
-    [].
+    []
+    f_ex_4.
 Example ex_lfp_geq_empty_4 :=
   ex_lfp_geq_empty Cs_ex_4 f_ex_4.
 
@@ -301,12 +283,12 @@ Example Cs_ex_5 := [([atom_x0; atom_y0] ~> atom_x1); ([atom_x0; atom_y0] ~> atom
 Example f_ex_5 := frontier_fin_0.
 Example thm_32_example5 :=
   thm_32
+    2
+    2
     Cs_ex_5
-    2
-    2
-    f_ex_5
     [x_str; y_str]
-    [].
+    []
+    f_ex_5.
 Example ex_lfp_geq_empty_5 :=
   ex_lfp_geq_empty Cs_ex_5 f_ex_5.
 
@@ -316,12 +298,12 @@ Example Cs_ex_6 := [([atom_x0] ~> atom_y1); ([atom_y0; atom_z0] ~> atom_z1)].
 Example f_ex_6 := frontier_fin_0.
 Example thm_32_example6 :=
   thm_32
+    3
+    3
     Cs_ex_6
-    3
-    3
-    f_ex_6
     [x_str; y_str; z_str]
-    [].
+    []
+    f_ex_6.
 Example ex_lfp_geq_empty_6 :=
   ex_lfp_geq_empty Cs_ex_6 f_ex_6.
 
@@ -331,12 +313,12 @@ Example Cs_ex_7 := [([atom_x0] ~> atom_x1); ([atom_x0; atom_y0] ~> atom_y1)].
 Example f_ex_7 := frontier_fin_0.
 Example thm_32_example7 :=
   thm_32
+    2
+    2
     Cs_ex_7
-    2
-    2
-    f_ex_7
     [x_str; y_str]
-    [].
+    []
+    f_ex_7.
 Example ex_lfp_geq_empty_7 :=
   ex_lfp_geq_empty Cs_ex_7 f_ex_7.
 
@@ -346,12 +328,12 @@ Example Cs_ex_8 := [([atom_x0; atom_y0] ~> atom_y1); ([atom_z0] ~> atom_u1); ([a
 Example f_ex_8 := (fun x : string => if string_dec x x_str then infty else fin 0).
 Example thm_32_example8 :=
   thm_32
+    4
+    4
     Cs_ex_8
-    4
-    4
-    f_ex_8
     [x_str; y_str; z_str; u_str]
-    [].
+    []
+    f_ex_8.
 Example ex_lfp_geq_empty_8 :=
   ex_lfp_geq_empty Cs_ex_8 f_ex_8.
 
@@ -361,12 +343,12 @@ Example Cs_ex_9 := [([atom_x0] ~> atom_x1); ([atom_x0] ~> atom_y0)].
 Example f_ex_9 := frontier_fin_0.
 Example thm_32_example9 :=
   thm_32
+    2
+    2
     Cs_ex_9
-    2
-    2
-    f_ex_9
     [x_str; y_str]
-    [].
+    []
+    f_ex_9.
 Example ex_lfp_geq_empty_9 :=
   ex_lfp_geq_empty Cs_ex_9 f_ex_9.
 
