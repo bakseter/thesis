@@ -54,7 +54,7 @@ length l =
 
 type Sig a = a
   -- singleton inductive, whose constructor was exist
-
+  
 sig_rect :: (a1 -> () -> a2) -> a1 -> a2
 sig_rect f s =
   f s __

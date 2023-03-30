@@ -360,7 +360,7 @@ Extract Constant fold_right => "Prelude.foldr".
 Extract Inductive nat => "Prelude.Integer" ["0" "Prelude.succ"]
   "(\fO fS n -> if n Prelude.== 0 then fO () else fS (n Prelude.- 1))".
 
-Extraction "/home/andreas/Projects/thesis/coq/thm_32.hs"
+Extraction "/home/andreas/Projects/thesis/coq/extr/thm_32.hs"
   thm_32
   thm_32_example1
   thm_32_example2
