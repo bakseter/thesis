@@ -55,7 +55,7 @@ Module Alf.
   ].
   Example f := frontier_fin_0.
   Example vars' := nodup string_dec (vars Cs).
-  Example ex :=
+  Example ex_alf :=
     thm_32
       (Datatypes.length vars')
       (Datatypes.length vars')
@@ -63,10 +63,54 @@ Module Alf.
       vars'
       []
       f.
-  Example ex_lfp_geq_empty' :=
+  Example ex_lfp_geq_empty_alf :=
     ex_lfp_geq_empty Cs f.
 
 End Alf.
+
+Module Alf2.
+
+  Example Cs := [
+    ["a" & 0] ~> "b" & 1;
+    ["b" & 0] ~> "c" & 1;
+    ["c" & 0] ~> "d" & 1;
+    ["d" & 0] ~> "e" & 1;
+    ["e" & 0] ~> "f" & 1;
+    ["f" & 0] ~> "g" & 1;
+    ["g" & 0] ~> "h" & 1;
+    ["h" & 0] ~> "i" & 1;
+    ["i" & 0] ~> "j" & 1;
+    ["j" & 0] ~> "k" & 1;
+    ["k" & 0] ~> "l" & 1;
+    ["l" & 0] ~> "m" & 1;
+    ["m" & 0] ~> "n" & 1;
+    ["n" & 0] ~> "o" & 1;
+    ["o" & 0] ~> "p" & 1;
+    ["p" & 0] ~> "q" & 1;
+    ["q" & 0] ~> "r" & 1;
+    ["r" & 0] ~> "s" & 1;
+    ["s" & 0] ~> "t" & 1;
+    ["t" & 0] ~> "u" & 1;
+    ["u" & 0] ~> "v" & 1;
+    ["v" & 0] ~> "w" & 1;
+    ["w" & 0] ~> "x" & 1;
+    ["x" & 0] ~> "y" & 1;
+    ["y" & 0] ~> "z" & 1
+  ].
+  Example f := frontier_fin_0.
+  Example vars' := nodup string_dec (vars Cs).
+  Example ex_alf2 :=
+    thm_32
+      (Datatypes.length vars')
+      (Datatypes.length vars')
+      Cs
+      vars'
+      []
+      f.
+  Example ex_lfp_geq_empty_alf2 :=
+    ex_lfp_geq_empty Cs f.
+
+End Alf2.
 
 Module Fla.
 
@@ -99,7 +143,7 @@ Module Fla.
   ].
   Example f := frontier_fin_0.
   Example vars' := nodup string_dec (vars Cs).
-  Example ex :=
+  Example ex_fla :=
     thm_32
       (Datatypes.length vars')
       (Datatypes.length vars')
@@ -107,7 +151,7 @@ Module Fla.
       vars'
       []
       f.
-  Example ex_lfp_geq_empty' :=
+  Example ex_lfp_geq_empty_fla :=
     ex_lfp_geq_empty Cs f.
 
 End Fla.
@@ -123,7 +167,7 @@ Module Note.
   ].
   Example f := frontier_fin_0.
   Example vars' := nodup string_dec (vars Cs).
-  Example ex :=
+  Example ex_note :=
     thm_32
       (Datatypes.length vars')
       (Datatypes.length vars')
@@ -131,7 +175,7 @@ Module Note.
       vars'
       []
       f.
-  Example ex_lfp_geq_empty' :=
+  Example ex_lfp_geq_empty_note :=
     ex_lfp_geq_empty Cs f.
 
 End Note.
@@ -144,7 +188,7 @@ Module Xy.
   ].
   Example f := frontier_fin_0.
   Example vars' := nodup string_dec (vars Cs).
-  Example ex :=
+  Example ex_xy :=
     thm_32
       (Datatypes.length vars')
       (Datatypes.length vars')
@@ -152,7 +196,7 @@ Module Xy.
       vars'
       []
       f.
-  Example ex_lfp_geq_empty' :=
+  Example ex_lfp_geq_empty_xy :=
     ex_lfp_geq_empty Cs f.
 
 End Xy.
@@ -166,7 +210,7 @@ Module Xyz0.
   ].
   Example f := frontier_fin_0.
   Example vars' := nodup string_dec (vars Cs).
-  Example ex :=
+  Example ex_xyz0 :=
     thm_32
       (Datatypes.length vars')
       (Datatypes.length vars')
@@ -174,7 +218,7 @@ Module Xyz0.
       vars'
       []
       f.
-  Example ex_lfp_geq_empty' :=
+  Example ex_lfp_geq_empty_xyz0 :=
     ex_lfp_geq_empty Cs f.
 
 End Xyz0.
@@ -188,8 +232,9 @@ Extract Inductive nat => "Prelude.Integer" ["0" "Prelude.succ"]
   "(\fO fS n -> if n Prelude.== 0 then fO () else fS (n Prelude.- 1))".
 
 Extraction "/home/andreas/Projects/thesis/coq/extr/ex.hs"
-  Alf.ex Alf.ex_lfp_geq_empty'
-  Fla.ex Fla.ex_lfp_geq_empty'
-  Note.ex Note.ex_lfp_geq_empty'
-  Xy.ex Xy.ex_lfp_geq_empty'
-  Xyz0.ex Xyz0.ex_lfp_geq_empty'.
+  Alf.ex_alf Alf.ex_lfp_geq_empty_alf
+  Alf2.ex_alf2 Alf2.ex_lfp_geq_empty_alf2
+  Fla.ex_fla Fla.ex_lfp_geq_empty_fla
+  Note.ex_note Note.ex_lfp_geq_empty_note
+  Xy.ex_xy Xy.ex_lfp_geq_empty_xy
+  Xyz0.ex_xyz0 Xyz0.ex_lfp_geq_empty_xyz0.
