@@ -1,10 +1,13 @@
 From Coq Require Import Lists.List. Import ListNotations.
+From Coq Require Import Lists.ListSet.
 From Coq Require Import Strings.String.
+From Coq Require Import Lia.
 Require Import Frontier. Import Frontier.
 Require Import Clause. Import Clause.
 Require Import Atom. Import Atom.
 Require Import Geq. Import Geq.
 Require Import Vars. Import Vars.
+Require Import Sets. Import Sets.
 Require Import Main. Import Main.
 
 Module Alf.
@@ -19,7 +22,6 @@ Module Alf.
     ].
 
    --- Works for Cs with (at most) this def.:
-
     Example Cs := [
       ["a" & 0] ~> "b" & 1;
       ["b" & 1] ~> "c" & 2
@@ -27,9 +29,9 @@ Module Alf.
   *)
 
   Example Cs := [
-    ["a" & 0] ~> "b" & 1;
-    ["b" & 1] ~> "c" & 2;
-    ["c" & 2] ~> "d" & 3;
+    ["a" & 0] ~> "c" & 2;
+    ["c" & 2] ~> "d" & 3
+  (*
     ["d" & 3] ~> "e" & 4;
     ["e" & 4] ~> "f" & 5;
     ["f" & 5] ~> "g" & 6;
@@ -52,6 +54,7 @@ Module Alf.
     ["w" & 22] ~> "x" & 23;
     ["x" & 23] ~> "y" & 24;
     ["y" & 24] ~> "z" & 25
+   *)
   ].
   Example f := frontier_fin_0.
   Example vars' := nodup string_dec (vars Cs).
@@ -65,6 +68,21 @@ Module Alf.
       f.
   Example ex_lfp_geq_empty_alf :=
     ex_lfp_geq_empty Cs f.
+
+  Lemma a1 : incl [] vars'.
+  Proof. apply incl_nil_l. Qed.
+
+  Lemma a2 : Datatypes.length (nodup string_dec vars') <= Datatypes.length vars'.
+  Proof. apply nodup_length. Qed.
+
+  Lemma a3 : Datatypes.length
+    (set_diff string_dec (nodup string_dec vars')
+       (nodup string_dec [])) <= Datatypes.length vars' <=
+      Datatypes.length vars'.
+  Proof. unfold vars'. simpl. lia. Qed.
+
+  Compute ex_alf a1 a2 a3 ex_lfp_geq_empty_alf.
+
 
 End Alf.
 
@@ -228,13 +246,5 @@ Extraction Language Haskell.
 Extract Constant map => "Prelude.map".
 Extract Constant fold_right => "Prelude.foldr".
 
-Extract Inductive nat => "Prelude.Integer" ["0" "Prelude.succ"]
-  "(\fO fS n -> if n Prelude.== 0 then fO () else fS (n Prelude.- 1))".
-
 Extraction "/home/andreas/Projects/thesis/coq/extr/ex.hs"
-  Alf.ex_alf Alf.ex_lfp_geq_empty_alf
-  Alf2.ex_alf2 Alf2.ex_lfp_geq_empty_alf2
-  Fla.ex_fla Fla.ex_lfp_geq_empty_fla
-  Note.ex_note Note.ex_lfp_geq_empty_note
-  Xy.ex_xy Xy.ex_lfp_geq_empty_xy
-  Xyz0.ex_xyz0 Xyz0.ex_lfp_geq_empty_xyz0.
+  Alf.ex_alf Alf.ex_lfp_geq_empty_alf.

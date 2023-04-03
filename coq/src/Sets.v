@@ -313,13 +313,20 @@ Module Sets.
   Qed.
 
   Lemma set_diff_In_emptyR {A : Type} (dec : forall x y : A, {x = y} + {x <> y}) (x : A) (V : set A) :
-    In x V -> In x (set_diff dec V []).
+    In x V <->
+    In x (set_diff dec V []).
   Proof.
-    intros. induction V; try contradiction.
-    destruct H.
-    - subst. simpl. apply set_add_intro. left. reflexivity.
-    - apply IHV in H. simpl. apply set_add_intro. right.
-      assumption.
+    generalize dependent x.
+    induction V; split; intros;
+    try contradiction; simpl in *.
+    - destruct H; subst.
+      + apply set_add_intro. left.
+        reflexivity.
+      + apply set_add_intro. right.
+        apply IHV. assumption.
+    - apply set_add_elim in H.
+      destruct H; try auto.
+      right. apply IHV. assumption.
   Qed.
 
   Lemma set_diff_nodup_eq {A : Type} (dec : forall x y : A, {x = y} + {x <> y}) (V W : set A) :
@@ -615,6 +622,7 @@ Module Sets.
         * f_equal. assumption.
   Qed.
 
+  (* NEEDED *)
   Lemma set_diff_succ {A : Type} (dec : forall x y, {x = y} + {x <> y}) (V : set A) (n : nat) :
     forall W,
       incl W V ->
@@ -828,8 +836,8 @@ Module Sets.
     - simpl.
       assert (Datatypes.length (set_diff dec V []) = Datatypes.length (set_diff dec (nodup dec V) [])).
       { rewrite set_diff_nodup_l. reflexivity. }
-      rewrite H2.
-      rewrite set_diff_nil.
+      rewrite set_diff_nil_length_nodup.
+      apply (set_diff_In_emptyR dec) in H0.
   Admitted.
 
   Lemma set_diff_refl_nil {A : Type} (dec : forall x y : A, {x = y} + {x <> y}) (l : set A) :

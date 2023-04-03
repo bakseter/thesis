@@ -1,0 +1,26 @@
+ghci> (ex_alf ex_lfp_geq_empty_alf) "a"
+
+IHn: n = 2, m = 3, v = ["a","c","d"], w = [], f d = Fin 0, f c = Fin 0
+IHm: n = 3, m = 2, v = ["a","c","d"], w = [], f d = Fin 0, f c = Fin 0
+le_lt_eq_dec: n = 3, m = 3
+IHn: n = 1, m = 2, v = ["a","c","d"], w = [], f d = Fin 0, f c = Fin 0
+IHm: n = 2, m = 1, v = [], w = [], f d = Fin 0, f c = Fin 0
+le_lt_eq_dec: n = 0, m = 2
+IHm: n = 2, m = 0, v = [], w = [], f d = Fin 0, f c = Fin 0
+le_lt_eq_dec: n = 0, m = 1
+IHm: n = 3, m = 1, v = ["a","c","d"], w = ["c"], f d = Fin 0, f c = Fin 1
+le_lt_eq_dec: n = 2, m = 2
+IHn: n = 1, m = 2, v = ["a","c","d"], w = [], f d = Fin 0, f c = Fin 0
+IHm: n = 2, m = 1, v = ["c"], w = [], f d = Fin 0, f c = Fin 1
+le_lt_eq_dec: n = 1, m = 2
+IHm: n = 2, m = 0, v = ["c"], w = [], f d = Fin 0, f c = Fin 1
+le_lt_eq_dec: n = 1, m = 1
+IHn: n = 0, m = 1, v = ["a","c","d"], w = [], f d = Fin 0, f c = Fin 0
+IHm: n = 1, m = 0, v = [], w = [], f d = Fin 0, f c = Fin 1
+le_lt_eq_dec: n = 0, m = 1
+IHm: n = 3, m = 0, v = ["a","c","d"], w = ["c"], f d = Fin 0, f c = Fin 2
+le_lt_eq_dec: n = 2, m = 1
+
+*** Exception: absurd case
+CallStack (from HasCallStack):
+  error, called at ex_fail.hs:13:3 in main:Ex
