@@ -241,10 +241,112 @@ Module Xyz0.
 
 End Xyz0.
 
+Module Fail0.
+  Example Cs := [
+    ["a" & 0] ~> "b" & 2;
+    ["b" & 2] ~> "c" & 1
+  ].
+  Example f := frontier_fin_0.
+  Example vars' := nodup string_dec (vars Cs).
+  Example ex_fail0 :=
+    thm_32
+      (Datatypes.length vars')
+      (Datatypes.length vars')
+      Cs
+      vars'
+      []
+      f.
+  Example ex_lfp_geq_empty_fail0 :=
+    ex_lfp_geq_empty Cs f.
+End Fail0.
+
+Module Fail1.
+  Example Cs := [
+    ["a" & 0] ~> "b" & 3;
+    ["b" & 2] ~> "c" & 3
+  ].
+  Example f := frontier_fin_0.
+  Example vars' := nodup string_dec (vars Cs).
+  Example ex_fail1 :=
+    thm_32
+      (Datatypes.length vars')
+      (Datatypes.length vars')
+      Cs
+      vars'
+      []
+      f.
+  Example ex_lfp_geq_empty_fail1 :=
+    ex_lfp_geq_empty Cs f.
+End Fail1.
+
+Module Fail2.
+  Example Cs := [
+    ["a" & 0] ~> "b" & 3;
+    ["b" & 4] ~> "c" & 1
+  ].
+  Example f := frontier_fin_0.
+  Example vars' := nodup string_dec (vars Cs).
+  Example ex_fail2 :=
+    thm_32
+      (Datatypes.length vars')
+      (Datatypes.length vars')
+      Cs
+      vars'
+      []
+      f.
+  Example ex_lfp_geq_empty_fail2 :=
+    ex_lfp_geq_empty Cs f.
+End Fail2.
+
+Module Fail3.
+  Example Cs := [
+    ["a" & 0] ~> "b" & 2;
+    ["b" & 2] ~> "a" & 1
+  ].
+  Example f := frontier_fin_0.
+  Example vars' := nodup string_dec (vars Cs).
+  Example ex_fail3 :=
+    thm_32
+      (Datatypes.length vars')
+      (Datatypes.length vars')
+      Cs
+      vars'
+      []
+      f.
+  Example ex_lfp_geq_empty_fail3 :=
+    ex_lfp_geq_empty Cs f.
+End Fail3.
+
+Module Fail4.
+  Example Cs := [
+    ["a" & 0] ~> "b" & 0;
+    ["b" & 3] ~> "c" & 3
+  ].
+  Example f := frontier_infty.
+  Example vars' := nodup string_dec (vars Cs).
+  Example ex_fail4 :=
+    thm_32
+      (Datatypes.length vars')
+      (Datatypes.length vars')
+      Cs
+      vars'
+      []
+      f.
+  Example ex_lfp_geq_empty_fail4 :=
+    ex_lfp_geq_empty Cs f.
+End Fail4.
+
 Extraction Language Haskell.
 
 Extract Constant map => "Prelude.map".
 Extract Constant fold_right => "Prelude.foldr".
 
+Extract Inductive nat => "Prelude.Integer" ["0" "Prelude.succ"]
+  "(\fO fS n -> if n Prelude.== 0 then fO () else fS (n Prelude.- 1))".
+
 Extraction "/home/andreas/Projects/thesis/coq/extr/ex.hs"
-  Alf.ex_alf Alf.ex_lfp_geq_empty_alf.
+  Fail0.ex_fail0 Fail0.ex_lfp_geq_empty_fail0
+  Fail1.ex_fail1 Fail1.ex_lfp_geq_empty_fail1
+  Fail2.ex_fail2 Fail2.ex_lfp_geq_empty_fail2
+  Fail3.ex_fail3 Fail3.ex_lfp_geq_empty_fail3
+  Fail4.ex_fail4 Fail4.ex_lfp_geq_empty_fail4.

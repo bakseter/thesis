@@ -1,0 +1,36 @@
+GHCi, version 9.0.2: https://www.haskell.org/ghc/  :? for help
+[1 of 1] Compiling Ex               ( extr/ex.hs, interpreted )
+Ok, one module loaded.
+ghci> (ex_fail3 ex_lfp_geq_empty_fail3) "a"
+IHn: n = 1, m = 2, v = ["b","a"], w = [], f d = Fin 0, f c = Fin 0
+IHm: n = 2, m = 1, v = ["b","a"], w = [], f d = Fin 0, f c = Fin 0
+le_lt_eq_dec: n = 2, m = 2
+IHn: n = 0, m = 1, v = ["b","a"], w = [], f d = Fin 0, f c = Fin 0
+IHm: n = 1, m = 0, v = [], w = [], f d = Fin 0, f c = Fin 0
+le_lt_eq_dec: n = 0, m = 1
+IHm: n = 2, m = 0, v = ["b","a"], w = ["b"], f d = Fin 0, f c = Fin 0
+le_lt_eq_dec: n = 1, m = 1
+IHn: n = 0, m = 1, v = ["b","a"], w = [], f d = Fin 0, f c = Fin 0
+IHm: n = 1, m = 0, v = ["b"], w = [], f d = Fin 0, f c = Fin 0
+le_lt_eq_dec: n = 1, m = 1
+IHn: n = 0, m = 1, v = ["b","a"], w = [], f d = Fin 0, f c = Fin 0
+IHm: n = 1, m = 0, v = ["b"], w = [], f d = Fin 0, f c = Fin 0
+le_lt_eq_dec: n = 1, m = 1
+Fin 0
+ghci> 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
