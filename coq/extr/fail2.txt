@@ -2,25 +2,25 @@ GHCi, version 9.0.2: https://www.haskell.org/ghc/  :? for help
 [1 of 1] Compiling Ex               ( extr/ex.hs, interpreted )
 Ok, one module loaded.
 ghci> (ex_fail2 ex_lfp_geq_empty_fail2) "a"
-IHn: n = 2, m = 3, v = ["a","b","c"], w = [], f d = Fin 0, f c = Fin 0
-IHm: n = 3, m = 2, v = ["a","b","c"], w = [], f d = Fin 0, f c = Fin 0
+IHn: n = 2, m = 3, v = ["a","b","c"], w = [], f(a) = Fin 0, f(b) = Fin 0, f(c) = Fin 0
+IHm: n = 3, m = 2, v = ["a","b","c"], w = [], f(a) = Fin 0, f(b) = Fin 0, f(c) = Fin 0
 le_lt_eq_dec: n = 3, m = 3
-IHn: n = 1, m = 2, v = ["a","b","c"], w = [], f d = Fin 0, f c = Fin 0
-IHm: n = 2, m = 1, v = [], w = [], f d = Fin 0, f c = Fin 0
+IHn: n = 1, m = 2, v = ["a","b","c"], w = [], f(a) = Fin 0, f(b) = Fin 0, f(c) = Fin 0
+IHm: n = 2, m = 1, v = [], w = [], f(a) = Fin 0, f(b) = Fin 0, f(c) = Fin 0
 le_lt_eq_dec: n = 0, m = 2
-IHm: n = 2, m = 0, v = [], w = [], f d = Fin 0, f c = Fin 0
+IHm: n = 2, m = 0, v = [], w = [], f(a) = Fin 0, f(b) = Fin 0, f(c) = Fin 0
 le_lt_eq_dec: n = 0, m = 1
-IHm: n = 3, m = 1, v = ["a","b","c"], w = ["b"], f d = Fin 0, f c = Fin 0
+IHm: n = 3, m = 1, v = ["a","b","c"], w = ["b"], f(a) = Fin 0, f(b) = Fin 0, f(c) = Fin 0
 le_lt_eq_dec: n = 2, m = 2
-IHn: n = 1, m = 2, v = ["a","b","c"], w = [], f d = Fin 0, f c = Fin 0
-IHm: n = 2, m = 1, v = ["b"], w = [], f d = Fin 0, f c = Fin 0
+IHn: n = 1, m = 2, v = ["a","b","c"], w = [], f(a) = Fin 0, f(b) = Fin 0, f(c) = Fin 0
+IHm: n = 2, m = 1, v = ["b"], w = [], f(a) = Fin 0, f(b) = Fin 0, f(c) = Fin 0
 le_lt_eq_dec: n = 1, m = 2
-IHm: n = 2, m = 0, v = ["b"], w = [], f d = Fin 0, f c = Fin 0
+IHm: n = 2, m = 0, v = ["b"], w = [], f(a) = Fin 0, f(b) = Fin 0, f(c) = Fin 0
 le_lt_eq_dec: n = 1, m = 1
-IHn: n = 0, m = 1, v = ["a","b","c"], w = [], f d = Fin 0, f c = Fin 0
-IHm: n = 1, m = 0, v = [], w = [], f d = Fin 0, f c = Fin 0
+IHn: n = 0, m = 1, v = ["a","b","c"], w = [], f(a) = Fin 0, f(b) = Fin 0, f(c) = Fin 0
+IHm: n = 1, m = 0, v = [], w = [], f(a) = Fin 0, f(b) = Fin 0, f(c) = Fin 0
 le_lt_eq_dec: n = 0, m = 1
-IHm: n = 3, m = 0, v = ["a","b","c"], w = ["b"], f d = Fin 0, f c = Fin 0
+IHm: n = 3, m = 0, v = ["a","b","c"], w = ["b"], f(a) = Fin 0, f(b) = Fin 0, f(c) = Fin 0
 le_lt_eq_dec: n = 2, m = 1
 *** Exception: absurd case
 CallStack (from HasCallStack):
