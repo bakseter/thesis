@@ -8,13 +8,13 @@ le_lt_eq_dec: n = 2, m = 2
 IHn: n = 0, m = 1, v = ["b","a"], w = [], f(b) = Fin 0, f(a) = Fin 0
 IHm: n = 1, m = 0, v = [], w = [], f(b) = Fin 0, f(a) = Fin 0
 le_lt_eq_dec: n = 0, m = 1
-IHm: n = 2, m = 0, v = ["b","a"], w = ["b"], f(b) = Fin 0, f(a) = Fin 0
+IHm: n = 2, m = 0, v = ["b","a"], w = ["b"], f(b) = Fin 1, f(a) = Fin 0
 le_lt_eq_dec: n = 1, m = 1
 IHn: n = 0, m = 1, v = ["b","a"], w = [], f(b) = Fin 0, f(a) = Fin 0
-IHm: n = 1, m = 0, v = ["b"], w = [], f(b) = Fin 0, f(a) = Fin 0
+IHm: n = 1, m = 0, v = ["b"], w = [], f(b) = Fin 1, f(a) = Fin 0
 le_lt_eq_dec: n = 1, m = 1
 IHn: n = 0, m = 1, v = ["b","a"], w = [], f(b) = Fin 0, f(a) = Fin 0
-IHm: n = 1, m = 0, v = ["b"], w = [], f(b) = Fin 0, f(a) = Fin 0
+IHm: n = 1, m = 0, v = ["b"], w = [], f(b) = Fin 2, f(a) = Fin 0
 le_lt_eq_dec: n = 1, m = 1
 Fin 0
 ghci> (ex_fail3 ex_lfp_geq_empty_fail3) "b"
@@ -24,13 +24,13 @@ le_lt_eq_dec: n = 2, m = 2
 IHn: n = 0, m = 1, v = ["b","a"], w = [], f(b) = Fin 0, f(a) = Fin 0
 IHm: n = 1, m = 0, v = [], w = [], f(b) = Fin 0, f(a) = Fin 0
 le_lt_eq_dec: n = 0, m = 1
-IHm: n = 2, m = 0, v = ["b","a"], w = ["b"], f(b) = Fin 0, f(a) = Fin 0
+IHm: n = 2, m = 0, v = ["b","a"], w = ["b"], f(b) = Fin 1, f(a) = Fin 0
 le_lt_eq_dec: n = 1, m = 1
 IHn: n = 0, m = 1, v = ["b","a"], w = [], f(b) = Fin 0, f(a) = Fin 0
-IHm: n = 1, m = 0, v = ["b"], w = [], f(b) = Fin 0, f(a) = Fin 0
+IHm: n = 1, m = 0, v = ["b"], w = [], f(b) = Fin 1, f(a) = Fin 0
 le_lt_eq_dec: n = 1, m = 1
 IHn: n = 0, m = 1, v = ["b","a"], w = [], f(b) = Fin 0, f(a) = Fin 0
-IHm: n = 1, m = 0, v = ["b"], w = [], f(b) = Fin 0, f(a) = Fin 0
+IHm: n = 1, m = 0, v = ["b"], w = [], f(b) = Fin 2, f(a) = Fin 0
 le_lt_eq_dec: n = 1, m = 1
 Fin 2
 ghci> 

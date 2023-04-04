@@ -352,7 +352,7 @@ thm_32 n m cs4 v w f4 x =
     Debug.Trace.trace
         ("IHn: n = " ++ Prelude.show n0 ++ ", m = " ++ Prelude.show m0 ++
         ", v = " ++ (Prelude.show v) ++ ", w = " ++ (Prelude.show w) ++
-        Prelude.concatMap (\var -> ", f(" ++ var ++ ") = " ++ Prelude.show (f0 var)) v) Prelude.$
+        Prelude.concatMap (\var -> ", f(" ++ var ++ ") = " ++ Prelude.show (f4 var)) v) Prelude.$
     nat_rect (\cs5 v0 w0 f5 _ _ _ h2 ->
       ex_lfp_geq_incl cs5
         (nodup
@@ -364,7 +364,7 @@ thm_32 n m cs4 v w f4 x =
             Debug.Trace.trace
                 ("IHm: n = " ++ Prelude.show (Prelude.succ n0) ++ ", m = " ++ Prelude.show m1 ++
                 ", v = " ++ (Prelude.show v0) ++ ", w = " ++ (Prelude.show w0) ++
-                Prelude.concatMap (\var -> ", f(" ++ var ++ ") = " ++ Prelude.show (f0 var)) v) Prelude.$
+                Prelude.concatMap (\var -> ", f(" ++ var ++ ") = " ++ Prelude.show (f5 var)) v) Prelude.$
       let {
        h3 =
         let {arg1 =
