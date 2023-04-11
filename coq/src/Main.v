@@ -81,10 +81,11 @@ Theorem thm_32 :
     pre_thm n m Cs V W f.
 Proof.
   unfold pre_thm. induction n as [|n IHn].
-  - unfold ex_lfp_geq in *. intros.
-    exists f. split. apply geq_refl. apply le_0_r in H0.
-    apply length_zero_iff_nil in H0. rewrite H0.
-    apply sub_model_W_empty.
+  - intros. exists f.
+    split; try apply geq_refl.
+    apply le_0_r in H0.
+    apply length_zero_iff_nil in H0.
+    rewrite H0. apply sub_model_W_empty.
   - induction m as [|m IHm].
     + intros.
       apply (ex_lfp_geq_incl Cs (nodup string_dec V) (nodup string_dec W));

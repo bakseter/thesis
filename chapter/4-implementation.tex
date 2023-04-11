@@ -79,8 +79,8 @@ Definition clause_true (c : Clause) (f : Frontier) : bool :=
 \end{minipage}
 
 The infix function \lstinline{<=?} is the boolean (and decidable) version of the
-Coq function \lstinline{<=}, which uses \lstinline{Prop} and is not decidable without
-additional lemmas/work/proofs \textcolor{red}{(wording?)}.
+Coq function \lstinline{<=}, which uses \lstinline{Prop} and is not inherently decidable without
+additional lemmas.
 
 We can also define functions that "shift" the number value of atoms or whole clauses by some amount \lstinline{n : nat}.
 
@@ -123,11 +123,11 @@ Definition all_shifts_true (c : Clause) (f : Frontier) : bool :=
 \subsection{\lstinline{sub_model}}
 
 Given any set of clauses and a function assigning values to the variables,
-we can determine if this is a valid model \textcolor{red}{(reword?)}.
+we can determine if this gives us a valid model \textcolor{red}{(reword?)}.
 
 We translate this propery to Coq as the recursive function \lstinline{sub_model}.
 We have two additional arguments \lstinline{V} and \lstinline{W}; these are
-the set of variables (strings) from the set of clauses, and all changed variables (expand on this), respectively.
+the set of variables (strings) from the set of clauses, and all changed variables \textcolor{red}{(expand on this)}, respectively.
 The function \lstinline{vars_set_atom} simply returns all the variables used
 in a set of atoms as a set of strings.
 
@@ -150,7 +150,7 @@ Fixpoint sub_model (Cs : set Clause) (V W : set string) (f : Frontier) : bool :=
 
 \subsection{\lstinline{geq}}
 
-We want to determine whether the all the values assigned to a set of variables
+We want to determine whether all the values assigned to a set of variables
 from one frontier are greater than or equal to all the values assigned to a set of variables
 from another frontier. The values are of the type \lstinline{Ninfty}, and the function
 only returns true if \textbf{all} the values from the first frontier are greater than
@@ -214,13 +214,14 @@ Another thing to note is the difference between \lstinline{Lemma} and \lstinline
 The reason for defining \lstinline{ex_lfp_geq} as a \lstinline{Type}, is that we can then use
 Coq's extraction feature to generate Haskell code from the Coq definitions.
 Since \lstinline{ex_lfp_geq} plays a central part in the proof of the main theorem,
-it must be defined as a \lstinline{Type} (or as a \lstinline{Set}!) to avoid universe inconsistencies.
+it must be defined as a \lstinline{Type} (or as a \lstinline{Set}!) to avoid universe inconsistencies
+when performing extraction.
 
 \section{The Main Proofs}
 
 We have now laid the groundwork for the formalization of theorem 3.2 from the paper \cite{mbezem}.
 We preceed the definition of theorem 3.2 with two additional definitions, which helps us simplify its
-definition and proof the theorem itself.
+definition and the proof of the theorem itself.
 
 \subsection{\lstinline{pre_thm}}
 
@@ -229,7 +230,7 @@ and theorem 3.2 share some structure, we define a propsition \lstinline{pre_thm}
 
 \begin{minipage}{\linewidth}
 \begin{lstlisting}[language=Coq, label={lst:pre_thm_def}, caption={Def. of \lstinline{pre_thm}}]
-Definition pre_thm (Cs : set Clause) (V W : set string) (f : Frontier) (n m : nat) :=
+Definition pre_thm (n m : nat) (Cs : set Clause) (V W : set string) (f : Frontier) :=
   incl W V ->
   Datatypes.length (nodup string_dec V) <= n ->
   Datatypes.length
@@ -254,13 +255,17 @@ Lemma lem_33 :
   forall Cs : set Clause,
   forall V W : set string,
   forall f : Frontier,
-  forall m : nat,
-    pre_thm Cs V W f (Datatypes.length (nodup string_dec V) - 1) m ->
+    (forall Cs' : set Clause,
+     forall V' W' : set string,
+     forall f' : Frontier,
+     forall m : nat,
+      pre_thm (Datatypes.length (nodup string_dec V) - 1) m Cs' V' W' f'
+    ) ->
     incl W V ->
     ex_lfp_geq Cs (nodup string_dec W) (nodup string_dec W) f ->
     ex_lfp_geq Cs (nodup string_dec V) (nodup string_dec W) f.
 Proof.
- (* ... *)
+  (* ... *)
 Qed.
 \end{lstlisting}
 \end{minipage}
@@ -272,16 +277,102 @@ We can now formulate theorem 3.2 using \lstinline{pre_thm}:
 \begin{minipage}{\linewidth}
 \begin{lstlisting}[language=Coq, label={lst:thm_32}, caption={Theorem 3.2 in Coq}]
 Theorem thm_32 :
-  forall Cs : set Clause,
   forall n m : nat,
-  forall f : Frontier,
+  forall Cs : set Clause,
   forall V W : set string,
-    pre_thm Cs V W f n m.
+  forall f : Frontier,
+    pre_thm n m Cs V W f.
 Proof.
   (* ... *)
 Qed.
 \end{lstlisting}
 \end{minipage}
+
+The proof of theorem 3.2 is based on a double induction on \lstinline{n} and \lstinline{m}.
+
+\subsubsection{Base case of \lstinline{n}}
+
+The first base case is simple. We want to prove
+
+\tabto{2em}
+\lstinline{ex_lfp_geq Cs (nodup string_dec V) (nodup string_dec V) f}.
+
+If we unfold the definition of \lstinline{ex_lfp_geq}, we see that we must prove
+
+\tabto{2em}
+\lstinline{{g : Frontier | geq (nodup string_dec V) f g = true}\}
+
+and
+
+\tabto{2em}
+\lstinline{sub_model Cs (nodup string_dec V) (nodup string_dec V) f = true}.
+
+The syntax of the first goal is a bit strange, but it is simply a proposition
+that states that there exists a \lstinline{g : Frontier} such that
+\lstinline{geq (nodup string_dec V) f g = true}. This is easily proven by
+assuming \lstinline{g = f} and using the lemma \lstinline{geq_refl}.
+The reason for the different syntax is that we are using the \lstinline{Set} universe
+which does not have the same syntax as the \lstinline{Prop} universe,
+where we could have written
+
+\tabto{2em}
+\lstinline{exists g : Frontier, geq (nodup string_dec V) f g = true}.
+
+The second goal is proven by the fact that the length of \lstinline{V} is less than or equal to \lstinline{n},
+which in this case is \lstinline{0}. This means that \lstinline{V} is empty,
+and we therefore have the new goal of \lstinline{sub_model Cs [] [] f = true}.
+This is proven by the lemma \lstinline{sub_model_W_empty}, which states that
+\lstinline{forall Cs V f, sub_model Cs V [] f = true}.
+
+\subsubsection{Inductive case of \lstinline{n}}
+
+We start the inductive case of \lstinline{n} by doing a new induction on \lstinline{m}.
+
+\subsubsection{Base case of \lstinline{m}}
+
+The first base case is similar to the first base case of \lstinline{n}.
+We again want to prove
+
+\tabto{2em}
+\lstinline{ex_lfp_geq Cs (nodup string_dec V) (nodup string_dec V) f}.
+
+We now apply the lemma \lstinline{ex_lfp_geq_incl}, which states that
+
+\tabto{2em}
+\lstinline{forall Cs V W f, incl V W -> forall f, ex_lfp_geq Cs W W f -> ex_lfp_geq Cs V V f.}
+
+We give this lemma the arguments of \lstinline{Cs}, \lstinline{nodup string_dec V} and \lstinline{nodup string_dec W}.
+This generates to new goals,
+
+$(1)$
+\tabto{2em}
+\lstinline{incl (nodup string_dec V) (nodup string_dec W)}
+
+and
+
+$(2)$
+\tabto{2em}
+\lstinline{ex_lfp_geq Cs (nodup string_dec W) (nodup string_dec W) f}.
+
+The goal $(1)$ is proven by using a hypothesis that states that
+
+\tabto{2em}
+\lstinline{Datatypes.length (set_diff string_dec (nodup string_dec V) (nodup string_dec W)) <= m <= n}.
+
+Since \lstinline{m} is \lstinline{0}, this means that
+the set difference of \lstinline{V} and \lstinline{W} is empty.
+We can now apply the lemma \lstinline{set_diff_nil_incl} on this hypothesis, which states that
+
+\tabto{2em}
+\lstinline{forall dec V W, set_diff dec V W = [] <-> incl V W.}
+
+This gives us a hypothesis identical to our goal $(1)$, and therefore proves it.
+
+The goal $(2)$ is proven by an existing hypothesis.
+
+\subsubsection{Inductive case of \lstinline{m}}
+
+Too long :)
 
 \section{Extraction to Haskell}
 
