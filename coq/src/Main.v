@@ -165,6 +165,11 @@ Proof.
                     rewrite (incl_set_union_nodup_l string_dec).
                     apply nodup_incl. assumption.
                 }
+                (*
+                   fails here (?)
+                   when W goes from empty to non-empty
+                   and then does not increase further in next step.
+                *)
                 assert (Datatypes.length (set_diff string_dec V (set_union string_dec (nodup string_dec W) U)) < Datatypes.length (set_diff string_dec V (nodup string_dec W)) <= S m).
                 {
                   apply conj.

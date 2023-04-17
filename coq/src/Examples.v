@@ -83,7 +83,6 @@ Module Alf.
 
   Compute ex_alf a1 a2 a3 ex_lfp_geq_empty_alf.
 
-
 End Alf.
 
 Module Alf2.
