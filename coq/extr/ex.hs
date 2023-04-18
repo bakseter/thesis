@@ -17,8 +17,8 @@ false_rec =
   false_rect
 
 eq_rect :: a1 -> a2 -> a1 -> a2
-eq_rect _ f4 _ =
-  f4
+eq_rect _ f5 _ =
+  f5
 
 eq_rec :: a1 -> a2 -> a1 -> a2
 eq_rec =
@@ -29,10 +29,10 @@ eq_rec_r =
   eq_rec
 
 nat_rect :: a1 -> (Prelude.Integer -> a1 -> a1) -> Prelude.Integer -> a1
-nat_rect f4 f5 n =
+nat_rect f5 f6 n =
   (\fO fS n -> if n Prelude.== 0 then fO () else fS (n Prelude.- 1))
-    (\_ -> f4)
-    (\n0 -> f5 n0 (nat_rect f4 f5 n0))
+    (\_ -> f5)
+    (\n0 -> f6 n0 (nat_rect f5 f6 n0))
     n
 
 nat_rec :: a1 -> (Prelude.Integer -> a1 -> a1) -> Prelude.Integer -> a1
@@ -40,10 +40,10 @@ nat_rec =
   nat_rect
 
 list_rect :: a2 -> (a1 -> (([]) a1) -> a2 -> a2) -> (([]) a1) -> a2
-list_rect f4 f5 l =
+list_rect f5 f6 l =
   case l of {
-   ([]) -> f4;
-   (:) y l0 -> f5 y l0 (list_rect f4 f5 l0)}
+   ([]) -> f5;
+   (:) y l0 -> f6 y l0 (list_rect f5 f6 l0)}
 
 list_rec :: a2 -> (a1 -> (([]) a1) -> a2 -> a2) -> (([]) a1) -> a2
 list_rec =
@@ -65,8 +65,8 @@ type Sig a = a
   -- singleton inductive, whose constructor was exist
   
 sig_rect :: (a1 -> () -> a2) -> a1 -> a2
-sig_rect f4 s =
-  f4 s __
+sig_rect f5 s =
+  f5 s __
 
 sig_rec :: (a1 -> () -> a2) -> a1 -> a2
 sig_rec =
@@ -87,10 +87,10 @@ map :: (a1 -> a2) -> (([]) a1) -> ([]) a2
 map = Prelude.map
 
 flat_map :: (a1 -> ([]) a2) -> (([]) a1) -> ([]) a2
-flat_map f4 l =
+flat_map f5 l =
   case l of {
    ([]) -> ([]);
-   (:) x t -> app (f4 x) (flat_map f4 t)}
+   (:) x t -> app (f5 x) (flat_map f5 t)}
 
 fold_right :: (a2 -> a1 -> a1) -> a1 -> (([]) a2) -> a1
 fold_right = Prelude.foldr
@@ -190,21 +190,21 @@ frontier_infty _ =
   Infty
 
 update_infty_V :: (Set Prelude.String) -> Frontier -> Frontier
-update_infty_V v f4 x =
+update_infty_V v f5 x =
   case set_mem
          ((Prelude.==) :: Prelude.String -> Prelude.String -> Prelude.Bool) x
          v of {
    Prelude.True -> Infty;
-   Prelude.False -> f4 x}
+   Prelude.False -> f5 x}
 
 data Atom0 =
    Atom Prelude.String Prelude.Integer
 
 atom_true :: Atom0 -> Frontier -> Prelude.Bool
-atom_true a f4 =
+atom_true a f5 =
   case a of {
    Atom x k ->
-    case f4 x of {
+    case f5 x of {
      Infty -> Prelude.True;
      Fin n -> (Prelude.<=) k n}}
 
@@ -217,12 +217,12 @@ data Clause0 =
    Clause (Set Atom0) Atom0
 
 clause_true :: Clause0 -> Frontier -> Prelude.Bool
-clause_true c f4 =
+clause_true c f5 =
   case c of {
    Clause conds conc ->
     case fold_right (Prelude.&&) Prelude.True
-           (map (\a -> atom_true a f4) conds) of {
-     Prelude.True -> atom_true conc f4;
+           (map (\a -> atom_true a f5) conds) of {
+     Prelude.True -> atom_true conc f5;
      Prelude.False -> Prelude.True}}
 
 shift_clause :: Prelude.Integer -> Clause0 -> Clause0
@@ -231,16 +231,16 @@ shift_clause n c =
    Clause conds conc -> Clause (map (shift_atom n) conds) (shift_atom n conc)}
 
 all_shifts_true :: Clause0 -> Frontier -> Prelude.Bool
-all_shifts_true c f4 =
+all_shifts_true c f5 =
   case c of {
    Clause _ conc ->
     case conc of {
      Atom x k ->
-      case f4 x of {
+      case f5 x of {
        Infty -> Prelude.True;
        Fin n ->
         clause_true (shift_clause (sub ((Prelude.+) n (Prelude.succ 0)) k) c)
-          f4}}}
+          f5}}}
 
 vars_set_atom :: (Set Atom0) -> Set Prelude.String
 vars_set_atom s =
@@ -265,13 +265,13 @@ vars_clause c =
         (vars_set_atom conds)}}
 
 vars :: (Set Clause0) -> Set Prelude.String
-vars cs4 =
-  flat_map vars_clause cs4
+vars cs5 =
+  flat_map vars_clause cs5
 
 sub_vars_improvable :: (Set Clause0) -> (Set Prelude.String) -> (Set
                        Prelude.String) -> Frontier -> Set Prelude.String
-sub_vars_improvable cs4 v w f4 =
-  case cs4 of {
+sub_vars_improvable cs5 v w f5 =
+  case cs5 of {
    ([]) -> ([]);
    (:) c t ->
     case c of {
@@ -290,12 +290,12 @@ sub_vars_improvable cs4 v w f4 =
                        set_mem
                          ((Prelude.==) :: Prelude.String -> Prelude.String -> Prelude.Bool)
                          x0 v) (vars_set_atom l)))))
-               (all_shifts_true (Clause l (Atom x k)) f4) of {
-         Prelude.True -> sub_vars_improvable t v w f4;
+               (all_shifts_true (Clause l (Atom x k)) f5) of {
+         Prelude.True -> sub_vars_improvable t v w f5;
          Prelude.False ->
           set_add
             ((Prelude.==) :: Prelude.String -> Prelude.String -> Prelude.Bool)
-            x (sub_vars_improvable t v w f4)}}}}
+            x (sub_vars_improvable t v w f5)}}}}
 
 type Ex_lfp_geq_S = Frontier
 
@@ -312,8 +312,8 @@ ex_lfp_geq_monotone _ _ _ _ h =
   h
 
 ex_lfp_geq_empty :: (Set Clause0) -> Frontier -> Ex_lfp_geq
-ex_lfp_geq_empty _ f4 =
-  f4
+ex_lfp_geq_empty _ f5 =
+  f5
 
 ex_lfp_geq_nodup_iff :: (Set Clause0) -> (Set Prelude.String) -> Frontier ->
                         (,) (Ex_lfp_geq -> Ex_lfp_geq)
@@ -323,15 +323,15 @@ ex_lfp_geq_nodup_iff _ _ _ =
 
 sub_forward :: (Set Clause0) -> (Set Prelude.String) -> (Set Prelude.String)
                -> Frontier -> (,) (Set Prelude.String) Frontier
-sub_forward cs4 v w f4 =
-  let {x = sub_vars_improvable cs4 v w f4} in
+sub_forward cs5 v w f5 =
+  let {x = sub_vars_improvable cs5 v w f5} in
   let {
    f' = \v0 ->
     case set_mem
            ((Prelude.==) :: Prelude.String -> Prelude.String -> Prelude.Bool)
            v0 x of {
-     Prelude.True -> sinfty (f4 v0);
-     Prelude.False -> f4 v0}}
+     Prelude.True -> sinfty (f5 v0);
+     Prelude.False -> f5 v0}}
   in
   (,) x f'
 
@@ -347,49 +347,50 @@ lem_33 _ _ _ _ _ x =
 thm_32 :: Prelude.Integer -> Prelude.Integer -> (Set Clause0) -> (Set
           Prelude.String) -> (Set Prelude.String) -> Frontier -> Ex_lfp_geq
           -> Ex_lfp_geq
-thm_32 n m cs4 v w f4 x =
-  nat_rect (\_ _ _ _ f5 _ _ _ _ -> f5) (\n0 iHn m0 ->
+thm_32 n m cs5 v w f5 x =
+  nat_rect (\_ _ _ _ f6 _ _ _ _ -> f6) (\n0 iHn m0 ->
     Debug.Trace.trace
         ("IHn: n = " ++ Prelude.show n0 ++ ", m = " ++ Prelude.show m0 ++
         ", v = " ++ (Prelude.show v) ++ ", w = " ++ (Prelude.show w) ++
-        Prelude.concatMap (\var -> ", f(" ++ var ++ ") = " ++ Prelude.show (f4 var)) v) Prelude.$
-    nat_rect (\cs5 v0 w0 f5 _ _ _ h2 ->
-      ex_lfp_geq_incl cs5
+        Prelude.concatMap (\var -> ", f(" ++ var ++ ") = " ++ Prelude.show (f5 var)) v) Prelude.$
+    nat_rect (\cs6 v0 w0 f6 _ _ _ h2 ->
+      ex_lfp_geq_incl cs6
         (nodup
           ((Prelude.==) :: Prelude.String -> Prelude.String -> Prelude.Bool)
           v0)
         (nodup
           ((Prelude.==) :: Prelude.String -> Prelude.String -> Prelude.Bool)
-          w0) f5 h2) (\m1 iHm cs5 v0 w0 f5 _ _ _ h2 ->
+          w0) f6 h2) (\m1 iHm cs6 v0 w0 f6 _ _ _ h2 ->
             Debug.Trace.trace
-                ("IHm: n = " ++ Prelude.show (Prelude.succ n0) ++ ", m = " ++ Prelude.show m1 ++
-                ", v = " ++ (Prelude.show v0) ++ ", w = " ++ (Prelude.show w0) ++
-                Prelude.concatMap (\var -> ", f(" ++ var ++ ") = " ++ Prelude.show (f5 var)) v) Prelude.$
+                 ("IHm: n = " ++ Prelude.show (Prelude.succ n0) ++ ", m = " ++ Prelude.show m1 ++
+                 ", v = " ++ (Prelude.show v0) ++ ", w = " ++ (Prelude.show w0) ++
+                 Prelude.concatMap (\var -> ", f(" ++ var ++ ") = " ++ Prelude.show (f6 var)) v) Prelude.$
       let {
-       h3 =
-        let {arg1 =
-          (length
-            (set_diff
-              ((Prelude.==) :: Prelude.String -> Prelude.String -> Prelude.Bool)
-              (nodup
-                ((Prelude.==) :: Prelude.String -> Prelude.String -> Prelude.Bool)
-                v0)
-              (nodup
-                ((Prelude.==) :: Prelude.String -> Prelude.String -> Prelude.Bool)
-                w0)))}
-        in let {arg2 = (Prelude.succ m1)}
-        in
-            (Debug.Trace.trace ("le_lt_eq_dec: n = " ++ Prelude.show arg1 ++ ", m = " ++ Prelude.show arg2)) (le_lt_eq_dec arg1 arg2)}
-      in
-      case h3 of {
-       Prelude.True -> iHm cs5 v0 w0 f5 __ __ __ h2;
-       Prelude.False ->
-        let {h5 = iHn n0 cs5 w0 ([]) f5 __ __ __ f5} in
-        let {
-         h = lem_33 cs5 v0
+        h3 =
+         let {arg1 =
+           (length
+             (set_diff
+               ((Prelude.==) :: Prelude.String -> Prelude.String -> Prelude.Bool)
                (nodup
                  ((Prelude.==) :: Prelude.String -> Prelude.String -> Prelude.Bool)
-                 w0) f5 (\cs' v' w' f' m2 _ _ _ h9 ->
+                 v0)
+               (nodup
+                 ((Prelude.==) :: Prelude.String -> Prelude.String -> Prelude.Bool)
+                 w0)))}
+         in let {arg2 = (Prelude.succ m1)}
+         in
+             (Debug.Trace.trace ("le_lt_eq_dec: n = " ++ Prelude.show arg1 ++ ", m = " ++ Prelude.show arg2)) (le_lt_eq_dec arg1 arg2)}
+
+      in
+      case h3 of {
+       Prelude.True -> iHm cs6 v0 w0 f6 __ __ __ h2;
+       Prelude.False ->
+        let {h5 = iHn n0 cs6 w0 ([]) f6 __ __ __ f6} in
+        let {
+         h = lem_33 cs6 v0
+               (nodup
+                 ((Prelude.==) :: Prelude.String -> Prelude.String -> Prelude.Bool)
+                 w0) f6 (\cs' v' w' f' m2 _ _ _ h9 ->
                iHn m2 cs' v' w' f' __ __ __ h9)
                (eq_rec_r
                  (nodup
@@ -403,7 +404,7 @@ thm_32 n m cs4 v w f4 x =
         in
         sig_rec (\h0 _ ->
           let {
-           p = sub_forward cs5
+           p = sub_forward cs6
                  (nodup
                    ((Prelude.==) :: Prelude.String -> Prelude.String -> Prelude.Bool)
                    v0)
@@ -414,7 +415,7 @@ thm_32 n m cs4 v w f4 x =
           case p of {
            (,) a b ->
             eq_rect
-              (sub_vars_improvable cs5
+              (sub_vars_improvable cs6
                 (nodup
                   ((Prelude.==) :: Prelude.String -> Prelude.String -> Prelude.Bool)
                   v0)
@@ -425,7 +426,7 @@ thm_32 n m cs4 v w f4 x =
                 case set_mem
                        ((Prelude.==) :: Prelude.String -> Prelude.String -> Prelude.Bool)
                        v1
-                       (sub_vars_improvable cs5
+                       (sub_vars_improvable cs6
                          (nodup
                            ((Prelude.==) :: Prelude.String -> Prelude.String -> Prelude.Bool)
                            v0)
@@ -450,25 +451,25 @@ thm_32 n m cs4 v w f4 x =
                                 w0) a))}
                    in
                    case s of {
-                    Prelude.True -> update_infty_V v0 f5;
+                    Prelude.True -> update_infty_V v0 f6;
                     Prelude.False ->
-                     ex_lfp_geq_monotone cs5
+                     ex_lfp_geq_monotone cs6
                        (nodup
                          ((Prelude.==) :: Prelude.String -> Prelude.String -> Prelude.Bool)
-                         v0) b f5
-                       (iHm cs5 v0
+                         v0) b f6
+                       (iHm cs6 v0
                          (nodup
                            ((Prelude.==) :: Prelude.String -> Prelude.String -> Prelude.Bool)
                            (set_union
                              ((Prelude.==) :: Prelude.String -> Prelude.String -> Prelude.Bool)
                              w0 a)) b __ __ __
-                         (iHn n0 cs5
+                         (iHn n0 cs6
                            (nodup
                              ((Prelude.==) :: Prelude.String -> Prelude.String -> Prelude.Bool)
                              (set_union
                                ((Prelude.==) :: Prelude.String -> Prelude.String -> Prelude.Bool)
                                w0 a)) ([]) b __ __ __ b))}}) b) a __}) h}) m0)
-    n m cs4 v w f4 __ __ __ x
+    n m cs5 v w f5 __ __ __ x
 
 cs :: ([]) Clause0
 cs =
@@ -586,4 +587,94 @@ ex_fail4 x =
 ex_lfp_geq_empty_fail4 :: Ex_lfp_geq
 ex_lfp_geq_empty_fail4 =
   ex_lfp_geq_empty cs3 f3
+
+cs4 :: ([]) Clause0
+cs4 =
+  (:) (Clause ((:) (Atom "max_case_strong.u0" 0) ([])) (Atom "eq.u0"
+    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "max_case_strong.u0" 0) ([]))
+    (Atom "Coq.Init.Logic.10" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
+    "min_case_strong.u0" 0) ([])) (Atom "eq.u0" (Prelude.succ 0))) ((:)
+    (Clause ((:) (Atom "min_case_strong.u0" 0) ([])) (Atom
+    "Coq.Init.Logic.10" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
+    "FunctionalExtensionality.forall_extensionality.u1" 0) ([])) (Atom
+    "FunctionalExtensionality.functional_extensionality.u1" (Prelude.succ
+    0))) ((:) (Clause ((:) (Atom
+    "FunctionalExtensionality.forall_extensionality.u1" 0) ([])) (Atom
+    "eq.u0" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
+    "FunctionalExtensionality.forall_extensionality.u3" 0) ([])) (Atom
+    "eq.u0" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
+    "FunctionalExtensionality.forall_extensionalityS.u1" 0) ([])) (Atom
+    "eq.u0" (Prelude.succ 0))) ((:) (Clause ((:) (Atom "hypo.u0" 0) ([]))
+    (Atom "list.u0" (Prelude.succ 0))) ((:) (Clause ((:) (Atom "Prop" 0)
+    ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
+    "app_nil_r.u0" 0) ([])) (Atom "eq.u0" (Prelude.succ 0))) ((:) (Clause
+    ((:) (Atom "app_nil_r.u1" 0) ([])) (Atom "eq.u0" (Prelude.succ 0))) ((:)
+    (Clause ((:) (Atom "app_assoc.u0" 0) ([])) (Atom "eq.u0" (Prelude.succ
+    0))) ((:) (Clause ((:) (Atom "app_assoc.u1" 0) ([])) (Atom "eq.u0"
+    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "nth_split.u0" 0) ([])) (Atom
+    "eq.u0" (Prelude.succ 0))) ((:) (Clause ((:) (Atom "nth_ext.u0" 0) ([]))
+    (Atom "eq.u0" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
+    "nth_error_split.u0" 0) ([])) (Atom "eq.u0" (Prelude.succ 0))) ((:)
+    (Clause ((:) (Atom "remove_app.u0" 0) ([])) (Atom "eq.u0" (Prelude.succ
+    0))) ((:) (Clause ((:) (Atom "notin_remove.u0" 0) ([])) (Atom "eq.u0"
+    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "filter_ext_in.u0" 0) ([]))
+    (Atom "eq.u0" (Prelude.succ 0))) ((:) (Clause ((:) (Atom "remove_alt.u0"
+    0) ([])) (Atom "eq.u0" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
+    "split_combine.u0" 0) ([])) (Atom "eq.u0" (Prelude.succ 0))) ((:) (Clause
+    ((:) (Atom "firstn_all2.u0" 0) ([])) (Atom "eq.u0" (Prelude.succ 0)))
+    ((:) (Clause ((:) (Atom "firstn_app.u0" 0) ([])) (Atom "eq.u0"
+    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "firstn_firstn.u0" 0) ([]))
+    (Atom "eq.u0" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
+    "firstn_skipn.u0" 0) ([])) (Atom "eq.u0" (Prelude.succ 0))) ((:) (Clause
+    ((:) (Atom "firstn_skipn_rev.u0" 0) ([])) (Atom "eq.u0" (Prelude.succ
+    0))) ((:) (Clause ((:) (Atom "firstn_map.u0" 0) ([])) (Atom "eq.u0"
+    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "firstn_map.u1" 0) ([])) (Atom
+    "eq.u0" (Prelude.succ 0))) ((:) (Clause ((:) (Atom "firstn_map.u2" 0)
+    ([])) (Atom "eq.u0" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
+    "firstn_map.u3" 0) ([])) (Atom "eq.u0" (Prelude.succ 0))) ((:) (Clause
+    ((:) (Atom "Add_split.u0" 0) ([])) (Atom "eq.u0" (Prelude.succ 0))) ((:)
+    (Clause ((:) (Atom "Add_split.u1" 0) ([])) (Atom "eq.u0" (Prelude.succ
+    0))) ((:) (Clause ((:) (Atom "repeat_cons.u0" 0) ([])) (Atom "eq.u0"
+    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "count_occ_unique.u0" 0) ([]))
+    (Atom "eq.u0" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
+    "repeat_to_concat.u0" 0) ([])) (Atom "eq.u0" (Prelude.succ 0))) ((:)
+    (Clause ((:) (Atom "Fin.caseS'.u0" 0) ([])) (Atom "Fin.caseS'.u1"
+    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "Vector.eqb_eq.u0" 0) ([]))
+    (Atom "eq.u0" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
+    "Vector.caseS'.u1]" 0) ([])) (Atom "Vector.caseS'.u2" (Prelude.succ 0)))
+    ((:) (Clause ((:) (Atom "EnvRing.env_morph.u0" 0) ([])) (Atom "eq.u0"
+    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "EnvRing.Pjump_add.u0" 0)
+    ([])) (Atom "eq.u0" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
+    "EnvRing.Mphi_morph.u0" 0) ([])) (Atom "eq.u0" (Prelude.succ 0))) ((:)
+    (Clause ((:) (Atom "Vector.eq_nth_iff.u0" 0) ([])) (Atom "eq.u0"
+    (Prelude.succ 0))) ((:) (Clause ((:) (Atom
+    "Vector.replace_replace_neq.u0" 0) ([])) (Atom "eq.u0" (Prelude.succ 0)))
+    ((:) (Clause ((:) (Atom "Vector.fold_left_right_assoc_eq.u0" 0) ([]))
+    (Atom "eq.u0" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
+    "Vector.fold_left_right_assoc_eq.u1" 0) ([])) (Atom "eq.u0" (Prelude.succ
+    0))) ((:) (Clause ((:) (Atom "Vector.append_splitat.u0" 0) ([])) (Atom
+    "eq.u0" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
+    "Vector.to_list_of_list_opp.u0" 0) ([])) (Atom "eq.u0" (Prelude.succ 0)))
+    ((:) (Clause ((:) (Atom "Vector.of_list_to_list_opp.u0" 0) ([])) (Atom
+    "eq.u0" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
+    "Vector.to_list_append.u0" 0) ([])) (Atom "eq.u0" (Prelude.succ 0))) ((:)
+    (Clause ((:) (Atom "Vector.to_list_map.u1" 0) ([])) (Atom "eq.u0"
+    (Prelude.succ 0))) ([])))))))))))))))))))))))))))))))))))))))))))))))))))
+
+f4 :: Frontier
+f4 =
+  frontier_fin_0
+
+vars'4 :: ([]) Prelude.String
+vars'4 =
+  nodup ((Prelude.==) :: Prelude.String -> Prelude.String -> Prelude.Bool)
+    (vars cs4)
+
+ex_coq_types :: Ex_lfp_geq -> Ex_lfp_geq
+ex_coq_types x =
+  thm_32 (length vars'4) (length vars'4) cs4 vars'4 ([]) f4 x
+
+ex_lfp_geq_empty_coq_types :: Ex_lfp_geq
+ex_lfp_geq_empty_coq_types =
+  ex_lfp_geq_empty cs4 f4
 

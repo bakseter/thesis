@@ -335,6 +335,74 @@ Module Fail4.
     ex_lfp_geq_empty Cs f.
 End Fail4.
 
+Module CoqTypes.
+  Example Cs := [
+    ["max_case_strong.u0" & 0]  ~>  "eq.u0" & 1;
+    ["max_case_strong.u0" & 0]  ~>  "Coq.Init.Logic.10" & 1;
+    ["min_case_strong.u0" & 0]  ~>  "eq.u0" & 1;
+    ["min_case_strong.u0" & 0]  ~>  "Coq.Init.Logic.10" & 1;
+    ["FunctionalExtensionality.forall_extensionality.u1" & 0]  ~>  "FunctionalExtensionality.functional_extensionality.u1" & 1;
+    ["FunctionalExtensionality.forall_extensionality.u1" & 0]  ~>  "eq.u0" & 1;
+    ["FunctionalExtensionality.forall_extensionality.u3" & 0]  ~>  "eq.u0" & 1;
+    ["FunctionalExtensionality.forall_extensionalityS.u1" & 0]  ~>  "eq.u0" & 1;
+    ["hypo.u0" & 0]  ~>  "list.u0" & 1;
+    ["Prop" & 0]  ~> "Set" & 1;
+    ["app_nil_r.u0" & 0]  ~>  "eq.u0" & 1;
+    ["app_nil_r.u1" & 0]  ~>  "eq.u0" & 1;
+    ["app_assoc.u0" & 0]  ~>  "eq.u0" & 1;
+    ["app_assoc.u1" & 0]  ~>  "eq.u0" & 1;
+    ["nth_split.u0" & 0]  ~>  "eq.u0" & 1;
+    ["nth_ext.u0" & 0]  ~>  "eq.u0" & 1;
+    ["nth_error_split.u0" & 0]  ~>  "eq.u0" & 1;
+    ["remove_app.u0" & 0]  ~>  "eq.u0" & 1;
+    ["notin_remove.u0" & 0]  ~>  "eq.u0" & 1;
+    ["filter_ext_in.u0" & 0]  ~>  "eq.u0" & 1;
+    ["remove_alt.u0" & 0]  ~>  "eq.u0" & 1;
+    ["split_combine.u0" & 0]  ~>  "eq.u0" & 1;
+    ["firstn_all2.u0" & 0]  ~>  "eq.u0" & 1;
+    ["firstn_app.u0" & 0]  ~>  "eq.u0" & 1;
+    ["firstn_firstn.u0" & 0]  ~>  "eq.u0" & 1;
+    ["firstn_skipn.u0" & 0]  ~>  "eq.u0" & 1;
+    ["firstn_skipn_rev.u0" & 0]  ~>  "eq.u0" & 1;
+    ["firstn_map.u0" & 0]  ~>  "eq.u0" & 1;
+    ["firstn_map.u1" & 0]  ~>  "eq.u0" & 1;
+    ["firstn_map.u2" & 0]  ~>  "eq.u0" & 1;
+    ["firstn_map.u3" & 0]  ~>  "eq.u0" & 1;
+    ["Add_split.u0" & 0]  ~>  "eq.u0" & 1;
+    ["Add_split.u1" & 0]  ~>  "eq.u0" & 1;
+    ["repeat_cons.u0" & 0]  ~>  "eq.u0" & 1;
+    ["count_occ_unique.u0" & 0]  ~>  "eq.u0" & 1;
+    ["repeat_to_concat.u0" & 0]  ~>  "eq.u0" & 1;
+    ["Fin.caseS'.u0" & 0]  ~>  "Fin.caseS'.u1" & 1;
+    ["Vector.eqb_eq.u0" & 0]  ~>  "eq.u0" & 1;
+    ["Vector.caseS'.u1]" & 0]  ~>  "Vector.caseS'.u2" & 1;
+    ["EnvRing.env_morph.u0" & 0]  ~>  "eq.u0" & 1;
+    ["EnvRing.Pjump_add.u0" & 0]  ~>  "eq.u0" & 1;
+    ["EnvRing.Mphi_morph.u0" & 0]  ~>  "eq.u0" & 1;
+    ["Vector.eq_nth_iff.u0" & 0]  ~>  "eq.u0" & 1;
+    ["Vector.replace_replace_neq.u0" & 0]  ~>  "eq.u0" & 1;
+    ["Vector.fold_left_right_assoc_eq.u0" & 0]  ~>  "eq.u0" & 1;
+    ["Vector.fold_left_right_assoc_eq.u1" & 0]  ~>  "eq.u0" & 1;
+    ["Vector.append_splitat.u0" & 0]  ~>  "eq.u0" & 1;
+    ["Vector.to_list_of_list_opp.u0" & 0]  ~>  "eq.u0" & 1;
+    ["Vector.of_list_to_list_opp.u0" & 0]  ~>  "eq.u0" & 1;
+    ["Vector.to_list_append.u0" & 0]  ~>  "eq.u0" & 1;
+    ["Vector.to_list_map.u1" & 0]  ~>  "eq.u0" & 1
+  ].
+  Example f := frontier_fin_0.
+  Example vars' := nodup string_dec (vars Cs).
+  Example ex_coq_types :=
+    thm_32
+      (Datatypes.length vars')
+      (Datatypes.length vars')
+      Cs
+      vars'
+      []
+      f.
+  Example ex_lfp_geq_empty_coq_types :=
+    ex_lfp_geq_empty Cs f.
+End CoqTypes.
+
 Extraction Language Haskell.
 
 Extract Constant map => "Prelude.map".
@@ -348,4 +416,5 @@ Extraction "/home/andreas/Projects/thesis/coq/extr/ex.hs"
   Fail1.ex_fail1 Fail1.ex_lfp_geq_empty_fail1
   Fail2.ex_fail2 Fail2.ex_lfp_geq_empty_fail2
   Fail3.ex_fail3 Fail3.ex_lfp_geq_empty_fail3
-  Fail4.ex_fail4 Fail4.ex_lfp_geq_empty_fail4.
+  Fail4.ex_fail4 Fail4.ex_lfp_geq_empty_fail4
+  CoqTypes.ex_coq_types CoqTypes.ex_lfp_geq_empty_coq_types.
