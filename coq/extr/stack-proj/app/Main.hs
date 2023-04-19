@@ -1,4 +1,4 @@
-module Ex where
+module Main where
 
 import qualified Prelude
 import qualified Debug.Trace
