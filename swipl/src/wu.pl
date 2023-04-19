@@ -30,7 +30,7 @@ clu :- retractall(cb(_,_)),
        % NB duality needed as only Y can be a max
        forall((X leq Y), assertz(cb(X,[Y]))),
        forall((X eq Y), (assertz(cb(X,[Y])), assertz(cb(Y,[X])))),
-       forall(((X lt Y),X\='Set'),  assertz(cb(X,[Y-1]))).
+       forall(((X lt Y)/*,X\='Set'*/),  assertz(cb(X,[Y-1]))).
        
 chu(A) :- % NB duality
        forall((X leq Y),(get_assoc(X,A,N),get_assoc(Y,A,M), N >= M)),
@@ -136,9 +136,17 @@ show_maxType(A) :- get_assoc(maxType,A,N),write(N),write('   ').
 
 ask(M,A,B) :- get_assoc(A,M,X),get_assoc(B,M,Y),write(X-Y),nl.
 
-% not used yet
-%ext(F,E,FE):- atom_concat(F,'.',F1),atom_concat(F1,E,FE).
-%io(Dest,Mode,Name,DO):-open(Dest,Mode,_,[alias(Name)]),
-%       (Mode=write->set_output(Name);set_input(Name)),DO,close(Name).
-%out(Fi):-ext(Fi,out,Fo),io(Fo,write,out,test(Fi)).
+
+% write output of listclauses to file
+
+listclauses:- 
+write('['),nl,
+forall(cb(X,[Y-1]),(write('["'),write(Y),write('"'),write(' & '),write(0),write(']  ~>  '),write('"'),write(X),write('"'),write(' & 1 ;'),nl)),
+forall((cb(X,[Y]),Y\=(_-1)),(write('["'),write(Y),write('"'),write(' & '),write(0),write(']  ~>  '),write('"'),write(X),write('"'),write(' & 0 ;'),nl)),
+write('end ~> end]').
+
+ext(F,E,FE):- atom_concat(F,'.',F1),atom_concat(F1,E,FE).
+io(Dest,Mode,Name,DO):-open(Dest,Mode,_,[alias(Name)]),
+       (Mode=write->set_output(Name);set_input(Name)),DO,close(Name).
+out(Fo):- io(Fo,write,out,listclauses).
 
