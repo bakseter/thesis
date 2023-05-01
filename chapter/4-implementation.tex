@@ -18,7 +18,7 @@ We also define the atoms in the clauses as containing one string and one natural
 since this is sufficient for our implementation.
 
 \begin{minipage}{\linewidth}
-\begin{lstlisting}[language=Coq, label={lst:atom_clause_def}, caption={Def. of \lstinline{Atom} and \lstinline{Clause} in Coq}]
+\begin{lstlisting}[language=Coq, label={lst:atom_clause_def}, caption={\lstinline{Atom} and \lstinline{Clause} in Coq}]
 Inductive Atom : Type :=
   | atom : string -> nat -> Atom.
 
@@ -45,7 +45,7 @@ We implement this in Coq using two types, \lstinline{Ninfty} and \lstinline{Fron
 \lstinline{Frontier} is a function from a string (variable) to \lstinline{Ninfty}.
 
 \begin{minipage}{\linewidth}
-\begin{lstlisting}[language=Coq, label={lst:ninfty_frontier_def}, caption={Def. of \lstinline{Ninfty} and \lstinline{Frontier} in Coq}]
+\begin{lstlisting}[language=Coq, label={lst:ninfty_frontier_def}, caption={\lstinline{Ninfty} and \lstinline{Frontier} in Coq}]
 Inductive Ninfty : Type :=
   | infty : Ninfty
   | fin   : nat -> Ninfty.
@@ -58,7 +58,7 @@ Using these definitions of \lstinline{Atom}, \lstinline{Clause} and \lstinline{F
 we can define functions that check whether any given atom or clause is satisfied for any frontier.
 
 \begin{minipage}{\linewidth}
-\begin{lstlisting}[language=Coq, label={lst:atom_clause_true_def}, caption={Def. of \lstinline{atom_true} and \lstinline{clause_true} in Coq}]
+\begin{lstlisting}[language=Coq, label={lst:atom_clause_true_def}, caption={\lstinline{atom_true} and \lstinline{clause_true} in Coq}]
 Definition atom_true (a : Atom) (f : Frontier) : bool :=
   match a with
   | (x & k) =>
@@ -85,7 +85,7 @@ additional lemmas.
 We can also define functions that "shift" the number value of atoms or whole clauses by some amount \lstinline{n : nat}.
 
 \begin{minipage}{\linewidth}
-\begin{lstlisting}[language=Coq, label={lst:shift_atom_clause_true}, caption={Def. of \lstinline{shift_atom} and \lstinline{shift_clause} in Coq}]
+\begin{lstlisting}[language=Coq, label={lst:shift_atom_clause_true}, caption={\lstinline{shift_atom} and \lstinline{shift_clause} in Coq}]
 Definition shift_atom (n : nat) (a : Atom)  : Atom :=
   match a with
   | (x & k) => (x & (n + k))
@@ -103,7 +103,7 @@ Using these definitions, we can now define an important property that will be us
 later; whether a set of clauses is true for any shift of \lstinline{n : nat}.
 
 \begin{minipage}{\linewidth}
-\begin{lstlisting}[language=Coq, label={lst:all_shifts_true}, caption={Def. of \lstinline{all_shifts_true}}]
+\begin{lstlisting}[language=Coq, label={lst:all_shifts_true}, caption={\lstinline{all_shifts_true} in Coq}]
 Definition all_shifts_true (c : Clause) (f : Frontier) : bool :=
   match c with
   | (conds ~> conc) =>
@@ -132,7 +132,7 @@ The function \lstinline{vars_set_atom} simply returns all the variables used
 in a set of atoms as a set of strings.
 
 \begin{minipage}{\linewidth}
-\begin{lstlisting}[language=Coq, label={lst:sub_model_def}, caption={Def. of \lstinline{sub_model}}]
+\begin{lstlisting}[language=Coq, label={lst:sub_model_def}, caption={\lstinline{sub_model} in Coq}]
 Fixpoint sub_model (Cs : set Clause) (V W : set string) (f : Frontier) : bool :=
   match Cs with
   | []      => true
@@ -157,7 +157,7 @@ only returns true if \textbf{all} the values from the first frontier are greater
 the values from the second frontier.
 
 \begin{minipage}{\linewidth}
-\begin{lstlisting}[language=Coq, label={lst:geq_def}, caption={Def. of \lstinline{geq}}]
+\begin{lstlisting}[language=Coq, label={lst:geq_def}, caption={\lstinline{geq} in Coq}]
 Fixpoint geq (V : set string) (g f : Frontier) : bool :=
   match V with
   | []      => true
@@ -203,13 +203,11 @@ We also use the \lstinline{prod} type constructor to represent the conjunction o
 
 Another thing to note is the difference between \lstinline{Lemma} and \lstinline{Definition}.
 
-\textcolor{red}{
-    \textbf{NOT QUITE CORRECT!}
+\textcolor{red}{\textbf{NOT QUITE CORRECT!}}
 
-    The former is used to define a proposition, while the latter is (usually) used to define a type or a non-recursive function.
-    In this case, we could actually use \lstinline{Definition} instead of \lstinline{Lemma},
-    but not the other way around.
-}
+The former is used to define a proposition, while the latter is (usually) used to define a type or a non-recursive function.
+In this case, we could actually use \lstinline{Definition} instead of \lstinline{Lemma},
+but not the other way around.
 
 The reason for defining \lstinline{ex_lfp_geq} as a \lstinline{Type}, is that we can then use
 Coq's extraction feature to generate Haskell code from the Coq definitions.
@@ -394,6 +392,12 @@ Extraction "/home/user/path/to/code/ex.hs"
 Coq will automatically determine definitions which depend on one another when doing extraction.
 In the example above, we would not have needed to specify \lstinline{lem_33} to be extracted,
 since \lstinline{thm_32} already depends on it.
+
+By default, Coq will give its own implementation of any functions used, instead of using
+Haskell's native implementations. If we want, we can specify what native Haskell functions
+should be used when extracting a Coq function. In the example code above,
+we specify that when extracting, \lstinline[language=Haskell]{Prelude.map} and \lstinline[language=Haskell]{Prelude.foldr}
+should be used for the Coq functions \lstinline{map} and \lstinline{fold_right}.
 
 In the next chapter we will go more into detail about the results of the extraction,
 and the results of the Haskell code ran on some example input.

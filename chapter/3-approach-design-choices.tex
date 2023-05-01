@@ -1,9 +1,15 @@
 \chapter{Approach \& Design Choices}
 
-When translating an informal proof to a formal proof or specification,
-one often has to decide how to model certain mathematical objects and their properties.
-For example, in Coq, there are several implementations of the mathematical notion of a \textit{set}.
-When choosing which implementation to use, there are often tradeoffs to consider.
+% When translating an informal proof to a formal proof or specification,
+% one often has to decide how to model certain mathematical objects and their properties.
+% For example, in Coq, there are several implementations of the mathematical notion of a \textit{set}.
+% When choosing which implementation to use, there are often tradeoffs to consider.
+
+\section{Simplifications}
+
+\subsection{Minimality}
+
+\subsection{Lemma 3.3}
 
 \section{Modeling Sets in Coq}
 
@@ -20,11 +26,10 @@ when you take the union of two sets, or how you determine if a set contains an e
 One of the most important data structures in functional computer programming is the \textit{list}.
 Unlike a set, a list \textit{can} contain more than one of the same element, and the elements \textit{are} arranged in a
 specific order.
-Lists (in functional programming) usually have the same inductive definition, which is also a formal definition.
-The definition from Coq's standard library is as follows:
+The inductive definition of a list from Coq's standard library is as follows:
 
 \begin{minipage}{\linewidth}
-\begin{lstlisting}[language=Coq, label={lst:list_def}, caption={Def. of a list in Coq}]
+\begin{lstlisting}[language=Coq, label={lst:list_def}, caption={Inductive def. of list type in Coq}]
 Inductive list {A : Type} : list A :=
     | nil : list
     | cons : A -> list -> list.

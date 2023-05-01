@@ -1,28 +1,29 @@
 \chapter{Background}
 
-\section{Formalizing Mathematical Problems}
+\section{Formalizing Mathematics}
 
 \subsection{Proofs}
 
 When solving mathematical problems, we often use proofs
-to either \textbf{warrant} a claim or to \textbf{explain} why the claim is true.
-We can group proofs into two types; \textit{informal} and \textit{formal} proofs.
+to either \textbf{justify} a claim or to \textbf{explain} why the claim is true.
+We can group distinguish between proofs; \textit{informal} and \textit{formal} proofs.
 
 % Traditional informal proofs emphasize the latter, and they take for grated that this is sufficent from the former.
 % Formal proofs on the other hand, ??? on the former; depending on the formalism used they have some
 % explanatory merit as well.
 
 An informal proof is often written in a natural language, and the proof is adequate if most
-readers are convinced by the proof \cite{bpierce}. They rely heavily on the readers intuition
+readers are convinced by the proof \cite{bpierce}. Such proofs rely heavily on the reader's intuition
 and often omit logical steps to make them easier to understand for humans \cite{ams:formal-proof}.
 As these proofs grow larger and more complex, they become harder for humans to follow,
-which can ultimately lead to errors in the proofs' reasoning. This might cause the whole proof
-to be incorrect \cite{rkhamsi}, and even the result of the proof might be wrong.
+which can ultimately lead to errors in the proofs' logic. This might cause the whole proof
+to be incorrect \cite{rkhamsi}, and even the claim justified by it might be wrong.
 
 A formal proof is written in a formal language, and can be compared to a computer program
 written in a programming language. Writing a formal proof is more difficult than writing an informal proof.
 Formal proofs include every logical step, and nothing is left for the reader to assume.
-This can make them extremely verbose, but the amount of logical errors are reduced \cite{ams:formal-proof}.
+This can make them extremely verbose, but the amount of logical errors is reduced \cite{ams:formal-proof}.
+The only possible errors in formalized proofs are false assumptions and/or flawed verification software.
 
 \subsection{Formalization}
 
@@ -30,75 +31,82 @@ This can make them extremely verbose, but the amount of logical errors are reduc
 
 Type theory groups mathematical objects with similar properties together by assigning them a "type".
 Similarily to data types in computer programming, we can use types to represent mathematical
-objects. For example, we can use the data type \texttt{nat} to represent natural numbers.
+objects. For example, we can use the data type \texttt{nat} to represent natural numbers, or we can create
+our own data types which allows us to represent e.g. clauses in logic.
 
 \subsection{Propositions as types}
 
 % https://homepages.inf.ed.ac.uk/wadler/papers/propositions-as-types/propositions-as-types.pdf
 
 The concept of propositions as types sees proving a mathematical proposition
-as the same process as constructing a value of that type.
+as the same process as constructing a value of a type, in this case,
+of the proposition as a type.
 For example, to prove a proposition $P$ which states "all integers are the sum of four squares",
 we must construct a value of the type $P$ that shows that this is true for all integers.
-Such a value is a function that for any input $n$ returns a proof that $n$ is the sum of four squares.
+Such a value is a function that for any input $n$ returns a proof that $n$ is the sum of four squares,
+that is, return four numbers $a, b, c, d$ and a proof that $n = a^2 + b^2 + c^2 + d^2$.
 Proofs are mathematical objects; thus a proposition can be viewed as having the type of all its proofs (if any!).
 We can use this correspondance to model a proof as a typed computer program.
 The power of this concept comes from the fact that we can use a type checker to verify that
 our program is typed correctly, and thus that the corresponding proof is valid.
+Often, the proof can be used to compute something, i.e. the numbers $a, b, c, d$ mentioned above.
 
 \subsection{Dependent types}
 
-\textcolor{red}{(should redo this section probably, too early for Coq example? also find source)}
+Dependent types allow us to define more rigorously types which depend on terms.
 
-In most programming languages, the data type of a variable does not indicate anything about the value of the variable.
-Dependent types allow us to define types which depend on the value of the type itself.
-
-Example:
+An example to illustrate this is the definition of a vector:
 
 \begin{minipage}{\linewidth}
-\begin{lstlisting}[language=Coq, label={lst:dep_type_le}, caption={Def. of \lstinline{le} in Coq, using dependent types}]
-Inductive le : nat -> nat -> Prop :=
-  | le_n : forall n, le n n
-  | le_S : forall n m, le n m -> le n (S m).
+\begin{lstlisting}[language=Coq, label={lst:dep_type_vec}, caption={Def. of \lstinline{vector} in Coq, using dependent types}]
+Inductive vector (A : Type) : nat -> Type :=
+  | Vnil : vector A 0
+  | Vcons : forall (h : A) (n : nat), vector A n -> vector A (S n).
 \end{lstlisting}
 \end{minipage}
 
-Here, the type \lstinline{le} has two constructors which depend on the value of the two arguments given to the type.
-Two natural numbers satisfies the definition of \lstinline{le} if
-\begin{enumerate}
-    \item they are the same number
-    \item the second number is a successor of \lstinline{m},
-        provided that the first number is less than or equal to \lstinline{m}
-\end{enumerate}
+This definition gives us a type with two constructors:
 
-Both constructors thus depend on the value of the input;
-we can check whether the definition holds by repeatedly applying
-either of the two constructors. If we have done every combination of
-application, and we are still left with a term that can no longer be reduced,
-we can conclude that the first number is \textbf{not} less than or equal to the second number.
+\begin{itemize}
+    \item
+        \lstinline{Vnil} has the type of \lstinline{vector A 0}, and represents the empty vector.
+    \item
+        \lstinline{Vcons} has type type of \lstinline{vector A (S n)}, where the value of \lstinline{n} 
+                            is the length of the vector given to the constructor.
+                            This makes the type of a \lstinline{vector} \textit{depend} on its length.
+\end{itemize}
+
+In this scenario, the length of a \lstinline{vector} is fixed by the argument \lstinline{n : nat}
+and the term \lstinline{vector A n -> vector A (S n)}.
+Any definition of a \lstinline{vector} must adhere to this term, and is checked at compile time.
+An example of a valid and invalid definition is:
+
+\begin{minipage}{\linewidth}
+\begin{lstlisting}[language=Coq, label={lst:dep_type_vec_ex}, caption={Examples of vectors in Coq}]
+(* valid definition; (S 0) equal to 1  *)
+Definition vec_valid : vector string 2 := Vcons string "b" 1 (Vcons string "a" 0 (Vnil string)).
+(* invalid definition; (S 0) not equal to 2 *)
+Definition vec_invalid : vector string 2 := Vcons string "b" 2 (Vcons string "a" 0 (Vnil string)).
+\end{lstlisting}
+\end{minipage}
 
 \section{Proof assistants}
 
 Propositions as types allow us to bridge the gap between logic and computing,
-while dependent types allow us to define more rigorous types which depends on values.
+while dependent types allow us to define more rigorously types which depends on values.
 The former is a crucial aspect of \textit{proof assistants}, while the latter gives
 us more expressive power when constructing proofs using a proof assistant.
 The purpose of a proof assistant is to get computer support for continuity and verify a formal proof mechanically.
 
 \subsection{Coq}
-Coq is based on the higher-order type theory \textit{Calculus of Inductive Constructions} (CoC), and
+Coq is based on the higher-order type theory \textit{Calculus of Inductive Constructions} (CIC), and
 functions as both a proof assistant and a dependently typed functional programming language.
 Coq also allow us to extract certified programs from the proofs of their specification to
 the programming langauges OCaml and Haskell \cite{cintro}.
-Coq implements a specification language called \textit{Gallina}, which is
-
-\textcolor{red}{
-    \begin{itemize}
-        \item an extension of CoC? or based on CoC?
-        \item used to define terms?
-        \item something else?
-    \end{itemize}
-}
+Coq implements a specification language called \textit{Gallina},
+which allows us to define logical objects within Coq.
+These objects are typed to ensure their correctness \textcolor{red}{(is quote too direct?)},
+and the typing rules used are from CIC \cite{cic}.
 
 This is an example of the syntax of Gallina:
 
@@ -128,9 +136,9 @@ to \lstinline{S n}, we get a value of the type (and a proof) of
 our initial theorem can be rewritten as \lstinline{forall n : nat, S n <= S n}.
 This matches the type of our function, and the proof is complete.
 
-Proving theorems like this is not really intutive for a human prover,
+Proving theorems like this is not really intuitive for a human prover,
 and that is why Coq gives us the \textit{Ltac} meta-language for writing proofs.
-Ltac provides us with tactics, which are shorthand syntax for defining Gallina terms \textcolor{red}{(is this correct?) \cite{cltac}.
+Ltac provides us with tactics, which are shorthand syntax for defining Gallina terms \textcolor{red}{(is this correct?)} \cite{cltac}.
 Using Ltac, we can rewrite the proof from \ref{lst:gallina_ex} as such:
 
 \begin{minipage}{\linewidth}
@@ -153,13 +161,22 @@ Coq provides us with tooling that gives us the ability to see our goals and the 
 to further simplify the process \cite{cide}.
 Ltac is not the only proof langauge, with another example being \textit{SSReflect} \cite{cssr}.
 
+\subsection{Other proof assistants}
 
-\subsection{Agda}
+\subsubsection{Agda}
 
-\subsection{Isabelle}
+Agda is a depdently typed functional programming language based on Martin-Löf's
+intuitionistic type theory. Unlike Coq, Agda does not use tactics. \cite{agdatut}
+However, by using proposition as types, Agda can also function as a proof assistant.
 
-\subsection{Lean}
+\subsubsection{Isabelle}
 
-\subsection{Higher-Order Logic}
+\subsubsection{Lean}
+
+Lean is proof assistant, automated theorem prover and dependently typed functional programming language.
+Lean can be instantiated using either CIC or Martin-Löf's intuitionistic type theory.
+\cite{lean}
+
+\subsubsection{Higher-Order Logic}
 
 \section{Extraction of programs from verified proofs}

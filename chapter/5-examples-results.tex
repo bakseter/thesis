@@ -1,1 +1,66 @@
 \chapter{Examples \& Results}
+
+\section{Syntax}
+
+When extracting \lstinline{thm_32} to Haskell, we
+create a Haskell function that takes as input every variable
+that is used in the definition of \lstinline{thm_32}.
+This is what the type signature of such a function looks like in Haskell:
+
+\begin{minipage}{\linewidth}
+\begin{lstlisting}[language=Haskell, label={lst:thm_32_haskell}, caption={Haskell extraction of \lstinline{thm_32}}]
+thm_32 :: Prelude.Integer -> Prelude.Integer -> (Set Clause0) ->
+          (Set Prelude.String) -> (Set Prelude.String) -> Frontier ->
+          Ex_lfp_geq -> Ex_lfp_geq
+thm_32 n m cs v w f x =
+    {- ... -}
+\end{lstlisting}
+\end{minipage}
+
+This all looks familiar: \lstinline{n, m} are two natural numbers which are used for induction in the proof of the theorem,
+\lstinline{cs} is the set of clauses, \lstinline{v, w} are the set of variables
+and \lstinline{f} is the frontier.
+We also see an additional argument of type \lstinline[language=Haskell]{Ex_lfp_geq}, and that the return type
+of the function also has this type.
+In the extraction, \lstinline[language=Haskell]{Ex_lfp_geq} has the following definition:
+
+\begin{minipage}{\linewidth}
+\begin{lstlisting}[language=Haskell, label={lst:ex_lfp_geq_haskell}, caption={\lstinline{Ex_lfp_geq} in Haskell}]
+type Ex_lfp_geq_S = Frontier
+type Ex_lfp_geq = Ex_lfp_geq_S
+\end{lstlisting}
+\end{minipage}
+
+Looking back at the Coq definition of \lstinline{ex_lfp_geq}, it defined a proposition that stated that there
+exists a \lstinline{g : Frontier}, such that the proposition holds.
+If such a \lstinline{g} exists, then the \lstinline{g} itsself is evidence (proof) that it does.
+Thus, the type of the proof of \lstinline{ex_lfp_geq} is just the type of \lstinline{Frontier}.
+
+We can now start to define a computable example using \lstinline{thm_32}.
+It is easiest to define the example in Coq and then extract it to Haskell,
+since Coq heavily prioritizes safety over readability when extracting,
+making much of the Haskell code hard to read.
+
+
+\begin{minipage}{\linewidth}
+\begin{lstlisting}[language=Coq, label={lst:thm_32_coq_example}, caption={\lstinline{thm_32} example}]
+  Example Cs := [
+    ["a" & 0] ~> "b" & 3;
+    ["b" & 4] ~> "c" & 1
+  ].
+  Example f := frontier_fin_0.
+  Example vars' := nodup string_dec (vars Cs).
+
+  Example thm_32_example :=
+    thm_32
+      (Datatypes.length vars')
+      (Datatypes.length vars')
+      Cs
+      vars'
+      []
+      f.
+  Example ex_lfp_geq_example :=
+    ex_lfp_geq_empty Cs f.
+\end{lstlisting}
+\end{minipage}
+
