@@ -6,7 +6,7 @@
 
 When solving mathematical problems, we often use proofs
 to either \textbf{justify} a claim or to \textbf{explain} why the claim is true.
-We can group distinguish between proofs; \textit{informal} and \textit{formal} proofs.
+We can distinguish between two types of proofs; \textit{informal} and \textit{formal} proofs.
 
 % Traditional informal proofs emphasize the latter, and they take for grated that this is sufficent from the former.
 % Formal proofs on the other hand, ??? on the former; depending on the formalism used they have some
@@ -26,6 +26,8 @@ This can make them extremely verbose, but the amount of logical errors is reduce
 The only possible errors in formalized proofs are false assumptions and/or flawed verification software.
 
 \subsection{Formalization}
+
+\textcolor{red}{is this section necessary?}
 
 \section{Type theory}
 
@@ -58,7 +60,7 @@ Dependent types allow us to define more rigorously types which depend on terms.
 An example to illustrate this is the definition of a vector:
 
 \begin{minipage}{\linewidth}
-\begin{lstlisting}[language=Coq, label={lst:dep_type_vec}, caption={Def. of \lstinline{vector} in Coq, using dependent types}]
+\begin{lstlisting}[language=Coq, label={lst:dep_type_vec}, caption={\lstinline{vector} in Coq, using dependent types}]
 Inductive vector (A : Type) : nat -> Type :=
   | Vnil : vector A 0
   | Vcons : forall (h : A) (n : nat), vector A n -> vector A (S n).
@@ -71,7 +73,7 @@ This definition gives us a type with two constructors:
     \item
         \lstinline{Vnil} has the type of \lstinline{vector A 0}, and represents the empty vector.
     \item
-        \lstinline{Vcons} has type type of \lstinline{vector A (S n)}, where the value of \lstinline{n} 
+        \lstinline{Vcons} has type type of \lstinline{vector A (S n)}, where the value of \lstinline{n}
                             is the length of the vector given to the constructor.
                             This makes the type of a \lstinline{vector} \textit{depend} on its length.
 \end{itemize}
@@ -84,9 +86,11 @@ An example of a valid and invalid definition is:
 \begin{minipage}{\linewidth}
 \begin{lstlisting}[language=Coq, label={lst:dep_type_vec_ex}, caption={Examples of vectors in Coq}]
 (* valid definition; (S 0) equal to 1  *)
-Definition vec_valid : vector string 2 := Vcons string "b" 1 (Vcons string "a" 0 (Vnil string)).
+Definition vec_valid : vector string 2 :=
+    Vcons string "b" 1 (Vcons string "a" 0 (Vnil string)).
 (* invalid definition; (S 0) not equal to 2 *)
-Definition vec_invalid : vector string 2 := Vcons string "b" 2 (Vcons string "a" 0 (Vnil string)).
+Definition vec_invalid : vector string 2 :=
+    Vcons string "b" 2 (Vcons string "a" 0 (Vnil string)).
 \end{lstlisting}
 \end{minipage}
 
@@ -96,6 +100,8 @@ Propositions as types allow us to bridge the gap between logic and computing,
 while dependent types allow us to define more rigorously types which depends on values.
 The former is a crucial aspect of \textit{proof assistants}, while the latter gives
 us more expressive power when constructing proofs using a proof assistant.
+An example of the expressive power of dependent types is the fact that we can define
+predicates that depend on the value of a term, e.g. a predicate that checks if a number is even.
 The purpose of a proof assistant is to get computer support for continuity and verify a formal proof mechanically.
 
 \subsection{Coq}
@@ -179,4 +185,14 @@ Lean can be instantiated using either CIC or Martin-Löf's intuitionistic type t
 
 \subsubsection{Higher-Order Logic}
 
-\section{Extraction of programs from verified proofs}
+\subsection{Extraction of programs from verified proofs}
+
+By the the notion of propositions as types, we can use a proof assistant to
+prove the correctness of a program. However, we can also extract a program from
+a proof of its correctness. This type of code extraction is a common feature of proof assistants.
+The extracted program is guaranteed to be correct by the type system of the proof assistant,
+and the resulting code can be extracted to a variety programming languages, such as Haskell and OCaml (as is the case for Coq).
+\cite{cintro}
+
+
+\textcolor{red}{(if we want to elaborate, cite this \url{https://www.irif.fr/~letouzey/download/extraction2002.pdf} and this \url{https://www.irif.fr/~letouzey/download/letouzey_extr_cie08.pdf})}

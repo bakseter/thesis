@@ -1,9 +1,11 @@
 \chapter{Examples \& Results}
 
-\section{Syntax}
+\section{Examples using the extracted Haskell code}
 
-When extracting \lstinline{thm_32} to Haskell, we
-create a Haskell function that takes as input every variable
+\subsection{Defining examples for extraction in Coq}
+
+When extracting \lstinline{thm_32} to Haskell, Coq
+creates a Haskell function that takes as input every variable
 that is used in the definition of \lstinline{thm_32}.
 This is what the type signature of such a function looks like in Haskell:
 
@@ -33,34 +35,98 @@ type Ex_lfp_geq = Ex_lfp_geq_S
 
 Looking back at the Coq definition of \lstinline{ex_lfp_geq}, it defined a proposition that stated that there
 exists a \lstinline{g : Frontier}, such that the proposition holds.
-If such a \lstinline{g} exists, then the \lstinline{g} itsself is evidence (proof) that it does.
+If such a \lstinline{g} exists, then the \lstinline{g} itsself is evidence (proof) that the proposition holds.
 Thus, the type of the proof of \lstinline{ex_lfp_geq} is just the type of \lstinline{Frontier}.
 
 We can now start to define a computable example using \lstinline{thm_32}.
-It is easiest to define the example in Coq and then extract it to Haskell,
-since Coq heavily prioritizes safety over readability when extracting,
+It is easiest to define as much of the example as possible in Coq and then extract it to Haskell,
+since Coq heavily prioritizes code correctness over readability when extracting,
 making much of the Haskell code hard to read.
-
 
 \begin{minipage}{\linewidth}
 \begin{lstlisting}[language=Coq, label={lst:thm_32_coq_example}, caption={\lstinline{thm_32} example}]
-  Example Cs := [
-    ["a" & 0] ~> "b" & 3;
-    ["b" & 4] ~> "c" & 1
-  ].
-  Example f := frontier_fin_0.
-  Example vars' := nodup string_dec (vars Cs).
+Example Cs := [
+  ["a" & 0; "b" & 0] ~> "b" & 1;
+  ["b" & 0] ~> "c" & 3;
+  ["c" & 1] ~> "d" & 0;
+  ["b" & 0; "d" & 2] ~> "e" & 0;
+  ["e" & 0] ~> "a" & 0
+].
+Example f := frontier_fin_0.
+Example vars' := nodup string_dec (vars Cs).
 
-  Example thm_32_example :=
-    thm_32
-      (Datatypes.length vars')
-      (Datatypes.length vars')
-      Cs
-      vars'
-      []
-      f.
-  Example ex_lfp_geq_example :=
-    ex_lfp_geq_empty Cs f.
+Example thm_32_example :=
+  thm_32
+    (Datatypes.length vars')
+    (Datatypes.length vars')
+    Cs
+    vars'
+    []
+    f.
 \end{lstlisting}
 \end{minipage}
 
+In Coq, the type of \lstinline{thm_32_example} is \lstinline{pre_thm} applied to all the arguments given.
+If we would like to execute this program entirly in Coq, we would need to give a proof of each of the assumptions
+in \lstinline{pre_thm}, and the resulting type of the output would be the type of the proof of \lstinline{ex_lfp_geq},
+again applied to all the arguments given.
+
+Since Coq elimiates many of the logical parts of the proof when extracting (\textcolor{red}{cite coq extraction papers}),
+we can avoid the tedious task of proving all the assumptions of \lstinline{pre_thm} by simply
+using the extracted Haskell function for \lstinline{thm_32_example}, which as we saw previously only needs a \lstinline{Frontier}
+as input (since we have given every other argument necessary), and returns a \lstinline{Frontier} as output.
+This frontier should be the same as the one given as input, i.e. \lstinline{f} in this example.
+We can then apply the extracted Haskell function \lstinline{thm_32_example} to \lstinline{f},
+and we receive a \lstinline{Frontier} as output.
+This \lstinline{Frontier} can then be applied to any string to get the resulting value of the string,
+which should be either a natural number or infinity.
+
+\subsection{Necessary alterations to the extracted Haskell code}
+
+Since we have not given a proof of lemma 3.3, Coq will include a definition of the lemma in the extracted code,
+but will immidiately crash the program if the extracted function representing the lemma is ever called.
+We circumvent this by replacing the extracted definition of \lstinline{lem_33} with the identity function
+for any frontier. We will look at some examples where this workaround is not sufficient in
+\autoref{sec:limitations}.
+
+If we want to actually read the output from the extracted functions, we also need to
+derive a \lstinline{Show} instance for \lstinline{Ninfty}.
+What this means is that we need to define a function \lstinline{show :: Ninfty -> String},
+which will be used by Haskell to convert a \lstinline{Ninfty} to a \lstinline{String}.
+This can be done by simply adding the line \lstinline{deriving Prelude.Show} to the definition of \lstinline{Ninfty},
+which will make Haskell just print the constructors of \lstinline{Ninfty},
+which will be either \lstinline{Fin n} for some natural number \lstinline{n},
+or \lstinline{Infty} for infinity.
+
+\subsection{Example output}
+
+We can now run the example from \autoref{lst:thm_32_coq_example} using GHCi,
+which is an interactive Haskell interpreter that comes with the Haskell compiler GHC.
+
+\begin{minipage}{\linewidth}
+\begin{lstlisting}[language=Haskell, label={lst:thm_32_haskell_output}, caption={\lstinline{thm_32} example output}]
+ghci> (thm_32_example f) "a"
+Fin 0
+ghci> (thm_32_example f) "b"
+Fin 1
+ghci> (thm_32_example f) "c"
+Fin 2
+ghci> (thm_32_example f) "x"
+Fin 0
+\end{lstlisting}
+\end{minipage}
+
+When given a string value (variable) from the set of clauses, the function will compute the value of that variable.
+When given any other variable, the function will return the value that the original frontier given as input
+would return for that variable, which is always \lstinline{Fin 0} in this case
+(since in our example the frontier is \lstinline{frontier_fin_0},
+which is a constant function that always returns \lstinline{Fin 0}).
+
+\section{Real world example}
+
+As stated previously, the algorithm (produced by)/(used in)? theorem 3.2 is being
+tested for use in checking loops and determining universe levels in the
+type system of Coq.
+
+\section{Limitations}
+\label{sec:limitations}
