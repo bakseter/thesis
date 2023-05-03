@@ -1,4 +1,4 @@
-\chapter{The case in question}
+\chapter{The Case in Question}
 
 \section{Overview}
 
@@ -8,7 +8,7 @@ on universe-level constraints. We focused on formalizing the proof of theorem 3.
 Since this proof is complex enough that mistakes are possible, it was a good candidate for formalization.
 It also has direct applications to the formalization and verification of the Coq proof assistant itself,
 since the algorithm outlined in the proof is being tested
-for use in checking loops in Coqs type system. \cite{coqgithub}
+for use in checking loops in Coq's type system. \cite{coqgithub}
 
 \section{Relevant parts of the paper}
 
@@ -21,20 +21,40 @@ called their join.
 \textcolor{red}{insert def. of frontier/f here}
 
 A semilattice presentation consists of a set $V$ of generators
-(also called variables) and a set  $C$ of constraints
+(also called variables) and a set $C$ of constraints
 (also called relations).
 
 \textcolor{red}{insert def. of $S_C$ and related notation here}
 
+Given a finite semilattice presentation $(V, C)$,
+and a subset $W \subseteq V$, we denote by
+$\overline{S_C} \mid W$ the set of clauses in $\overline{S_C}$
+mentioning only variables in $W$, and by $\overline{S_C} \downarrow W$
+the set of clauses in $\overline{S_C}$ with conclusion over $W$.
+
 % A term over V is a term of the form
 % $x_1 + k_1 \lor \ldots \lor x_m + k_m$,
-% where $x_i \in V$ and $k_i \in N^{\infty}$.
+% where $x_i \in V$ and $k_i \in N^{}$.
+
+\subsection{Lemma 3.1}
+
+Lemma 3.1 states that given $f : V \rightarrow N^{\infty}$,
+and a clause $A \rightarrow b$, let $P$ be the problem whether or not
+$A + k \rightarrow b + k$ is satisfied by $f$ for all $k \in N$.
+Then $P$ is decidable. \cite[p.~3]{mbezem}
+
+The proof of lemma 3.1 demonstrates that the problem $P$
+is decidable, meaning we can indeed write an algorithm that
+determines whether or not the problem holds for all $k \in N$.
+Lemma 3.1 is also crucial for making case distinctions
+in further proofs, since we know that any $S_C$ is finite.
 
 \subsection{Theorem 3.2}
 
 Theorem 3.2 states that for any finite semilattice representation
 $(V, C)$ and any function $f : V \rightarrow N^{\infty}$,
 the least $g \ge f$ that is a model of $\overline{S_C}$ can be computed.
+\cite[p.~3]{mbezem}
 
 \subsection{Lemma 3.3}
 
@@ -45,3 +65,4 @@ $f : W \rightarrow N^{\infty}$, the least $g \ge f$ that is a model of
 $\overline{S_C}|W$ can be computed, then for any function
 $f : V \rightarrow N^{\infty}$ with $f(V - W) \subseteq N$,
 the least $h \ge f$ that is a model of $\overline{S_C}\downarrow W$ can be computed.
+\cite[p.~3-4]{mbezem}
