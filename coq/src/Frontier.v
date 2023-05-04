@@ -20,6 +20,6 @@ Module Frontier.
   Proof. apply functional_extensionality. intros. reflexivity. Qed.
 
   Definition update_infty_V (V : set string) (f : Frontier) : Frontier :=
-    fun x => if x € V then infty else f x.
+    fun x : string => if x € V then infty else f x.
 
 End Frontier.

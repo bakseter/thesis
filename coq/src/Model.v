@@ -4,6 +4,8 @@ From Coq Require Import Lists.ListSet.
 From Coq Require Import Strings.String.
 From Coq Require Import Arith.PeanoNat.
 From Coq Require Import Lia.
+From Coq Require Import Arith.Arith.
+From Coq Require Import Arith.EqNat. Import Nat.
 From Coq Require Import Logic.FunctionalExtensionality.
 Require Import Sets. Import Sets. Import StringSetsNotation.
 Require Import Clause. Import Clause.
@@ -186,6 +188,27 @@ Module Model.
     sub_model Cs V V (update_infty_V V f) = true.
   Proof.
     generalize dependent f.
+    induction Cs as [|c Cs]; intros; try reflexivity.
+    destruct c as [l [x k]]. unfold sub_model. fold sub_model.
+    apply andb_true_iff. split; try apply IHCs.
+    repeat rewrite orb_true_iff. destruct (negb (x € V)) eqn:HxV;
+    destruct (negb (fold_right andb true (map (fun x0 : string => x0 € V) (vars_set_atom l)))) eqn:Hfold;
+    destruct (all_shifts_true (l ~> x & k) (update_infty_V V f)) eqn:Hast;
+    try auto.
+  Admitted.
+  (*
+    - destruct l. simpl in Hast. destruct (update_infty_V V f x) eqn:Hfx.
+      -- discriminate.
+      -- simpl in Hfold. induction n.
+
+      left. apply negb_false_iff in HxV, Hfold.
+      assert (Hfold' := Hfold).
+      apply fold_right_andb_true_map_incl_iff in Hfold.
+      eapply (incl_fold_right_andb_true) in Hfold.
+      + apply HxV.
+      + apply incl_refl.
+
+
     induction V as [|h t]; intros.
     - unfold update_infty_V. simpl.
       assert ((fun x : string => f x) = f).
@@ -196,13 +219,36 @@ Module Model.
       + induction Cs as [|c Cs]; try reflexivity.
         destruct c as [l [x k]]. unfold sub_model. fold sub_model.
         apply andb_true_iff. split.
-        * repeat rewrite orb_true_iff. right.
+        * repeat rewrite orb_true_iff.
+          destruct (negb (x € h :: t)) eqn:Hxht; try reflexivity.
+          -- left. left. reflexivity.
+          -- assert (Hxht' := Hxht).
+             apply negb_false_iff in Hxht'.
+             apply set_mem_correct1 in Hxht'.
+             unfold set_In in *.
+             right. apply In_incl_singleton in Hxht'.
+             assert (sub_model ([l ~> x & k]) [x] [x] (fun x0: string => if x0 € h :: t then infty else f x0) = true).
+             ++ eapply sub_model_monotone.
+                ** apply Hxht'.
+                ** apply Hxht'.
+                ** admit.
+             ++ unfold sub_model in H. fold sub_model in H.
+                apply andb_true_iff in H. destruct H as [H _].
+                repeat rewrite orb_true_iff in H. destruct H;
+                destruct H.
+                ** simpl in H. destruct (string_dec x x).
+                   --- discriminate.
+                   --- contradiction.
+                ** simpl in H.
+
+             eapply sub_model_monotone in Hxht.
           unfold sub_model in IHt. fold sub_model in IHt.
           admit.
         * apply IHCs. unfold sub_model in IHt. fold sub_model in IHt.
           setoid_rewrite andb_true_iff in IHt. intros.
           destruct (IHt f0) as [IHt1 IHt2]. apply IHt2.
   Admitted.
+   *)
 
   Example sub_model_test1 :
     sub_model

@@ -304,6 +304,10 @@ ex_lfp_geq_monotone :: (Set Clause0) -> (Set Prelude.String) -> Frontier ->
 ex_lfp_geq_monotone _ _ _ _ h =
   h
 
+ex_lfp_geq_empty :: (Set Clause0) -> Frontier -> Ex_lfp_geq
+ex_lfp_geq_empty _ f0 =
+  f0
+
 ex_lfp_geq_nodup_iff :: (Set Clause0) -> (Set Prelude.String) -> Frontier ->
                         (,) (Ex_lfp_geq -> Ex_lfp_geq)
                         (Ex_lfp_geq -> Ex_lfp_geq)
@@ -337,7 +341,11 @@ thm_32 :: Prelude.Integer -> Prelude.Integer -> (Set Clause0) -> (Set
           Prelude.String) -> (Set Prelude.String) -> Frontier -> Ex_lfp_geq
           -> Ex_lfp_geq
 thm_32 n m cs0 v w f0 x =
-  nat_rect (\_ _ _ _ f1 _ _ _ _ -> f1) (\n0 iHn m0 ->
+  nat_rect (\_ cs1 v0 _ f1 _ _ _ _ ->
+    eq_rec_r ([]) (ex_lfp_geq_empty cs1 f1)
+      (nodup
+        ((Prelude.==) :: Prelude.String -> Prelude.String -> Prelude.Bool)
+        v0)) (\n0 iHn m0 ->
     nat_rect (\cs1 v0 w0 f1 _ _ _ h2 ->
       ex_lfp_geq_incl cs1
         (nodup

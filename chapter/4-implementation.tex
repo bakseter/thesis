@@ -185,19 +185,13 @@ Definition ex_lfp_geq_S (Cs : set Clause) (V W : set string) (f : Frontier) : Se
 \end{minipage}
 
 One thing to note here is that we can define this lemma either as having the type \lstinline{Prop} or as having the type \lstinline{Set}.
-When using \lstinline{Prop}, we define it as a predicate, using standard first-order logic syntax.
+When using \lstinline{Prop}, we define it as a proposition, using standard first-order logic syntax.
 
 When using \lstinline{Set}, we define it as a type,
 using the \lstinline{sig} type constructor in place of \lstinline{exists}.
-We also use the \lstinline{prod} type constructor to represent the conjunction of two predicates.
+We also use the \lstinline{prod} type constructor to represent the conjunction of two propositions.
 
 Another thing to note is the difference between \lstinline{Lemma} and \lstinline{Definition}.
-
-\textcolor{red}{\textbf{NOT QUITE CORRECT!}}
-
-The former is used to define a predicate, while the latter is (usually) used to define a type or a non-recursive function.
-In this case, we could actually use \lstinline{Definition} instead of \lstinline{Lemma},
-but not the other way around.
 
 The reason for defining \lstinline{ex_lfp_geq} using \lstinline{Set}, is that we can then use
 Coq's extraction feature to generate Haskell code from the Coq definitions.
@@ -282,35 +276,13 @@ The proof of theorem 3.2 is based on a primary induction on \lstinline{n} and a 
 
 The first base case is simple. We want to prove
 
-\tabto{2em}
+(1) \tabto{2em}
 \lstinline{ex_lfp_geq Cs (nodup string_dec V) (nodup string_dec V) f}.
 
-If we unfold the definition of \lstinline{ex_lfp_geq}, we see that we must prove
-
-\tabto{2em}
-\lstinline{{g : Frontier | geq (nodup string_dec V) f g = true}\}
-
-and
-
-\tabto{2em}
-\lstinline{sub_model Cs (nodup string_dec V) (nodup string_dec V) f = true}.
-
-The syntax of the first goal is a bit strange, but it is simply a predicate
-that states that there exists a \lstinline{g : Frontier} such that
-\lstinline{geq (nodup string_dec V) f g = true}. This is easily proven by
-assuming \lstinline{g = f} and using the lemma \lstinline{geq_refl}.
-The reason for the different syntax is that we are using the \lstinline{Set} universe
-which does not have the same syntax as the \lstinline{Prop} universe,
-where we could have written
-
-\tabto{2em}
-\lstinline{exists g : Frontier, geq (nodup string_dec V) f g = true}.
-
-The second goal is proven by the fact that the length of \lstinline{V} is less than or equal to \lstinline{n},
-which in this case is \lstinline{0}. This means that \lstinline{V} is empty,
-and we therefore have the new goal of \lstinline{sub_model Cs [] [] f = true}.
-This is proven by the lemma \lstinline{sub_model_W_empty}, which states that
-\lstinline{forall Cs V f, sub_model Cs V [] f = true}.
+Since \lstinline{n = 0}, we get that the length of \lstinline{V} is \lstinline{0},
+and hence we get a new goal \lstinline{ex_lfp_geq Cs [] [] f}.
+This is proven by the lemma \lstinline{ex_lfp_geq_empty},
+which states that \lstinline{forall Cs f, ex_lfp_geq Cs [] [] f}.
 
 \subsubsection{Inductive case of \lstinline{n}}
 
@@ -347,7 +319,7 @@ The goal $(1)$ is proven by using a hypothesis that states that
 \tabto{2em}
 \lstinline{Datatypes.length (set_diff string_dec (nodup string_dec V) (nodup string_dec W)) <= m <= n}.
 
-Since \lstinline{m} is \lstinline{0}, this means that
+Since \lstinline{m = 0}, this means that
 the set difference of \lstinline{V} and \lstinline{W} is empty.
 We can now apply the lemma \lstinline{set_diff_nil_incl} on this hypothesis, which states that
 
@@ -360,7 +332,7 @@ The goal $(2)$ is proven by an existing hypothesis.
 
 \subsubsection{Inductive case of \lstinline{m}}
 
-Too long :)
+\textcolor{red}{insert brief explanation here (from proof overview)...}
 
 \section{Extraction to Haskell}
 

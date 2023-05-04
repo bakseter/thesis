@@ -18,23 +18,38 @@ that maps an element to itself or to a greater element in the ordered set.
 A join-semilattice is a partially ordered set in which any two elements have a least upper bound,
 called their join.
 
-\textcolor{red}{insert def. of frontier/f here}
-
 A semilattice presentation consists of a set $V$ of generators
 (also called variables) and a set $C$ of constraints
 (also called relations).
 
-\textcolor{red}{insert def. of $S_C$ and related notation here}
+A term over V has the form $x_1 + k_1 \lor \ldots \lor x_m + k_m$, where $x_i \in V$ and $k_i \in \mathbb{N}$.
+
+A relation is an equation $s = t$, where $s$ and $t$ are terms over $V$.
+A constraint, like $x = y^+$ (with $x, y \in V$), expresses a relation between the generators (variables) $x$ and $y$.
+
+Horn clauses are propositional clauses $A \rightarrow b$, with a non-empty body $A$ and conclusion $b$.
+The atoms are of the form $x + k$, where $x \in V, k \in \mathbb{N}$.
+We call this special form of Horn clauses simply \textit{clauses}.
+
+For each constraint $s = t$, we generate $m + n$ clauses by replacing join by conjunction and implication.
+We define $S_{s=t}$ as the set of these clauses and $S_C$ as the union of all $S_{s=t}$, with $s = t$ as a constraint in C.
+
+Predecessor clauses are derived from the axiom $x \; \lor \; x^{+} = x^{+}$ and have the form
+$x + k + 1 \rightarrow x + k$, where $(x \in V, k \in \mathbb{N})$
+
+We define closure under shifting upwards as follows:
+$A \rightarrow b$ is in the set of clauses, then so must $A + 1 \rightarrow b + 1$ be.
+$A + 1$ denotes the set of atoms of the form $a + 1$, where $a \in A$.
 
 Given a finite semilattice presentation $(V, C)$,
 and a subset $W \subseteq V$, we denote by
-$\overline{S_C} \mid W$ the set of clauses in $\overline{S_C}$
+$\overline{S_C}$ the smallest set of clauses that is closed under shifting upwards,
+by $\overline{S_C} \mid W$ the set of clauses in $\overline{S_C}$
 mentioning only variables in $W$, and by $\overline{S_C} \downarrow W$
 the set of clauses in $\overline{S_C}$ with conclusion over $W$.
 
-% A term over V is a term of the form
-% $x_1 + k_1 \lor \ldots \lor x_m + k_m$,
-% where $x_i \in V$ and $k_i \in N^{}$.
+A function $f : V \rightarrow N^{\infty}$ is a model $\ldots$
+
 
 \subsection{Lemma 3.1}
 

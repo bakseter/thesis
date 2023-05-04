@@ -46,11 +46,8 @@ making much of the Haskell code hard to read.
 \begin{minipage}{\linewidth}
 \begin{lstlisting}[language=Coq, label={lst:thm_32_coq_example}, caption={\lstinline{thm_32} example}]
 Example Cs := [
-  ["a" & 0; "b" & 0] ~> "b" & 1;
-  ["b" & 0] ~> "c" & 3;
-  ["c" & 1] ~> "d" & 0;
-  ["b" & 0; "d" & 2] ~> "e" & 0;
-  ["e" & 0] ~> "a" & 0
+  ["a" & 0] ~> "b" & 1;
+  ["b" & 1] ~> "c" & 2
 ].
 Example f := frontier_fin_0.
 Example vars' := nodup string_dec (vars Cs).
@@ -66,10 +63,13 @@ Example thm_32_example :=
 \end{lstlisting}
 \end{minipage}
 
-In Coq, the type of \lstinline{thm_32_example} is \lstinline{pre_thm} applied to all the arguments given.
+In Coq, the type of \lstinline{thm_32_example} is \lstinline{pre_thm} partially applied to all the arguments given.
 If we would like to execute this program entirly in Coq, we would need to give a proof of each of the assumptions
 in \lstinline{pre_thm}, and the resulting type of the output would be the type of the proof of \lstinline{ex_lfp_geq},
-again applied to all the arguments given.
+again partially applied to all the arguments given.
+
+\textcolor{red}{"partially applied to the arguments given" might not be the best explanation here? what I'm trying to say is
+that the type of thm\_32\_example has less arrows than pre\_thm since we have given it some arguments}
 
 Since Coq elimiates many of the logical parts of the proof when extracting (\textcolor{red}{cite coq extraction papers}),
 we can avoid the tedious task of proving all the assumptions of \lstinline{pre_thm} by simply
@@ -127,6 +127,8 @@ which is a constant function that always returns \lstinline{Fin 0}).
 As stated previously, the algorithm (produced by)/(used in)? theorem 3.2 is being
 tested for use in checking loops and determining universe levels in the
 type system of Coq.
+
+\url{http://adam.chlipala.net/cpdt/html/Universes.html}
 
 \section{Limitations}
 \label{sec:limitations}
