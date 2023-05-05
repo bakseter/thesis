@@ -25,10 +25,6 @@ Formal proofs include every logical step, and nothing is left for the reader to 
 This can make them extremely verbose, but the amount of logical errors is reduced \cite{ams:formal-proof}.
 The only possible errors in formalized proofs are false assumptions and/or flawed verification software.
 
-\subsection{Formalization}
-
-\textcolor{red}{is this section necessary?}
-
 \section{Type theory}
 
 Type theory groups mathematical objects with similar properties together by assigning them a "type".
@@ -38,6 +34,7 @@ our own data types which allows us to represent e.g. clauses in logic.
 
 \subsection{Propositions as types}
 
+\textcolor{red}{add source, see LateX comment}
 % https://homepages.inf.ed.ac.uk/wadler/papers/propositions-as-types/propositions-as-types.pdf
 
 The concept of propositions as types sees proving a mathematical proposition
@@ -73,7 +70,7 @@ This definition gives us a type with two constructors:
     \item
         \lstinline{Vnil} has the type of \lstinline{vector A 0}, and represents the empty vector.
     \item
-        \lstinline{Vcons} has type type of \lstinline{vector A (S n)}, where the value of \lstinline{n}
+        \lstinline{Vcons} has type of \lstinline{vector A (S n)}, where the value of \lstinline{n}
                             is the length of the vector given to the constructor.
                             This makes the type of a \lstinline{vector} \textit{depend} on its length.
 \end{itemize}
@@ -144,7 +141,7 @@ This matches the type of our function, and the proof is complete.
 
 Proving theorems like this is not really intuitive for a human prover,
 and that is why Coq gives us the \textit{Ltac} meta-language for writing proofs.
-Ltac provides us with tactics, which are shorthand syntax for defining Gallina terms \textcolor{red}{(is this correct?)} \cite{cltac}.
+Ltac provides us with tactics, which are a kind of shorthand syntax for defining Gallina terms \textcolor{red}{(is this correct?)} \cite{cltac}.
 Using Ltac, we can rewrite the proof from \ref{lst:gallina_ex} as such:
 
 \begin{minipage}{\linewidth}

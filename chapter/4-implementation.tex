@@ -2,12 +2,9 @@
 
 \section{Data types}
 
-The paper \cite{mbezem} uses heavily Horn clauses, which it (and we) simply call clauses.
-Following the definition of a Horn clause, a clause contains a body of a set of atomic formulas,
-or atoms, and a single atom as the head \cite{halbert}.
-
-We also define the atoms in the clauses as containing one string and one natural number,
-since this is sufficient for our implementation.
+As seen in \autoref{sec:case}, we want to represent clauses as
+a set of atoms as premises and a single atom as a conclusion.
+We implement this in Coq using two types, \lstinline{Atom} and \lstinline{Clause}.
 
 \begin{minipage}{\linewidth}
 \begin{lstlisting}[language=Coq, label={lst:atom_clause_def}, caption={\lstinline{Atom} and \lstinline{Clause} in Coq}]
@@ -25,11 +22,10 @@ Notation "ps ~> c" := (clause ps c) (at level 81).
 
 Note also the \lstinline{Notation}-syntax, which allow us to define a custom notation,
 making the code easier to read. The expression on the left-hand side of the \lstinline{:=} in quotation marks
-is equivalent to the expression on the right-hand side in parentheses.
+is definitionally equal to the expression on the right-hand side in parentheses.
 The level determines which notation should take precedence, with a higher level equaling a higher precedence.
 
-As we saw when discussing \cite{mbezem} in \autoref{sec:case},
-we also want to model functions of the form $f : V \rightarrow N^{\infty}$.
+We also want to model functions of the form $f : V \rightarrow N^{\infty}$.
 We implement this in Coq using two types, \lstinline{Ninfty} and \lstinline{Frontier}.
 \lstinline{Ninfty} is either a natural number or infinity.
 \lstinline{Frontier} is a function from a string (variable) to \lstinline{Ninfty}.
@@ -90,8 +86,10 @@ Definition shift_clause (n : nat) (c : Clause) : Clause :=
 \end{lstlisting}
 \end{minipage}
 
-Using these definitions, we can now define an important property that will be used
-later; whether a set of clauses is true for any shift of \lstinline{n : nat}.
+Using these definitions, we can now define an important property that is
+possible by Lemma 3.1 \cite[p. ~3]{mbezem}, since this lemma enables us to check whether or not a clause
+is satisfied by a frontier for any shift of \lstinline{k : nat}.
+We will use this property later to determine if a set of clauses is a valid model.
 
 \begin{minipage}{\linewidth}
 \begin{lstlisting}[language=Coq, label={lst:all_shifts_true}, caption={\lstinline{all_shifts_true} in Coq}]
@@ -113,9 +111,9 @@ Definition all_shifts_true (c : Clause) (f : Frontier) : bool :=
 
 \subsection{The function \lstinline{sub_model}}
 
-Given any set of clauses and a function assigning values to the variables,
-we can determine if this gives us a valid model, that is,
-whether all shifts of all clauses are satisfied.
+Given any set of clauses and a function assigning values to the variables (frontier),
+we can determine if the frontier is a model of the set of clauses, i.e.
+whether all shifts of all clauses are satisfied by the frontier.
 
 We translate this property to Coq as the recursive function \lstinline{sub_model}.
 We have two additional arguments \lstinline{V} and \lstinline{W}; these are
@@ -192,23 +190,25 @@ using the \lstinline{sig} type constructor in place of \lstinline{exists}.
 We also use the \lstinline{prod} type constructor to represent the conjunction of two propositions.
 
 Another thing to note is the difference between \lstinline{Lemma} and \lstinline{Definition}.
+\textcolor{red}{explain this}
 
 The reason for defining \lstinline{ex_lfp_geq} using \lstinline{Set}, is that we can then use
 Coq's extraction feature to generate Haskell code from the Coq definitions.
 Since \lstinline{ex_lfp_geq} plays a central part in the proof of the main theorem,
 it must be defined as a \lstinline{Set} to avoid universe inconsistencies
 when performing extraction.
+\textcolor{red}{explain this, cite extraction papers maybe}
 
 \section{The Main Proofs}
 
-We have now laid the groundwork for the formalization of Theorem 3.2 from the paper \cite{mbezem}.
+We have now laid the groundwork for the formalization of Theorem 3.2.
 We precede the definition of Theorem 3.2 with two additional definitions, which helps us simplify its
 definition and the proof of the theorem itself.
 
 \subsection{The predicate \lstinline{pre_thm}}
 
 Since (in our case) the formal definitions of lemma 3.3, which will be expanded on shortly,
-and theorem 3.2 share some structure, we define a predicate \lstinline{pre_thm}:
+and Theorem 3.2 share some structure, we define a proposition \lstinline{pre_thm}:
 
 \begin{minipage}{\linewidth}
 \begin{lstlisting}[language=Coq, label={lst:pre_thm_def}, caption={Def. of \lstinline{pre_thm}}]
@@ -227,7 +227,7 @@ Definition pre_thm (n m : nat) (Cs : set Clause) (V W : set string) (f : Frontie
 
 \subsection{Lemma 3.3}
 
-Lemma 3.3 from the paper \cite{mbezem} is used in the proof of theorem 3.2 to solve \textcolor{red}{fill inn explanation here...}
+Lemma 3.3 from the paper \cite{mbezem} is used in the proof of Theorem 3.2 to solve \textcolor{red}{fill inn explanation here...}
 
 We define it using \lstinline{pre_thm} as follows:
 
@@ -254,7 +254,7 @@ Qed.
 
 \subsection{Theorem 3.2}
 
-We can now formulate theorem 3.2 using \lstinline{pre_thm}:
+We can now formulate Theorem 3.2 using \lstinline{pre_thm}:
 
 \begin{minipage}{\linewidth}
 \begin{lstlisting}[language=Coq, label={lst:thm_32}, caption={Theorem 3.2 in Coq}]
@@ -270,7 +270,7 @@ Qed.
 \end{lstlisting}
 \end{minipage}
 
-The proof of theorem 3.2 is based on a primary induction on \lstinline{n} and a secondary induction on \lstinline{m}.
+The proof of Theorem 3.2 is based on a primary induction on \lstinline{n} and a secondary induction on \lstinline{m}.
 
 \subsubsection{Base case of \lstinline{n}}
 

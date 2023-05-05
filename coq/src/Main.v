@@ -31,104 +31,9 @@ Definition pre_thm (n m : nat) (Cs : set Clause) (V W : set string) (f : Frontie
   Datatypes.length
     (set_diff string_dec
       (nodup string_dec V)
-      (nodup string_dec W)
-    ) <= m <= n ->
+      (nodup string_dec W)) <= m <= n ->
   ex_lfp_geq Cs (nodup string_dec W) (nodup string_dec W) f ->
   ex_lfp_geq Cs (nodup string_dec V) (nodup string_dec V) f.
-
-(* informal proof sketch, cf. TCS note.
-Given Cs, V, W, and f, distinguish the following cases:
-
-1. Some v in V has f(v)=Infty. Then we can simplify Cs
-by eliminating all clauses with v in the conclusion, and
-simplifying clauses by eliminating atoms with v in the premiss.
-It may be that the premiss of a clause becomes empty, in which
-case we know that also the variable in the conclusion is Infty.
-We continue this process until the clause set cannot be simplified
-any more. Call the remaining clause set Cs', with variables in V',
-which is a strict subset of V. Now apply the first condition of
-lem33 to Cs', V'and W' empty to get a model of Cs' restricted to V'.
-Then we can extend this with value Infty for variables in V\V'
-to a model of Cs restricted to V.
-
-2. Not 1, so f: V->N. Now we can apply the method from the TCS note
-and termination is guaranteed since variables in V-W have values in N
-which do not change, and "bound" clauses having such a variable in
-the premiss.
-
-Matthieu Sozeau has a formal proof of termination in this case. *)
-
-Definition exists_pred_stuff (V : set string) (f : Frontier) :
-  {exists v : string, (In v V) /\ (f v = infty)} +
-  {forall v : string, In v V -> f v <> infty}.
-Proof.
-  induction V as [|v V' IHV'].
-  - right. intros. inversion H.
-  - destruct IHV' as [IH|IH].
-    + left. elim IH.
-      intros. exists x. destruct H.
-      split. right. assumption. assumption.
-    + destruct (f v) eqn:Hf.
-      * left. exists v.
-        split. left. reflexivity. assumption.
-      * right. intros. destruct H as [H|H].
-        -- rewrite H in Hf. rewrite Hf. discriminate.
-        -- apply IH. assumption.
-Qed.
-
-Lemma fold_right_andb_true_map_incl_vars_set_atom_false (V W : set string) (l : set Atom) :
-  incl W V ->
-  fold_right andb true
-    (map
-      (fun x : string => x € nodup string_dec W)
-      (vars_set_atom l)) = false ->
-  fold_right andb true
-    (map
-      (fun x : string => x € nodup string_dec V)
-      (vars_set_atom l)) = false.
-Proof.
-  intros.
-  induction V as [|v V].
-  - destruct W.
-    + simpl in *. assumption.
-    + apply incl_l_nil_false in H.
-      contradiction. discriminate.
-  - simpl. destruct (in_dec string_dec v V).
-    + apply IHV. induction W as [|w W].
-      * apply incl_nil_l.
-      * apply incl_cons_inv in H.
-        destruct H. apply incl_cons.
-        -- simpl in H, H1. destruct H;
-           subst; assumption.
-        -- apply IHW; try assumption.
-           ++ simpl in H0.
-              rewrite <- H0.
-              f_equal. f_equal.
-              apply functional_extensionality.
-              intros. destruct (in_dec string_dec w W);
-              try reflexivity.
-              simpl. destruct (string_dec x w);
-              try reflexivity. subst.
-              apply set_mem_correct2. unfold set_In.
-              apply nodup_In.  simpl in H.
-              destruct H.
-              ** subst.
-Admitted.
-
-Lemma all_shifts_true_geq (c : Clause) (V : set string) (f g : Frontier) :
-  all_shifts_true c f = true ->
-  geq V f g = true ->
-  all_shifts_true c g = true.
-Proof.
-  intros. destruct c as [l [x k]].
-  induction k as [|k].
-  - simpl. destruct (g x) eqn:Hgx; try reflexivity.
-    destruct (f x) eqn:Hfx; try reflexivity.
-    simpl in H. rewrite Hfx in H.
-    + destruct (fold_right andb true (map (fun a : Atom => atom_true a g) (map (shift_atom (n + 1 - 0)) l)));
-      try reflexivity.
-Admitted.
-
 
 Lemma lem_33 :
   forall Cs : set Clause,
@@ -143,36 +48,6 @@ Lemma lem_33 :
     incl W V ->
     ex_lfp_geq Cs (nodup string_dec W) (nodup string_dec W) f ->
     ex_lfp_geq Cs (nodup string_dec V) (nodup string_dec W) f.
-Proof.
-  intros.
-  destruct (exists_pred_stuff V f).
-  - induction Cs as [|c Cs].
-    + unfold ex_lfp_geq.
-      unfold ex_lfp_geq_S. exists f.
-      split; try apply geq_refl; try reflexivity.
-    + unfold ex_lfp_geq.
-      unfold ex_lfp_geq_S. exists f.
-      split; try apply geq_refl.
-      unfold sub_model. fold sub_model.
-      destruct c as [l [x k]].
-      apply andb_true_iff. split.
-      * unfold ex_lfp_geq in H0. unfold ex_lfp_geq_S in H0.
-        elim H0. intros. destruct p.
-        unfold sub_model in e1. fold sub_model in e1.
-        apply andb_true_iff in e1. destruct e1.
-        repeat rewrite orb_true_iff in H1.
-        destruct H1. destruct H1.
-        -- rewrite H1. apply orb_true_l.
-        -- repeat rewrite orb_true_iff.
-           left. right. apply negb_true_iff.
-           apply negb_true_iff in H1.
-           apply (fold_right_andb_true_map_incl_vars_set_atom_false V W);
-           try assumption.
-        -- repeat rewrite orb_true_iff.
-           right.
-
-
-
 Admitted.
 
 Theorem thm_32 :
