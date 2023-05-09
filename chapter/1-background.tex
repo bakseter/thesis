@@ -8,10 +8,6 @@ When solving mathematical problems, we often use proofs
 to either \textbf{justify} a claim or to \textbf{explain} why the claim is true.
 We can distinguish between two types of proofs; \textit{informal} and \textit{formal} proofs.
 
-% Traditional informal proofs emphasize the latter, and they take for grated that this is sufficent from the former.
-% Formal proofs on the other hand, ??? on the former; depending on the formalism used they have some
-% explanatory merit as well.
-
 An informal proof is often written in a natural language, and the proof is adequate if most
 readers are convinced by the proof \cite{bpierce}. Such proofs rely heavily on the reader's intuition
 and often omit logical steps to make them easier to understand for humans \cite{ams:formal-proof}.
@@ -33,9 +29,10 @@ objects. For example, we can use the data type \texttt{nat} to represent natural
 our own data types which allows us to represent e.g. clauses in logic.
 
 \subsection{Propositions as types}
+\label{ssec:pat}
 
-\textcolor{red}{add source, see LateX comment}
-% https://homepages.inf.ed.ac.uk/wadler/papers/propositions-as-types/propositions-as-types.pdf
+\textcolor{red}{Add source, see below. Maybe find better source? My paragraph is not really connected that well to the source.}
+\url{https://homepages.inf.ed.ac.uk/wadler/papers/propositions-as-types/propositions-as-types.pdf}
 
 The concept of propositions as types sees proving a mathematical proposition
 as the same process as constructing a value of a type, in this case,
@@ -52,7 +49,8 @@ Often, the proof can be used to compute something, i.e. the numbers $a, b, c, d$
 
 \subsection{Dependent types}
 
-Dependent types allow us to define more rigorously types which depend on terms.
+Dependent types allow us to define more rigorously types which depend on values.
+\textcolor{red}{Do I need source for this?}
 
 An example to illustrate this is the definition of a vector:
 
@@ -102,6 +100,7 @@ predicates that depend on the value of a term, e.g. a predicate that checks if a
 The purpose of a proof assistant is to get computer support for continuity and verify a formal proof mechanically.
 
 \subsection{Coq}
+
 Coq is based on the higher-order type theory \textit{Calculus of Inductive Constructions} (CIC), and
 functions as both a proof assistant and a dependently typed functional programming language.
 Coq also allow us to extract certified programs from the proofs of their specification to
@@ -141,7 +140,7 @@ This matches the type of our function, and the proof is complete.
 
 Proving theorems like this is not really intuitive for a human prover,
 and that is why Coq gives us the \textit{Ltac} meta-language for writing proofs.
-Ltac provides us with tactics, which are a kind of shorthand syntax for defining Gallina terms \textcolor{red}{(is this correct?)} \cite{cltac}.
+Ltac provides us with tactics, which are a kind of shorthand syntax for defining Gallina terms \cite{cltac}.
 Using Ltac, we can rewrite the proof from \ref{lst:gallina_ex} as such:
 
 \begin{minipage}{\linewidth}

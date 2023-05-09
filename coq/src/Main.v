@@ -50,7 +50,7 @@ Lemma lem_33 :
     ex_lfp_geq Cs (nodup string_dec V) (nodup string_dec W) f.
 Admitted.
 
-Theorem thm_32 :
+Definition thm_32 :
   forall n m : nat,
   forall Cs : set Clause,
   forall V W : set string,
@@ -195,4 +195,4 @@ Proof.
           -- unfold pre_thm. intros. apply (IHn m0 Cs' V' W' f');
              try assumption; try lia.
           -- rewrite nodup_rm. assumption.
-Qed.
+Defined.

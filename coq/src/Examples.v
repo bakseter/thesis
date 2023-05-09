@@ -8,9 +8,13 @@ Require Import Atom. Import Atom.
 Require Import Geq. Import Geq.
 Require Import Vars. Import Vars.
 Require Import Sets. Import Sets.
+Require Import Model. Import Model.
 Require Import Main. Import Main.
 
 Module FailEx0.
+
+  Check thm_32.
+  Check pre_thm.
 
   Example Cs := [
     ["a" & 0] ~> "b" & 2;
@@ -26,6 +30,37 @@ Module FailEx0.
       vars'
       []
       fail_ex_0_f.
+
+  Example fail_ex_0' :=
+    pre_thm
+      (Datatypes.length vars')
+      (Datatypes.length vars')
+      Cs
+      vars'
+      []
+      fail_ex_0_f.
+
+  Check fail_ex_0.
+  Check fail_ex_0'.
+
+  Lemma incl_nil_vars' : incl [] vars'.
+  Proof. apply incl_nil_l. Qed.
+
+  Lemma length_vars'_le :
+    Datatypes.length (nodup string_dec vars') <=
+    Datatypes.length vars'.
+  Proof. reflexivity. Qed.
+
+  Lemma asd :
+     Datatypes.length
+    (set_diff string_dec (nodup string_dec vars') (nodup string_dec [])) <=
+  Datatypes.length vars' <= Datatypes.length vars'.
+  Proof. simpl. apply conj; reflexivity. Qed.
+
+  Lemma def : ex_lfp_geq Cs (nodup string_dec []) (nodup string_dec []) fail_ex_0_f.
+  Proof. simpl. apply ex_lfp_geq_empty. Qed.
+
+  Eval compute in ((fail_ex_0 incl_nil_vars' length_vars'_le asd def)).
 
 End FailEx0.
 

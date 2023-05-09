@@ -10,7 +10,7 @@ that is used in the definition of \lstinline{thm_32}.
 This is what the type signature of such a function looks like in Haskell:
 
 \begin{minipage}{\linewidth}
-\begin{lstlisting}[language=Haskell, label={lst:thm_32_haskell}, caption={Haskell extraction of \lstinline{thm_32}}]
+\begin{lstlisting}[language=Haskell, label={lst:thm_32_type_sig_haskell}, caption={Type signature of Haskell extraction of \lstinline{thm_32}}]
 thm_32 :: Prelude.Integer -> Prelude.Integer -> (Set Clause0) ->
           (Set Prelude.String) -> (Set Prelude.String) -> Frontier ->
           Ex_lfp_geq -> Ex_lfp_geq
@@ -33,15 +33,53 @@ type Ex_lfp_geq = Ex_lfp_geq_S
 \end{lstlisting}
 \end{minipage}
 
-Looking back at the Coq definition of \lstinline{ex_lfp_geq}, it defined a proposition that stated that there
+Looking back at the Coq definition of \lstinline{ex_lfp_geq} (see \autoref{lst:ex_lfp_geq_def}),
+it defined a proposition that stated that there
 exists a \lstinline{g : Frontier}, such that the proposition holds.
 If such a \lstinline{g} exists, then the \lstinline{g} itsself is evidence (proof) that the proposition holds.
 Thus, the type of the proof of \lstinline{ex_lfp_geq} is just the type of \lstinline{Frontier}.
 
-We can now start to define a computable example using \lstinline{thm_32}.
+\textcolor{red}{The rest of the section includes a lot of guesswork, I'm trying to understand the types in Coq and how they relate to Set, Prop, and extracted stuff in Haskell}
+
+First, we can look at the type signature of \lstinline{thm_32} to see what arguments we need to give it.
+
+\begin{minipage}{\linewidth}
+\begin{lstlisting}[language=Coq, label={lst:thm_32_type_sig_coq}, caption={Type signature of \lstinline{thm_32} in Coq}]
+thm_32
+     : forall (n m : nat) (Cs : set Clause) (V W : set string) (f : Frontier),
+       pre_thm n m Cs V W f
+\end{lstlisting}
+\end{minipage}
+
+We see that the type of \lstinline{thm_32} is a proof of \lstinline{pre_thm}, with the quantified variables
+\lstinline{n, m, Cs, V, W, f}.
+These are the same variables that we saw in the type signature of the Haskell extraction of \lstinline{thm_32}.
+We can now look at the type signature of \lstinline{pre_thm}.
+
+\begin{minipage}{\linewidth}
+\begin{lstlisting}[language=Coq, label={lst:pre_thm_type_sig_coq}, caption={Type signature of \lstinline{pre_thm} in Coq}]
+pre_thm
+     : nat ->
+       nat -> set Clause -> set string -> set string -> Frontier -> Set
+\end{lstlisting}
+\end{minipage}
+
+Given all quantified variables from \lstinline{thm_32}, we see that the type of \lstinline{pre_thm} is
+an object in \lstinline{Set}. This object is \lstinline{ex_lfp_geq}.
+\textcolor{something about depedenent types? since the type of ex_lfp_geq depends on the values of the quantified variables?}
+
+In summary, the type of \lstinline{thm_32} is a proof of \lstinline{pre_thm}, which,
+when given the quantified variables \lstinline{n, m, Cs, V, W, f}, returns a proof of \lstinline{ex_lfp_geq}
+for these same variables.
+As we saw earlier in this section, a proof of \lstinline{ex_lfp_geq}
+is simply a \lstinline{Frontier} that satisfies the conditions in \lstinline{ex_lfp_geq}.
+Since these conditions are logical objects they are ignored when extacting to Haskell,
+and we are left with just the frontier.
+
+With all this information, we can now start to define a computable and extractable example for \lstinline{thm_32}.
 It is easiest to define as much of the example as possible in Coq and then extract it to Haskell,
 since Coq heavily prioritizes code correctness over readability when extracting,
-making much of the Haskell code hard to read.
+making much of the Haskell code hard to read due to unconventional syntax.
 
 \begin{minipage}{\linewidth}
 \begin{lstlisting}[language=Coq, label={lst:thm_32_coq_example}, caption={\lstinline{thm_32} example}]
@@ -63,15 +101,21 @@ Example thm_32_example :=
 \end{lstlisting}
 \end{minipage}
 
-In Coq, the type of \lstinline{thm_32_example} is \lstinline{pre_thm} partially applied to all the arguments given.
-If we would like to execute this program entirly in Coq, we would need to give a proof of each of the assumptions
-in \lstinline{pre_thm}, and the resulting type of the output would be the type of the proof of \lstinline{ex_lfp_geq},
-again partially applied to all the arguments given.
+\begin{minipage}{\linewidth}
+\begin{lstinline}[language=Coq, label={lst:thm_32_type_sig_coq}, caption={Type signature of \lstinline{thm_32} in Coq}]
 
-\textcolor{red}{"partially applied to the arguments given" might not be the best explanation here? what I'm trying to say is
-that the type of thm\_32\_example has less arrows than pre\_thm since we have given it some arguments}
+\end{lstlisting}
+\end{minipage}
 
-Since Coq elimiates many of the logical parts of the proof when extracting (\textcolor{red}{cite coq extraction papers}),
+If we would like to execute \lstinline{thm_32} entirely in Coq, we would need to give a proof of each of these assumptions.
+These proofs are trivial but ultimately useless (and tedious to write down),
+so we only give the arguments that are strictly necessary for the extraction.
+Once these assumptions are ignored, we see that the final argument to \lstinline{thm_32} is of the type
+\lstinline{
+
+
+Since Coq elimiates many of the logical parts of the proof when extracting,
+\cite[p. ~8]{coqextroverview},
 we can avoid the tedious task of proving all the assumptions of \lstinline{pre_thm} by simply
 using the extracted Haskell function for \lstinline{thm_32_example}, which as we saw previously only needs a \lstinline{Frontier}
 as input (since we have given every other argument necessary), and returns a \lstinline{Frontier} as output.
