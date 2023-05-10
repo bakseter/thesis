@@ -1,17 +1,28 @@
 \chapter{The Case in Question}
-\label{chap:case}
+\label{ch:the_case_in_question}
 
 \section{Overview}
+\label{sec:overview}
 
-We have used the Coq proof assistant to formalize parts of the proofs of the following paper, \citeauthor{mbezem} \cite{mbezem}.
+We want to use the Coq proof assistant to formalize parts of the proofs of the following paper, by \citeauthor{mbezem} \cite{mbezem}.
 This paper solves two problems that occur in dependent type systems where typings depend
 on universe-level constraints. We focused on formalizing the proof of Theorem 3.2 from the paper.
-Since this proof is complex enough that mistakes are possible, it was a good candidate for formalization.
-It also has direct applications to the formalization and verification of the Coq proof assistant itself,
-since the algorithm outlined in the proof is being tested
-for use in checking loops in Coq's type system. \cite{coqgithub}
+Since this proof is complex enough that mistakes are possible, it is a good candidate for formalization.
+By formalizing the proof and then verifying it using Coq, we can be sure that it is correct.
+
+We are also interested in finding out whether or not the process of formalizing the proof
+can be completed in a reasonable amount of time, and with a reasonable amount of effort.
+Is the promise (\textcolor{red}{find better word?}) of a complete verification of the proof worth the effort of formalizing it?
+
+By using an advanced feature of Coq, we can also extract an algorithm from the proof,
+where this algorithm is certified to be produce correct results.
+Such an algorithm has direct applications to the formalization and verification of the Coq proof assistant itself,
+as Coq employs a similar algorithm to resolve constraints in its type system.
+\textcolor{red}{or, if they are not similiar, say:}
+as Coq employs an algorithm which solves the same problem when resolving constraints in its type system.
 
 \section{Relevant parts of the paper}
+\label{sec:relevant_parts_of_the_paper}
 
 In the paper, join-semilattices with inflationary endomorphisms
 are simply called semilattices. An inflationary endomorphism is a function
@@ -53,19 +64,21 @@ A function $f : V \rightarrow N^{\infty}$ is a model $\ldots$
 
 
 \subsection{Lemma 3.1}
+\label{ssec:lemma_3_1}
 
 Lemma 3.1 states that given $f : V \rightarrow N^{\infty}$,
 and a clause $A \rightarrow b$, let $P$ be the problem whether or not
 $A + k \rightarrow b + k$ is satisfied by $f$ for all $k \in N$.
 Then $P$ is decidable. \cite[p.~3]{mbezem}
 
-The proof of lemma 3.1 demonstrates that the problem $P$
+The proof of Lemma 3.1 demonstrates that the problem $P$
 is decidable, meaning we can indeed write an algorithm that
 determines whether or not the problem holds for all $k \in N$.
 Lemma 3.1 is also crucial for making case distinctions
 in further proofs, since we know that any $S_C$ is finite.
 
 \subsection{Theorem 3.2}
+\label{ssec:theorem_3_2}
 
 Theorem 3.2 states that for any finite semilattice representation
 $(V, C)$ and any function $f : V \rightarrow N^{\infty}$,
@@ -73,6 +86,7 @@ the least $g \ge f$ that is a model of $\overline{S_C}$ can be computed.
 \cite[p.~3]{mbezem}
 
 \subsection{Lemma 3.3}
+\label{ssec:lemma_3_3}
 
 Theorem 3.2 has a special case that is solved by an additional lemma,
 lemma 3.3. This lemma states that given a finite semilattive presentation

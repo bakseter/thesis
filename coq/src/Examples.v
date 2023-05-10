@@ -13,9 +13,6 @@ Require Import Main. Import Main.
 
 Module FailEx0.
 
-  Check thm_32.
-  Check pre_thm.
-
   Example Cs := [
     ["a" & 0] ~> "b" & 2;
     ["b" & 2] ~> "c" & 1
@@ -40,9 +37,6 @@ Module FailEx0.
       []
       fail_ex_0_f.
 
-  Check fail_ex_0.
-  Check fail_ex_0'.
-
   Lemma incl_nil_vars' : incl [] vars'.
   Proof. apply incl_nil_l. Qed.
 
@@ -60,7 +54,7 @@ Module FailEx0.
   Lemma def : ex_lfp_geq Cs (nodup string_dec []) (nodup string_dec []) fail_ex_0_f.
   Proof. simpl. apply ex_lfp_geq_empty. Qed.
 
-  Eval compute in ((fail_ex_0 incl_nil_vars' length_vars'_le asd def)).
+  Example fail_ex_0_errthang := fail_ex_0 incl_nil_vars' length_vars'_le asd def.
 
 End FailEx0.
 
@@ -5013,11 +5007,7 @@ Extract Constant fold_right => "Prelude.foldr".
 Extract Inductive nat => "Prelude.Integer" ["0" "Prelude.succ"]
   "(\fO fS n -> if n Prelude.== 0 then fO () else fS (n Prelude.- 1))".
 
-Extraction "/home/andreas/Projects/thesis/coq/extr/ex.hs"
+Extraction "/home/andreas/Projects/thesis/coq/extr/ex_test.hs"
   FailEx0.fail_ex_0
-  FailEx1.fail_ex_1
-  FailEx2.fail_ex_2
-  FailEx3.fail_ex_3
-  FailEx4.fail_ex_4
-  CoqTypesEx.coq_types_ex
-  ThesisEx.thesis_ex.
+  FailEx0.fail_ex_0'
+  FailEx0.fail_ex_0_errthang.

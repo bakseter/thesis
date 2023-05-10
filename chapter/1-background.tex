@@ -1,8 +1,10 @@
 \chapter{Background}
 
 \section{Formalizing mathematics}
+\label{sec:formalizing_mathematics}
 
 \subsection{Proofs}
+\label{ssec:proofs}
 
 When solving mathematical problems, we often use proofs
 to either \textbf{justify} a claim or to \textbf{explain} why the claim is true.
@@ -22,6 +24,7 @@ This can make them extremely verbose, but the amount of logical errors is reduce
 The only possible errors in formalized proofs are false assumptions and/or flawed verification software.
 
 \section{Type theory}
+\label{sec:type_theory}
 
 Type theory groups mathematical objects with similar properties together by assigning them a "type".
 Similarily to data types in computer programming, we can use types to represent mathematical
@@ -29,7 +32,7 @@ objects. For example, we can use the data type \texttt{nat} to represent natural
 our own data types which allows us to represent e.g. clauses in logic.
 
 \subsection{Propositions as types}
-\label{ssec:pat}
+\label{ssec:propositions_as_types}
 
 \textcolor{red}{Add source, see below. Maybe find better source? My paragraph is not really connected that well to the source.}
 \url{https://homepages.inf.ed.ac.uk/wadler/papers/propositions-as-types/propositions-as-types.pdf}
@@ -48,6 +51,7 @@ our program is typed correctly, and thus that the corresponding proof is valid.
 Often, the proof can be used to compute something, i.e. the numbers $a, b, c, d$ mentioned above.
 
 \subsection{Dependent types}
+\label{ssec:dependent_types}
 
 Dependent types allow us to define more rigorously types which depend on values.
 \textcolor{red}{Do I need source for this?}
@@ -90,6 +94,7 @@ Definition vec_invalid : vector string 2 :=
 \end{minipage}
 
 \section{Proof assistants}
+\label{sec:proof_assistants}
 
 Propositions as types allow us to bridge the gap between logic and computing,
 while dependent types allow us to define more rigorously types which depends on values.
@@ -100,6 +105,7 @@ predicates that depend on the value of a term, e.g. a predicate that checks if a
 The purpose of a proof assistant is to get computer support for continuity and verify a formal proof mechanically.
 
 \subsection{Coq}
+\label{ssec:coq}
 
 Coq is based on the higher-order type theory \textit{Calculus of Inductive Constructions} (CIC), and
 functions as both a proof assistant and a dependently typed functional programming language.
@@ -164,31 +170,33 @@ to further simplify the process \cite{cide}.
 Ltac is not the only proof langauge, with another example being \textit{SSReflect} \cite{cssr}.
 
 \subsection{Other proof assistants}
+\label{ssec:other_proof_assistants}
 
 \subsubsection{Agda}
+\label{sssec:agda}
 
 Agda is a depdently typed functional programming language based on Martin-Löf's
 intuitionistic type theory. Unlike Coq, Agda does not use tactics. \cite{agdatut}
 However, by using proposition as types, Agda can also function as a proof assistant.
 
 \subsubsection{Isabelle}
+\label{sssec:isabelle}
 
 \subsubsection{Lean}
+\label{sssec:lean}
 
 Lean is proof assistant, automated theorem prover and dependently typed functional programming language.
-Lean can be instantiated using either CIC or Martin-Löf's intuitionistic type theory.
-\cite{lean}
+Lean can be instantiated using either CIC or an Martin-Löf's intuitionistic type theory
+\cite{lean}.
 
 \subsubsection{Higher-Order Logic}
+\label{sssec:hol}
 
 \subsection{Extraction of programs from verified proofs}
+\label{ssec:extraction_of_programs_from_verified_proofs}
 
 By the the notion of propositions as types, we can use a proof assistant to
 prove the correctness of a program. However, we can also extract a program from
 a proof of its correctness. This type of code extraction is a common feature of proof assistants.
 The extracted program is guaranteed to be correct by the type system of the proof assistant,
-and the resulting code can be extracted to a variety programming languages, such as Haskell and OCaml (as is the case for Coq).
-\cite{cintro}
-
-
-\textcolor{red}{(if we want to elaborate, cite this \url{https://www.irif.fr/~letouzey/download/extraction2002.pdf} and this \url{https://www.irif.fr/~letouzey/download/letouzey_extr_cie08.pdf})}
+and the resulting code can be extracted to a variety programming languages, such as Haskell and OCaml (as is the case for Coq) \cite{cintro}.
