@@ -34,8 +34,6 @@ our own data types which allows us to represent e.g. clauses in logic.
 \subsection{Propositions as types}
 \label{ssec:propositions_as_types}
 
-\textcolor{red}{Add source, see below. Maybe find better source? My paragraph is not really connected that well to the source.}
-\url{https://homepages.inf.ed.ac.uk/wadler/papers/propositions-as-types/propositions-as-types.pdf}
 
 The concept of propositions as types sees proving a mathematical proposition
 as the same process as constructing a value of a type, in this case,
@@ -48,15 +46,16 @@ Proofs are mathematical objects; thus a proposition can be viewed as having the 
 We can use this correspondance to model a proof as a typed computer program.
 The power of this concept comes from the fact that we can use a type checker to verify that
 our program is typed correctly, and thus that the corresponding proof is valid.
-Often, the proof can be used to compute something, i.e. the numbers $a, b, c, d$ mentioned above.
+Often, the proof can be used to compute something, i.e. the numbers $a, b, c, d$ mentioned above
+\cite{pwadler}.
 
 \subsection{Dependent types}
 \label{ssec:dependent_types}
 
 Dependent types allow us to define more rigorously types which depend on values.
-\textcolor{red}{Do I need source for this?}
-
-An example to illustrate this is the definition of a vector:
+Since Coq has support for dependent types, we can give an example to illustrate what this mean.
+We consider the type \lstinline{vector}, which is a type polymorphic (the elements of the list can be of any same type)
+finite list with a fixed length.
 
 \begin{minipage}{\linewidth}
 \begin{lstlisting}[language=Coq, label={lst:dep_type_vec}, caption={\lstinline{vector} in Coq, using dependent types}]

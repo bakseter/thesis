@@ -2,7 +2,7 @@
 
 \section{Data types}
 
-As discussed in \autoref{chap:case}, we want to represent clauses as
+As discussed in \autoref{ch:the_case_in_question}, we want to represent clauses as
 a set of atoms as premises and a single atom as a conclusion.
 We implement this in Coq using two types, \lstinline{Atom} and \lstinline{Clause}.
 
@@ -25,9 +25,10 @@ making the code easier to read. The expression on the left-hand side of the \lst
 is definitionally equal to the expression on the right-hand side in parentheses.
 The level determines which notation should take precedence, with a higher level equaling a higher precedence.
 
-We also want to model functions of the form $f : V \rightarrow N^{\infty}$.
+We also want to model functions of the form $f : V \rightarrow \mathbb{N}^{\infty}$.
 We implement this in Coq using two types, \lstinline{Ninfty} and \lstinline{Frontier}.
-\lstinline{Ninfty} is either a natural number or infinity.
+\lstinline{Ninfty} has two constructors; \lstinline{infty} represents $\infty$,
+and \lstinline{fin n} represents a natural number $n$.
 \lstinline{Frontier} is a function from a string (variable) to \lstinline{Ninfty}.
 
 \begin{minipage}{\linewidth}
@@ -58,6 +59,7 @@ Definition atom_true (a : Atom) (f : Frontier) : bool :=
 Definition clause_true (c : Clause) (f : Frontier) : bool :=
   match c with
   | (conds ~> conc) =>
+    (* every atom in conds is true *)
     if fold_right andb true (map (fun a => atom_true a f) conds)
     then (atom_true conc f)
     else true
@@ -87,9 +89,9 @@ Definition shift_clause (n : nat) (c : Clause) : Clause :=
 \end{minipage}
 
 Using these definitions, we can now define an important property that is
-possible by Lemma 3.1 \cite[p. ~3]{mbezem}, since this lemma enables us to check whether or not a clause
+possible by Lemma 3.1 \cite[p.~3]{mbezem}, since this lemma enables us to check whether or not a clause
 is satisfied by a frontier for any shift of \lstinline{k : nat}.
-We will use this property later to determine if a set of clauses is a valid model.
+We will use this property later to determine if a frontier is a valid model for a set of clauses.
 
 \begin{minipage}{\linewidth}
 \begin{lstlisting}[language=Coq, label={lst:all_shifts_true}, caption={\lstinline{all_shifts_true} in Coq}]
@@ -117,7 +119,7 @@ whether all shifts of all clauses are satisfied by the frontier.
 
 We translate this property to Coq as the recursive function \lstinline{sub_model}.
 We have two additional arguments \lstinline{V} and \lstinline{W}; these are
-the set of variables (strings) from the set of clauses, and all , respectively.
+the set of variables (strings) from the set of clauses, and all \textcolor{red}{insert explanation here}, respectively.
 The function \lstinline{vars_set_atom} simply returns all the variables used
 in a set of atoms as a set of strings.
 
@@ -193,17 +195,18 @@ We also use the \lstinline{prod} type constructor to represent the conjunction o
 Akin to \lstinline{sig}, \lstinline{prod} is an implementation of a dependent sum type.
 Dependent sum types are also known as $\Pi$-types, and are often used to represent universal quantification.
 \textcolor{red}{find source for this, maybe \url{https://hottheory.files.wordpress.com/2013/03/hott-online-323-g28e4374.pdf}}.
+\textcolor{red}{would have been nice to explain this earlier or tie it in better with section about depdendent types in chap 1?}
 
 
 The reason for defining \lstinline{ex_lfp_geq} with \lstinline{Set}, is that we can then use
 Coq's extraction feature to generate Haskell code from the Coq definitions.
-As briefly mentioned in \autoref{ssec:pat}, a proof can often be used to compute something.
+As briefly mentioned in \autoref{ssec:propositions_as_types}, a proof can often be used to compute something.
 In this case, we want to compute the actual frontier \lstinline{g} that satisfies the above predicate.
 Coq distinguishes between logical objects (objects in \lstinline{Prop}) and infomative objects (objects in \lstinline{Set})
-\cite[p. ~1-2]{coqextrnew}.
+\cite[p.~1-2]{coqextrnew}.
 When extracting, Coq will remove as many logical objects as possible, meaning a proposition defined in \lstinline{Prop}
 would simply be collapsed to "\lstinline[language=Haskell]{()}" (the unit type) in Haskell
-\cite[p. ~8]{coqextroverview}.
+\cite[p.~8]{coqextroverview}.
 Logical objects are only used to ensure correctness when constructing a proof in Coq,
 and are not needed when actually computing something using the extracted code.
 
@@ -215,11 +218,11 @@ definition and the proof of the theorem itself.
 
 \subsection{The predicate \lstinline{pre_thm}}
 
-Since (in our case) the formal definitions of lemma 3.3, which will be expanded on shortly,
+Since (in our case) the formal definitions of Lemma 3.3, which will be expanded on shortly,
 and Theorem 3.2 share some structure, we define a proposition \lstinline{pre_thm}:
 
 \begin{minipage}{\linewidth}
-\begin{lstlisting}[language=Coq, label={lst:pre_thm_def}, caption={Def. of \lstinline{pre_thm}}]
+\begin{lstlisting}[language=Coq, label={lst:pre_thm_def}, caption={\lstinline{pre_thm} in Coq}]
 Definition pre_thm (n m : nat) (Cs : set Clause) (V W : set string) (f : Frontier) :=
   incl W V ->
   Datatypes.length (nodup string_dec V) <= n ->
@@ -235,7 +238,7 @@ Definition pre_thm (n m : nat) (Cs : set Clause) (V W : set string) (f : Frontie
 
 \subsection{Lemma 3.3}
 
-Lemma 3.3 from the paper \cite{mbezem} is used in the proof of Theorem 3.2 to solve \textcolor{red}{fill inn explanation here...}
+Lemma 3.3 from \cite{mbezem} is used in the proof of Theorem 3.2 to solve \textcolor{red}{fill inn explanation here...}
 
 We define it using \lstinline{pre_thm} as follows:
 

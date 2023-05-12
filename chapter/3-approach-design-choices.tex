@@ -67,13 +67,13 @@ when you take the union of two sets, or how you determine whether or nor a set c
 One of the most important data structures in functional computer programming is the \textit{list}.
 Unlike a set, a list \textit{can} contain more than one of the same element, and the elements \textit{are} arranged in a
 specific order.
-The inductive definition of a list from Coq's standard library is as follows:
+The inductive definition of a list from Coq's standard library is as follows \cite{coqdatatypes}:
 
 \begin{minipage}{\linewidth}
-\begin{lstlisting}[language=Coq, label={lst:list_def}, caption={Inductive def. of list type in Coq}]
-Inductive list {A : Type} : list A :=
-    | nil : list
-    | cons : A -> list -> list.
+\begin{lstlisting}[language=Coq, label={lst:list_def}, caption={Inductive definition of list type in Coq}]
+Inductive list (A : Type) : list A :=
+    | nil : list A
+    | cons : A -> list A -> list A.
 \end{lstlisting}
 \end{minipage}
 
@@ -88,7 +88,8 @@ In Coq, there are several ways to do this.
 \subsection{List \& ListSet}
 \label{ssec:list_listset}
 
-As stated previously, Coq gives us a traditional definition of a list in the \textbf{List} module of the standard library.
+As stated previously, Coq gives us a traditional definition of a list in the \textbf{List} module
+\footnote{The definition of \lstinline{list} is actually located in the module \textbf{Init.Datatypes}, while everything else relating to lists is in the \textbf{List} module.} of the standard library \cite{coqlist}.
 Due to the nature of its definition, it is very easy to construct proofs using induction or case distinction on lists;
 we only need to check two cases.
 This list implementation is type polymorphic, meaning any type can be used to construct a list of that type.
@@ -122,7 +123,7 @@ This convention of always passing the proof as an argument can be cumbersome and
 but it is a necessary evil to get the properties we want.
 
 Having just the implementation of the set structure is rarely enough; we also want to do operations on the set, and reason about these.
-That is where the \textbf{ListSet} module comes in, which defines a new type called \lstinline{set}.
+That is where the \textbf{ListSet} module comes in, which defines a new type called \lstinline{set} \cite{coqlistset}.
 This type is just an alias for the \lstinline{list} type from the \textbf{List} module,
 but the module also contains some useful functions.
 Most of these functions treat the input as a set in the traditional sense,
@@ -138,9 +139,12 @@ The module also gives us some lemmas to transform the boolean (type \lstinline{b
 propositions (type \lstinline{Prop}), and vice versa. An example to illustrate this is the following lemma on \lstinline{set_mem}:
 
 \begin{minipage}{\linewidth}
-\begin{lstlisting}[language=Coq, label={lst:set_mem_correct1}, caption={\lstinline{set_mem} lemma from \lstinline{ListSet}}]
+\begin{lstlisting}[language=Coq, label={lst:set_mem_correct1}, caption={\lstinline{set_mem} lemma in \lstinline{ListSet} module}]
 Lemma set_mem_correct1 {A : Type} (dec : forall x y : A, {x = y} + {x <> y}) :
     forall (x : A) (l : set A), set_mem dec x l = true -> set_In x l.
+Proof.
+    (* ... *)
+Qed.
 \end{lstlisting}
 \end{minipage}
 
@@ -156,7 +160,7 @@ For example, \lstinline{set_union} pattern matches on the second set given as an
 This makes proofs where we destruct or use induction on the second argument easy, such as this example:
 
 \begin{minipage}{\linewidth}
-\begin{lstlisting}[language=Coq, label={lst:set_op_ex1}, caption={Easy proof of lemma in \lstinline{ListSet}}]
+\begin{lstlisting}[language=Coq, label={lst:set_op_ex1}, caption={Easy proof of lemma in \lstinline{ListSet} module}]
 Lemma set_union_l_nil {A : Type} (dec : forall x y : A, {x = y} + {x <> y}) :
     forall l : set A, set_union dec l [] = l.
 Proof.
@@ -169,7 +173,7 @@ The downside is that even easy and seamingly trivial proofs that reason about th
 (or impossible) to prove, for example:
 
 \begin{minipage}{\linewidth}
-\begin{lstlisting}[language=Coq, label={lst:set_op_ex2}, caption={Impossible proof of lemma in \lstinline{ListSet}}]
+\begin{lstlisting}[language=Coq, label={lst:set_op_ex2}, caption={Impossible proof of lemma in \lstinline{ListSet} module}]
 Lemma set_union_nil_l {A : Type} (dec : forall x y : A, {x = y} + {x <> y}) :
     forall l : set A, set_union dec [] l = l.
 Proof.
@@ -193,7 +197,7 @@ used for any decidable type. This is useful if one needs sets with elements of d
 \subsection{MSetWeakList}
 \label{ssec:msetweaklist}
 
-The Coq standard library also gives us another implementation of sets, \textbf{MSetWeakList}.
+The Coq standard library also gives us another implementation of sets, \textbf{MSetWeakList} \cite{msetweaklist}.
 This implementation is a bit more complicated than the previous one,
 but gives us more guarantees about the properties of the set.
 The module is expressed as a functor, which in this case is a "function" that takes in a module as an argument, and again returns a module.
@@ -210,8 +214,22 @@ This makes it harder to reason about the sets in proofs.
 \subsection{Ensembles}
 \label{ssec:ensembles}
 
-Yet another implementation of sets is given by the \textbf{Ensembles} module, which defines the structure of a set as inductive propositions.
-This means it uses \lstinline{Prop} instead of \lstinline{bool},
+Yet another implementation of sets is given by the \textbf{Ensembles} module
+which defines the structure of a set as inductive propositions \cite{coqensembles}.
+These inductive propositions assert some fact about if an element is in the set or not.
+An example that illustrates this is the definition of \lstinline{Union}:
+
+\begin{minipage}{\linewidth}
+\begin{lstlisting}[language=Coq, label={lst:union_ensemble}, caption={\lstinline{Union} in \textbf{Ensembles} module}]
+Inductive Union (B C:Ensemble) : Ensemble :=
+  | Union_introl : forall x:U, In B x -> In (Union B C) x
+  | Union_intror : forall x:U, In C x -> In (Union B C) x.
+\end{lstlisting}
+\end{minipage}
+
+We see that the first constructor of \lstinline{Union} asserts that if an element is in \lstinline{B},
+then it is in the union of \lstinline{B} and \lstinline{C}.
+\textbf{Ensembles} uses \lstinline{Prop} instead of \lstinline{bool},
 making \textbf{Ensembles} useful for proofs where we do not care about decidability.
 The biggest downside to this implementation, is that we cannot reason about the size of the set.
 We can only determine if an element is in the set, not how big the set is.

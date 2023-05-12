@@ -24,35 +24,42 @@ as Coq employs an algorithm which solves the same problem when resolving constra
 \section{Relevant parts of the paper}
 \label{sec:relevant_parts_of_the_paper}
 
-In the paper, join-semilattices with inflationary endomorphisms
-are simply called semilattices. An inflationary endomorphism is a function
+We will paraphrase some key concepts from \cite{mbezem} that are needed to understand
+our implementation and formalization.
+
+We will call join-semilattices with inflationary endomorphisms simply semilattices.
+An inflationary endomorphism, in our case, is a function
 that maps an element to itself or to a greater element in the ordered set.
+We denote a semilattice $x$ with one inflationary endomorphism as $x^+$.
+$x^+$ is called the successor of $x$.
 A join-semilattice is a partially ordered set in which any two elements have a least upper bound,
 called their join.
+The join of a semilattice is a binary operation $\lor$ that is commutative, associative and idempotent.
 
 A semilattice presentation consists of a set $V$ of generators
 (also called variables) and a set $C$ of constraints
 (also called relations).
-
-A term over V has the form $x_1 + k_1 \lor \ldots \lor x_m + k_m$, where $x_i \in V$ and $k_i \in \mathbb{N}$.
-
-A relation is an equation $s = t$, where $s$ and $t$ are terms over $V$.
-A constraint, like $x = y^+$ (with $x, y \in V$), expresses a relation between the generators (variables) $x$ and $y$.
+For a semilattice $t$ and $k \in \mathbb{N}$, $t + k$ denotes the k-fold successor of $t$, thus making $t + 0 = t$ and $t + 1 = t^+$.
+A term over $V$ has the form $x_1 + k_1 \lor \ldots \lor x_m + k_m$, where $x_i \in V$ and $k_i \in \mathbb{N}$.
 
 Horn clauses are propositional clauses $A \rightarrow b$, with a non-empty body $A$ and conclusion $b$.
 The atoms are of the form $x + k$, where $x \in V, k \in \mathbb{N}$.
 We call this special form of Horn clauses simply \textit{clauses}.
 
-For each constraint $s = t$, we generate $m + n$ clauses by replacing join by conjunction and implication.
-We define $S_{s=t}$ as the set of these clauses and $S_C$ as the union of all $S_{s=t}$, with $s = t$ as a constraint in C.
+A relation is an equation $s = t$, where $s$ and $t$ are terms over $V$.
+A constraint (relation), like $a \lor b = c^+$ (with $a, b, c \in V$), expresses a relation between the generators (variables) $a, b, c$.
+For each constraint $s = t$, we generate clauses by replacing join by conjunction and implication.
+E.g. for the constraint $a \lor b = c^+$, we generate the clauses
+$a, b \rightarrow c^+$, $a \rightarrow c^+$, $b \rightarrow c^+$.
+This generated set of clauses is denoted by $S_{s=t}$, which in our example makes it $S_{a \lor b = c^+}$.
+We define $S_C$ as the union of all $S_{s=t}$, where $s = t$ is a constraint in $C$.
 
-Predecessor clauses are derived from the axiom $x \; \lor \; x^{+} = x^{+}$ and have the form
-$x + k + 1 \rightarrow x + k$, where $(x \in V, k \in \mathbb{N})$
+% Predecessor clauses are derived from the axiom $x \; \lor \; x^{+} = x^{+}$ and have the form
+% $x + k + 1 \rightarrow x + k$, where $(x \in V, k \in \mathbb{N})$
 
 We define closure under shifting upwards as follows:
-$A \rightarrow b$ is in the set of clauses, then so must $A + 1 \rightarrow b + 1$ be.
+if $A \rightarrow b$ is in the set of clauses, then so must $A + 1 \rightarrow b + 1$ be.
 $A + 1$ denotes the set of atoms of the form $a + 1$, where $a \in A$.
-
 Given a finite semilattice presentation $(V, C)$,
 and a subset $W \subseteq V$, we denote by
 $\overline{S_C}$ the smallest set of clauses that is closed under shifting upwards,
@@ -60,8 +67,11 @@ by $\overline{S_C} \mid W$ the set of clauses in $\overline{S_C}$
 mentioning only variables in $W$, and by $\overline{S_C} \downarrow W$
 the set of clauses in $\overline{S_C}$ with conclusion over $W$.
 
-A function $f : V \rightarrow N^{\infty}$ is a model $\ldots$
-
+A function $f : V \rightarrow \mathbb{N}^{\infty}$ specifies a downward closed set of atoms,
+namely $\{v + k \mid v \in V, k \in \mathbb{N}, k \le f(v)\}$,
+where $\mathbb{N}^{\infty}$ is the set of natural numbers extended with $\infty$.
+This set contains all atoms $v + k$ if $f(v) = \infty$.
+The sets specified by such functions are models of $\overline{S_C}$.
 
 \subsection{Lemma 3.1}
 \label{ssec:lemma_3_1}
@@ -89,7 +99,7 @@ the least $g \ge f$ that is a model of $\overline{S_C}$ can be computed.
 \label{ssec:lemma_3_3}
 
 Theorem 3.2 has a special case that is solved by an additional lemma,
-lemma 3.3. This lemma states that given a finite semilattive presentation
+Lemma 3.3. This lemma states that given a finite semilattive presentation
 $(V, C)$ and a strict subset $W \subset V$, if for any function
 $f : W \rightarrow N^{\infty}$, the least $g \ge f$ that is a model of
 $\overline{S_C}|W$ can be computed, then for any function
