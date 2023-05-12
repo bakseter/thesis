@@ -50,7 +50,7 @@ Lemma lem_33 :
     ex_lfp_geq Cs (nodup string_dec V) (nodup string_dec W) f.
 Admitted.
 
-Definition thm_32 :
+Theorem thm_32 :
   forall n m : nat,
   forall Cs : set Clause,
   forall V W : set string,
@@ -91,16 +91,45 @@ Proof.
           apply (nodup_incl2 string_dec) in H.
           apply (lem_33 Cs V (nodup string_dec W) f) in H;
           try assumption. elim H. intros h [H8 H9].
-          destruct (sub_forward Cs (nodup string_dec V) (nodup string_dec V) h) as [U h'] eqn:Hforward.
-          assert (sub_forward Cs (nodup string_dec V) (nodup string_dec V) h = (U, h')) by assumption.
-          assert (sub_forward Cs (nodup string_dec V) (nodup string_dec V) h = (U, h')) by assumption.
+          destruct
+            (sub_forward
+              Cs
+              (nodup string_dec V)
+              (nodup string_dec V)
+              h) as [U h'] eqn:Hforward.
+          assert
+            (sub_forward
+              Cs
+              (nodup string_dec V)
+              (nodup string_dec V)
+              h = (U, h')) by assumption.
+          assert
+            (sub_forward
+              Cs
+              (nodup string_dec V)
+              (nodup string_dec V)
+              h = (U, h')) by assumption.
           rewrite nodup_rm in H9.
-          apply (sub_forward_incl_set_diff Cs h h' (nodup string_dec V) (nodup string_dec W) U) in H9; try apply Hforward.
+          apply
+            (sub_forward_incl_set_diff
+              Cs
+              h
+              h'
+              (nodup string_dec V)
+              (nodup string_dec W)
+              U) in H9;
+          try apply Hforward.
           inversion Hforward. apply sub_forward_incl in Hforward.
           destruct U as [|u U'] eqn:Hu.
           -- apply sub_forward_empty in H7.
              destruct H7. unfold ex_lfp_geq. exists h. split; assumption.
-          -- destruct (incl_dec string_dec V (nodup string_dec (set_union string_dec (nodup string_dec W) U))).
+          -- destruct
+              (incl_dec
+                string_dec
+                V
+                (nodup
+                  string_dec
+                  (set_union string_dec (nodup string_dec W) U))).
              ++ unfold ex_lfp_geq. exists (update_infty_V V f). split.
                 ** apply geq_nodup_true. apply geq_update_infty_V.
                 ** rewrite <- sub_model_nodup. apply sub_model_update_infty_V.
@@ -110,21 +139,34 @@ Proof.
                   assumption. apply nodup_incl in Hforward.
                   rewrite Hu. assumption.
                 }
-                assert (Datatypes.length (nodup string_dec (set_union string_dec W U)) < Datatypes.length (nodup string_dec V)).
+                assert
+                  (Datatypes.length
+                    (nodup string_dec (set_union string_dec W U)) <
+                  Datatypes.length
+                    (nodup string_dec V)).
                 {
-                  assert (Datatypes.length (nodup string_dec (set_union string_dec W U)) <= Datatypes.length (nodup string_dec V)).
+                  assert (Datatypes.length
+                    (nodup string_dec (set_union string_dec W U)) <=
+                      Datatypes.length
+                        (nodup string_dec V)).
                   {
                     eapply NoDup_incl_length. apply NoDup_nodup.
                     apply nodup_incl. assumption.
                   }
                   apply le_lt_eq_dec in H13. destruct H13; try assumption.
-                  assert (strict_subset (nodup string_dec (set_union string_dec W U)) (nodup string_dec V)).
+                  assert
+                    (strict_subset
+                      (nodup string_dec (set_union string_dec W U))
+                      (nodup string_dec V)).
                   {
                     unfold strict_subset. split.
                     - apply nodup_incl. assumption.
                     - unfold not. intros. apply n0.
                       apply nodup_incl2 in H13.
-                      assert (incl (nodup string_dec (set_union string_dec W U)) (nodup string_dec V)).
+                      assert
+                        (incl
+                          (nodup string_dec (set_union string_dec W U))
+                          (nodup string_dec V)).
                       {
                         apply nodup_incl. assumption.
                       }
@@ -139,12 +181,11 @@ Proof.
                     rewrite (incl_set_union_nodup_l string_dec).
                     apply nodup_incl. assumption.
                 }
-                (*
-                   fails here (?)
-                   when W goes from empty to non-empty
-                   and then does not increase further in next step.
-                *)
-                assert (Datatypes.length (set_diff string_dec V (set_union string_dec (nodup string_dec W) U)) < Datatypes.length (set_diff string_dec V (nodup string_dec W)) <= S m).
+                assert
+                  (Datatypes.length
+                    (set_diff string_dec V (set_union string_dec (nodup string_dec W) U)) <
+                  Datatypes.length
+                    (set_diff string_dec V (nodup string_dec W)) <= S m).
                 {
                   apply conj.
                   - rewrite Hu. apply set_diff_incl_lt_length;
@@ -171,17 +212,29 @@ Proof.
                        rewrite nodup_rm. rewrite set_diff_nodup_eq in *;
                        try rewrite set_union_nodup_l in *; lia.
                    --- apply conj; try lia.
-                       assert (Datatypes.length (set_diff string_dec (nodup string_dec (set_union string_dec W U)) []) <= Datatypes.length (nodup string_dec (set_union string_dec W U))).
+                       assert
+                         (Datatypes.length
+                           (set_diff
+                              string_dec
+                              (nodup string_dec (set_union string_dec W U))
+                              []) <=
+                         Datatypes.length
+                           (nodup string_dec (set_union string_dec W U))).
                        apply (set_diff_nil_length string_dec).
                        eapply le_trans.
-                       rewrite set_diff_nodup_eq. apply H15. apply lt_le_pred in H13.
+                       rewrite set_diff_nodup_eq. apply H15.
+                       apply lt_le_pred in H13.
                        eapply le_trans. apply H13.
-                       assert (Datatypes.length (nodup string_dec V) <= Datatypes.length V).
+                       assert
+                        (Datatypes.length (nodup string_dec V) <=
+                         Datatypes.length V).
                        {
                           apply NoDup_incl_length. apply NoDup_nodup.
                           apply nodup_incl2. apply incl_refl.
                        }
-                       assert (pred (Datatypes.length (nodup string_dec V)) <= pred (Datatypes.length V)).
+                       assert
+                        (pred (Datatypes.length (nodup string_dec V)) <=
+                         pred (Datatypes.length V)).
                        {
                          apply Nat.pred_le_mono. assumption.
                        }
@@ -195,4 +248,4 @@ Proof.
           -- unfold pre_thm. intros. apply (IHn m0 Cs' V' W' f');
              try assumption; try lia.
           -- rewrite nodup_rm. assumption.
-Defined.
+Qed.

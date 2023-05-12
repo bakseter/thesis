@@ -189,27 +189,57 @@ There are ways to circumvent this problem.
 Since we often reason about if an element is in a list, or if the list has a certain length,
 we do not care about the order of the elements.
 If we construct our proofs with this in mind, \textbf{ListSet} is a viable implementation.
-There might however be cases where the order of the elements in the lists come into play (i.e. such as in \autoref{lst:set_op_ex2}),
+There might however be cases where the order of the elements in the lists come into play (e.g. such as in \autoref{lst:set_op_ex2}),
 and that is where this implementation falls short.
 Another thing to note is because of the polymorphic nature of the \lstinline{set} type, any additional lemmas proven about a set can be
-used for any decidable type. This is useful if one needs sets with elements of different types.
+used for any decidable type. This is useful if one needs sets with elements of different types,
+which is the case in our implementation; we need sets of atoms, clauses, strings, etc.
 
 \subsection{MSetWeakList}
 \label{ssec:msetweaklist}
 
-The Coq standard library also gives us another implementation of sets, \textbf{MSetWeakList} \cite{msetweaklist}.
+The Coq standard library also gives us another implementation of sets, \textbf{MSetWeakList} \cite{coqmsetweaklist}.
 This implementation is a bit more complicated than the previous one,
 but gives us more guarantees about the properties of the set.
 The module is expressed as a functor, which in this case is a "function" that takes in a module as an argument, and again returns a module.
 The module we give to the functor must define some basic properties about the type we want to create a set of,
 namely an equality relation, decidability of this relation and the fact that this relation is an equivalence relation.
-The output from the functor is a module containing functions and lemmas about set operations,
+The "output" from the functor is a new module containing functions and lemmas about set operations,
 with our input type being the type of the elements of the set.
+An example definition for a type of a set of atoms would be as follows:
 
-This means that for every type we want to use as an element in the set, we have to go through this process.
+\begin{minipage}{\linewidth}
+\begin{lstlisting}[language=Coq, label={lst:msetweaklist_ex1}, caption={Set of atoms in \lstinline{MSetWeakList} module}]
+Module AtomEq : DecidableType with Definition t := Atom.
+
+  Definition t := Atom.
+
+  Definition eq := (* equality of two Atom's *)
+
+  Lemma eq_equiv :
+    Equivalence eq.
+  Proof.
+    (* proof that eq is an equivalence relation *)
+  Qed.
+
+  Lemma eq_dec :
+    forall x y : t, {eq x y} + {~ eq x y}.
+  Proof.
+    (* proof that eq is decidable *)
+  Qed.
+
+End AtomEq.
+
+(* apply functor Make to module AtomEq *)
+Module AtomSet := Make AtomEq.
+\end{lstlisting}
+\end{minipage}
+
+The proofs of both lemmas above are trivial, but require a substantial amount of boilerplate code.
+For every type we want to use as an element in a set, we have to go through this entire process.
 In \textbf{List} and \textbf{ListSet}, we just had to pass in the proof of the equality of the type as an argument to the set functions and lemmas.
 The structure of the sets in \textbf{MSetWeakList} is also a lot more complicated than the simple and intuitive definition of \textbf{List}.
-This makes it harder to reason about the sets in proofs.
+This makes it harder to reason about the sets in proofs, given limited knowledge of Coq.
 
 \subsection{Ensembles}
 \label{ssec:ensembles}
