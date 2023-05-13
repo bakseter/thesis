@@ -35,6 +35,10 @@
 \usepackage{fullpage}
 \graphicspath{{figures/}}
 
+\usepackage{cleveref}
+\crefname{lstlisting}{listing}{listings}
+\Crefname{lstlisting}{Listing}{Listings}
+
 \newlength\glsdescwidth
   \setlength{\glsdescwidth}{1\hsize}
 
@@ -82,7 +86,7 @@
         Hypotheses, Notation, Local, Tactic, Reserved, Scope, Open, Close,
         Bind, Delimit, Definition, Let, Ltac, Fixpoint, CoFixpoint, Add,
         Morphism, Relation, Implicit, Arguments, Unset, Contextual,
-        Strict, Prenex, Implicits, Inductive, CoInductive, Record,
+        Strict, Prenex, Implicits, Inductive, CoInductive, Record, Fail,
         Structure, Canonical, Coercion, Context, Class, Global, Instance,
         Program, Infix, Theorem, Lemma, Corollary, Proposition, Fact,
         Remark, Example, Proof, Goal, Save, Qed, Defined, Hint, Resolve,
@@ -115,7 +119,7 @@
     morestring=[b]",
     morestring=[d],
     % Size of tabulations
-    tabsize=3,
+    tabsize=2,
     % Enables ASCII chars 128 to 255
     extendedchars=false,
     % Case sensitivity
@@ -190,3 +194,13 @@
     xleftmargin=0.5cm,
     abovecaptionskip=0.5cm
 }
+
+\newtheorem{innercustomthm}{}
+\newenvironment{customthm}[1]
+    {\renewcommand\theinnercustomthm{#1}\innercustomthm}
+    {\endinnercustomthm}
+
+\newtheorem{innercustomlem}{}
+\newenvironment{customlem}[1]
+    {\renewcommand\theinnercustomlem{#1}\innercustomlem}
+    {\endinnercustomlem}

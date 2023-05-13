@@ -4,9 +4,21 @@
 \section{Overview}
 \label{sec:overview}
 
+Recall the questions posed in the abstract.
 We want to use the Coq proof assistant to formalize parts of the proofs of the following paper, by \citeauthor{mbezem} \cite{mbezem}.
 This paper solves two problems that occur in dependent type systems where typings depend
-on universe-level constraints. We focused on formalizing the proof of Theorem 3.2 from the paper.
+on universe-level constraints:
+
+\begin{enumerate}
+    \item an equational theory of semilattices with one inflationary endomorphism
+          has a uniform word problem that can be solved in polynomial time.
+    \item loop-checking in a type system with universe-level constraints
+          can be done in polynomial time.
+\end{enumerate}
+
+\textcolor{red}{first problem is maybe summarized to generally, while second is more specific for the case of type systems? ask Marc.}
+
+We focused on formalizing the proof of \Cref{thm:3.2} from \cite{mbezem}.
 Since this proof is complex enough that mistakes are possible, it is a good candidate for formalization.
 By formalizing the proof and then verifying it using Coq, we can be sure that it is correct.
 
@@ -16,10 +28,8 @@ Is the promise (\textcolor{red}{find better word?}) of a complete verification o
 
 By using an advanced feature of Coq, we can also extract an algorithm from the proof,
 where this algorithm is certified to produce correct results.
-Such an algorithm has direct applications to the formalization and verification of the Coq proof assistant itself,
-as Coq employs a similar algorithm to resolve constraints in its type system.
-\textcolor{red}{or, if they are not similiar, say:}
-as Coq employs an algorithm which solves the same problem when resolving constraints in its type system.
+As an aside, this algorithm has direct applications to the formalization and verification of the Coq proof assistant itself,
+as Coq employs a similar algorithm to resolve universe-level constraints in its type system.
 
 \section{Relevant parts of the paper}
 \label{sec:relevant_parts_of_the_paper}
@@ -28,19 +38,23 @@ We will paraphrase some key concepts from \cite{mbezem} that are needed to under
 our implementation and formalization.
 
 We will call join-semilattices with inflationary endomorphisms simply semilattices.
+A join-semilattice is a partially ordered set in which any two elements have a least upper bound,
+called their join., denoted by $\lor$.
+The join of a semilattice is a binary operation $\lor$ that is commutative, associative and idempotent.
 An inflationary endomorphism, in our case, is a function
 that maps an element to itself or to a greater element in the ordered set.
-We denote a semilattice $x$ with one inflationary endomorphism as $x^+$.
-$x^+$ is called the successor of $x$.
-A join-semilattice is a partially ordered set in which any two elements have a least upper bound,
-called their join.
-The join of a semilattice is a binary operation $\lor$ that is commutative, associative and idempotent.
+We denote the inflationary endomorphism as $\underline{}^+$, for every lattice element $x$,
+$x^+$ is also called the successor of $x$.
+The fact that $x$ is an endomorphism means that we get the folloring properties
+$(x \lor y)^+ = x^+ \lor y^+$ and $x \lor x^+ = x^+$.
+
 
 A semilattice presentation consists of a set $V$ of generators
 (also called variables) and a set $C$ of constraints
 (also called relations).
 For a semilattice $t$ and $k \in \mathbb{N}$, $t + k$ denotes the k-fold successor of $t$, thus making $t + 0 = t$ and $t + 1 = t^+$.
 A term over $V$ has the form $x_1 + k_1 \lor \ldots \lor x_m + k_m$, where $x_i \in V$ and $k_i \in \mathbb{N}$.
+Every semilattice expression is equal to a term over $V$.
 
 Horn clauses are propositional clauses $A \rightarrow b$, with a non-empty body $A$ and conclusion $b$.
 The atoms are of the form $x + k$, where $x \in V, k \in \mathbb{N}$.
@@ -48,14 +62,20 @@ We call this special form of Horn clauses simply \textit{clauses}.
 
 A relation is an equation $s = t$, where $s$ and $t$ are terms over $V$.
 A constraint (relation), like $a \lor b = c^+$ (with $a, b, c \in V$), expresses a relation between the generators (variables) $a, b, c$.
-For each constraint $s = t$, we generate clauses by replacing join by conjunction and implication.
-E.g. for the constraint $a \lor b = c^+$, we generate the clauses
-$a, b \rightarrow c^+$, $a \rightarrow c^+$, $b \rightarrow c^+$.
-This generated set of clauses is denoted by $S_{s=t}$, which in our example makes it $S_{a \lor b = c^+}$.
+For each constraint $s = t$, we generate clauses by replacing join by conjunction, denoted by ",", and $\geq$ by implication.
+E.g. for the constraint $a \lor b = c^+$, we first derive $a \lor b \geq c^+$ and $c^+ \geq a \lor b$.
+From $a \lor b \geq c^+$, we generate the clause $a, b \rightarrow c^+$.
+From $c^+ \geq a \lor b$, we derive $c^+ \geq a$ and $c^+ \geq b$.
+We then generate the clause $c^+ \rightarrow a$ from the former, and the clause $c^+ \rightarrow b$ from the latter.
+This generated set of clauses is denoted by $S_{s=t}$, which in our example makes it
+$S_{a \lor b = c^+} := \{a, b \rightarrow c^+, c^+ \rightarrow a, c^+ \rightarrow b\}$.
 We define $S_C$ as the union of all $S_{s=t}$, where $s = t$ is a constraint in $C$.
 
 % Predecessor clauses are derived from the axiom $x \; \lor \; x^{+} = x^{+}$ and have the form
 % $x + k + 1 \rightarrow x + k$, where $(x \in V, k \in \mathbb{N})$
+
+In \cite[Theorem 2.2,~p.~3]{mbezem} it is proven that provability in the semilattice theory
+is equivalent to Horn clause provability, making it so that we can continue with the latter in the rest of this thesis.
 
 We define closure under shifting upwards as follows:
 if $A \rightarrow b$ is in the set of clauses, then so must $A + 1 \rightarrow b + 1$ be.
@@ -73,36 +93,38 @@ where $\mathbb{N}^{\infty}$ is the set of natural numbers extended with $\infty$
 This set contains all atoms $v + k$ if $f(v) = \infty$.
 The sets specified by such functions are models of $\overline{S_C}$.
 
-\subsection{Lemma 3.1}
-\label{ssec:lemma_3_1}
+\subsection{Lemmas and theorems}
+\label{ssec:lemmas_and_theorems}
 
-Lemma 3.1 states that given $f : V \rightarrow N^{\infty}$,
+\begin{customlem}{Lemma 3.1}[{\cite[p.~3]{mbezem}}]
+\label{lem:3.1}
+Given $f : V \rightarrow N^{\infty}$,
 and a clause $A \rightarrow b$, let $P$ be the problem whether or not
 $A + k \rightarrow b + k$ is satisfied by $f$ for all $k \in N$.
-Then $P$ is decidable. \cite[p.~3]{mbezem}
+Then $P$ is decidable.
+\end{customlem}
 
-The proof of Lemma 3.1 demonstrates that the problem $P$
+The proof of \Cref{lem:3.1} demonstrates that the problem $P$
 is decidable, meaning we can indeed write an algorithm that
 determines whether or not the problem holds for all $k \in N$.
-Lemma 3.1 is also crucial for making case distinctions
+\Cref{lem:3.1} is also crucial for making case distinctions
 in further proofs, since we know that any $S_C$ is finite.
 
-\subsection{Theorem 3.2}
-\label{ssec:theorem_3_2}
-
-Theorem 3.2 states that for any finite semilattice representation
+\begin{customthm}{Theorem 3.2}[{\cite[p.~3]{mbezem}}]
+\label{thm:3.2}
+For any finite semilattice representation
 $(V, C)$ and any function $f : V \rightarrow N^{\infty}$,
 the least $g \ge f$ that is a model of $\overline{S_C}$ can be computed.
-\cite[p.~3]{mbezem}
+\end{customthm}
 
-\subsection{Lemma 3.3}
-\label{ssec:lemma_3_3}
+\Cref{thm:3.2} has a special case that is solved by an additional lemma:
 
-Theorem 3.2 has a special case that is solved by an additional lemma,
-Lemma 3.3. This lemma states that given a finite semilattive presentation
+\begin{customlem}{Lemma 3.3}[{\cite[p.~3-4]{mbezem}}]
+\label{lem:3.3}
+Given a finite semilattive presentation
 $(V, C)$ and a strict subset $W \subset V$, if for any function
 $f : W \rightarrow N^{\infty}$, the least $g \ge f$ that is a model of
 $\overline{S_C}|W$ can be computed, then for any function
 $f : V \rightarrow N^{\infty}$ with $f(V - W) \subseteq N$,
 the least $h \ge f$ that is a model of $\overline{S_C}\downarrow W$ can be computed.
-\cite[p.~3-4]{mbezem}
+\end{customlem}

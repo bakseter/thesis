@@ -29,33 +29,35 @@ The only possible errors in formalized proofs are false assumptions and/or flawe
 Type theory groups mathematical objects with similar properties together by assigning them a "type".
 Similarily to data types in computer programming, we can use types to represent mathematical
 objects. For example, we can use the data type \texttt{nat} to represent natural numbers, or we can create
-our own data types which allows us to represent e.g. clauses in logic.
+our own data types which allows us to represent e.g., clauses in logic.
 
 \subsection{Propositions as types}
 \label{ssec:propositions_as_types}
 
-
 The concept of propositions as types sees proving a mathematical proposition
 as the same process as constructing a value of a type, in this case,
 of the proposition as a type.
-For example, to prove a proposition $P$ which states "all integers are the sum of four squares",
-we must construct a value of the type $P$ that shows that this is true for all integers.
+For example, to prove a proposition $P$ which states "all natural numbers are the sum of four squares",
+we must construct a value of the type $P$ that shows that this is true for all natural numbers.
 Such a value is a function that for any input $n$ returns a proof that $n$ is the sum of four squares,
 that is, return four numbers $a, b, c, d$ and a proof that $n = a^2 + b^2 + c^2 + d^2$.
 Proofs are mathematical objects; thus a proposition can be viewed as having the type of all its proofs (if any!).
 We can use this correspondance to model a proof as a typed computer program.
 The power of this concept comes from the fact that we can use a type checker to verify that
 our program is typed correctly, and thus that the corresponding proof is valid.
-Often, the proof can be used to compute something, i.e. the numbers $a, b, c, d$ mentioned above
+Often, the proof can be used to compute something, i.e., the numbers $a, b, c, d$ mentioned above
 \cite{pwadler}.
 
 \subsection{Dependent types}
 \label{ssec:dependent_types}
 
-Dependent types allow us to define more rigorously types which depend on values.
-Since Coq has support for dependent types, we can give an example to illustrate what this mean.
+Dependent types allow us to define more rigorously types that depend on values.
+This is important for propositions as types.
+For example, the proposition $P$ in \Cref{ssec:propositions_as_types} uses
+$n = a^2 + b^2 + c^2 + d^2$, which is a type depending on five values $n, a, b, c, d$.
+Since Coq has support for dependent types, we can give an example to illustrate what this means.
 We consider the type \lstinline{vector}, which is a type polymorphic (the elements of the list can be of any same type)
-finite list with a fixed length.
+finite list with a fixed length, which is the value on which the type depends, a natural number.
 
 \begin{minipage}{\linewidth}
 \begin{lstlisting}[language=Coq, label={lst:dep_type_vec}, caption={\lstinline{vector} in Coq, using dependent types}]
@@ -71,8 +73,9 @@ This definition gives us a type with two constructors:
     \item
         \lstinline{Vnil} has the type of \lstinline{vector A 0}, and represents the empty vector.
     \item
-        \lstinline{Vcons} has type of \lstinline{vector A (S n)}, where the value of \lstinline{n}
-                            is the length of the vector given to the constructor as an argument.
+        \lstinline{Vcons} has type of \lstinline{forall (h : A) (n : nat) vector A (S n)}, where \lstinline{h}
+                            is the head of the vector and \lstinline{n} is the length of the vector,
+                            where both are given to the constructor as arguments.
                             This makes the type of a \lstinline{vector} \textit{depend} on its length.
 \end{itemize}
 
@@ -87,7 +90,7 @@ An example of a valid and invalid definition is:
 Definition vec_valid : vector string 2 :=
     Vcons string "b" 1 (Vcons string "a" 0 (Vnil string)).
 (* invalid definition; (S 0) not equal to 2 *)
-Definition vec_invalid : vector string 2 :=
+Fail Definition vec_invalid : vector string 2 :=
     Vcons string "b" 2 (Vcons string "a" 0 (Vnil string)).
 \end{lstlisting}
 \end{minipage}
@@ -96,12 +99,13 @@ Definition vec_invalid : vector string 2 :=
 \label{sec:proof_assistants}
 
 Propositions as types allow us to bridge the gap between logic and computing,
-while dependent types allow us to define more rigorously types which depends on values.
+while dependent types allow us to define more rigorously types which depend on values,
+thus enhancing the expressivity of simple types.
 The former is a crucial aspect of \textit{proof assistants}, while the latter gives
 us more expressive power when constructing proofs using a proof assistant.
 An example of the expressive power of dependent types is the fact that we can define
 predicates that depend on the value of a term, e.g. a predicate that checks if a number is even.
-The purpose of a proof assistant is to get computer support for continuity and verify a formal proof mechanically.
+The purpose of a proof assistant is to get computer support to construct and verify a formal proof mechanically.
 
 \subsection{Coq}
 \label{ssec:coq}

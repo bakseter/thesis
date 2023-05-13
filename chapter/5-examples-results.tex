@@ -34,7 +34,7 @@ pre_thm
 \end{minipage}
 
 We see that \lstinline{pre_thm} returns an object in \lstinline{Set}.
-This object is the proposition defined in \autoref{lst:pre_thm_def},
+This object is the proposition defined in \Cref{lst:pre_thm_def},
 where all the variables are the arguments given to \lstinline{pre_thm}, i.e. the variables quantified in \lstinline{thm_32}.
 This proposition states some logical assumptions, and concludes with a definition of \lstinline{ex_lfp_geq}.
 By the notion of propositions as types, this proposition is a function
@@ -86,11 +86,11 @@ which should be either a natural number or infinity.
 \subsection{Necessary alterations to the extracted Haskell code}
 \label{sec:necessary_alterations}
 
-Since we have not given a proof of Lemma 3.3, Coq will include a definition of the lemma in the extracted code,
+Since we have not given a proof of \Cref{lem:3.3}, Coq will include a definition of the lemma in the extracted code,
 but will immidiately crash the program if the extracted function representing the lemma is ever called.
 We circumvent this by replacing the extracted definition of \lstinline{lem_33} with the identity function
 for any frontier. We will look at some examples where this workaround is not sufficient in
-\autoref{sec:limitations}.
+\Cref{sec:limitations}.
 
 If we want to actually read the output from the extracted functions, we also need to
 derive a \lstinline{Show} instance for \lstinline{Ninfty}.
@@ -104,7 +104,7 @@ or \lstinline{Infty} for infinity.
 \subsection{Example output}
 \label{sssec:example_output}
 
-We can now run the example from \autoref{lst:thm_32_coq_example} using GHCi,
+We can now run the example from \Cref{lst:thm_32_coq_example} using GHCi,
 which is an interactive Haskell interpreter that is included with GHC, the standard Haskell compiler.
 
 \begin{minipage}{\linewidth}
@@ -129,7 +129,7 @@ which is a constant function that always returns \lstinline{Fin 0}).
 \section{Real world example}
 \label{sec:real_world_example}
 
-As stated previously, the algorithm described Theorem 3.2 is being
+As stated previously, the algorithm described \Cref{thm:3.2} is being
 tested for use in checking loops and determining universe levels in the
 type system of Coq.
 

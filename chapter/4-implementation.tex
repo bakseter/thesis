@@ -2,7 +2,7 @@
 
 \section{Data types}
 
-As discussed in \autoref{ch:the_case_in_question}, we want to represent clauses as
+As discussed in \Cref{ch:the_case_in_question}, we want to represent clauses as
 a set of atoms as premises and a single atom as a conclusion.
 We implement this in Coq using two types, \lstinline{Atom} and \lstinline{Clause}.
 
@@ -25,7 +25,9 @@ making the code easier to read. The expression on the left-hand side of the \lst
 is definitionally equal to the expression on the right-hand side in parentheses.
 The level determines which notation should take precedence, with a higher level equaling a higher precedence.
 
-We also want to model functions of the form $f : V \rightarrow \mathbb{N}^{\infty}$.
+We also want to represent functions of the form $f : V \rightarrow \mathbb{N}^{\infty}$,
+which as we saw in \Cref{sec:relevant_parts_of_the_paper}
+are functions that are models of a set of clauses.
 We implement this in Coq using two types, \lstinline{Ninfty} and \lstinline{Frontier}.
 \lstinline{Ninfty} has two constructors; \lstinline{infty} represents $\infty$,
 and \lstinline{fin n} represents a natural number $n$.
@@ -89,7 +91,7 @@ Definition shift_clause (n : nat) (c : Clause) : Clause :=
 \end{minipage}
 
 Using these definitions, we can now define an important property that is
-possible by Lemma 3.1 \cite[p.~3]{mbezem}, since this lemma enables us to check whether or not a clause
+possible by \Cref{lem:3.1} \cite[p.~3]{mbezem}, since this lemma enables us to check whether or not a clause
 is satisfied by a frontier for any shift of \lstinline{k : nat}.
 We will use this property later to determine if a frontier is a valid model for a set of clauses.
 
@@ -200,7 +202,7 @@ Dependent sum types are also known as $\Pi$-types, and are often used to represe
 
 The reason for defining \lstinline{ex_lfp_geq} with \lstinline{Set}, is that we can then use
 Coq's extraction feature to generate Haskell code from the Coq definitions.
-As briefly mentioned in \autoref{ssec:propositions_as_types}, a proof can often be used to compute something.
+As briefly mentioned in \Cref{ssec:propositions_as_types}, a proof can often be used to compute something.
 In this case, we want to compute the actual frontier \lstinline{g} that satisfies the above predicate.
 Coq distinguishes between logical objects (objects in \lstinline{Prop}) and infomative objects (objects in \lstinline{Set})
 \cite[p.~1-2]{coqextrnew}.
@@ -212,14 +214,14 @@ and are not needed when actually computing something using the extracted code.
 
 \section{The main proofs}
 
-We have now laid the groundwork for the formalization of Theorem 3.2.
-We precede the definition of Theorem 3.2 with two additional definitions, which helps us simplify its
+We have now laid the groundwork for the formalization of \Cref{thm:3.2}.
+We precede the definition of \Cref{thm:3.2} with two additional definitions, which helps us simplify its
 definition and the proof of the theorem itself.
 
 \subsection{The predicate \lstinline{pre_thm}}
 
-Since (in our case) the formal definitions of Lemma 3.3, which will be expanded on shortly,
-and Theorem 3.2 share some structure, we define a proposition \lstinline{pre_thm}:
+Since (in our case) the formal definitions of \Cref{lem:3.3}, which will be expanded on shortly,
+and \Cref{thm:3.2} share some structure, we define a proposition \lstinline{pre_thm}:
 
 \begin{minipage}{\linewidth}
 \begin{lstlisting}[language=Coq, label={lst:pre_thm_def}, caption={\lstinline{pre_thm} in Coq}]
@@ -236,14 +238,14 @@ Definition pre_thm (n m : nat) (Cs : set Clause) (V W : set string) (f : Frontie
 \end{lstlisting}
 \end{minipage}
 
-\subsection{Lemma 3.3}
+\subsection{\Cref{lem:3.3}}
 
-Lemma 3.3 from \cite{mbezem} is used in the proof of Theorem 3.2 to solve \textcolor{red}{fill inn explanation here...}
+\Cref{lem:3.3} from \cite{mbezem} is used in the proof of \Cref{thm:3.2} to solve \textcolor{red}{fill inn explanation here...}
 
 We define it using \lstinline{pre_thm} as follows:
 
 \begin{minipage}{\linewidth}
-\begin{lstlisting}[language=Coq, label={lst:lem_33}, caption={Lemma 3.3 in Coq}]
+\begin{lstlisting}[language=Coq, label={lst:lem_33}, caption={\Cref{lem:3.3} in Coq}]
 Lemma lem_33 :
   forall Cs : set Clause,
   forall V W : set string,
@@ -263,12 +265,12 @@ Qed.
 \end{lstlisting}
 \end{minipage}
 
-\subsection{Theorem 3.2}
+\subsection{\Cref{thm:3.2}}
 
-We can now formulate Theorem 3.2 using \lstinline{pre_thm}:
+We can now formulate \Cref{thm:3.2} using \lstinline{pre_thm}:
 
 \begin{minipage}{\linewidth}
-\begin{lstlisting}[language=Coq, label={lst:thm_32}, caption={Theorem 3.2 in Coq}]
+\begin{lstlisting}[language=Coq, label={lst:thm_32}, caption={\Cref{thm:3.2} in Coq}]
 Theorem thm_32 :
   forall n m : nat,
   forall Cs : set Clause,
@@ -281,7 +283,7 @@ Qed.
 \end{lstlisting}
 \end{minipage}
 
-The proof of Theorem 3.2 is based on a primary induction on \lstinline{n} and a secondary induction on \lstinline{m}.
+The proof of \Cref{thm:3.2} is based on a primary induction on \lstinline{n} and a secondary induction on \lstinline{m}.
 
 \subsubsection{Base case of \lstinline{n}}
 
