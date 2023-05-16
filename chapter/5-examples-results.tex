@@ -138,11 +138,46 @@ which is a constant function that always returns \lstinline{Fin 0}).
 \label{sec:real_world_example}
 
 As stated previously, the algorithm described \Cref{thm:3.2} is being
-tested for use in checking loops and determining universe levels in the
+tested for use in checking loops and determining type universe levels in the
 type system of Coq.
+We briefly explained type universes in the case of Coq in \Cref{ssec:ex_lfp_geq}.
+The error that occured in the example of a universe inconsistency in \Cref{lst:universe_inconsistency}
+was detected by Coq's own universe-constraint checking algorithm, but we can also use our own algorithm to do the same thing.
+\textcolor{red}{is this true?}
 
-\textcolor{red}{explain more about type universes in Coq, see URL for possible citation}
-\url{http://adam.chlipala.net/cpdt/html/Universes.html}
+Using the Coq command \lstinline{Print Universes} we can see the current state of the universe hierarchy for any Coq file.
+Doing this at the bottom of our file \lstinline{Main.v}, after our proof of \Cref{thm:3.2},
+we get the following output (truncated):
+
+\begin{minipage}{\linewidth}
+\begin{lstlisting}[language=Coq, label={lst:universe_hierarchy}, caption={Universe hierarchy in \lstinline{Main.v}}]
+Set < Coq.setoid_ring.BinList.1
+    < Coq.Numbers.BinNums.1
+
+...
+
+  <= Coq.Lists.List.247
+  <= Coq.Lists.List.886
+\end{lstlisting}
+\end{minipage}
+
+This output has over 5000 lines, so we have truncated it to only show the first and last few lines.
+We can translate these constraints into a set of clauses \lstinline{Cs} as such:
+
+\begin{minipage}{\linewidth}
+\begin{lstlisting}[language=Coq, label={lst:universe_hierarchy_clauses}, caption={Universe hierarchy as clauses}]
+Definition Cs := [
+  ["Set" & 0] ~> "Coq.setoid_ring.BinList.1" & 1;
+  ["Coq.setoid_ring.BinList.1" & 1] ~> "Coq.Numbers.BinNums.1" & 2;
+  ...
+  ["Coq.Lists.List.247" & 247] ~> "Coq.Lists.List.886" & 886
+].
+\end{lstlisting}
+\end{minipage}
+
+We can then run our algorithm on these clauses to get a minimal model of \lstinline{Cs}.
+Even though we have not given a formal proof of \Cref{lem:3.3},
+this "real world" example still gives a correct minimal model for the type unverse constraints from Coq.
 
 \section{Limitations}
 \label{sec:limitations}

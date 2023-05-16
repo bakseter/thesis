@@ -21,7 +21,7 @@ Module Forward.
 
   Definition sub_forward (Cs : set Clause) (V W : set string) (f : Frontier) : set string * Frontier :=
     let X := sub_vars_improvable Cs V W f in
-    let f' := fun v => if v € X then Sinfty (f v) else f v
+    let f' := fun v => if set_mem string_dec v X then Sinfty (f v) else f v
     in (X, f').
 
   Definition forward (Cs : set Clause) (f : Frontier) : set string * Frontier :=

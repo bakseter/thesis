@@ -22,8 +22,8 @@ Module VarsImp.
     match Cs with
     | []      => []
     | (l ~> (x & k)) :: t  =>
-        if negb (x € W) ||
-           negb (fold_right andb true (map (fun x => x € V) (vars_set_atom l))) ||
+        if negb (set_mem string_dec x W) ||
+           negb (fold_right andb true (map (fun x => set_mem string_dec x V) (vars_set_atom l))) ||
            all_shifts_true (l ~> (x & k)) f
         then sub_vars_improvable t V W f
         else set_add string_dec x (sub_vars_improvable t V W f)

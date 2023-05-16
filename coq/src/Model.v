@@ -27,8 +27,8 @@ Module Model.
     match Cs with
     | []      => true
     | (l ~> (x & k)) :: t  =>
-        (negb (x € W) ||
-         negb (fold_right andb true (map (fun x => x € V) (vars_set_atom l))) ||
+        (negb (set_mem string_dec x W) ||
+         negb (fold_right andb true (map (fun x => set_mem string_dec x V) (vars_set_atom l))) ||
          all_shifts_true (l ~> (x & k)) f
         ) && sub_model t V W f
     end.

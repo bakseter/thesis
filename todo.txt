@@ -1,12 +1,36 @@
+DONE
+
 + paraphrase more chap 2 and add example, see img on phone
-x rewrite section about list listset osv..
-x admitted lemmas, simplification
++ rewrite section about list listset osv..
++ admitted lemmas, simplification
 + "defined WITH Set" for ex_lfp_geq
 + also add: incl s1 s2 /\ incl s2 a1
 + evaluation: refer to new points from chap 2
 + f is a model for a set of clauses if all clauses are satisfied in f; "F IS A MODEL"
 
+--------------------------------------------------------------------------------------------------
+
+TODO
+
 - sub_model represents different S_C, S_C|W, etc.. see img for diagram
 - lem_33 would have fixed problem with increasing set W, see img
 - "problemstilling": add to chap 2, se email Marc.
-- related & future work: se email Marc. finish this.
+- read per martin-löf's article, 1.4 and 1.5. use this to elaborate on chap 1 and 4, dep. type theory.
+- finish "other proof assistants"
+- describe two problems in chap 2
+- pose questions in abstract (remove a bit from chap 2 probably)
+- add intro to chap 3, with to key concepts; leave aside sec. 2 (lattice -> Horn) and 4 (complexity) from article
+- add ensembles infinite sets, see paper
+- complete proof overview theorem 3.2, chap 4. see paper
+- clean up sec 5.3, maybe combine 5.3.1 into just 5.3. don't go into detail about why thing fails, just say consequence of lemma 3.3.
+
+- all misc. red text
+
+--------------------------------------------------------------------------------------------------
+
+FINALLY
+
+- all check red text
+- write conlusion
+- write abstract
+- write aknowledgements

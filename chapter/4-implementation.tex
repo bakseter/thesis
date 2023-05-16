@@ -188,30 +188,51 @@ Definition ex_lfp_geq_S (Cs : set Clause) (V W : set string) (f : Frontier) : Se
 \end{lstlisting}
 \end{minipage}
 
-One thing to note here is that we can define this predicate either as having the type \lstinline{Prop} or as having the type \lstinline{Set}.
+One thing to note here is that we can define this predicate either with \lstinline{Prop} or with \lstinline{Set}.
 When defined with \lstinline{Prop}, we define it as a logical predicate, using standard first-order logic syntax.
 When defined with \lstinline{Set}, we define it as a type,
 using the \lstinline{sig} type constructor in place of \lstinline{exists}.
-\lstinline{sig} is an implementation of a dependent product type.
-Dependent product types are also known as $\Sigma$-types, and are often used to represent existential quantification.
-We also use the \lstinline{prod} type constructor to represent the conjunction of two propositions.
-Akin to \lstinline{sig}, \lstinline{prod} is an implementation of a dependent sum type.
-Dependent sum types are also known as $\Pi$-types, and are often used to represent universal quantification.
-\textcolor{red}{find source for this, maybe \url{https://hottheory.files.wordpress.com/2013/03/hott-online-323-g28e4374.pdf}}.
-\textcolor{red}{would have been nice to explain this earlier or tie it in better with section about depdendent types in chap 1?}
 
+\textcolor{red}{fill inn some dep. type theory from Per-Martin article, also tie in to chap. 1}
 
 The reason for defining \lstinline{ex_lfp_geq} with \lstinline{Set}, is that we can then use
 Coq's extraction feature to generate Haskell code from the Coq definitions.
 As briefly mentioned in \Cref{ssec:propositions_as_types}, a proof can often be used to compute something.
 In this case, we want to compute the actual frontier \lstinline{g} that satisfies the above predicate.
-Coq distinguishes between logical objects (objects in \lstinline{Prop}) and infomative objects (objects in \lstinline{Set})
+Coq distinguishes between logical objects (objects in \lstinline{Prop}) and informative objects (objects in \lstinline{Set})
 \cite[p.~1-2]{coqextrnew}.
 When extracting, Coq will remove as many logical objects as possible, meaning a proposition defined in \lstinline{Prop}
-would simply be collapsed to "\lstinline[language=Haskell]{()}" (the unit type) in Haskell
+would simply be collapsed to "\lstinline[language=Haskell]{()}" (the unit type) when extracted to Haskell
 \cite[p.~8]{coqextroverview}.
 Logical objects are only used to ensure correctness when constructing a proof in Coq,
 and are not needed when actually computing something using the extracted code.
+Informative objects, on the other hand, are kept when extracting, and can be used to compute something.
+This is why we define \lstinline{ex_lfp_geq} with \lstinline{Set}.
+
+Another important thing to we need to keep in mind when doing proofs with extraction in mind is to avoid \textit{universe inconsistencies}.
+We will not eloborate much on what type universes are, but we will give a brief explanation of how they work in Coq.
+In Coq, all objects of type \lstinline{Prop} live in the universe \lstinline{Set}, and all objects of type \lstinline{Set}
+live in the universe \lstinline{Type}. The universe hierarchy extends infinitely past \lstinline{Type}, but we will not
+need to go further than that.
+When defining a type, we can only refer to objects in universes lower than the universe of the type we are defining.
+Here is an example to illustrate this:
+
+\begin{minipage}{\linewidth}
+\begin{lstlisting}[language=Coq, label={lst:universe_inconsistency}, caption={A universe inconsistency in Coq}]
+
+(* type signature of sig *)
+sig : forall A : Type, (A -> Prop) -> Type
+
+(* Prop <= Set, ok *)
+Definition invalid_def (A : Prop) : Set :=
+  sig (fun x : A => x = x).
+
+(* Set <= Prop, universe inconsistency! *)
+Fail Definition invalid_def (A : Set) : Prop :=
+  sig (fun x : A => x = x).
+\end{lstlisting}
+\end{minipage}
+
 
 \section{The main proofs}
 
@@ -345,11 +366,11 @@ The goal $(2)$ is proven by an existing hypothesis.
 \subsubsection{Inductive case of \lstinline{m}}
 \label{sssec:inductive_case_m}
 
-The inductive case of \lstinline{m} by far the largest part of the proof (see lines 17-199 \Cref{lst:thm_32_full_proof}).
+The inductive case of \lstinline{m} by far the largest part of the proof (see lines 17-199 of \Cref{lst:thm_32_full_proof}).
 As it is very complex and does not follow the paper too closely,
 we will go through a more "high-level" explanation of the reasoning
 we followed when constructing the formalized proof.
-We will use sometimes use mathematical notation to explain the proof instead of Coq code,
+We will sometimes use mathematical notation to explain the proof instead of Coq code,
 for the sake of being terse and clear.
 
 Assume $W \subseteq V$, $\lvert V \rvert \leq n + 1$, $\lvert V - W \rvert \leq m + 1 \leq n + 1$.
