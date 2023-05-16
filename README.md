@@ -1,4 +1,4 @@
-# [Title here]
+# A case study in dependent type theory: extracting a certified program from the formal proof of its specification
 
 ## Build Coq files
 
@@ -8,7 +8,7 @@ make -f CoqMakefile
 ```
 
 Proof of main theorem (Theorem 3.2) is located in `src/Main.v`.
-Haskell extraction, along with some examples (and minor manual code changes), is located in `extr/ex.hs`.
+Haskell extraction, along with some examples (and minor manual code changes, see thesis 5.1.2), is located in `extr/ex.hs`.
 The largest example uses type universe constraints taken from `src/Main.v`
 using `Print Universes`.
 

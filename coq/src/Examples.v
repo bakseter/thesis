@@ -28,34 +28,6 @@ Module FailEx0.
       []
       fail_ex_0_f.
 
-  Example fail_ex_0' :=
-    pre_thm
-      (Datatypes.length vars')
-      (Datatypes.length vars')
-      Cs
-      vars'
-      []
-      fail_ex_0_f.
-
-  Lemma incl_nil_vars' : incl [] vars'.
-  Proof. apply incl_nil_l. Qed.
-
-  Lemma length_vars'_le :
-    Datatypes.length (nodup string_dec vars') <=
-    Datatypes.length vars'.
-  Proof. reflexivity. Qed.
-
-  Lemma asd :
-     Datatypes.length
-    (set_diff string_dec (nodup string_dec vars') (nodup string_dec [])) <=
-  Datatypes.length vars' <= Datatypes.length vars'.
-  Proof. simpl. apply conj; reflexivity. Qed.
-
-  Lemma def : ex_lfp_geq Cs (nodup string_dec []) (nodup string_dec []) fail_ex_0_f.
-  Proof. simpl. apply ex_lfp_geq_empty. Qed.
-
-  Example fail_ex_0_errthang := fail_ex_0 incl_nil_vars' length_vars'_le asd def.
-
 End FailEx0.
 
 
@@ -4978,26 +4950,46 @@ Module CoqTypesEx.
 End CoqTypesEx.
 
 
-Module ThesisEx.
+Module ThesisEx1.
 
   Example Cs := [
     ["a" & 0] ~> "b" & 1;
     ["b" & 1] ~> "c" & 2
   ].
-  Example thesis_ex_f := frontier_fin_0.
+  Example thesis_ex_1_f := frontier_fin_0.
   Example vars' := nodup string_dec (vars Cs).
 
-  Example thesis_ex :=
+  Example thesis_ex_1 :=
     thm_32
       (Datatypes.length vars')
       (Datatypes.length vars')
       Cs
       vars'
       []
-      thesis_ex_f.
+      thesis_ex_1_f.
 
-End ThesisEx.
+End ThesisEx1.
 
+Module ThesisEx2.
+
+  Example Cs := [
+    ["a" & 0] ~> "b" & 1;
+    ["b" & 1] ~> "c" & 2;
+    ["c" & 2] ~> "d" & 3
+  ].
+  Example thesis_ex_2_f := frontier_fin_0.
+  Example vars' := nodup string_dec (vars Cs).
+
+  Example thesis_ex_2 :=
+    thm_32
+      (Datatypes.length vars')
+      (Datatypes.length vars')
+      Cs
+      vars'
+      []
+      thesis_ex_2_f.
+
+End ThesisEx2.
 
 Extraction Language Haskell.
 
@@ -5007,7 +4999,12 @@ Extract Constant fold_right => "Prelude.foldr".
 Extract Inductive nat => "Prelude.Integer" ["0" "Prelude.succ"]
   "(\fO fS n -> if n Prelude.== 0 then fO () else fS (n Prelude.- 1))".
 
-Extraction "/home/andreas/Projects/thesis/coq/extr/ex_test.hs"
+Extraction "/home/andreas/Projects/thesis/coq/extr/ex.hs"
   FailEx0.fail_ex_0
-  FailEx0.fail_ex_0'
-  FailEx0.fail_ex_0_errthang.
+  FailEx1.fail_ex_1
+  FailEx2.fail_ex_2
+  FailEx3.fail_ex_3
+  FailEx4.fail_ex_4
+  CoqTypesEx.coq_types_ex
+  ThesisEx1.thesis_ex_1
+  ThesisEx2.thesis_ex_2.

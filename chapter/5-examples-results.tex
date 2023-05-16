@@ -11,7 +11,8 @@ It is easiest to define as much of the example as possible in Coq and then extra
 since Coq heavily prioritizes code correctness over readability when extracting.
 This makes much of the Haskell code hard to read due to unconventional syntax,
 e.g. using a recursion operator insted of calling a function recursively.
-First, we can look at the type signature of \lstinline{thm_32} in Coq to see what arguments we need to give it.
+First, we can look at the type of \lstinline{thm_32} in Coq to see what arguments we need to give it.
+We do this by using the Coq command \lstinline{Check}.
 
 \begin{minipage}{\linewidth}
 \begin{lstlisting}[language=Coq, label={lst:thm_32_type_sig_coq}, caption={Type signature of \lstinline{thm_32} in Coq}]
@@ -50,34 +51,40 @@ With all this information, we can now define an example of \lstinline{thm_32} in
 
 \begin{minipage}{\linewidth}
 \begin{lstlisting}[language=Coq, label={lst:thm_32_coq_example}, caption={\lstinline{thm_32} example}]
+(* represents the clauses: a -> b + 1, b + 1 -> c + 2 *)
 Example Cs := [
   ["a" & 0] ~> "b" & 1;
   ["b" & 1] ~> "c" & 2
 ].
-Example f := frontier_fin_0.
+
+(* all-zero frontier *)
+Example thesis_ex_1_f := frontier_fin_0.
+
+(* extract only variables from clauses *)
 Example vars' := nodup string_dec (vars Cs).
 
-Example thm_32_example :=
+(* (partially) apply arguments to thm_32 *)
+Example thesis_ex_1 :=
   thm_32
-    (Datatypes.length vars')
-    (Datatypes.length vars')
-    Cs
-    vars'
-    []
-    f.
+  (Datatypes.length vars')
+  (Datatypes.length vars')
+  Cs
+  vars'
+  []
+  thesis_ex_1_f.
 \end{lstlisting}
 \end{minipage}
 
 Since Coq elimiates many of the logical parts of the proof when extracting,
 \cite[p. ~8]{coqextroverview},
 we can avoid the tedious task of proving all the assumptions of \lstinline{pre_thm} by simply
-using the extracted Haskell function for \lstinline{thm_32_example}.
+using the extracted Haskell function for \lstinline{thesis_ex_1}.
 The final assumption of \lstinline{pre_thm}, namely \lstinline{ex_lfp_geq Cs (nodup string_dec W) (nodup string_dec W) f},
 will however not be removed by Coq, since it is an object in \lstinline{Set}.
 This assumption is trivially true for any \lstinline{f}, since \lstinline{W} is an empty list in our example.
 Since Coq simplifies the type of \lstinline{ex_lfp_geq} to \lstinline{Frontier},
-we can just include the same frontier \lstinline{f} as in \lstinline{thm_32_example} to the extracted Haskell
-version of \lstinline{thm_32_example}, as a replacement for a proof of the above trivially true assumption.
+we can just include the same frontier \lstinline{f} as in \lstinline{thesis_ex_1} to the extracted Haskell
+version of \lstinline{thesis_ex_1}, as a replacement for a proof of the above trivially true assumption.
 We then receive a \lstinline{Frontier} as output, which is the result of the theorem;
 the frontier that is a model of a set of clauses \lstinline{Cs}.
 This frontier can then be applied to any string representing a variable to get the value of that variable in the model,
@@ -86,8 +93,8 @@ which should be either a natural number or infinity.
 \subsection{Necessary alterations to the extracted Haskell code}
 \label{sec:necessary_alterations}
 
-Since we have not given a proof of \Cref{lem:3.3}, Coq will include a definition of the lemma in the extracted code,
-but will immidiately crash the program if the extracted function representing the lemma is ever called.
+Since we have not given a proof of \Cref{lem:3.3}, Coq will include a "placeholder" definition of the lemma in the extracted code.
+This definition will simply call the \lstinline{error} function, which will crash the program when called.
 We circumvent this by replacing the extracted definition of \lstinline{lem_33} with the identity function
 for any frontier. We will look at some examples where this workaround is not sufficient in
 \Cref{sec:limitations}.
@@ -109,17 +116,18 @@ which is an interactive Haskell interpreter that is included with GHC, the stand
 
 \begin{minipage}{\linewidth}
 \begin{lstlisting}[language=Haskell, label={lst:thm_32_haskell_output}, caption={\lstinline{thm_32} example output}]
-ghci> (thm_32_example f) "a"
+ghci> (thesis_ex_1 thesis_ex_1_f) "a"
 Fin 0
-ghci> (thm_32_example f) "b"
+ghci> (thesis_ex_1 thesis_ex_1_f) "b"
 Fin 1
-ghci> (thm_32_example f) "c"
+ghci> (thesis_ex_1 thesis_ex_1_f) "c"
 Fin 2
-ghci> (thm_32_example f) "x"
+ghci> (thesis_ex_1 thesis_ex_1_f) "x"
 Fin 0
 \end{lstlisting}
 \end{minipage}
 
+The expression \lstinline[language=Haskell]{(thesis_ex_1 thesis_ex_1_f)} produces a function that is the minimal model of \lstinline{Cs}.
 When given a string value (variable) from the set of clauses, the function will compute the value of that variable.
 When given any other variable, the function will return the value that the original frontier given as input
 would return for that variable, which is always \lstinline{Fin 0} in this case
@@ -138,3 +146,105 @@ type system of Coq.
 
 \section{Limitations}
 \label{sec:limitations}
+
+\subsection{Extension of \Cref{lst:thm_32_coq_example} that fails}
+
+Due to not having given a formal proof of \Cref{lem:3.3},
+there are some cases where the extracted Haskell code will crash.
+To show this, we can extend the set of clauses from \Cref{lst:thm_32_coq_example} as such:
+
+\begin{minipage}{\linewidth}
+\begin{lstlisting}[language=Coq, label={lst:thm_32_coq_example_extended}, caption={\lstinline{thm_32} example extended}]
+Example Cs := [
+  ["a" & 0] ~> "b" & 1;
+  ["b" & 1] ~> "c" & 2;
+  (* add new clause *)
+  ["c" & 2] ~> "d" & 3
+].
+
+Example thesis_ex_2_f := frontier_fin_0.
+Example vars' := nodup string_dec (vars Cs).
+
+Example thesis_ex_2 :=
+  thm_32
+  (Datatypes.length vars')
+  (Datatypes.length vars')
+  Cs
+  vars'
+  []
+  thesis_ex_2_f.
+\end{lstlisting}
+\end{minipage}
+
+If we try to run the extracted Haskell code for this example,
+we will always encounter a runtime exception:
+
+\begin{minipage}{\linewidth}
+\begin{lstlisting}[language=Haskell, label={lst:thm_32_haskell_output_extended}, caption={\lstinline{thm_32} example extended output}]
+ghci> (thesis_ex_2 thesis_ex_2_f) "a"
+*** Exception: absurd case
+CallStack (from HasCallStack):
+  error, called at ex.hs:13:3 in main:Ex
+\end{lstlisting}
+\end{minipage}
+
+The exception "absurd case" is what happens when a logical assumption in the proof
+is not correct, which is the case here.
+To see why this happens, we can do some minor alterations to the extracted Haskell code,
+and print out the values of some variables during the execution of the algorithm.
+What we want to show is every primary and secondary induction call (\lstinline{IHn} and \lstinline{IHm} respectively),
+and the values of the variables \lstinline{n}, \lstinline{m}, \lstinline{V} and \lstinline{W} at the time of those calls.
+Doing so, we get the following output (truncated for brevity):
+
+\begin{lstlisting}[language=Haskell, label={lst:thm_32_haskell_output_extended_debug}, caption={\lstinline{thm_32} example extended output with debug}]
+ghci> (thesis_ex_2 thesis_ex_2_f) "a"
+IHn: n = 3, m = 4, V = ["a","b","c","d"], W = []
+
+...
+
+IHn: n = 0, m = 1, V = ["a","b","c","d"], W = []
+IHm: n = 1, m = 0, V = [], W = []
+IHm: n = 3, m = 0, V = ["b","c","d"], W = ["d"]
+*** Exception: absurd case
+CallStack (from HasCallStack):
+  error, called at ex.hs:13:3 in main:Ex
+\end{lstlisting}
+
+The debug line we are most interested in is the last one,
+which is the last secondary induction call before the exception.
+If we refer to lines 133-137 of \Cref{lst:thm_32_full_proof},
+we see that the proof asserts (and proves) the following claim:
+
+\begin{minipage}{\linewidth}
+\begin{lstlisting}[language=Coq, label={lst:thm_32_false_claim}, caption={False claim in \lstinline{thm_32} proof}]
+Datatypes.length
+  (set_diff string_dec V (set_union string_dec (nodup string_dec W) U)) <
+Datatypes.length
+  (set_diff string_dec V (nodup string_dec W)) <= S m.
+\end{lstlisting}
+\end{minipage}
+
+This claim is false, as we can see by looking at the values of
+\lstinline{V}, \lstinline{W} and \lstinline{m} at the time of the last induction call.
+We replace the variables in the claim with their values, and reduce (parts of) the claim to the following:
+
+\tabto{2em}
+\lstinline{Datatypes.length (set_diff string_dec V (nodup string_dec W)) <= S m}
+
+$\Rightarrow$
+\tabto{2em}
+\lstinline{Datatypes.length (set_diff string_dec ["b","c","d"] ["d"]) <= S 0}.
+
+$\Rightarrow$
+\tabto{2em}
+\lstinline{Datatypes.length ["c","b"] <= S 0}.
+
+$\Rightarrow$
+\tabto{2em}
+\lstinline{2 <= 1}.
+
+The final claim is obviously not true, hence why the Haskell code crashes with "absurd case".
+But why does this happen at all? Shouldn't the Coq proof have failed at the point where the claim was asserted?
+This false claim is a consequence of not having given a formal proof of \Cref{lem:3.3}.
+
+\textcolor{red}{explain, refer to Theorem 3.2 overview from chapter 4}

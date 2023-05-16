@@ -10,21 +10,23 @@ This paper solves two problems that occur in dependent type systems where typing
 on universe-level constraints:
 
 \begin{enumerate}
-    \item an equational theory of semilattices with one inflationary endomorphism
-          has a uniform word problem that can be solved in polynomial time.
-    \item loop-checking in a type system with universe-level constraints
+    \item The uniform word problem for an an equational theory of semilattices
+          with one inflationary endomorphism can be solved in polynomial time.
+    \item Loop-checking in a type system with universe-level constraints
           can be done in polynomial time.
 \end{enumerate}
 
-\textcolor{red}{first problem is maybe summarized to generally, while second is more specific for the case of type systems? ask Marc.}
+In short, these problems can be explained as follows:
 
-We focused on formalizing the proof of \Cref{thm:3.2} from \cite{mbezem}.
+\textcolor{red}{two paragraphs about the problems}
+
+We have focused on formalizing the proof of \Cref{thm:3.2} from \cite{mbezem}.
 Since this proof is complex enough that mistakes are possible, it is a good candidate for formalization.
 By formalizing the proof and then verifying it using Coq, we can be sure that it is correct.
 
 We are also interested in finding out whether or not the process of formalizing the proof
 can be completed in a reasonable amount of time, and with a reasonable amount of effort.
-Is the promise (\textcolor{red}{find better word?}) of a complete verification of the proof worth the effort of formalizing it?
+Is the promise of a complete verification of the proof worth the effort of formalizing it?
 
 By using an advanced feature of Coq, we can also extract an algorithm from the proof,
 where this algorithm is certified to produce correct results.
@@ -38,25 +40,25 @@ We will paraphrase some key concepts from \cite{mbezem} that are needed to under
 our implementation and formalization.
 
 We will call join-semilattices with inflationary endomorphisms simply semilattices.
-A join-semilattice is a partially ordered set in which any two elements have a least upper bound,
-called their join., denoted by $\lor$.
-The join of a semilattice is a binary operation $\lor$ that is commutative, associative and idempotent.
-An inflationary endomorphism, in our case, is a function
+A \textit{join-semilattice} is a partially ordered set in which any two elements have a least upper bound,
+called their join.
+The \textit{join} of a semilattice is a binary operation $\lor$ that is commutative, associative and idempotent.
+An \textit{inflationary endomorphism}, in our case, is a function
 that maps an element to itself or to a greater element in the ordered set.
-We denote the inflationary endomorphism as $\underline{}^+$, for every lattice element $x$,
+We denote the inflationary endomorphism as $^+$, for every lattice element $x$,
 $x^+$ is also called the successor of $x$.
-The fact that $x$ is an endomorphism means that we get the folloring properties
+The fact that $x$ is an endomorphism means that we get the following properties:
 $(x \lor y)^+ = x^+ \lor y^+$ and $x \lor x^+ = x^+$.
 
 
-A semilattice presentation consists of a set $V$ of generators
-(also called variables) and a set $C$ of constraints
+A \textit{semilattice presentation} consists of a set $V$ of \textit{generators}
+(also called variables) and a set $C$ of \textit{constraints}
 (also called relations).
 For a semilattice $t$ and $k \in \mathbb{N}$, $t + k$ denotes the k-fold successor of $t$, thus making $t + 0 = t$ and $t + 1 = t^+$.
 A term over $V$ has the form $x_1 + k_1 \lor \ldots \lor x_m + k_m$, where $x_i \in V$ and $k_i \in \mathbb{N}$.
 Every semilattice expression is equal to a term over $V$.
 
-Horn clauses are propositional clauses $A \rightarrow b$, with a non-empty body $A$ and conclusion $b$.
+\textit{Horn clauses} are propositional clauses $A \rightarrow b$, with a non-empty body $A$ and conclusion $b$.
 The atoms are of the form $x + k$, where $x \in V, k \in \mathbb{N}$.
 We call this special form of Horn clauses simply \textit{clauses}.
 
@@ -70,6 +72,12 @@ We then generate the clause $c^+ \rightarrow a$ from the former, and the clause 
 This generated set of clauses is denoted by $S_{s=t}$, which in our example makes it
 $S_{a \lor b = c^+} := \{a, b \rightarrow c^+, c^+ \rightarrow a, c^+ \rightarrow b\}$.
 We define $S_C$ as the union of all $S_{s=t}$, where $s = t$ is a constraint in $C$.
+From the axiom $x \lor x^+ = x^+$, we can derive the following clauses:
+$x, x^+ \rightarrow x^+$,
+$x^+ \rightarrow x^+$ and $x^+ \rightarrow x$.
+We are only interested in the last one, which we call a \textit{predecessor clause}.
+A predecessor clauses ensures that any atom $x + k$ that is true in a model,
+also has $x + k - 1$ true in that model.
 
 % Predecessor clauses are derived from the axiom $x \; \lor \; x^{+} = x^{+}$ and have the form
 % $x + k + 1 \rightarrow x + k$, where $(x \in V, k \in \mathbb{N})$
@@ -98,9 +106,9 @@ The sets specified by such functions are models of $\overline{S_C}$.
 
 \begin{customlem}{Lemma 3.1}[{\cite[p.~3]{mbezem}}]
 \label{lem:3.1}
-Given $f : V \rightarrow N^{\infty}$,
+Given $f : V \rightarrow \mathbb{N}^{\infty}$,
 and a clause $A \rightarrow b$, let $P$ be the problem whether or not
-$A + k \rightarrow b + k$ is satisfied by $f$ for all $k \in N$.
+$A + k \rightarrow b + k$ is satisfied by $f$ for all $k \in \mathbb{N}$.
 Then $P$ is decidable.
 \end{customlem}
 
@@ -112,19 +120,19 @@ in further proofs, since we know that any $S_C$ is finite.
 
 \begin{customthm}{Theorem 3.2}[{\cite[p.~3]{mbezem}}]
 \label{thm:3.2}
-For any finite semilattice representation
-$(V, C)$ and any function $f : V \rightarrow N^{\infty}$,
-the least $g \ge f$ that is a model of $\overline{S_C}$ can be computed.
+Let $(V, C)$ be a finite semilattice presentation.
+For any $f : V \rightarrow \mathbb{N}^{\infty}$
+we can compute the least $g \ge f$ that is a model of $\overline{S_C}$.
 \end{customthm}
 
 \Cref{thm:3.2} has a special case that is solved by an additional lemma:
 
-\begin{customlem}{Lemma 3.3}[{\cite[p.~3-4]{mbezem}}]
+\begin{customlem}{Lemma 3.3}[{\cite[p.~3]{mbezem}}]
 \label{lem:3.3}
-Given a finite semilattive presentation
-$(V, C)$ and a strict subset $W \subset V$, if for any function
-$f : W \rightarrow N^{\infty}$, the least $g \ge f$ that is a model of
-$\overline{S_C}|W$ can be computed, then for any function
-$f : V \rightarrow N^{\infty}$ with $f(V - W) \subseteq N$,
-the least $h \ge f$ that is a model of $\overline{S_C}\downarrow W$ can be computed.
+Let $(V, C)$ be a finite semilattice presentation.
+Let $W$ be a strict subset of $V$ such that for any
+$f : W \rightarrow \mathbb{N}^{\infty}$ we can
+compute the least $g \geq f$ that is a model of $\overline{S_C} \mid W$.
+Then for any $f : V \rightarrow \mathbb{N}^{\infty}$ with $f(V - W) \subseteq \mathbb{N}$,
+we can compute the least $h \geq f$ that is a model of $\overline{S_C} \downarrow W$.
 \end{customlem}

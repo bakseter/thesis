@@ -384,7 +384,8 @@ Module Geq.
       ex_lfp_geq Cs W W f ->
       ex_lfp_geq Cs V V f.
   Proof.
-    intros. unfold ex_lfp_geq in *.
+    intros.
+    unfold ex_lfp_geq, ex_lfp_geq_S in *.
     destruct H0 as [g [Hg1 Hg2]].
     exists g. split.
     - apply geq_incl with W; assumption.

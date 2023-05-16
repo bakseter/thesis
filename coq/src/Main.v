@@ -25,7 +25,7 @@ Require Import Geq. Import Geq.
 Require Import Model. Import Model.
 Require Import Ninfty. Import Ninfty.
 
-Definition pre_thm (n m : nat) (Cs : set Clause) (V W : set string) (f : Frontier) :=
+Definition pre_thm (n m : nat) (Cs : set Clause) (V W : set string) (f : Frontier) : Set :=
   incl W V ->
   Datatypes.length (nodup string_dec V) <= n ->
   Datatypes.length
@@ -122,7 +122,8 @@ Proof.
           inversion Hforward. apply sub_forward_incl in Hforward.
           destruct U as [|u U'] eqn:Hu.
           -- apply sub_forward_empty in H7.
-             destruct H7. unfold ex_lfp_geq. exists h. split; assumption.
+             destruct H7. unfold ex_lfp_geq. exists h.
+             split; assumption.
           -- destruct
               (incl_dec
                 string_dec

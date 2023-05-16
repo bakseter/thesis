@@ -539,7 +539,7 @@ Module Sets.
   Proof.
     induction V as [|h t]; intros; simpl in *; try lia.
     destruct (dec x h); simpl in *.
-    - rewrite H. apply le_refl.
+    - rewrite H. apply Nat.le_refl.
     - rewrite <- H. apply le_n_S. apply IHt. reflexivity.
   Qed.
 
@@ -796,7 +796,7 @@ Module Sets.
           -- apply set_mem_correct1 in Hmem3.
              apply (set_add_In dec) in Hmem3.
              rewrite Hmem3. rewrite app_length. simpl.
-             rewrite Nat.add_1_r. eapply le_trans in IHV.
+             rewrite Nat.add_1_r. eapply Nat.le_trans in IHV.
              apply IHV.
   Admitted.
 
@@ -978,7 +978,6 @@ Module Sets.
         apply IHV.
   Admitted.
 
-  (* NEEDED *)
   Lemma strict_subset_lt_length {A : Type} (dec : forall x y, {x = y} + {x <> y}) (V W : set A) :
      strict_subset V W ->
      Datatypes.length (nodup dec V) < Datatypes.length (nodup dec W).
@@ -986,8 +985,12 @@ Module Sets.
     intros. unfold strict_subset in H. destruct H.
     assert (H1 := H). apply (nodup_incl_length dec) in H1.
     apply le_lt_eq_dec in H1. destruct H1; try assumption.
-    eapply (set_diff_succ dec) in H; try lia.
-    unfold not. intros.
-  Admitted.
+    exfalso. apply H0. apply (nodup_incl dec).
+    apply (nodup_incl2 dec). eapply NoDup_length_incl.
+    - apply NoDup_nodup.
+    - rewrite e. apply Nat.le_refl.
+    - apply nodup_incl. apply nodup_incl2.
+      assumption.
+  Qed.
 
 End Sets.

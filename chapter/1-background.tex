@@ -179,8 +179,9 @@ Ltac is not the only proof langauge, with another example being \textit{SSReflec
 \label{sssec:agda}
 
 Agda is a depdently typed functional programming language based on Martin-Löf's
-intuitionistic type theory. Unlike Coq, Agda does not use tactics. \cite{agdatut}
-However, by using proposition as types, Agda can also function as a proof assistant.
+intuitionistic type theory. Unlike Coq, Agda does not use tactics
+However, by using proposition as types, Agda can also function as a proof assistant
+\cite{agdatut}.
 
 \subsubsection{Isabelle}
 \label{sssec:isabelle}
@@ -188,12 +189,15 @@ However, by using proposition as types, Agda can also function as a proof assist
 \subsubsection{Lean}
 \label{sssec:lean}
 
-Lean is proof assistant, automated theorem prover and dependently typed functional programming language.
-Lean can be instantiated using either CIC or an Martin-Löf's intuitionistic type theory
+Lean is dependently typed functional programming language and theorem prover.
+The goal of Lean is to establish a connection between the automated and interactive processes of proving theorems.
+Like Coq, Lean is also based on the type theory of CIC
 \cite{lean}.
 
 \subsubsection{Higher-Order Logic}
 \label{sssec:hol}
+
+HOL is a family of several theorem provers, based on the concept of higher-order logic.
 
 \subsection{Extraction of programs from verified proofs}
 \label{ssec:extraction_of_programs_from_verified_proofs}
@@ -202,4 +206,4 @@ By the the notion of propositions as types, we can use a proof assistant to
 prove the correctness of a program. However, we can also extract a program from
 a proof of its correctness. This type of code extraction is a common feature of proof assistants.
 The extracted program is guaranteed to be correct by the type system of the proof assistant,
-and the resulting code can be extracted to a variety programming languages, such as Haskell and OCaml (as is the case for Coq) \cite{cintro}.
+and the resulting code can be extracted to several programming languages, such as Haskell and OCaml (as is the case for Coq) \cite{cintro}.

@@ -1,11 +1,12 @@
-- paraphrase more chap 2 and add example, see img on phone
++ paraphrase more chap 2 and add example, see img on phone
 x rewrite section about list listset osv..
-- also add: incl s1 s2 /\ incl s2 a1
-- f is a model for a set of clauses if all clauses are satisfied in f; "F IS A MODEL"
-- sub_model represents different S_C, S_C|W, etc.. see img for diagram
-- "defined WITH Set" for ex_lfp_geq
 x admitted lemmas, simplification
++ "defined WITH Set" for ex_lfp_geq
++ also add: incl s1 s2 /\ incl s2 a1
++ evaluation: refer to new points from chap 2
++ f is a model for a set of clauses if all clauses are satisfied in f; "F IS A MODEL"
+
+- sub_model represents different S_C, S_C|W, etc.. see img for diagram
 - lem_33 would have fixed problem with increasing set W, see img
-- "problemstilling": add to chap 2, se email Marc
-- evaluation: refer to new points from chap 2
-- related & future work: se email Marc
+- "problemstilling": add to chap 2, se email Marc.
+- related & future work: se email Marc. finish this.

@@ -1,4 +1,5 @@
 \chapter{Implementation of Logical Notions}
+\label{chap:implementation}
 
 \section{Data types}
 
@@ -221,11 +222,11 @@ definition and the proof of the theorem itself.
 \subsection{The predicate \lstinline{pre_thm}}
 
 Since (in our case) the formal definitions of \Cref{lem:3.3}, which will be expanded on shortly,
-and \Cref{thm:3.2} share some structure, we define a proposition \lstinline{pre_thm}:
+and \Cref{thm:3.2} share some structure, we define (with \lstinline{Set}) a proposition \lstinline{pre_thm}:
 
 \begin{minipage}{\linewidth}
 \begin{lstlisting}[language=Coq, label={lst:pre_thm_def}, caption={\lstinline{pre_thm} in Coq}]
-Definition pre_thm (n m : nat) (Cs : set Clause) (V W : set string) (f : Frontier) :=
+Definition pre_thm (n m : nat) (Cs : set Clause) (V W : set string) (f : Frontier) : Set :=
   incl W V ->
   Datatypes.length (nodup string_dec V) <= n ->
   Datatypes.length
@@ -315,17 +316,15 @@ We now apply the lemma \lstinline{ex_lfp_geq_incl}, which states that
 \lstinline{forall Cs V W f, incl V W -> forall f, ex_lfp_geq Cs W W f -> ex_lfp_geq Cs V V f.}
 
 We give this lemma the arguments of \lstinline{Cs}, \lstinline{nodup string_dec V} and \lstinline{nodup string_dec W}.
-This generates to new goals,
+This generates two new goals:
 
 $(1)$
 \tabto{2em}
 \lstinline{incl (nodup string_dec V) (nodup string_dec W)}
 
-and
-
 $(2)$
 \tabto{2em}
-\lstinline{ex_lfp_geq Cs (nodup string_dec W) (nodup string_dec W) f}.
+\lstinline{ex_lfp_geq Cs (nodup string_dec W) (nodup string_dec W) f}
 
 The goal $(1)$ is proven by using a hypothesis that states that
 
@@ -344,6 +343,20 @@ This gives us a hypothesis identical to our goal $(1)$, and therefore proves it.
 The goal $(2)$ is proven by an existing hypothesis.
 
 \subsubsection{Inductive case of \lstinline{m}}
+\label{sssec:inductive_case_m}
+
+The inductive case of \lstinline{m} by far the largest part of the proof (see lines 17-199 \Cref{lst:thm_32_full_proof}).
+As it is very complex and does not follow the paper too closely,
+we will go through a more "high-level" explanation of the reasoning
+we followed when constructing the formalized proof.
+We will use sometimes use mathematical notation to explain the proof instead of Coq code,
+for the sake of being terse and clear.
+
+Assume $W \subseteq V$, $\lvert V \rvert \leq n + 1$, $\lvert V - W \rvert \leq m + 1 \leq n + 1$.
+If $\lvert V - W \rvert \leq m$ then we can apply the secondary induction hypothesis, and we are done.
+Hence, we can assume $\lvert V - W \rvert = m + 1$, meaning $\lvert W \rvert \leq n$.
+To prove \lstinline{ex_lfp_geq Cs V V f}, we assert \lstinline{(U, g) = sub_forward Cs V V f}.
+
 
 \textcolor{red}{insert brief explanation here (from proof overview)...}
 
@@ -371,7 +384,7 @@ since \lstinline{thm_32} already depends on it.
 By default, Coq will give its own implementation of any functions used, instead of using
 Haskell's native implementations. If we want, we can specify what native Haskell functions
 should be used when extracting a Coq function. In the example code above,
-we specify that when extracting, \lstinline[language=Haskell]{Prelude.map} and \lstinline[language=Haskell]{Prelude.foldr}
+we specify that when extracting, Haskell's \lstinline[language=Haskell]{Prelude.map} and \lstinline[language=Haskell]{Prelude.foldr}
 should be used for the Coq functions \lstinline{map} and \lstinline{fold_right}.
 
 In the next chapter we will go more into detail about the results of the extraction,
