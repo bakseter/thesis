@@ -121,10 +121,19 @@ we can determine if the frontier is a model of the set of clauses, i.e.
 whether all shifts of all clauses are satisfied by the frontier.
 
 We translate this property to Coq as the recursive function \lstinline{sub_model}.
-We have two additional arguments \lstinline{V} and \lstinline{W}; these are
-the set of variables (strings) from the set of clauses, and all \textcolor{red}{insert explanation here}, respectively.
-The function \lstinline{vars_set_atom} simply returns all the variables used
-in a set of atoms as a set of strings.
+As we saw in \Cref{sec:relevant_parts_of_the_paper}, we distinguish
+between three different sets of clauses when talking about frontiers as models;
+$\overline{S_C}$, $\overline{S_C}\mid W$ and $\overline{S_C}\downarrow W$.
+These are represented by
+\lstinline{sub_model Cs V V f}, \lstinline{sub_model Cs W W f} and \lstinline{sub_model Cs V W f},
+respectively.
+
+We have two additional arguments \lstinline{V} and \lstinline{W}:
+\lstinline{V} is the the set of variables (strings) from the set of clauses \lstinline{Cs},
+and \lstinline{W} is a subset of \lstinline{V} such that for each variable
+there is a clause in \lstinline{Cs} that can be used to generate a new atom.
+The function \lstinline{vars_set_atom} use below simply returns all the variables
+used in a set of atoms, as a set of strings.
 
 \begin{minipage}{\linewidth}
 \begin{lstlisting}[language=Coq, label={lst:sub_model_def}, caption={The function \lstinline{sub_model} in Coq}]
@@ -142,6 +151,49 @@ Fixpoint sub_model (Cs : set Clause) (V W : set string) (f : Frontier) : bool :=
      all_shifts_true (l ~> (x & k)) f
     ) && sub_model t V W f
   end.
+\end{lstlisting}
+\end{minipage}
+
+\subsection{The functions \lstinline{sub_vars_improvable} and \lstinline{sub_forward}}
+
+The three conditions of the disjunction in \Cref{lst:sub_model_def} are
+what determines if a clause is satisfied by a frontier.
+If these conditions are not met, we want to repeatedly increment the value of the variable,
+and check again if the clause is satisfied.
+We start by first determining such "improvable" variables with the function \lstinline{sub_vars_improvable}:
+
+\begin{minipage}{\linewidth}
+\begin{lstlisting}[language=Coq, label={lst:sub_vars_improvable_def}, caption={The function \lstinline{sub_vars_improvable}}]
+Fixpoint sub_vars_improvable (Cs : set Clause) (V W : set string) (f : Frontier) : set string :=
+  match Cs with
+  | []      => []
+  | (l ~> (x & k)) :: t  =>
+      if negb (set_mem string_dec x W) ||
+         negb (
+            fold_right andb true
+                (map (fun x => set_mem string_dec x V) (vars_set_atom l))
+         ) ||
+         all_shifts_true (l ~> (x & k)) f
+      then sub_vars_improvable t V W f
+      else set_add string_dec x (sub_vars_improvable t V W f)
+  end.
+\end{lstlisting}
+\end{minipage}
+
+We then define a new function \lstinline{sub_forward} that take these improvable variables
+and a frontier \lstinline{f}, and defines a new frontier \lstinline{f'}
+that increments the value that \lstinline{f} assigns to each variable.
+The return type of \lstinline{sub_forward} is a pair of a set of strings and a frontier,
+where the set of strings is the set of improvable variables.
+
+\begin{minipage}{\linewidth}
+\begin{lstlisting}[language=Coq, label={lst:sub_forward_def}, caption={The function \lstinline{sub_forward}}]
+Definition sub_forward (Cs : set Clause) (V W : set string) (f : Frontier)
+    : set string * Frontier :=
+  let X := sub_vars_improvable Cs V W f in
+  (* Sinfty increases a Fin value by 1, and leaves Infty unchanged *)
+  let f' := fun v => if set_mem string_dec v X then Sinfty (f v) else f v
+  in (X, f').
 \end{lstlisting}
 \end{minipage}
 
@@ -376,10 +428,17 @@ for the sake of being terse and clear.
 Assume $W \subseteq V$, $\lvert V \rvert \leq n + 1$, $\lvert V - W \rvert \leq m + 1 \leq n + 1$.
 If $\lvert V - W \rvert \leq m$ then we can apply the secondary induction hypothesis, and we are done.
 Hence, we can assume $\lvert V - W \rvert = m + 1$, meaning $\lvert W \rvert \leq n$.
-To prove \lstinline{ex_lfp_geq Cs V V f}, we assert \lstinline{(U, g) = sub_forward Cs V V f}.
+To prove \lstinline{ex_lfp_geq Cs V V f}, we assert \lstinline{(W, g) = sub_forward Cs V V f}.
+This gives us three cases to consider:
 
+\begin{enumerate}
+  \item $W = \emptyset$, and we are done.
+  \item $W = V$, meaning all variables in $V$ map to $\infty$, and we are done.
+  \item $\emptyset \subset W \subset V$. Then $\lvert W \rvert \leq n$ and $\lvert V - W \rvert \leq m$.
+      So by the primary induction hypothesis, we get \lstinline{ex_lfp_geq Cs W W f}.
+      Then by the second induction hypothesis, we get \lstinline{ex_lfp_geq Cs V V f}, and we are done.
+\end{enumerate}
 
-\textcolor{red}{insert brief explanation here (from proof overview)...}
 
 \section{Extraction to Haskell}
 

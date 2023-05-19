@@ -179,10 +179,8 @@ We can then run our algorithm on these clauses to get a minimal model of \lstinl
 Even though we have not given a formal proof of \Cref{lem:3.3},
 this "real world" example still gives a correct minimal model for the type unverse constraints from Coq.
 
-\section{Limitations}
+\section{Limitations: extension of \Cref{lst:thm_32_coq_example} that fails}
 \label{sec:limitations}
-
-\subsection{Extension of \Cref{lst:thm_32_coq_example} that fails}
 
 Due to not having given a formal proof of \Cref{lem:3.3},
 there are some cases where the extracted Haskell code will crash.
@@ -280,6 +278,8 @@ $\Rightarrow$
 
 The final claim is obviously not true, hence why the Haskell code crashes with "absurd case".
 But why does this happen at all? Shouldn't the Coq proof have failed at the point where the claim was asserted?
-This false claim is a consequence of not having given a formal proof of \Cref{lem:3.3}.
-
-\textcolor{red}{explain, refer to Theorem 3.2 overview from chapter 4}
+This error is due to the fact that we have not given a formal proof of \Cref{lem:3.3}.
+Since we do not use \Cref{lem:3.3} to calculate a new frontier in the algorithm but instead just
+redefine \Cref{lem:3.3} as the identity function, this has consequences for later steps in the algorithm.
+This example in particular is "cosntructed to fail"; as we saw in the previous section,
+the algorithm does work for many cases even without a formal proof of \Cref{lem:3.3}.
