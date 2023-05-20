@@ -1,14 +1,23 @@
 \chapter{Approach \& Design Choices}
 \label{ch:approach_design_choices}
 
-\textcolor{red}{add intro, see paper}
-\textcolor{red}{we leave aside chapters 2 and 4 from paper, lattice -> Horn and complexity}
-
 When translating an informal proof or specification to a formal proof.
-one often has to decide how to model certain mathematical objects and their properties.
-For example, in Coq, there are several implementations of the mathematical notion of a \textit{set}.
-When choosing which implementation to use, there are often tradeoffs to consider.
-Examples of such trade-offs are simplicity of the implementation, ease of use, and performance.
+one often has to decide how to model certain mathematical objects and their properties,
+and which parts of a proof that can be simplified or left out entirely.
+Our formalization effort has been focused mostly on \Cref{thm:3.2} and its proof.
+We have left aside two concepts from \cite{mbezem}:
+
+\begin{itemize}
+    \item the relation between lattices and Horn clauses
+    \item complexity theoretic claims about the problems
+\end{itemize}
+
+These are sections 2 and 4 from \cite{mbezem}, respectively.
+We have also made some simplifications to various parts of our formalization,
+which we will explain in more detail in the next subsection.
+
+% For example, in Coq, there are several implementations of the mathematical notion of a \textit{set}.
+% When choosing which implementation to use, there are often tradeoffs to consider.
 
 \section{Simplifications for the sake of time}
 \label{sec:simplifications}

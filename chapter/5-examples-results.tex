@@ -182,8 +182,7 @@ this "real world" example still gives a correct minimal model for the type unver
 \section{Limitations: extension of \Cref{lst:thm_32_coq_example} that fails}
 \label{sec:limitations}
 
-Due to not having given a formal proof of \Cref{lem:3.3},
-there are some cases where the extracted Haskell code will crash.
+There are some cases where the extracted Haskell code will crash.
 To show this, we can extend the set of clauses from \Cref{lst:thm_32_coq_example} as such:
 
 \begin{minipage}{\linewidth}
@@ -229,6 +228,7 @@ What we want to show is every primary and secondary induction call (\lstinline{I
 and the values of the variables \lstinline{n}, \lstinline{m}, \lstinline{V} and \lstinline{W} at the time of those calls.
 Doing so, we get the following output (truncated for brevity):
 
+\begin{minipage}{\linewidth}
 \begin{lstlisting}[language=Haskell, label={lst:thm_32_haskell_output_extended_debug}, caption={\lstinline{thm_32} example extended output with debug}]
 ghci> (thesis_ex_2 thesis_ex_2_f) "a"
 IHn: n = 3, m = 4, V = ["a","b","c","d"], W = []
@@ -242,6 +242,7 @@ IHm: n = 3, m = 0, V = ["b","c","d"], W = ["d"]
 CallStack (from HasCallStack):
   error, called at ex.hs:13:3 in main:Ex
 \end{lstlisting}
+\end{minipage}
 
 The debug line we are most interested in is the last one,
 which is the last secondary induction call before the exception.

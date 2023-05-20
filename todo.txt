@@ -11,28 +11,34 @@ DONE
 + lem_33 would have fixed problem with increasing set W, see img
 + complete proof overview theorem 3.2, chap 4. see paper
 + clean up sec 5.3, maybe combine 5.3.1 into just 5.3. don't go into detail about why thing fails, just say consequence of lemma 3.3.
++ add intro to chap 3, with to key concepts; leave aside sec. 2 (lattice -> Horn) and 4 (complexity) from article
++ describe two problems in chap 2
++ "problemstilling": add to chap 2, se email Marc.
 
 --------------------------------------------------------------------------------------------------
 
-TODO
+TODO (in order of importance)
 
-- "problemstilling": add to chap 2, se email Marc.
-- read per martin-löf's article, 1.4 and 1.5. use this to elaborate on chap 1 and 4, dep. type theory.
-- finish "other proof assistants"
-- describe two problems in chap 2
-- add intro to chap 3, with to key concepts; leave aside sec. 2 (lattice -> Horn) and 4 (complexity) from article
-- add ensembles infinite sets, see paper
 - determine questions to pose in abstract (remove a bit from chap 2 probably)
 - finish section 6
 - finish section 7
+- read per martin-löf's article, 1.4 and 1.5. use this to elaborate on chap 1 and 4, dep. type theory.
+- finish "other proof assistants"
+- add ensembles infinite sets, see paper
 
 - all misc. red text
 
 --------------------------------------------------------------------------------------------------
 
-FINALLY
+THEN (before 26.05)
 
-- all check red text
+- double-check red text
 - write conlusion
 - write finished abstract
+
+--------------------------------------------------------------------------------------------------
+
+FINALLY
+
+- edit according to final review
 - write aknowledgements

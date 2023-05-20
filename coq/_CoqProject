@@ -1,6 +1,7 @@
 -R src TH
 src/Atom.v
 src/Clause.v
+src/Examples.v
 src/Forward.v
 src/Frontier.v
 src/Geq.v

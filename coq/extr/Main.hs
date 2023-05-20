@@ -1,9 +1,17 @@
-module Ex where
+module Main where
 
-import qualified Prelude
+import qualified Data.Char
+import qualified Data.Function
+import qualified Data.List
+import qualified Data.Ratio
 import qualified Debug.Trace
+import qualified Prelude
+import qualified Text.Printf
 
+-- for my own sanity
 (++) = (Prelude.++)
+($) = (Prelude.$)
+(.) = (Prelude..)
 
 __ :: any
 __ = Prelude.error "Logical or arity value used"
@@ -171,7 +179,19 @@ incl_dec dec v w =
 data Ninfty =
    Infty
  | Fin Prelude.Integer
- deriving (Prelude.Show)
+ deriving (Prelude.Show, Prelude.Eq)
+
+instance Prelude.Ord Ninfty where {
+  compare x y =
+    case x of {
+     Infty ->
+      case y of {
+       Infty -> Prelude.EQ;
+       Fin _ -> Prelude.GT};
+     Fin n ->
+      case y of {
+       Infty -> Prelude.LT;
+       Fin m -> Prelude.compare n m}}}
 
 sinfty :: Ninfty -> Ninfty
 sinfty x =
@@ -346,19 +366,21 @@ lem_33 _ _ _ _ _ x =
 
 thm_32 :: Prelude.Integer -> Prelude.Integer -> (Set Clause0) -> (Set
           Prelude.String) -> (Set Prelude.String) -> Frontier -> Ex_lfp_geq
-          -> Ex_lfp_geq
-thm_32 n m cs7 v w f x =
+          -> Prelude.Bool -> Ex_lfp_geq
+thm_32 n m cs7 v w f x debug =
   nat_rect (\_ cs8 v0 _ f0 _ _ _ _ ->
     eq_rec_r ([]) (ex_lfp_geq_empty cs8 f0)
       (nodup
         ((Prelude.==) :: Prelude.String -> Prelude.String -> Prelude.Bool)
         v0)) (\n0 iHn m0 ->
-            Debug.Trace.trace
+            (if debug then
+              Debug.Trace.trace
               ("IHn: n = " ++ Prelude.show n0 ++ ", m = " ++ Prelude.show m0 ++
               ", V = " ++ (Prelude.show v) ++ ", W = " ++ (Prelude.show w) ++
               -- Prelude.concatMap (\var -> ", f(" ++ var ++ ") = " ++ Prelude.show (f var)) v)
               "")
-              Prelude.$
+            else Prelude.id)
+              $
     nat_rect (\cs8 v0 w0 f0 _ _ _ h2 ->
       ex_lfp_geq_incl cs8
         (nodup
@@ -367,12 +389,14 @@ thm_32 n m cs7 v w f x =
         (nodup
           ((Prelude.==) :: Prelude.String -> Prelude.String -> Prelude.Bool)
           w0) f0 h2) (\m1 iHm cs8 v0 w0 f0 _ _ _ h2 ->
-            Debug.Trace.trace
+            (if debug then
+              Debug.Trace.trace
                ("IHm: n = " ++ Prelude.show (Prelude.succ n0) ++ ", m = " ++ Prelude.show m1 ++
                ", V = " ++ (Prelude.show v0) ++ ", W = " ++ (Prelude.show w0) ++
                -- Prelude.concatMap (\var -> ", f(" ++ var ++ ") = " ++ Prelude.show (f0 var)) v)
                "")
-               Prelude.$
+            else Prelude.id)
+               $
       let {
        h3 =
            let {arg1 =
@@ -496,7 +520,7 @@ vars' =
 
 fail_ex_0 :: Ex_lfp_geq -> Ex_lfp_geq
 fail_ex_0 x =
-  thm_32 (length vars') (length vars') cs vars' ([]) fail_ex_0_f x
+  thm_32 (length vars') (length vars') cs vars' ([]) fail_ex_0_f x Prelude.True
 
 cs0 :: ([]) Clause0
 cs0 =
@@ -516,7 +540,7 @@ vars'0 =
 
 fail_ex_1 :: Ex_lfp_geq -> Ex_lfp_geq
 fail_ex_1 x =
-  thm_32 (length vars'0) (length vars'0) cs0 vars'0 ([]) fail_ex_1_f x
+  thm_32 (length vars'0) (length vars'0) cs0 vars'0 ([]) fail_ex_1_f x Prelude.True
 
 cs1 :: ([]) Clause0
 cs1 =
@@ -536,7 +560,7 @@ vars'1 =
 
 fail_ex_2 :: Ex_lfp_geq -> Ex_lfp_geq
 fail_ex_2 x =
-  thm_32 (length vars'1) (length vars'1) cs1 vars'1 ([]) fail_ex_2_f x
+  thm_32 (length vars'1) (length vars'1) cs1 vars'1 ([]) fail_ex_2_f x Prelude.True
 
 cs2 :: ([]) Clause0
 cs2 =
@@ -555,7 +579,7 @@ vars'2 =
 
 fail_ex_3 :: Ex_lfp_geq -> Ex_lfp_geq
 fail_ex_3 x =
-  thm_32 (length vars'2) (length vars'2) cs2 vars'2 ([]) fail_ex_3_f x
+  thm_32 (length vars'2) (length vars'2) cs2 vars'2 ([]) fail_ex_3_f x Prelude.True
 
 cs3 :: ([]) Clause0
 cs3 =
@@ -574,7 +598,7 @@ vars'3 =
 
 fail_ex_4 :: Ex_lfp_geq -> Ex_lfp_geq
 fail_ex_4 x =
-  thm_32 (length vars'3) (length vars'3) cs3 vars'3 ([]) fail_ex_4_f x
+  thm_32 (length vars'3) (length vars'3) cs3 vars'3 ([]) fail_ex_4_f x Prelude.True
 
 cs4 :: ([]) Clause0
 cs4 =
@@ -6913,9 +6937,9 @@ vars'4 =
   nodup ((Prelude.==) :: Prelude.String -> Prelude.String -> Prelude.Bool)
     (vars cs4)
 
-coq_types_ex :: Ex_lfp_geq -> Ex_lfp_geq
-coq_types_ex x =
-  thm_32 (length vars'4) (length vars'4) cs4 vars'4 ([]) coq_types_ex_f x
+coq_types_ex :: Prelude.Bool -> Ex_lfp_geq -> Ex_lfp_geq
+coq_types_ex debug x =
+  thm_32 (length vars'4) (length vars'4) cs4 vars'4 ([]) coq_types_ex_f x debug
 
 cs5 :: ([]) Clause0
 cs5 =
@@ -6934,7 +6958,7 @@ vars'5 =
 
 thesis_ex_1 :: Ex_lfp_geq -> Ex_lfp_geq
 thesis_ex_1 x =
-  thm_32 (length vars'5) (length vars'5) cs5 vars'5 ([]) thesis_ex_1_f x
+  thm_32 (length vars'5) (length vars'5) cs5 vars'5 ([]) thesis_ex_1_f x Prelude.True
 
 cs6 :: ([]) Clause0
 cs6 =
@@ -6955,4 +6979,40 @@ vars'6 =
 
 thesis_ex_2 :: Ex_lfp_geq -> Ex_lfp_geq
 thesis_ex_2 x =
-  thm_32 (length vars'6) (length vars'6) cs6 vars'6 ([]) thesis_ex_2_f x
+  thm_32 (length vars'6) (length vars'6) cs6 vars'6 ([]) thesis_ex_2_f x Prelude.True
+
+printAligned :: Prelude.String -> [(Prelude.String, Prelude.String)] -> Prelude.IO ()
+printAligned sep xs =
+  Prelude.mapM_ Prelude.putStrLn $ align xs
+    where
+      maxStrLength =
+        Prelude.maximum $ map (Prelude.length . Prelude.fst) xs
+      align =
+        map (\(s, i) -> s ++ Prelude.replicate (maxStrLength Prelude.- Prelude.length s) ' ' ++ sep ++ i)
+
+
+frequencyPercentages :: Prelude.Show a => [(Prelude.String, a)] -> [(Prelude.String, Prelude.String)]
+frequencyPercentages xs =
+  map (\l -> (Prelude.head l, Text.Printf.printf "%.2f%%" ((Prelude.fromRational (Prelude.fromIntegral (Prelude.length l) Data.Ratio.% Prelude.fromIntegral (Prelude.length xs)) Prelude.* 100 :: Prelude.Double)))) grouped
+    where
+      grouped =
+        Data.List.group . Data.List.sort $ map (Prelude.show . Prelude.snd) xs
+
+compareTuples :: Prelude.Ord a => ([Prelude.Char], a) -> ([Prelude.Char], a) -> Prelude.Ordering
+compareTuples (a1, b1) (a2, b2)
+  | compareB Prelude.== Prelude.EQ = compareA
+  | Prelude.otherwise = compareB
+  where
+    compareA = Prelude.compare (map Data.Char.toLower a1) (map Data.Char.toLower a2)
+    compareB = Prelude.flip Prelude.compare b1 b2
+
+main :: Prelude.IO ()
+main = do
+    let f = (coq_types_ex Prelude.False) coq_types_ex_f
+    let output = Data.List.sortBy compareTuples $ map (\var -> (var, f var)) vars'4
+    printAligned " = " $ map (\(x,y) -> (x, Prelude.show y)) output
+    let output2 = frequencyPercentages output
+    Prelude.putStrLn ""
+    Prelude.putStrLn "Frequency percentages:"
+    Prelude.putStrLn $ Prelude.replicate 90 '-'
+    printAligned ": " output2

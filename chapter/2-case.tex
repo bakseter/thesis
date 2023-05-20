@@ -7,7 +7,7 @@
 Recall the questions posed in the abstract.
 We want to use the Coq proof assistant to formalize parts of the proofs of the following paper, by \citeauthor{mbezem} \cite{mbezem}.
 This paper solves two problems that occur in dependent type systems where typings depend
-on universe-level constraints:
+on universe-level constraints, and the two problems can be summarized as follows:
 
 \begin{enumerate}
     \item The uniform word problem for an an equational theory of semilattices
@@ -16,9 +16,23 @@ on universe-level constraints:
           can be done in polynomial time.
 \end{enumerate}
 
-In short, these problems can be explained as follows:
+From \cite{mbezem}, we get a definition of a uniform word problem for an equational theory $T$:
 
-\textcolor{red}{two paragraphs about the problems}
+\begin{quote}
+The uniform word problem for an equational theory $T$ is to determine,
+given a finite set $E$ of relations between generators,
+whether a given relation is provable from $E$ in $T$.
+\end{quote}
+In our case, the equational theory $T$ is the theory of join-semilattices
+with one inflationary endomorphism.
+This problem is shown in \cite{mbezem} to be solved in polynomial time.
+We will explain in more detail in the next subsection what join-semilattices
+and inflationary endomorphisms are.
+
+Loop-checking, in our case, means determining if a set of constraints
+on some set of variables generate an infinite loop between constraints.
+This is important for algorithms such as a type-checking algorithm where
+type universe levels have to be determined, and the algorithm has to be decideable.
 
 We have focused on formalizing the proof of \Cref{thm:3.2} from \cite{mbezem}.
 Since this proof is complex enough that mistakes are possible, it is a good candidate for formalization.

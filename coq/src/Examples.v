@@ -4999,7 +4999,7 @@ Extract Constant fold_right => "Prelude.foldr".
 Extract Inductive nat => "Prelude.Integer" ["0" "Prelude.succ"]
   "(\fO fS n -> if n Prelude.== 0 then fO () else fS (n Prelude.- 1))".
 
-Extraction "/home/andreas/Projects/thesis/coq/extr/ex.hs"
+Extraction "/home/andreas/Projects/thesis/coq/extr/Main.hs"
   FailEx0.fail_ex_0
   FailEx1.fail_ex_1
   FailEx2.fail_ex_2

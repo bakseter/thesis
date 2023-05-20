@@ -4,6 +4,9 @@ src/Atom.vos src/Atom.vok src/Atom.required_vos: src/Atom.v src/Frontier.vos src
 src/Clause.vo src/Clause.glob src/Clause.v.beautified src/Clause.required_vo: src/Clause.v src/Atom.vo src/Frontier.vo src/Ninfty.vo src/Misc.vo
 src/Clause.vio: src/Clause.v src/Atom.vio src/Frontier.vio src/Ninfty.vio src/Misc.vio
 src/Clause.vos src/Clause.vok src/Clause.required_vos: src/Clause.v src/Atom.vos src/Frontier.vos src/Ninfty.vos src/Misc.vos
+src/Examples.vo src/Examples.glob src/Examples.v.beautified src/Examples.required_vo: src/Examples.v src/Frontier.vo src/Clause.vo src/Atom.vo src/Geq.vo src/Vars.vo src/Sets.vo src/Model.vo src/Main.vo
+src/Examples.vio: src/Examples.v src/Frontier.vio src/Clause.vio src/Atom.vio src/Geq.vio src/Vars.vio src/Sets.vio src/Model.vio src/Main.vio
+src/Examples.vos src/Examples.vok src/Examples.required_vos: src/Examples.v src/Frontier.vos src/Clause.vos src/Atom.vos src/Geq.vos src/Vars.vos src/Sets.vos src/Model.vos src/Main.vos
 src/Forward.vo src/Forward.glob src/Forward.v.beautified src/Forward.required_vo: src/Forward.v src/Sets.vo src/Clause.vo src/Atom.vo src/Frontier.vo src/Vars.vo src/VarsImp.vo src/Misc.vo src/Ninfty.vo src/Geq.vo src/Model.vo
 src/Forward.vio: src/Forward.v src/Sets.vio src/Clause.vio src/Atom.vio src/Frontier.vio src/Vars.vio src/VarsImp.vio src/Misc.vio src/Ninfty.vio src/Geq.vio src/Model.vio
 src/Forward.vos src/Forward.vok src/Forward.required_vos: src/Forward.v src/Sets.vos src/Clause.vos src/Atom.vos src/Frontier.vos src/Vars.vos src/VarsImp.vos src/Misc.vos src/Ninfty.vos src/Geq.vos src/Model.vos
