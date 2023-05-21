@@ -1,11 +1,12 @@
 \chapter{Background}
+\label{ch:background}
 
 \section{Proofs \& formalization}
 \label{sec:proofs_formalization}
 
 When solving mathematical problems, we often use proofs
 to either \textbf{justify} a claim or to \textbf{explain} why the claim is true.
-We can distinguish between two types of proofs; \textit{informal} and \textit{formal} proofs.
+We can distinguish between two types of proofs; \emph{informal} and \emph{formal} proofs.
 
 An informal proof is often written in a natural language, and the proof is adequate if most
 readers are convinced by the proof \cite{bpierce}. Such proofs rely heavily on the reader's intuition
@@ -19,7 +20,7 @@ written in a programming language. Writing a formal proof is more difficult than
 Formal proofs include every logical step, and nothing is left for the reader to assume.
 This can formal proofs extremely verbose, but the amount of logical errors is reduced \cite{ams:formal-proof}.
 The only possible errors in formalized proofs are false assumptions and/or flawed verification software.
-When we talk about \textit{formalization}, we mean the process of translating an informal proof into a formal proof.
+When we talk about \emph{formalization}, we mean the process of translating an informal proof into a formal proof.
 
 \section{Type theory}
 \label{sec:type_theory}
@@ -74,7 +75,7 @@ This definition gives us a type with two constructors:
         \lstinline{Vcons} has type of \lstinline{forall (h : A) (n : nat) vector A (S n)}, where \lstinline{h}
                             is the head of the vector and \lstinline{n} is the length of the vector,
                             where both are given to the constructor as arguments.
-                            This makes the type of a \lstinline{vector} \textit{depend} on its length.
+                            This makes the type of a \lstinline{vector} \emph{depend} on its length.
 \end{itemize}
 
 In this scenario, the length of a \lstinline{vector} is fixed by the argument \lstinline{n : nat}
@@ -99,7 +100,7 @@ Fail Definition vec_invalid : vector string 2 :=
 Propositions as types allow us to bridge the gap between logic and computing,
 while dependent types allow us to define more rigorously types which depend on values,
 thus enhancing the expressivity of simple types.
-The former is a crucial aspect of \textit{proof assistants}, while the latter gives
+The former is a crucial aspect of \emph{proof assistants}, while the latter gives
 us more expressive power when constructing proofs using a proof assistant.
 An example of the expressive power of dependent types is the fact that we can define
 predicates that depend on the value of a term, e.g. a predicate that checks if a number is even.
@@ -108,11 +109,11 @@ The purpose of a proof assistant is to get computer support to construct and ver
 \subsection{Coq}
 \label{ssec:coq}
 
-Coq is based on the higher-order type theory \textit{Calculus of Inductive Constructions} (CIC), and
+Coq is based on the higher-order type theory \emph{Calculus of Inductive Constructions} (CIC), and
 functions as both a proof assistant and a dependently typed functional programming language.
 Coq also allow us to extract certified programs from the proofs of their specification to
 the programming langauges OCaml and Haskell \cite{cintro}.
-Coq implements a specification language called \textit{Gallina},
+Coq implements a specification language called \emph{Gallina},
 which allows us to define logical objects within Coq.
 These objects are typed to ensure their correctness \textcolor{red}{(is quote too direct?)},
 and the typing rules used are from CIC \cite{cic}.
@@ -146,7 +147,7 @@ our initial theorem can be rewritten as \lstinline{forall n : nat, S n <= S n}.
 This matches the type of our function, and the proof is complete.
 
 Proving theorems like this is not really intuitive for a human prover,
-and that is why Coq gives us the \textit{Ltac} meta-language for writing proofs.
+and that is why Coq gives us the \emph{Ltac} meta-language for writing proofs.
 Ltac provides us with tactics, which are a kind of shorthand syntax for defining Gallina terms \cite{cltac}.
 Using Ltac, we can rewrite the proof from \ref{lst:gallina_ex} as such:
 
@@ -168,7 +169,7 @@ we can use symbols like "-", "+", and "*" to branch into these sub-proofs and so
 Once a goal has been solved, we can move on the next. When there are no more goals, the proof is complete.
 Coq provides us with tooling that gives us the ability to see our goals and the proof state
 to further simplify the process \cite{cide}.
-Ltac is not the only proof langauge, with another example being \textit{SSReflect} \cite{cssr}.
+Ltac is not the only proof langauge, with another example being \emph{SSReflect} \cite{cssr}.
 
 \subsection{Other proof assistants}
 \label{ssec:other_proof_assistants}

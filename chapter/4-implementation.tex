@@ -33,6 +33,8 @@ We implement this in Coq using two types, \lstinline{Ninfty} and \lstinline{Fron
 \lstinline{Ninfty} has two constructors; \lstinline{infty} represents $\infty$,
 and \lstinline{fin n} represents a natural number $n$.
 \lstinline{Frontier} is a function from a string (variable) to \lstinline{Ninfty}.
+In the context of our formalization, we will refer to a function of this
+type as a \emph{frontier}.
 
 \begin{minipage}{\linewidth}
 \begin{lstlisting}[language=Coq, label={lst:ninfty_frontier_def}, caption={\lstinline{Ninfty} and \lstinline{Frontier} in Coq}]
@@ -164,7 +166,8 @@ We start by first determining such "improvable" variables with the function \lst
 
 \begin{minipage}{\linewidth}
 \begin{lstlisting}[language=Coq, label={lst:sub_vars_improvable_def}, caption={The function \lstinline{sub_vars_improvable}}]
-Fixpoint sub_vars_improvable (Cs : set Clause) (V W : set string) (f : Frontier) : set string :=
+Fixpoint sub_vars_improvable (Cs : set Clause) (V W : set string) (f : Frontier)
+    : set string :=
   match Cs with
   | []      => []
   | (l ~> (x & k)) :: t  =>
@@ -261,7 +264,7 @@ and are not needed when actually computing something using the extracted code.
 Informative objects, on the other hand, are kept when extracting, and can be used to compute something.
 This is why we define \lstinline{ex_lfp_geq} with \lstinline{Set}.
 
-Another important thing to we need to keep in mind when doing proofs with extraction in mind is to avoid \textit{universe inconsistencies}.
+Another important thing to we need to keep in mind when doing proofs with extraction in mind is to avoid \emph{universe inconsistencies}.
 We will not eloborate much on what type universes are, but we will give a brief explanation of how they work in Coq.
 In Coq, all objects of type \lstinline{Prop} live in the universe \lstinline{Set}, and all objects of type \lstinline{Set}
 live in the universe \lstinline{Type}. The universe hierarchy extends infinitely past \lstinline{Type}, but we will not
@@ -294,12 +297,13 @@ definition and the proof of the theorem itself.
 
 \subsection{The predicate \lstinline{pre_thm}}
 
-Since (in our case) the formal definitions of \Cref{lem:3.3}, which will be expanded on shortly,
-and \Cref{thm:3.2} share some structure, we define (with \lstinline{Set}) a proposition \lstinline{pre_thm}:
+Since our formal definitions of \Cref{lem:3.3}, which will be expanded on shortly,
+and \Cref{thm:3.2} share some structure, we define (with \lstinline{Set}) a predicate \lstinline{pre_thm}:
 
 \begin{minipage}{\linewidth}
 \begin{lstlisting}[language=Coq, label={lst:pre_thm_def}, caption={\lstinline{pre_thm} in Coq}]
-Definition pre_thm (n m : nat) (Cs : set Clause) (V W : set string) (f : Frontier) : Set :=
+Definition pre_thm (n m : nat) (Cs : set Clause) (V W : set string) (f : Frontier)
+    : Set :=
   incl W V ->
   Datatypes.length (nodup string_dec V) <= n ->
   Datatypes.length
@@ -314,9 +318,14 @@ Definition pre_thm (n m : nat) (Cs : set Clause) (V W : set string) (f : Frontie
 
 \subsection{\Cref{lem:3.3}}
 
-\Cref{lem:3.3} from \cite{mbezem} is used in the proof of \Cref{thm:3.2} to solve \textcolor{red}{fill inn explanation here...}
-
-We define it using \lstinline{pre_thm} as follows:
+\Cref{lem:3.3} is used in the proof of \Cref{thm:3.2} to solve
+a special case, as we saw in \Cref{sec:relevant_parts_of_the_paper}.
+We also need this lemma to be able to prove \Cref{thm:3.2} in Coq.
+As explained in \Cref{ssec:leaving_out_the_formal_proof_of_lem_33},
+we will only give a formal definition of the lemma in Coq,
+leave out the proof. By using the Coq command \lstinline{Admitted},
+we can leave out a full proof of a lemma, but still be able to use the lemma in other Coq proofs.
+We define \Cref{lem:3.3} in Coq using \lstinline{pre_thm}, as follows:
 
 \begin{minipage}{\linewidth}
 \begin{lstlisting}[language=Coq, label={lst:lem_33}, caption={\Cref{lem:3.3} in Coq}]
@@ -333,11 +342,13 @@ Lemma lem_33 :
     incl W V ->
     ex_lfp_geq Cs (nodup string_dec W) (nodup string_dec W) f ->
     ex_lfp_geq Cs (nodup string_dec V) (nodup string_dec W) f.
-Proof.
-  (* ... *)
-Qed.
+Admitted.
 \end{lstlisting}
 \end{minipage}
+
+One thing to note is that when applying \Cref{lem:3.3} in the formal proof of \Cref{thm:3.2},
+the first assumption of the lemma is solved immediately by applying the primary induction hypothesis
+(the induction on \lstinline{n}, also called \lstinline{IHn} in Coq).
 
 \subsection{\Cref{thm:3.2}}
 

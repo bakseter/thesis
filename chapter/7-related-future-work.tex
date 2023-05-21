@@ -1,21 +1,24 @@
 \chapter{Related \& Future Work}
 
-\section{Related work: Universe consistency checking in Coq}
+\section{Related work: universe consistency checking in Coq}
 
-Currently no joins, only $x + k >= y$ with $k = 0,1$.
-Graph-based algorithm. Ongoing effort \cite{coqgithub} to implement algorithm from \cite{mbezem}.
-Plans to extend with joins for more expressivity for universe levels in Coq.
-Focus on speed with current (limited) expressivity. Later more expressivity.
+There is an ongoing effort \cite{coqgithub} to implement a version of the algorithm from \cite{mbezem}
+for use in universe consitency checking in Coq.
+This version of the algorithm is graph-based, does not include joins,
+and only support constraints (clauses) of the form $x + k >= y$ with $k \in \{0, 1\}$.
+The main focus is on speed, which explains the limited expressivity.
+There are plans to extend the current implementation with more expressivity later on.
 
 \section{Future work}
 
 \subsection{Completing proof of remaining logical lemmas}
 
-As mentioned in \Cref{ssec:incomplete_proofs_for_some_purely_logical_lemmas}, we have not fully completed
+As mentioned in \Cref{ssec:incomplete_formal_proofs_for_some_purely_logical_lemmas}, we have not fully completed
 some of the intermediate lemmas used directly in the proof of \Cref{thm:3.2}.
 We have done some work on making sure these are purely logical steps,
 and that they should have no effect on the final result.
-Solving these would however strenghten the argument for the correctness of the proof of \Cref{thm:3.2}.
+Solving these fully would however strenghten the argument for the correctness of the formal,
+and hence informal, proof of \Cref{thm:3.2}.
 
 \subsection{Formal proof of \Cref{lem:3.3}}
 
@@ -29,4 +32,5 @@ Further work on a complete formalization of \Cref{thm:3.2} would certainly benef
 As mentioned in \Cref{ssec:proof_of_minimality}, our proof of \Cref{thm:3.2} does not include a claim that the model
 generated is minimal. As later explained in the same subsection, we would only need to include one addtional
 assumption in our proof of \Cref{thm:3.2} to be able to correctly claim that the model generated is minimal.
-We chose not to do this, as it had no effect on the results produced by the extracted algorithm.
+We chose not to do this as it had no effect on the results produced by the extracted algorithm,
+only the claim for correctness.

@@ -115,7 +115,7 @@ We can now run the example from \Cref{lst:thm_32_coq_example} using GHCi,
 which is an interactive Haskell interpreter that is included with GHC, the standard Haskell compiler.
 
 \begin{minipage}{\linewidth}
-\begin{lstlisting}[language=Haskell, label={lst:thm_32_haskell_output}, caption={\lstinline{thm_32} example output}]
+\begin{lstlisting}[language=bash, label={lst:thm_32_haskell_output}, caption={\lstinline{thm_32} example output}]
 ghci> (thesis_ex_1 thesis_ex_1_f) "a"
 Fin 0
 ghci> (thesis_ex_1 thesis_ex_1_f) "b"
@@ -176,10 +176,14 @@ Definition Cs := [
 \end{minipage}
 
 We can then run our algorithm on these clauses to get a minimal model of \lstinline{Cs}.
+This minimal model is a function that assigns to each type universe a natural number,
+which corresponds to its universe level. It is minimal in the sense that no other mapping from
+type universes to universe levels that satisfies the constraints in \lstinline{Cs} has a lower
+universe level for any given type universe.
 Even though we have not given a formal proof of \Cref{lem:3.3},
 this "real world" example still gives a correct minimal model for the type unverse constraints from Coq.
 
-\section{Limitations: extension of \Cref{lst:thm_32_coq_example} that fails}
+\section{Extension of \Cref{lst:thm_32_coq_example} that fails}
 \label{sec:limitations}
 
 There are some cases where the extracted Haskell code will crash.
@@ -212,7 +216,7 @@ If we try to run the extracted Haskell code for this example,
 we will always encounter a runtime exception:
 
 \begin{minipage}{\linewidth}
-\begin{lstlisting}[language=Haskell, label={lst:thm_32_haskell_output_extended}, caption={\lstinline{thm_32} example extended output}]
+\begin{lstlisting}[language=bash, label={lst:thm_32_haskell_output_extended}, caption={Output of \lstinline{thm_32} example extended}]
 ghci> (thesis_ex_2 thesis_ex_2_f) "a"
 *** Exception: absurd case
 CallStack (from HasCallStack):
@@ -229,7 +233,7 @@ and the values of the variables \lstinline{n}, \lstinline{m}, \lstinline{V} and 
 Doing so, we get the following output (truncated for brevity):
 
 \begin{minipage}{\linewidth}
-\begin{lstlisting}[language=Haskell, label={lst:thm_32_haskell_output_extended_debug}, caption={\lstinline{thm_32} example extended output with debug}]
+\begin{lstlisting}[language=bash, label={lst:thm_32_haskell_output_extended_debug}, caption={Output of \lstinline{thm_32} example extended, with debug}]
 ghci> (thesis_ex_2 thesis_ex_2_f) "a"
 IHn: n = 3, m = 4, V = ["a","b","c","d"], W = []
 

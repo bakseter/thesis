@@ -14,14 +14,15 @@ DONE
 + add intro to chap 3, with to key concepts; leave aside sec. 2 (lattice -> Horn) and 4 (complexity) from article
 + describe two problems in chap 2
 + "problemstilling": add to chap 2, se email Marc.
++ finish section 7
++ finish section 6
++ write conlusion
 
 --------------------------------------------------------------------------------------------------
 
 TODO (in order of importance)
 
 - determine questions to pose in abstract (remove a bit from chap 2 probably)
-- finish section 6
-- finish section 7
 - read per martin-löf's article, 1.4 and 1.5. use this to elaborate on chap 1 and 4, dep. type theory.
 - finish "other proof assistants"
 - add ensembles infinite sets, see paper
@@ -33,7 +34,6 @@ TODO (in order of importance)
 THEN (before 26.05)
 
 - double-check red text
-- write conlusion
 - write finished abstract
 
 --------------------------------------------------------------------------------------------------

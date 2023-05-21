@@ -54,10 +54,10 @@ We will paraphrase some key concepts from \cite{mbezem} that are needed to under
 our implementation and formalization.
 
 We will call join-semilattices with inflationary endomorphisms simply semilattices.
-A \textit{join-semilattice} is a partially ordered set in which any two elements have a least upper bound,
+A \emph{join-semilattice} is a partially ordered set in which any two elements have a least upper bound,
 called their join.
-The \textit{join} of a semilattice is a binary operation $\lor$ that is commutative, associative and idempotent.
-An \textit{inflationary endomorphism}, in our case, is a function
+The \emph{join} of a semilattice is a binary operation $\lor$ that is commutative, associative and idempotent.
+An \emph{inflationary endomorphism}, in our case, is a function
 that maps an element to itself or to a greater element in the ordered set.
 We denote the inflationary endomorphism as $^+$, for every lattice element $x$,
 $x^+$ is also called the successor of $x$.
@@ -65,16 +65,16 @@ The fact that $x$ is an endomorphism means that we get the following properties:
 $(x \lor y)^+ = x^+ \lor y^+$ and $x \lor x^+ = x^+$.
 
 
-A \textit{semilattice presentation} consists of a set $V$ of \textit{generators}
-(also called variables) and a set $C$ of \textit{constraints}
-(also called relations).
+A \emph{semilattice presentation} consists of a set $V$ of \emph{generators}
+(also called \emph{variables}) and a set $C$ of \emph{relations}
+(also called \emph{constraints}).
 For a semilattice $t$ and $k \in \mathbb{N}$, $t + k$ denotes the k-fold successor of $t$, thus making $t + 0 = t$ and $t + 1 = t^+$.
 A term over $V$ has the form $x_1 + k_1 \lor \ldots \lor x_m + k_m$, where $x_i \in V$ and $k_i \in \mathbb{N}$.
 Every semilattice expression is equal to a term over $V$.
 
-\textit{Horn clauses} are propositional clauses $A \rightarrow b$, with a non-empty body $A$ and conclusion $b$.
+\emph{Horn clauses} are propositional clauses $A \rightarrow b$, with a non-empty body $A$ and conclusion $b$.
 The atoms are of the form $x + k$, where $x \in V, k \in \mathbb{N}$.
-We call this special form of Horn clauses simply \textit{clauses}.
+We call this special form of Horn clauses simply \emph{clauses}.
 
 A relation is an equation $s = t$, where $s$ and $t$ are terms over $V$.
 A constraint (relation), like $a \lor b = c^+$ (with $a, b, c \in V$), expresses a relation between the generators (variables) $a, b, c$.
@@ -89,7 +89,7 @@ We define $S_C$ as the union of all $S_{s=t}$, where $s = t$ is a constraint in 
 From the axiom $x \lor x^+ = x^+$, we can derive the following clauses:
 $x, x^+ \rightarrow x^+$,
 $x^+ \rightarrow x^+$ and $x^+ \rightarrow x$.
-We are only interested in the last one, which we call a \textit{predecessor clause}.
+We are only interested in the last one, which we call a \emph{predecessor clause}.
 A predecessor clauses ensures that any atom $x + k$ that is true in a model,
 also has $x + k - 1$ true in that model.
 

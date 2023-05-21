@@ -16,23 +16,26 @@ These are sections 2 and 4 from \cite{mbezem}, respectively.
 We have also made some simplifications to various parts of our formalization,
 which we will explain in more detail in the next subsection.
 
-% For example, in Coq, there are several implementations of the mathematical notion of a \textit{set}.
+% For example, in Coq, there are several implementations of the mathematical notion of a \emph{set}.
 % When choosing which implementation to use, there are often tradeoffs to consider.
 
 \section{Simplifications for the sake of time}
 \label{sec:simplifications}
 
-\subsection{Incomplete proofs for some purely logical lemmas}
-\label{ssec:incomplete_proofs_for_some_purely_logical_lemmas}
+\subsection{Incomplete formal proofs for some purely logical lemmas}
+\label{ssec:incomplete_formal_proofs_for_some_purely_logical_lemmas}
 
 We have chosen to not spend too much time fully completing the formal Coq proofs of some purely logical lemmas,
 which are mainly used as intermediate steps in the proof of \Cref{thm:3.2}.
+When we say "purely logical", we mean that they do not contribute anything to the
+constructive part of the proof, and are not used in the extracted algorithm in any way
+(we wil expand on how most logical lemmas are removed by extraction in \Cref{ssec:ex_lfp_geq}).
+They are purely logical in the sense that they only serve to prove the correctness of the proof.
 As we will se later in this section, this is mainly due to
 very complex or impossible-to-prove formal proofs of lemmas in our set implementation
 being trivial when proving the same lemma informally.
 The formal proofs of these lemmas are however not very interesting,
-and they do not contribute to the correctness of the implementation nor
-the results of extracting code from the Coq formalization.
+which is why we have not spent too much time on them.
 
 \subsection{Leaving out the formal proof of \Cref{lem:3.3}}
 \label{ssec:leaving_out_the_formal_proof_of_lem_33}
@@ -66,8 +69,8 @@ We will explain the semantics of this proposition in more detail in \Cref{chap:i
 \label{sec:modeling_finite_sets_in_coq}
 
 Sets in mathematics are seemingly simple structures; a set is a collection of elements.
-A set cannot contain more than one of the same element (\textit{no duplicates}), and the elements are not arranged in any
-specific order (\textit{no order}).
+A set cannot contain more than one of the same element (\emph{no duplicates}), and the elements are not arranged in any
+specific order (\emph{no order}).
 This is the naive definition of a set, not taking into account the complexity of this subtle notion,
 different set theories, powerful axioms, and so on.
 
@@ -76,8 +79,8 @@ We do not care about how our elements or sets are represented, we only care abou
 This does not hold for formal proofs though. In a formal proof, we need to specify exactly what happens
 when you take the union of two sets, or how you determine whether or nor a set contains an element.
 
-One of the most important data structures in functional computer programming is the \textit{list}.
-Unlike a set, a list \textit{can} contain more than one of the same element, and the elements \textit{are} arranged in a
+One of the most important data structures in functional computer programming is the \emph{list}.
+Unlike a set, a list \emph{can} contain more than one of the same element, and the elements \emph{are} arranged in a
 specific order.
 The inductive definition of a list from Coq's standard library is as follows \cite{coqdatatypes}:
 
@@ -92,7 +95,7 @@ Inductive list (A : Type) : list A :=
 Using the \lstinline{cons} constructor, we can easily define any list containing any elements of the same type;
 we can even have lists of lists.
 The problem is of course that lists are not sets. We want to find a way to take into account the two important properties
-of \textit{no duplicates} and \textit{no order} into our definition of lists.
+of \emph{no duplicates} and \emph{no order} into our definition of lists.
 In Coq, there are several ways to do this.
 
 % https://stackoverflow.com/questions/36588263/how-to-define-set-in-coq-without-defining-set-as-a-list-of-elements
@@ -139,7 +142,7 @@ That is where the \textbf{ListSet} module comes in, which defines a new type cal
 This type is just an alias for the \lstinline{list} type from the \textbf{List} module,
 but the module also contains some useful functions.
 Most of these functions treat the input as a set in the traditional sense,
-meaning that they try to preserve the properties of \textit{no duplicates} and \textit{no order}.
+meaning that they try to preserve the properties of \emph{no duplicates} and \emph{no order}.
 Examples of some of these functions are \lstinline{set_add}, \lstinline{set_mem},
 \lstinline{set_diff}, and \lstinline{set_union}.
 We also get useful lemmas that prove common properties about these functions.
