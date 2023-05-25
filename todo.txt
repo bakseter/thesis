@@ -17,15 +17,16 @@ DONE
 + finish section 7
 + finish section 6
 + write conlusion
++ determine questions to pose in abstract (remove a bit from chap 2 probably)
++ edit last paragraph of chap 8, too grandiose
++ write finished abstract
 
 --------------------------------------------------------------------------------------------------
 
 TODO (in order of importance)
 
-- determine questions to pose in abstract (remove a bit from chap 2 probably)
 - read per martin-löf's article, 1.4 and 1.5. use this to elaborate on chap 1 and 4, dep. type theory.
 - finish "other proof assistants"
-- edit last paragraph of chap 8, too grandiose
 - add ensembles infinite sets, see paper (can be ignored if no time)
 
 - all misc. red text
@@ -35,7 +36,6 @@ TODO (in order of importance)
 THEN (before 26.05)
 
 - double-check red text
-- write finished abstract
 
 --------------------------------------------------------------------------------------------------
 

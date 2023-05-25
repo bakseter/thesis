@@ -2,7 +2,23 @@
 
 \begin{abstract}
 
-    \lipsum[1-2]
+    Proofs are an important part of mathematics, but they are not without their flaws.
+    Proofs are written by humans, and humans make mistakes.
+    In this thesis, we explore the use of proof assistants to construct formal versions of informal proofs,
+    and to extract certified programs from these formal proofs.
+    We study a specific case of two problems from dependent type theory,
+    solved by \citeauthor{mbezem} in \cite{mbezem}.
+    Firstly, we ask ourselves: is the informal proof of \Cref{thm:3.2} from \cite{mbezem} correct?
+    \Cref{thm:3.2} is a complex enough proof such that mistakes are possible.
+    Using the Coq proof assistant, we formalize the proof of \Cref{thm:3.2} from \cite{mbezem},
+    to gain more confidence in the correctness of the informal proof.
+    Secondly, is the process of formalization worth the effort?
+    Transforming an informal proof into a formal proof is not necessarily an easy or straightforward process,
+    and there are several approaches to formalization of a proof.
+    Lastly, is the the certified program extracted from the formal proof of \Cref{thm:3.2} useful?
+    The algorithm extracted from the proof has practical applications in some fields of computer science,
+    and we explore the usefulness of the algorithm in a real-world setting.
+
 
 \end{abstract}
 
