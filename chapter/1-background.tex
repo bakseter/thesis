@@ -94,7 +94,7 @@ gives us a proof of $\exists a \, \exists b \, \exists c \, \exists d \, (n = a^
 Thus, the type of the proposition varies with $n$,
 modeling universal quantification.
 
-To represent the type of an existensially quantified proposition,
+To represent the type of an existentially quantified proposition,
 we use a $\Sigma$-type, also called a dependent pair type.
 Given a function $B$ that for any $a : A$ maps to an
 element of the type $B(a)$, we denote $\sum_{a : A} B(a)$.
@@ -112,7 +112,7 @@ As we have just shown by representing universal and existential quantification,
 the concept of dependent types is important for propositions as types
 by providing us with more expressivity.
 We can also look at a more practical example of dependent types,
-using the Coq proof assistant, which has support for depedently typed programming.
+using the Coq proof assistant, which has support for dependently typed programming.
 We consider the type \lstinline{vector}, which is a type polymorphic (the elements of the list can be of any same type)
 finite list with a fixed length, which is the value on which the type depends, a natural number.
 

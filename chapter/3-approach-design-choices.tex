@@ -16,9 +16,6 @@ These are sections 2 and 4 from \cite{mbezem}, respectively.
 We have also made some simplifications to various parts of our formalization,
 which we will explain in more detail in the next subsection.
 
-% For example, in Coq, there are several implementations of the mathematical notion of a \emph{set}.
-% When choosing which implementation to use, there are often tradeoffs to consider.
-
 \section{Simplifications for the sake of time}
 \label{sec:simplifications}
 
@@ -98,19 +95,18 @@ The problem is of course that lists are not sets. We want to find a way to take 
 of \emph{no duplicates} and \emph{no order} into our definition of lists.
 In Coq, there are several ways to do this.
 
-% https://stackoverflow.com/questions/36588263/how-to-define-set-in-coq-without-defining-set-as-a-list-of-elements
-
 \subsection{List \& ListSet}
 \label{ssec:list_listset}
 
-As stated previously, Coq gives us a traditional definition of a list in the \textbf{List} module
-\footnote{The definition of \lstinline{list} is actually located in the module \textbf{Init.Datatypes}, while everything else relating to lists is in the \textbf{List} module.} of the standard library \cite{coqlist}.
+As stated previously, Coq gives us a traditional definition of a list in the \lstinline{List} module
+\footnote{The definition of \lstinline{list} is actually located in the module \lstinline{Init.Datatypes},
+while everything else relating to lists is in the \lstinline{List} module.} of the standard library \cite{coqlist}.
 Due to the nature of its definition, it is very easy to construct proofs using induction or case distinction on lists;
 we only need to check two cases.
 This list implementation is type polymorphic, meaning any type can be used to construct a list of that type.
 We do not need to give Coq any more information about the properties of the underlying type of the list other than the type itself.
 
-The \textbf{List} module also gives us a tool to combat the possibility of duplicates in a list,
+The \lstinline{List} module also gives us a tool to combat the possibility of duplicates in a list,
 with \lstinline{NoDup} and \lstinline{nodup}.
 \lstinline{NoDup} is an inductively defined proposition that asserts whether a list has duplicates or not.
 \lstinline{nodup} is a function that takes in a list and returns a list with the same elements, but without duplicates.
@@ -138,8 +134,8 @@ This convention of always passing the proof as an argument can be cumbersome and
 but it is a necessary evil to get the properties we want.
 
 Having just the implementation of the set structure is rarely enough; we also want to do operations on the set, and reason about these.
-That is where the \textbf{ListSet} module comes in, which defines a new type called \lstinline{set} \cite{coqlistset}.
-This type is just an alias for the \lstinline{list} type from the \textbf{List} module,
+That is where the \lstinline{ListSet} module comes in, which defines a new type called \lstinline{set} \cite{coqlistset}.
+This type is just an alias for the \lstinline{list} type from the \lstinline{List} module,
 but the module also contains some useful functions.
 Most of these functions treat the input as a set in the traditional sense,
 meaning that they try to preserve the properties of \emph{no duplicates} and \emph{no order}.
@@ -163,7 +159,7 @@ Qed.
 \end{lstlisting}
 \end{minipage}
 
-\lstinline{set_In} is just an alias for \lstinline{In} from the \textbf{List} module,
+\lstinline{set_In} is just an alias for \lstinline{In} from the \lstinline{List} module,
 which is a proposition that is very common in many lemmas from the standard library.
 Lemmas such as the example above are very useful when reasoning about boolean functions such as
 \lstinline{set_mem} in proofs, as transforming them into propositions makes them easier to work with
@@ -216,7 +212,7 @@ Definition strict_subset {A : Type} (s1 s2 : set A) :=
 Instead of defining a strict subset as a list that is a subset of another list and where the lists are not equal,
 we instead define it as a list that includes every element of another list and where some element of
 the other list is not in the first list.
-If we use these kinds of tricks and construct our proofs carefully, \textbf{ListSet} is a viable implementation for our purposes.
+If we use these kinds of tricks and construct our proofs carefully, \lstinline{ListSet} is a viable implementation for our purposes.
 There might however be cases where the order of the elements in the lists come into play (e.g. such as in \Cref{lst:set_op_ex2}),
 and that is where this implementation falls short.
 Another thing to note is because of the polymorphic nature of the \lstinline{set} type, any additional lemmas proven about a set can be
@@ -226,7 +222,7 @@ which is the case in our implementation; we need sets of atoms, clauses, strings
 \subsection{MSetWeakList}
 \label{ssec:msetweaklist}
 
-The Coq standard library also gives us another implementation of sets, \textbf{MSetWeakList} \cite{coqmsetweaklist}.
+The Coq standard library also gives us another implementation of sets, \lstinline{MSetWeakList} \cite{coqmsetweaklist}.
 This implementation is a bit more complicated than the previous one,
 but gives us more guarantees about the properties of the set.
 The module is expressed as a functor, which in this case is a "function" that takes in a module as an argument, and again returns a module.
@@ -266,20 +262,21 @@ Module AtomSet := Make AtomEq.
 
 The proofs of both lemmas above are trivial, but require a substantial amount of boilerplate code.
 For every type we want to use as an element in a set, we have to go through this entire process.
-In \textbf{List} and \textbf{ListSet}, we just had to pass in the proof of the decidability of equality of the type as an argument to the set functions and lemmas.
-The structure of the sets in \textbf{MSetWeakList} is also a lot more complicated than the simple and intuitive definition of \textbf{List}.
+In \lstinline{List} and \lstinline{ListSet}, we just had to pass in the proof of the decidability of equality of the type as an argument to the set functions and lemmas.
+The structure of the sets in \lstinline{MSetWeakList} is also a lot more complicated than
+the simple and intuitive definitions given in \lstinline{List}.
 This makes it harder to reason about the sets in proofs, given limited knowledge of Coq.
 
 \subsection{Ensembles}
 \label{ssec:ensembles}
 
-Yet another implementation of sets is given by the \textbf{Ensembles} module
+Yet another implementation of sets is given by the \lstinline{Ensembles} module
 which defines the structure of a set as inductive propositions \cite{coqensembles}.
 These inductive propositions assert some fact about if an element is in the set or not.
 An example that illustrates this is the definition of \lstinline{Union}:
 
 \begin{minipage}{\linewidth}
-\begin{lstlisting}[language=Coq, label={lst:union_ensemble}, caption={\lstinline{Union} in \textbf{Ensembles} module}]
+\begin{lstlisting}[language=Coq, label={lst:union_ensemble}, caption={\lstinline{Union} in \lstinline{Ensembles} module}]
 Inductive Union (B C:Ensemble) : Ensemble :=
   | Union_introl : forall x:U, In B x -> In (Union B C) x
   | Union_intror : forall x:U, In C x -> In (Union B C) x.
@@ -288,17 +285,17 @@ Inductive Union (B C:Ensemble) : Ensemble :=
 
 We see that the first constructor of \lstinline{Union} asserts that if an element is in \lstinline{B},
 then it is in the union of \lstinline{B} and \lstinline{C}.
-\textbf{Ensembles} uses \lstinline{Prop} instead of \lstinline{bool},
-making \textbf{Ensembles} useful for proofs where we do not care about decidability.
+\lstinline{Ensembles} uses \lstinline{Prop} instead of \lstinline{bool},
+making \lstinline{Ensembles} useful for proofs where we do not care about decidability.
 The biggest downside to this implementation is that we cannot reason about the size of the set.
 We can only determine if an element is in the set, not how big the set is.
-In our case, this makes the \textbf{Ensembles} module useless, since the theorem we are formalizing requires us to reason about the
+In our case, this makes the \lstinline{Ensembles} module useless, since the theorem we are formalizing requires us to reason about the
 size of the set.
 
 \section{Choice of implementation of sets}
 \label{sec:choice_of_implementation_of_sets}
 
-The simplest set (or set-like) implementation in Coq are the \textbf{List} and \textbf{ListSet} modules.
+The simplest set (or set-like) implementation in Coq are the \lstinline{List} and \lstinline{ListSet} modules.
 These require minimal knowledge of advanced Coq syntax and behave like lists, making proofs by induction easy.
 They are also polymorphic, meaning ease of use when making sets of different or self-defined types.
-Because of these reasons, we chose to go with \textbf{List} and \textbf{ListSet}.
+Because of these reasons, we chose to go with \lstinline{List} and \lstinline{ListSet}.
