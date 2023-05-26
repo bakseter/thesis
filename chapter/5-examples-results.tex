@@ -142,8 +142,8 @@ tested for use in checking loops and determining type universe levels in the
 type system of Coq.
 We briefly explained type universes in the case of Coq in \Cref{ssec:ex_lfp_geq}.
 The error that occurred in the example of a universe inconsistency in \Cref{lst:universe_inconsistency}
-was detected by Coq's own universe-constraint checking algorithm, but we can also use our own algorithm to do the same thing.
-\textcolor{red}{is this true?}
+was detected by Coq's own universe-constraint checking algorithm;
+we can also use our algorithm to detect these universe inconsistencies.
 
 Using the Coq command \lstinline{Print Universes} we can see the current state of the universe hierarchy for any Coq file.
 Doing this at the bottom of our file \lstinline{Main.v}, after our proof of \Cref{thm:3.2},
@@ -151,13 +151,12 @@ we get the following output (truncated):
 
 \begin{minipage}{\linewidth}
 \begin{lstlisting}[language=Coq, label={lst:universe_hierarchy}, caption={Universe hierarchy in \lstinline{Main.v}}]
-Set < Coq.setoid_ring.BinList.1
-    < Coq.Numbers.BinNums.1
+DefaultRelation.u0 <= Coq.Relations.Relation_Definitions.1 ;
+default_relation.u0 <= DefaultRelation.u0 ;
 
 ...
 
-  <= Coq.Lists.List.247
-  <= Coq.Lists.List.886
+Coq.Structures.Equalities.1 <= Morphisms.proper_sym_impl_iff_2.u1 ;
 \end{lstlisting}
 \end{minipage}
 
@@ -167,10 +166,15 @@ We can translate these constraints into a set of clauses \lstinline{Cs} as such:
 \begin{minipage}{\linewidth}
 \begin{lstlisting}[language=Coq, label={lst:universe_hierarchy_clauses}, caption={Universe hierarchy as clauses}]
 Definition Cs := [
-  ["Set" & 0] ~> "Coq.setoid_ring.BinList.1" & 1;
-  ["Coq.setoid_ring.BinList.1" & 1] ~> "Coq.Numbers.BinNums.1" & 2;
-  ...
-  ["Coq.Lists.List.247" & 247] ~> "Coq.Lists.List.886" & 886
+    ["Coq.Relations.Relation_Definitions.1" & 0]
+        ~> "DefaultRelation.u0" & 0;
+    ["DefaultRelation.u0" & 0]
+        ~> "default_relation.u0" & 0;
+
+    ...
+
+    ["Morphisms.proper_sym_impl_iff_2.u1" & 0]
+        ~> "Coq.Structures.Equalities.1" & 0
 ].
 \end{lstlisting}
 \end{minipage}
@@ -208,8 +212,8 @@ make -f CoqMakefile  3.25s user 0.76s system 99% cpu 4.045 total
 \end{lstlisting}
 \end{minipage}
 
-As we can see, our algorithm takes around \~18 seconds, while a full Coq compilation
-takes around \~3 seconds.
+As we can see, our algorithm takes around 18 seconds, while a full Coq compilation
+takes around 3 seconds.
 Again, keep in mind that Coq does a lot more than just checking universe constraints when
 compiling. But, as we can see from these results, our extracted algorithm
 is not too slow to be used as a prototype.

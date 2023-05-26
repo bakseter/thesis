@@ -247,8 +247,7 @@ One thing to note here is that we can define this predicate either with \lstinli
 When defined with \lstinline{Prop}, we define it as a logical predicate, using standard first-order logic syntax.
 When defined with \lstinline{Set}, we define it as a type,
 using the \lstinline{sig} type constructor in place of \lstinline{exists}.
-
-\textcolor{red}{fill inn some dep. type theory from Per-Martin article, also tie in to chap. 1}
+\lstinline{sig} denotes the $\Sigma$-type, which we explained in \Cref{ssec:dependent_types}.
 
 The reason for defining \lstinline{ex_lfp_geq} with \lstinline{Set}, is that we can then use
 Coq's extraction feature to generate Haskell code from the Coq definitions.
