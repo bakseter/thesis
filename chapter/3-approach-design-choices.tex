@@ -1,7 +1,7 @@
 \chapter{Approach \& Design Choices}
 \label{ch:approach_design_choices}
 
-When translating an informal proof or specification to a formal proof.
+When translating an informal proof or specification to a formal proof,
 one often has to decide how to model certain mathematical objects and their properties,
 and which parts of a proof that can be simplified or left out entirely.
 Our formalization effort has been focused mostly on \Cref{thm:3.2} and its proof.
@@ -29,9 +29,9 @@ We have chosen to not spend too much time fully completing the formal Coq proofs
 which are mainly used as intermediate steps in the proof of \Cref{thm:3.2}.
 When we say "purely logical", we mean that they do not contribute anything to the
 constructive part of the proof, and are not used in the extracted algorithm in any way
-(we wil expand on how most logical lemmas are removed by extraction in \Cref{ssec:ex_lfp_geq}).
+(we will expand on how most logical lemmas are removed by extraction in \Cref{ssec:ex_lfp_geq}).
 They are purely logical in the sense that they only serve to prove the correctness of the proof.
-As we will se later in this section, this is mainly due to
+As we will see later in this section, this is mainly due to
 very complex or impossible-to-prove formal proofs of lemmas in our set implementation
 being trivial when proving the same lemma informally.
 The formal proofs of these lemmas are however not very interesting,
@@ -184,7 +184,7 @@ Qed.
 \end{lstlisting}
 \end{minipage}
 
-The downside is that even easy and seamingly trivial proofs that reason about the other argument are frustratingly hard
+The downside is that even easy and seemingly trivial proofs that reason about the other argument are frustratingly hard
 (or impossible) to prove, for example:
 
 \begin{minipage}{\linewidth}

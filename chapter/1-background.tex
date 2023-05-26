@@ -26,7 +26,7 @@ When we talk about \emph{formalization}, we mean the process of translating an i
 \label{sec:type_theory}
 
 Type theory groups mathematical objects with similar properties together by assigning them a "type".
-Similarily to data types in computer programming, we can use types to represent mathematical
+Similarly to data types in computer programming, we can use types to represent mathematical
 objects. For example, we can use the data type \texttt{nat} to represent natural numbers, or we can create
 our own data types which allows us to represent e.g., clauses in logic.
 
@@ -41,7 +41,7 @@ we must construct a value of the type $P$ that shows that this is true for all n
 Such a value is a function that for any input $n$ returns a proof that $n$ is the sum of four squares,
 that is, return four numbers $a, b, c, d$ and a proof that $n = a^2 + b^2 + c^2 + d^2$.
 Proofs are mathematical objects; thus a proposition can be viewed as having the type of all its proofs (if any!).
-We can use this correspondance to model a proof as a typed computer program.
+We can use this correspondence to model a proof as a typed computer program.
 The power of this concept comes from the fact that we can use a type checker to verify that
 our program is typed correctly, and thus that the corresponding proof is valid.
 Often, the proof can be used to compute something, i.e., the numbers $a, b, c, d$ mentioned above
@@ -112,7 +112,7 @@ The purpose of a proof assistant is to get computer support to construct and ver
 Coq is based on the higher-order type theory \emph{Calculus of Inductive Constructions} (CIC), and
 functions as both a proof assistant and a dependently typed functional programming language.
 Coq also allow us to extract certified programs from the proofs of their specification to
-the programming langauges OCaml and Haskell \cite{cintro}.
+the programming languages OCaml and Haskell \cite{cintro}.
 Coq implements a specification language called \emph{Gallina},
 which allows us to define logical objects within Coq.
 These objects are typed to ensure their correctness \textcolor{red}{(is quote too direct?)},
@@ -142,7 +142,8 @@ In this case, the function is
 \lstinline{fun : nat => le_s (S n)}, where \lstinline{le_n} is a constructor
 of the type \lstinline{forall n : nat, n <= n}. By applying this constructor
 to \lstinline{S n}, we get a value of the type (and a proof) of
-\lstinline{forall n : nat, S n <= S n}. By Coq's definition of \lstinline{<},
+\lstinline{forall n : nat, S n <= S n}.
+By Coq's definition of \lstinline{<},
 our initial theorem can be rewritten as \lstinline{forall n : nat, S n <= S n}.
 This matches the type of our function, and the proof is complete.
 
@@ -163,13 +164,13 @@ Qed.
 \end{minipage}
 
 When developing proofs using Ltac, each tactic is executed or "played" one by one,
-much like an interpreter. The tactics are seperated by punctuation marks.
+much like an interpreter. The tactics are separated by punctuation marks.
 When the use of a tactic causes the proof to depend on the solving of multiple sub-proofs (called "goals"),
 we can use symbols like "-", "+", and "*" to branch into these sub-proofs and solve their goals independently.
 Once a goal has been solved, we can move on the next. When there are no more goals, the proof is complete.
 Coq provides us with tooling that gives us the ability to see our goals and the proof state
 to further simplify the process \cite{cide}.
-Ltac is not the only proof langauge, with another example being \emph{SSReflect} \cite{cssr}.
+Ltac is not the only proof language, with another example being \emph{SSReflect} \cite{cssr}.
 
 \subsection{Other proof assistants}
 \label{ssec:other_proof_assistants}
@@ -177,7 +178,7 @@ Ltac is not the only proof langauge, with another example being \emph{SSReflect}
 \subsubsection{Agda}
 \label{sssec:agda}
 
-Agda is a depdently typed functional programming language based on Martin-Löf's
+Agda is a dependently typed functional programming language based on Martin-Löf's
 intuitionistic type theory. Unlike Coq, Agda does not use tactics
 However, by using proposition as types, Agda can also function as a proof assistant
 \cite{agdatut}.

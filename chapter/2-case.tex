@@ -33,19 +33,22 @@ inflationary endomorphisms and Horn clauses are.
 Loop-checking, in our case, means determining if a set of constraints
 on some set of variables generate an infinite loop between constraints.
 This is important for algorithms such as a type-checking algorithm where
-type universe levels have to be determined, and the algorithm has to be decideable.
+type universe levels have to be determined, and the algorithm has to be decidable.
 We have focused on formalizing the proof of \Cref{thm:3.2} from \cite{mbezem}.
 Since this proof is complex enough that mistakes are possible, it is a good candidate for formalization.
 By formalizing the proof and then verifying it using Coq, we can be sure that it is correct.
 
 Secondly, we are also interested in finding out whether or not the process of formalizing the proof
 can be completed in a reasonable amount of time, and with a reasonable amount of effort.
-Is the promise of a complete verification of the proof worth the effort of formalizing it?
+A formal proof of \Cref{thm:3.2} is a sizeable undertaking, and we want to know if it is feasible to complete it.
 
-Finally, by using an advanced feature of Coq, we can also extract an algorithm from the proof,
+Finally, we want to assess if our formalization effort will be worth it.
+By completing a formal version of \Cref{thm:3.2} we can be very confident in its correctness.
+We can also, by using an advanced feature of Coq, extract an algorithm from the formal proof,
 where this algorithm is certified to produce correct results.
 As an aside, this algorithm has direct applications to the formalization and verification of the Coq proof assistant itself,
-as Coq employs a similar algorithm to resolve universe-level constraints in its type system.
+as the algorithm outlined by the proofs in \cite{mbezem} can be used to solve a similiar problem that Coq encounters when
+checking the consistency of universe levels during interpetation/compilation.
 
 \section{Relevant parts of the paper}
 \label{sec:relevant_parts_of_the_paper}

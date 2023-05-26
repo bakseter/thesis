@@ -56,7 +56,7 @@ Definition atom_true (a : Atom) (f : Frontier) : bool :=
   | (x & k) =>
     match f x with
     | infty => true
-    (* se explantation for <=? below *)
+    (* see explanation for <=? below *)
     | fin n => k <=? n
     end
   end.
@@ -209,7 +209,7 @@ only returns true if \textbf{all} the values from the first frontier are greater
 the values from the second frontier.
 
 \begin{minipage}{\linewidth}
-\begin{lstlisting}[language=Coq, label={lst:geq_def}, caption={Pointwise comparing frontiers with \lstinline{geq} in Coq}]
+\begin{lstlisting}[language=Coq, label={lst:geq_def}, caption={Point-wise comparing frontiers with \lstinline{geq} in Coq}]
 Fixpoint geq (V : set string) (g f : Frontier) : bool :=
   match V with
   | []      => true
@@ -265,7 +265,7 @@ Informative objects, on the other hand, are kept when extracting, and can be use
 This is why we define \lstinline{ex_lfp_geq} with \lstinline{Set}.
 
 Another important thing to we need to keep in mind when doing proofs with extraction in mind is to avoid \emph{universe inconsistencies}.
-We will not eloborate much on what type universes are, but we will give a brief explanation of how they work in Coq.
+We will not elaborate much on what type universes are, but we will give a brief explanation of how they work in Coq.
 In Coq, all objects of type \lstinline{Prop} live in the universe \lstinline{Set}, and all objects of type \lstinline{Set}
 live in the universe \lstinline{Type}. The universe hierarchy extends infinitely past \lstinline{Type}, but we will not
 need to go further than that.
@@ -278,7 +278,7 @@ Here is an example to illustrate this:
 (* type signature of sig *)
 sig : forall A : Type, (A -> Prop) -> Type
 
-(* Prop <= Set, ok *)
+(* Prop <= Set, OK *)
 Definition invalid_def (A : Prop) : Set :=
   sig (fun x : A => x = x).
 

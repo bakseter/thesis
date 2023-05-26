@@ -10,8 +10,8 @@
 It is easiest to define as much of the example as possible in Coq and then extract it to Haskell,
 since Coq heavily prioritizes code correctness over readability when extracting.
 This makes much of the Haskell code hard to read due to unconventional syntax,
-e.g. using a recursion operator insted of calling a function recursively.
-First, we can look at the type of \lstinline{thm_32} in Coq to see what arguments we need to give it.
+e.g. using a recursion operator instead of calling a function recursively.
+First, we can look at the type of \lstinline{thm_32} in Coq to see what arguments we need to provide it with.
 We do this by using the Coq command \lstinline{Check}.
 
 \begin{minipage}{\linewidth}
@@ -40,11 +40,11 @@ where all the variables are the arguments given to \lstinline{pre_thm}, i.e. the
 This proposition states some logical assumptions, and concludes with a definition of \lstinline{ex_lfp_geq}.
 By the notion of propositions as types, this proposition is a function
 that transforms a proof of the assumptions into a proof of the conclusion.
-Since the conlusion is a definition of \lstinline{ex_lfp_geq} instantiated with some variables,
+Since the conclusion is a definition of \lstinline{ex_lfp_geq} instantiated with some variables,
 we get a proof of \lstinline{ex_lfp_geq} for these same variables.
 Looking at the definition of \lstinline{ex_lfp_geq},
 it defines a proposition stating that there exists a \lstinline{g : Frontier} such that the proposition holds.
-If such a \lstinline{g} exists, then the \lstinline{g} itsself is evidence (proof) that the proposition holds.
+If such a \lstinline{g} exists, then the \lstinline{g} itself is evidence (proof) that the proposition holds.
 Hence, a proof of \lstinline{ex_lfp_geq} is simply a \lstinline{Frontier} that satisfies the conditions in \lstinline{ex_lfp_geq}.
 
 With all this information, we can now define an example of \lstinline{thm_32} in Coq.
@@ -75,7 +75,7 @@ Example thesis_ex_1 :=
 \end{lstlisting}
 \end{minipage}
 
-Since Coq elimiates many of the logical parts of the proof when extracting,
+Since Coq eliminates many of the logical parts of the proof when extracting,
 \cite[p. ~8]{coqextroverview},
 we can avoid the tedious task of proving all the assumptions of \lstinline{pre_thm} by simply
 using the extracted Haskell function for \lstinline{thesis_ex_1}.
@@ -141,7 +141,7 @@ As stated previously, the algorithm described \Cref{thm:3.2} is being
 tested for use in checking loops and determining type universe levels in the
 type system of Coq.
 We briefly explained type universes in the case of Coq in \Cref{ssec:ex_lfp_geq}.
-The error that occured in the example of a universe inconsistency in \Cref{lst:universe_inconsistency}
+The error that occurred in the example of a universe inconsistency in \Cref{lst:universe_inconsistency}
 was detected by Coq's own universe-constraint checking algorithm, but we can also use our own algorithm to do the same thing.
 \textcolor{red}{is this true?}
 
@@ -181,7 +181,38 @@ which corresponds to its universe level. It is minimal in the sense that no othe
 type universes to universe levels that satisfies the constraints in \lstinline{Cs} has a lower
 universe level for any given type universe.
 Even though we have not given a formal proof of \Cref{lem:3.3},
-this "real world" example still gives a correct minimal model for the type unverse constraints from Coq.
+this "real world" example still gives a correct minimal model for the type universe constraints from Coq.
+
+\subsection{Loose comparison to Coq's universe consistency algorithm}
+
+To give the reader an idea of how our extracted algorithm compares to some of
+the work done by the Coq compiler on a similar problem, we can
+loosely compare the run time of our algorithm to the run time of
+a full Coq compilation of our Coq project, which includes all
+lemmas and theorems needed for \Cref{thm:3.2}, and the proof itself.
+It is important to note that this is \textbf{not} a one-to-one comparison,
+since Coq does a lot more when compiling than simply checking universe constraints.
+We give this comparison only to give the reader an idea of the order of magnitude of the run time of our algorithm
+in a real world setting.
+
+We compile our Haskell algorithm using the Stack build tool,
+which is more efficient than using an interpreter such as GHCi.
+Using the \lstinline[language=bash]{time} command, we can check how long
+any command takes. For our Haskell algorithm we run the command \lstinline[language=bash]{stack run},
+and for the Coq example we run the command \lstinline[language=bash]{make -f CoqMakefile}.
+
+\begin{minipage}{\linewidth}
+\begin{lstlisting}[language=bash, label={lst:real_world_example_bench}, caption={Real-world example benchmark}]
+stack run  18.47s user 0.94s system 100% cpu 19.369 total
+make -f CoqMakefile  3.25s user 0.76s system 99% cpu 4.045 total
+\end{lstlisting}
+\end{minipage}
+
+As we can see, our algorithm takes around \~18 seconds, while a full Coq compilation
+takes around \~3 seconds.
+Again, keep in mind that Coq does a lot more than just checking universe constraints when
+compiling. But, as we can see from these results, our extracted algorithm
+is not too slow to be used as a prototype.
 
 \section{Extension of \Cref{lst:thm_32_coq_example} that fails}
 \label{sec:limitations}
@@ -286,5 +317,5 @@ But why does this happen at all? Shouldn't the Coq proof have failed at the poin
 This error is due to the fact that we have not given a formal proof of \Cref{lem:3.3}.
 Since we do not use \Cref{lem:3.3} to calculate a new frontier in the algorithm but instead just
 redefine \Cref{lem:3.3} as the identity function, this has consequences for later steps in the algorithm.
-This example in particular is "cosntructed to fail"; as we saw in the previous section,
+This example in particular is "constructed to fail"; as we saw in the previous section,
 the algorithm does work for many cases even without a formal proof of \Cref{lem:3.3}.

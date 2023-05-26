@@ -1,5 +1,7 @@
 % 'Prop' eq 'Set'.
 %'ex2.u0' lt 'eq.u0'.
+% Uncomment below for inconsistent
+%'ex2.u0' eq 'Prop'.
 'SetoidTactics.DefaultRelation.u0' leq 'Coq.Relations.Relation_Definitions.1'.
 'SetoidTactics.default_relation.u0' leq 'SetoidTactics.DefaultRelation.u0'.
 'SetoidTactics.default_relation.u0' leq 'Coq.Relations.Relation_Definitions.1'.

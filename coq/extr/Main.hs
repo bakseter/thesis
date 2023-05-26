@@ -1,17 +1,6 @@
 module Main where
 
-import qualified Data.Char
-import qualified Data.Function
-import qualified Data.List
-import qualified Data.Ratio
-import qualified Debug.Trace
 import qualified Prelude
-import qualified Text.Printf
-
--- for my own sanity
-(++) = (Prelude.++)
-($) = (Prelude.$)
-(.) = (Prelude..)
 
 __ :: any
 __ = Prelude.error "Logical or arity value used"
@@ -179,19 +168,6 @@ incl_dec dec v w =
 data Ninfty =
    Infty
  | Fin Prelude.Integer
- deriving (Prelude.Show, Prelude.Eq)
-
-instance Prelude.Ord Ninfty where {
-  compare x y =
-    case x of {
-     Infty ->
-      case y of {
-       Infty -> Prelude.EQ;
-       Fin _ -> Prelude.GT};
-     Fin n ->
-      case y of {
-       Infty -> Prelude.LT;
-       Fin m -> Prelude.compare n m}}}
 
 sinfty :: Ninfty -> Ninfty
 sinfty x =
@@ -361,26 +337,18 @@ lem_33 :: (Set Clause0) -> (Set Prelude.String) -> (Set Prelude.String) ->
           Frontier -> ((Set Clause0) -> (Set Prelude.String) -> (Set
           Prelude.String) -> Frontier -> Prelude.Integer -> Pre_thm) ->
           Ex_lfp_geq -> Ex_lfp_geq
-lem_33 _ _ _ _ _ x =
-    x
+lem_33 =
+  Prelude.error "AXIOM TO BE REALIZED"
 
 thm_32 :: Prelude.Integer -> Prelude.Integer -> (Set Clause0) -> (Set
           Prelude.String) -> (Set Prelude.String) -> Frontier -> Ex_lfp_geq
-          -> Prelude.Bool -> Ex_lfp_geq
-thm_32 n m cs7 v w f x debug =
+          -> Ex_lfp_geq
+thm_32 n m cs7 v w f x =
   nat_rect (\_ cs8 v0 _ f0 _ _ _ _ ->
     eq_rec_r ([]) (ex_lfp_geq_empty cs8 f0)
       (nodup
         ((Prelude.==) :: Prelude.String -> Prelude.String -> Prelude.Bool)
         v0)) (\n0 iHn m0 ->
-            (if debug then
-              Debug.Trace.trace
-              ("IHn: n = " ++ Prelude.show n0 ++ ", m = " ++ Prelude.show m0 ++
-              ", V = " ++ (Prelude.show v) ++ ", W = " ++ (Prelude.show w) ++
-              -- Prelude.concatMap (\var -> ", f(" ++ var ++ ") = " ++ Prelude.show (f var)) v)
-              "")
-            else Prelude.id)
-              $
     nat_rect (\cs8 v0 w0 f0 _ _ _ h2 ->
       ex_lfp_geq_incl cs8
         (nodup
@@ -389,30 +357,17 @@ thm_32 n m cs7 v w f x debug =
         (nodup
           ((Prelude.==) :: Prelude.String -> Prelude.String -> Prelude.Bool)
           w0) f0 h2) (\m1 iHm cs8 v0 w0 f0 _ _ _ h2 ->
-            (if debug then
-              Debug.Trace.trace
-               ("IHm: n = " ++ Prelude.show (Prelude.succ n0) ++ ", m = " ++ Prelude.show m1 ++
-               ", V = " ++ (Prelude.show v0) ++ ", W = " ++ (Prelude.show w0) ++
-               -- Prelude.concatMap (\var -> ", f(" ++ var ++ ") = " ++ Prelude.show (f0 var)) v)
-               "")
-            else Prelude.id)
-               $
       let {
-       h3 =
-           let {arg1 =
-             (length
-               (set_diff
-               ((Prelude.==) :: Prelude.String -> Prelude.String -> Prelude.Bool)
-                     (nodup
-                       ((Prelude.==) :: Prelude.String -> Prelude.String -> Prelude.Bool)
-                       v0)
-                     (nodup
-                       ((Prelude.==) :: Prelude.String -> Prelude.String -> Prelude.Bool)
-                       w0)))}
-               in let {arg2 = (Prelude.succ m1)}
-               in
-                   -- (Debug.Trace.trace ("le_lt_eq_dec: n = " ++ Prelude.show arg1 ++ ", m = " ++ Prelude.show arg2)) (le_lt_eq_dec arg1 arg2)}
-                   (le_lt_eq_dec arg1 arg2)}
+       h3 = le_lt_eq_dec
+              (length
+                (set_diff
+                  ((Prelude.==) :: Prelude.String -> Prelude.String -> Prelude.Bool)
+                  (nodup
+                    ((Prelude.==) :: Prelude.String -> Prelude.String -> Prelude.Bool)
+                    v0)
+                  (nodup
+                    ((Prelude.==) :: Prelude.String -> Prelude.String -> Prelude.Bool)
+                    w0))) (Prelude.succ m1)}
       in
       case h3 of {
        Prelude.True -> iHm cs8 v0 w0 f0 __ __ __ h2;
@@ -520,7 +475,7 @@ vars' =
 
 fail_ex_0 :: Ex_lfp_geq -> Ex_lfp_geq
 fail_ex_0 x =
-  thm_32 (length vars') (length vars') cs vars' ([]) fail_ex_0_f x Prelude.True
+  thm_32 (length vars') (length vars') cs vars' ([]) fail_ex_0_f x
 
 cs0 :: ([]) Clause0
 cs0 =
@@ -540,7 +495,7 @@ vars'0 =
 
 fail_ex_1 :: Ex_lfp_geq -> Ex_lfp_geq
 fail_ex_1 x =
-  thm_32 (length vars'0) (length vars'0) cs0 vars'0 ([]) fail_ex_1_f x Prelude.True
+  thm_32 (length vars'0) (length vars'0) cs0 vars'0 ([]) fail_ex_1_f x
 
 cs1 :: ([]) Clause0
 cs1 =
@@ -560,7 +515,7 @@ vars'1 =
 
 fail_ex_2 :: Ex_lfp_geq -> Ex_lfp_geq
 fail_ex_2 x =
-  thm_32 (length vars'1) (length vars'1) cs1 vars'1 ([]) fail_ex_2_f x Prelude.True
+  thm_32 (length vars'1) (length vars'1) cs1 vars'1 ([]) fail_ex_2_f x
 
 cs2 :: ([]) Clause0
 cs2 =
@@ -579,7 +534,7 @@ vars'2 =
 
 fail_ex_3 :: Ex_lfp_geq -> Ex_lfp_geq
 fail_ex_3 x =
-  thm_32 (length vars'2) (length vars'2) cs2 vars'2 ([]) fail_ex_3_f x Prelude.True
+  thm_32 (length vars'2) (length vars'2) cs2 vars'2 ([]) fail_ex_3_f x
 
 cs3 :: ([]) Clause0
 cs3 =
@@ -598,38 +553,504 @@ vars'3 =
 
 fail_ex_4 :: Ex_lfp_geq -> Ex_lfp_geq
 fail_ex_4 x =
-  thm_32 (length vars'3) (length vars'3) cs3 vars'3 ([]) fail_ex_4_f x Prelude.True
+  thm_32 (length vars'3) (length vars'3) cs3 vars'3 ([]) fail_ex_4_f x
 
 cs4 :: ([]) Clause0
 cs4 =
-  (:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "max_case_strong.u0"
+  (:) (Clause ((:) (Atom "Coq.Relations.Relation_Definitions.1" 0) ([]))
+    (Atom "DefaultRelation.u0" 0)) ((:) (Clause ((:) (Atom
+    "DefaultRelation.u0" 0) ([])) (Atom "default_relation.u0" 0)) ((:)
+    (Clause ((:) (Atom "Coq.Relations.Relation_Definitions.1" 0) ([])) (Atom
+    "default_relation.u0" 0)) ((:) (Clause ((:) (Atom "DefaultRelation.u0" 0)
+    ([])) (Atom "equivalence_default.u0" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Relations.Relation_Definitions.1" 0) ([])) (Atom
+    "equivalence_default.u0" 0)) ((:) (Clause ((:) (Atom "ex.u0" 0) ([]))
+    (Atom "Coq.Relations.Relation_Definitions.1" 0)) ((:) (Clause ((:) (Atom
+    "ex2.u0" 0) ([])) (Atom "Coq.Relations.Relation_Definitions.1" 0)) ((:)
+    (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
+    "Coq.Relations.Relation_Definitions.1" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Init.Logic.11" 0) ([])) (Atom "Coq.Relations.Relation_Definitions.1"
+    0)) ((:) (Clause ((:) (Atom "eq_ind_r.u0" 0) ([])) (Atom
+    "Coq.Relations.Relation_Definitions.1" 0)) ((:) (Clause ((:) (Atom
+    "Basics.flip.u0" 0) ([])) (Atom "Coq.Relations.Relation_Definitions.1"
+    0)) ((:) (Clause ((:) (Atom "Basics.flip.u1" 0) ([])) (Atom
+    "Coq.Relations.Relation_Definitions.1" 0)) ((:) (Clause ((:) (Atom
+    "ID.u0" 0) ([])) (Atom "Coq.Relations.Relation_Definitions.1" 0)) ((:)
+    (Clause ((:) (Atom "Morphisms.respectful_hetero.u0" 0) ([])) (Atom
+    "Coq.Relations.Relation_Definitions.1" 0)) ((:) (Clause ((:) (Atom
+    "Morphisms.respectful_hetero.u1" 0) ([])) (Atom
+    "Coq.Relations.Relation_Definitions.1" 0)) ((:) (Clause ((:) (Atom
+    "Morphisms.respectful_hetero.u2" 0) ([])) (Atom
+    "Coq.Relations.Relation_Definitions.1" 0)) ((:) (Clause ((:) (Atom
+    "Morphisms.respectful_hetero.u3" 0) ([])) (Atom
+    "Coq.Relations.Relation_Definitions.1" 0)) ((:) (Clause ((:) (Atom
+    "Morphisms.forall_def.u0" 0) ([])) (Atom
+    "Coq.Relations.Relation_Definitions.1" 0)) ((:) (Clause ((:) (Atom
+    "Morphisms.subrelation_proper.u0" 0) ([])) (Atom
+    "Coq.Relations.Relation_Definitions.1" 0)) ((:) (Clause ((:) (Atom
+    "Private_Dec.max_case_strong.u0" 0) ([])) (Atom "Private_Dec.max_case.u0"
+    0)) ((:) (Clause ((:) (Atom "Private_Dec.min_case_strong.u0" 0) ([]))
+    (Atom "Private_Dec.min_case.u0" 0)) ((:) (Clause ((:) (Atom
+    "Private_Dec.max_case_strong.u0" 0) ([])) (Atom "max_case_strong.u0" 0))
+    ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "max_case_strong.u0"
     (Prelude.succ 0))) ((:) (Clause ((:) (Atom "Coq.Init.Logic.10" 0) ([]))
-    (Atom "max_case_strong.u0" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
-    "eq.u0" 0) ([])) (Atom "min_case_strong.u0" (Prelude.succ 0))) ((:)
-    (Clause ((:) (Atom "Coq.Init.Logic.10" 0) ([])) (Atom
-    "min_case_strong.u0" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
-    "FunctionalExtensionality.functional_extensionality.u1" 0) ([])) (Atom
-    "FunctionalExtensionality.forall_extensionality.u1" (Prelude.succ 0)))
+    (Atom "max_case_strong.u0" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Init.Logic.11" 0) ([])) (Atom "max_case_strong.u0" (Prelude.succ
+    0))) ((:) (Clause ((:) (Atom "max_case_strong.u0" 0) ([])) (Atom
+    "max_case.u0" 0)) ((:) (Clause ((:) (Atom
+    "Private_Dec.min_case_strong.u0" 0) ([])) (Atom "min_case_strong.u0" 0))
+    ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "min_case_strong.u0"
+    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "Coq.Init.Logic.10" 0) ([]))
+    (Atom "min_case_strong.u0" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Init.Logic.11" 0) ([])) (Atom "min_case_strong.u0" (Prelude.succ
+    0))) ((:) (Clause ((:) (Atom "min_case_strong.u0" 0) ([])) (Atom
+    "min_case.u0" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Relations.Relation_Definitions.1" 0) ([])) (Atom
+    "Coq.Relations.Relation_Operators.1" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Relations.Relation_Definitions.1" 0) ([])) (Atom
+    "Coq.Relations.Relation_Operators.2" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Relations.Relation_Definitions.1" 0) ([])) (Atom
+    "Coq.Relations.Relation_Operators.3" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Relations.Relation_Definitions.1" 0) ([])) (Atom
+    "Coq.Relations.Relation_Operators.4" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Relations.Relation_Definitions.1" 0) ([])) (Atom
+    "Coq.Relations.Relation_Operators.5" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Relations.Relation_Definitions.1" 0) ([])) (Atom
+    "Coq.Relations.Relation_Operators.6" 0)) ((:) (Clause ((:) (Atom "sum.u0"
+    0) ([])) (Atom "Coq.Relations.Relation_Operators.7" 0)) ((:) (Clause ((:)
+    (Atom "sum.u1" 0) ([])) (Atom "Coq.Relations.Relation_Operators.7" 0))
+    ((:) (Clause ((:) (Atom "sigT.u0" 0) ([])) (Atom
+    "Coq.Relations.Relation_Operators.8" 0)) ((:) (Clause ((:) (Atom
+    "sigT.u1" 0) ([])) (Atom "Coq.Relations.Relation_Operators.9" 0)) ((:)
+    (Clause ((:) (Atom "Coq.Relations.Relation_Operators.8" 0) ([])) (Atom
+    "Coq.Relations.Relation_Operators.10" 0)) ((:) (Clause ((:) (Atom "eq.u0"
+    0) ([])) (Atom "Coq.Relations.Relation_Operators.10" 0)) ((:) (Clause
+    ((:) (Atom "Coq.Init.Logic.11" 0) ([])) (Atom
+    "Coq.Relations.Relation_Operators.10" 0)) ((:) (Clause ((:) (Atom
+    "eq_ind_r.u0" 0) ([])) (Atom "Coq.Relations.Relation_Operators.10" 0))
+    ((:) (Clause ((:) (Atom "sigT.u0" 0) ([])) (Atom
+    "Coq.Relations.Relation_Operators.10" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Init.Specif.78" 0) ([])) (Atom "Coq.Relations.Relation_Operators.10"
+    0)) ((:) (Clause ((:) (Atom "prod.u0" 0) ([])) (Atom
+    "Coq.Relations.Relation_Operators.10" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Relations.Relation_Operators.9" 0) ([])) (Atom
+    "Coq.Relations.Relation_Operators.11" 0)) ((:) (Clause ((:) (Atom "eq.u0"
+    0) ([])) (Atom "Coq.Relations.Relation_Operators.11" 0)) ((:) (Clause
+    ((:) (Atom "Coq.Init.Logic.11" 0) ([])) (Atom
+    "Coq.Relations.Relation_Operators.11" 0)) ((:) (Clause ((:) (Atom
+    "eq_ind_r.u0" 0) ([])) (Atom "Coq.Relations.Relation_Operators.11" 0))
+    ((:) (Clause ((:) (Atom "sigT.u1" 0) ([])) (Atom
+    "Coq.Relations.Relation_Operators.11" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Init.Specif.78" 0) ([])) (Atom "Coq.Relations.Relation_Operators.11"
+    0)) ((:) (Clause ((:) (Atom "prod.u1" 0) ([])) (Atom
+    "Coq.Relations.Relation_Operators.11" 0)) ((:) (Clause ((:) (Atom
+    "prod.u0" 0) ([])) (Atom "Coq.Relations.Relation_Operators.14" 0)) ((:)
+    (Clause ((:) (Atom "prod.u1" 0) ([])) (Atom
+    "Coq.Relations.Relation_Operators.15" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Relations.Relation_Operators.14" 0) ([])) (Atom
+    "Coq.Relations.Relation_Operators.16" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Relations.Relation_Operators.15" 0) ([])) (Atom
+    "Coq.Relations.Relation_Operators.16" 0)) ((:) (Clause ((:) (Atom
+    "prod.u0" 0) ([])) (Atom "Coq.Relations.Relation_Operators.16" 0)) ((:)
+    (Clause ((:) (Atom "prod.u1" 0) ([])) (Atom
+    "Coq.Relations.Relation_Operators.16" 0)) ((:) (Clause ((:) (Atom "eq.u0"
+    0) ([])) (Atom "equal_f.u0" 0)) ((:) (Clause ((:) (Atom "eq_ind_r.u0" 0)
+    ([])) (Atom "equal_f.u0" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([]))
+    (Atom "equal_f.u1" 0)) ((:) (Clause ((:) (Atom "eq_ind_r.u0" 0) ([]))
+    (Atom "equal_f.u1" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
+    "equal_f_dep.u0" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
+    "equal_f_dep.u1" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
+    "functional_extensionality_dep.u0" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0)
+    ([])) (Atom "functional_extensionality_dep.u1" 0)) ((:) (Clause ((:)
+    (Atom "functional_extensionality_dep.u0" 0) ([])) (Atom
+    "functional_extensionality.u0" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0)
+    ([])) (Atom "functional_extensionality.u0" 0)) ((:) (Clause ((:) (Atom
+    "functional_extensionality_dep.u1" 0) ([])) (Atom
+    "functional_extensionality.u1" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0)
+    ([])) (Atom "functional_extensionality.u1" 0)) ((:) (Clause ((:) (Atom
+    "functional_extensionality.u0" 0) ([])) (Atom "forall_extensionality.u0"
+    0)) ((:) (Clause ((:) (Atom "forall_extensionality.u3" 0) ([])) (Atom
+    "forall_extensionality.u0" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([]))
+    (Atom "forall_extensionality.u0" 0)) ((:) (Clause ((:) (Atom
+    "functional_extensionality.u1" 0) ([])) (Atom "forall_extensionality.u1"
+    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "forall_extensionality.u3" 0)
+    ([])) (Atom "forall_extensionality.u1" 0)) ((:) (Clause ((:) (Atom
+    "eq.u0" 0) ([])) (Atom "forall_extensionality.u1" (Prelude.succ 0))) ((:)
+    (Clause ((:) (Atom "forall_extensionality.u1" 0) ([])) (Atom
+    "forall_extensionality.u2" 0)) ((:) (Clause ((:) (Atom
+    "forall_extensionality.u3" 0) ([])) (Atom "forall_extensionality.u2" 0))
+    ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "forall_extensionality.u3"
+    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "functional_extensionality.u0"
+    0) ([])) (Atom "forall_extensionalityP.u0" 0)) ((:) (Clause ((:) (Atom
+    "eq.u0" 0) ([])) (Atom "forall_extensionalityP.u0" 0)) ((:) (Clause ((:)
+    (Atom "functional_extensionality.u0" 0) ([])) (Atom
+    "forall_extensionalityS.u0" 0)) ((:) (Clause ((:) (Atom
+    "forall_extensionalityS.u1" 0) ([])) (Atom "forall_extensionalityS.u0"
+    0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
+    "forall_extensionalityS.u0" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([]))
+    (Atom "forall_extensionalityS.u1" (Prelude.succ 0))) ((:) (Clause ((:)
+    (Atom "functional_extensionality_dep.u0" 0) ([])) (Atom
+    "functional_extensionality_dep_good.u0" 0)) ((:) (Clause ((:) (Atom
+    "eq.u0" 0) ([])) (Atom "functional_extensionality_dep_good.u0" 0)) ((:)
+    (Clause ((:) (Atom "Coq.Init.Logic.11" 0) ([])) (Atom
+    "functional_extensionality_dep_good.u0" 0)) ((:) (Clause ((:) (Atom
+    "functional_extensionality_dep.u1" 0) ([])) (Atom
+    "functional_extensionality_dep_good.u1" 0)) ((:) (Clause ((:) (Atom
+    "eq.u0" 0) ([])) (Atom "functional_extensionality_dep_good.u1" 0)) ((:)
+    (Clause ((:) (Atom "Coq.Init.Logic.11" 0) ([])) (Atom
+    "functional_extensionality_dep_good.u1" 0)) ((:) (Clause ((:) (Atom
+    "functional_extensionality_dep.u0" 0) ([])) (Atom
+    "functional_extensionality_dep_good_refl.u0" 0)) ((:) (Clause ((:) (Atom
+    "functional_extensionality_dep_good.u0" 0) ([])) (Atom
+    "functional_extensionality_dep_good_refl.u0" 0)) ((:) (Clause ((:) (Atom
+    "eq.u0" 0) ([])) (Atom "functional_extensionality_dep_good_refl.u0" 0))
+    ((:) (Clause ((:) (Atom "Coq.Init.Logic.11" 0) ([])) (Atom
+    "functional_extensionality_dep_good_refl.u0" 0)) ((:) (Clause ((:) (Atom
+    "functional_extensionality_dep.u1" 0) ([])) (Atom
+    "functional_extensionality_dep_good_refl.u1" 0)) ((:) (Clause ((:) (Atom
+    "functional_extensionality_dep_good.u1" 0) ([])) (Atom
+    "functional_extensionality_dep_good_refl.u1" 0)) ((:) (Clause ((:) (Atom
+    "eq.u0" 0) ([])) (Atom "functional_extensionality_dep_good_refl.u1" 0))
+    ((:) (Clause ((:) (Atom "Coq.Init.Logic.11" 0) ([])) (Atom
+    "functional_extensionality_dep_good_refl.u1" 0)) ((:) (Clause ((:) (Atom
+    "functional_extensionality_dep_good.u0" 0) ([])) (Atom
+    "forall_sig_eq_rect.u0" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([]))
+    (Atom "forall_sig_eq_rect.u0" 0)) ((:) (Clause ((:) (Atom "sig.u0" 0)
+    ([])) (Atom "forall_sig_eq_rect.u0" 0)) ((:) (Clause ((:) (Atom
+    "functional_extensionality_dep_good.u1" 0) ([])) (Atom
+    "forall_sig_eq_rect.u1" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([]))
+    (Atom "forall_sig_eq_rect.u1" 0)) ((:) (Clause ((:) (Atom "sig.u0" 0)
+    ([])) (Atom "forall_sig_eq_rect.u1" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Init.Specif.16" 0) ([])) (Atom "forall_sig_eq_rect.u1" 0)) ((:)
+    (Clause ((:) (Atom "forall_sig_eq_rect.u0" 0) ([])) (Atom
+    "forall_eq_rect.u0" 0)) ((:) (Clause ((:) (Atom "sig.u0" 0) ([])) (Atom
+    "forall_eq_rect.u0" 0)) ((:) (Clause ((:) (Atom "Coq.Init.Specif.16" 0)
+    ([])) (Atom "forall_eq_rect.u0" 0)) ((:) (Clause ((:) (Atom
+    "forall_sig_eq_rect.u1" 0) ([])) (Atom "forall_eq_rect.u1" 0)) ((:)
+    (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "forall_eq_rect.u1" 0)) ((:)
+    (Clause ((:) (Atom "sig.u0" 0) ([])) (Atom "forall_eq_rect.u1" 0)) ((:)
+    (Clause ((:) (Atom "Coq.Init.Specif.16" 0) ([])) (Atom
+    "forall_eq_rect.u1" 0)) ((:) (Clause ((:) (Atom "forall_sig_eq_rect.u2"
+    0) ([])) (Atom "forall_eq_rect.u2" 0)) ((:) (Clause ((:) (Atom
+    "functional_extensionality_dep_good_refl.u0" 0) ([])) (Atom
+    "forall_eq_rect_comp.u0" 0)) ((:) (Clause ((:) (Atom "forall_eq_rect.u0"
+    0) ([])) (Atom "forall_eq_rect_comp.u0" 0)) ((:) (Clause ((:) (Atom
+    "eq.u0" 0) ([])) (Atom "forall_eq_rect_comp.u0" 0)) ((:) (Clause ((:)
+    (Atom "functional_extensionality_dep_good_refl.u1" 0) ([])) (Atom
+    "forall_eq_rect_comp.u1" 0)) ((:) (Clause ((:) (Atom "forall_eq_rect.u1"
+    0) ([])) (Atom "forall_eq_rect_comp.u1" 0)) ((:) (Clause ((:) (Atom
+    "eq.u0" 0) ([])) (Atom "forall_eq_rect_comp.u1" 0)) ((:) (Clause ((:)
+    (Atom "sig.u0" 0) ([])) (Atom "forall_eq_rect_comp.u1" 0)) ((:) (Clause
+    ((:) (Atom "Coq.Init.Specif.16" 0) ([])) (Atom "forall_eq_rect_comp.u1"
+    0)) ((:) (Clause ((:) (Atom "forall_eq_rect.u2" 0) ([])) (Atom
+    "forall_eq_rect_comp.u2" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([]))
+    (Atom "forall_eq_rect_comp.u2" 0)) ((:) (Clause ((:) (Atom
+    "functional_extensionality_dep_good.u0" 0) ([])) (Atom
+    "f_equal__functional_extensionality_dep_good.u0" 0)) ((:) (Clause ((:)
+    (Atom "functional_extensionality_dep_good_refl.u0" 0) ([])) (Atom
+    "f_equal__functional_extensionality_dep_good.u0" 0)) ((:) (Clause ((:)
+    (Atom "forall_eq_rect.u0" 0) ([])) (Atom
+    "f_equal__functional_extensionality_dep_good.u0" 0)) ((:) (Clause ((:)
+    (Atom "eq.u0" 0) ([])) (Atom
+    "f_equal__functional_extensionality_dep_good.u0" 0)) ((:) (Clause ((:)
+    (Atom "Coq.Init.Logic.11" 0) ([])) (Atom
+    "f_equal__functional_extensionality_dep_good.u0" 0)) ((:) (Clause ((:)
+    (Atom "functional_extensionality_dep_good.u1" 0) ([])) (Atom
+    "f_equal__functional_extensionality_dep_good.u1" 0)) ((:) (Clause ((:)
+    (Atom "functional_extensionality_dep_good_refl.u1" 0) ([])) (Atom
+    "f_equal__functional_extensionality_dep_good.u1" 0)) ((:) (Clause ((:)
+    (Atom "forall_eq_rect.u1" 0) ([])) (Atom
+    "f_equal__functional_extensionality_dep_good.u1" 0)) ((:) (Clause ((:)
+    (Atom "eq.u0" 0) ([])) (Atom
+    "f_equal__functional_extensionality_dep_good.u1" 0)) ((:) (Clause ((:)
+    (Atom "Coq.Init.Logic.11" 0) ([])) (Atom
+    "f_equal__functional_extensionality_dep_good.u1" 0)) ((:) (Clause ((:)
+    (Atom "functional_extensionality_dep_good.u0" 0) ([])) (Atom
+    "f_equal__functional_extensionality_dep_good__fun.u0" 0)) ((:) (Clause
+    ((:) (Atom "f_equal__functional_extensionality_dep_good.u0" 0) ([]))
+    (Atom "f_equal__functional_extensionality_dep_good__fun.u0" 0)) ((:)
+    (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
+    "f_equal__functional_extensionality_dep_good__fun.u0" 0)) ((:) (Clause
+    ((:) (Atom "Coq.Init.Logic.11" 0) ([])) (Atom
+    "f_equal__functional_extensionality_dep_good__fun.u0" 0)) ((:) (Clause
+    ((:) (Atom "functional_extensionality_dep_good.u1" 0) ([])) (Atom
+    "f_equal__functional_extensionality_dep_good__fun.u1" 0)) ((:) (Clause
+    ((:) (Atom "f_equal__functional_extensionality_dep_good.u1" 0) ([]))
+    (Atom "f_equal__functional_extensionality_dep_good__fun.u1" 0)) ((:)
+    (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
+    "f_equal__functional_extensionality_dep_good__fun.u1" 0)) ((:) (Clause
+    ((:) (Atom "Coq.Init.Logic.11" 0) ([])) (Atom
+    "f_equal__functional_extensionality_dep_good__fun.u1" 0)) ((:) (Clause
+    ((:) (Atom "eq.u0" 0) ([])) (Atom "eta_expansion_dep.u0" 0)) ((:) (Clause
+    ((:) (Atom "eq.u0" 0) ([])) (Atom "eta_expansion_dep.u1" 0)) ((:) (Clause
+    ((:) (Atom "eta_expansion_dep.u0" 0) ([])) (Atom "eta_expansion.u0" 0))
+    ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "eta_expansion.u0" 0))
+    ((:) (Clause ((:) (Atom "eta_expansion_dep.u1" 0) ([])) (Atom
+    "eta_expansion.u1" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
+    "eta_expansion.u1" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Relations.Relation_Definitions.1" 0) ([])) (Atom
+    "Coq.setoid_ring.InitialRing.1" 0)) ((:) (Clause ((:) (Atom "Seq_refl.u0"
+    0) ([])) (Atom "Coq.setoid_ring.InitialRing.1" 0)) ((:) (Clause ((:)
+    (Atom "Morphisms.rewrite_relation_eq_dom.u0" 0) ([])) (Atom
+    "Coq.setoid_ring.InitialRing.1" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Classes.Morphisms.51" 0) ([])) (Atom "Coq.setoid_ring.InitialRing.1"
+    0)) ((:) (Clause ((:) (Atom "Coq.setoid_ring.Ring_theory.17" 0) ([]))
+    (Atom "Coq.setoid_ring.InitialRing.1" 0)) ((:) (Clause ((:) (Atom
+    "Coq.setoid_ring.Ring_theory.100" 0) ([])) (Atom
+    "Coq.setoid_ring.InitialRing.1" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Relations.Relation_Definitions.1" 0) ([])) (Atom
+    "Coq.setoid_ring.InitialRing.32" 0)) ((:) (Clause ((:) (Atom
+    "Coq.setoid_ring.InitialRing.1" 0) ([])) (Atom
+    "Coq.setoid_ring.InitialRing.32" 0)) ((:) (Clause ((:) (Atom
+    "Seq_refl.u0" 0) ([])) (Atom "Coq.setoid_ring.InitialRing.32" 0)) ((:)
+    (Clause ((:) (Atom "Coq.Classes.Morphisms.51" 0) ([])) (Atom
+    "Coq.setoid_ring.InitialRing.32" 0)) ((:) (Clause ((:) (Atom
+    "Coq.setoid_ring.Ring_theory.17" 0) ([])) (Atom
+    "Coq.setoid_ring.InitialRing.32" 0)) ((:) (Clause ((:) (Atom
+    "Coq.setoid_ring.Ring_theory.100" 0) ([])) (Atom
+    "Coq.setoid_ring.InitialRing.32" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Relations.Relation_Definitions.1" 0) ([])) (Atom
+    "Coq.setoid_ring.InitialRing.49" 0)) ((:) (Clause ((:) (Atom
+    "Coq.setoid_ring.InitialRing.1" 0) ([])) (Atom
+    "Coq.setoid_ring.InitialRing.49" 0)) ((:) (Clause ((:) (Atom
+    "Coq.setoid_ring.InitialRing.32" 0) ([])) (Atom
+    "Coq.setoid_ring.InitialRing.49" 0)) ((:) (Clause ((:) (Atom
+    "Seq_refl.u0" 0) ([])) (Atom "Coq.setoid_ring.InitialRing.49" 0)) ((:)
+    (Clause ((:) (Atom "Coq.Classes.Morphisms.51" 0) ([])) (Atom
+    "Coq.setoid_ring.InitialRing.49" 0)) ((:) (Clause ((:) (Atom
+    "Coq.setoid_ring.Ring_theory.17" 0) ([])) (Atom
+    "Coq.setoid_ring.InitialRing.49" 0)) ((:) (Clause ((:) (Atom
+    "Coq.setoid_ring.Ring_theory.100" 0) ([])) (Atom
+    "Coq.setoid_ring.InitialRing.49" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Relations.Relation_Definitions.1" 0) ([])) (Atom
+    "Coq.setoid_ring.InitialRing.70" 0)) ((:) (Clause ((:) (Atom
+    "Seq_refl.u0" 0) ([])) (Atom "Coq.setoid_ring.InitialRing.70" 0)) ((:)
+    (Clause ((:) (Atom "Coq.Classes.Morphisms.51" 0) ([])) (Atom
+    "Coq.setoid_ring.InitialRing.70" 0)) ((:) (Clause ((:) (Atom
+    "Coq.setoid_ring.Ring_theory.17" 0) ([])) (Atom
+    "Coq.setoid_ring.InitialRing.70" 0)) ((:) (Clause ((:) (Atom
+    "Coq.setoid_ring.Ring_theory.100" 0) ([])) (Atom
+    "Coq.setoid_ring.InitialRing.70" 0)) ((:) (Clause ((:) (Atom "prod.u0" 0)
+    ([])) (Atom "Coq.setoid_ring.InitialRing.71" 0)) ((:) (Clause ((:) (Atom
+    "prod.u1" 0) ([])) (Atom "Coq.setoid_ring.InitialRing.71" 0)) ((:)
+    (Clause ((:) (Atom "Coq.setoid_ring.Ring_theory.74" 0) ([])) (Atom
+    "Coq.setoid_ring.InitialRing.71" 0)) ((:) (Clause ((:) (Atom "list.u0" 0)
+    ([])) (Atom "hypo.u0" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
+    "Coq.Relations.Relation_Definitions.1" 0) ([])) (Atom
+    "Coq.micromega.OrderedRing.1" 0)) ((:) (Clause ((:) (Atom
+    "Coq.setoid_ring.Ring_theory.17" 0) ([])) (Atom
+    "Coq.micromega.OrderedRing.1" 0)) ((:) (Clause ((:) (Atom
+    "default_relation.u0" 0) ([])) (Atom "Coq.micromega.OrderedRing.21" 0))
+    ((:) (Clause ((:) (Atom "equivalence_default.u0" 0) ([])) (Atom
+    "Coq.micromega.OrderedRing.21" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Relations.Relation_Definitions.1" 0) ([])) (Atom
+    "Coq.micromega.OrderedRing.21" 0)) ((:) (Clause ((:) (Atom
+    "Coq.setoid_ring.InitialRing.1" 0) ([])) (Atom
+    "Coq.micromega.OrderedRing.21" 0)) ((:) (Clause ((:) (Atom
+    "Coq.setoid_ring.InitialRing.70" 0) ([])) (Atom
+    "Coq.micromega.OrderedRing.21" 0)) ((:) (Clause ((:) (Atom
+    "Coq.micromega.OrderedRing.1" 0) ([])) (Atom
+    "Coq.micromega.OrderedRing.21" 0)) ((:) (Clause ((:) (Atom "list.u0" 0)
+    ([])) (Atom "Coq.micromega.OrderedRing.21" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Classes.Morphisms.51" 0) ([])) (Atom "Coq.micromega.OrderedRing.21"
+    0)) ((:) (Clause ((:) (Atom "Coq.setoid_ring.Ring_polynom.1" 0) ([]))
+    (Atom "Coq.micromega.OrderedRing.21" 0)) ((:) (Clause ((:) (Atom
+    "Coq.setoid_ring.Ring_theory.17" 0) ([])) (Atom
+    "Coq.micromega.OrderedRing.21" 0)) ((:) (Clause ((:) (Atom
+    "Coq.setoid_ring.Ring_theory.100" 0) ([])) (Atom
+    "Coq.micromega.OrderedRing.21" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Relations.Relation_Definitions.1" 0) ([])) (Atom
+    "Coq.Classes.RelationClasses.1" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Classes.RelationClasses.1" 0) ([])) (Atom
+    "Coq.Relations.Relation_Definitions.1" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Relations.Relation_Definitions.1" 0) ([])) (Atom
+    "equivalence_rewrite_relation.u0" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Relations.Relation_Definitions.1" 0) ([])) (Atom "Tlist.u0" 0)) ((:)
+    (Clause ((:) (Atom "Tlist.u0" 0) ([])) (Atom
+    "Coq.Relations.Relation_Definitions.1" 0)) ((:) (Clause ((:) (Atom
+    "Tlist.u0" 0) ([])) (Atom "arrows.u0" 0)) ((:) (Clause ((:) (Atom
+    "arrows.u0" 0) ([])) (Atom "Tlist.u0" 0)) ((:) (Clause ((:) (Atom
+    "Tlist.u0" 0) ([])) (Atom "arrows.u1" 0)) ((:) (Clause ((:) (Atom
+    "arrows.u1" 0) ([])) (Atom "Tlist.u0" 0)) ((:) (Clause ((:) (Atom
+    "Tlist.u0" 0) ([])) (Atom "unary_operation.u0" 0)) ((:) (Clause ((:)
+    (Atom "arrows.u0" 0) ([])) (Atom "unary_operation.u0" 0)) ((:) (Clause
+    ((:) (Atom "Tlist.u0" 0) ([])) (Atom "binary_operation.u0" 0)) ((:)
+    (Clause ((:) (Atom "binary_operation.u0" 0) ([])) (Atom "Tlist.u0" 0))
+    ((:) (Clause ((:) (Atom "Tlist.u0" 0) ([])) (Atom "ternary_operation.u0"
+    0)) ((:) (Clause ((:) (Atom "Tlist.u0" 0) ([])) (Atom
+    "unary_predicate.u0" 0)) ((:) (Clause ((:) (Atom "Tlist.u0" 0) ([]))
+    (Atom "binary_relation.u0" 0)) ((:) (Clause ((:) (Atom
+    "binary_relation.u0" 0) ([])) (Atom "Tlist.u0" 0)) ((:) (Clause ((:)
+    (Atom "Tlist.u0" 0) ([])) (Atom "pointwise_extension.u0" 0)) ((:) (Clause
+    ((:) (Atom "Coq.Relations.Relation_Definitions.1" 0) ([])) (Atom
+    "Coq.Classes.RelationClasses.69" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Classes.RelationClasses.69" 0) ([])) (Atom
+    "Coq.Relations.Relation_Definitions.1" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Relations.Relation_Definitions.1" 0) ([])) (Atom
+    "subrelation_partial_order_obligation_1.u0" 0)) ((:) (Clause ((:) (Atom
+    "default_relation.u0" 0) ([])) (Atom "Coq.micromega.RingMicromega.1" 0))
+    ((:) (Clause ((:) (Atom "equivalence_default.u0" 0) ([])) (Atom
+    "Coq.micromega.RingMicromega.1" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Relations.Relation_Definitions.1" 0) ([])) (Atom
+    "Coq.micromega.RingMicromega.1" 0)) ((:) (Clause ((:) (Atom
+    "Coq.setoid_ring.InitialRing.1" 0) ([])) (Atom
+    "Coq.micromega.RingMicromega.1" 0)) ((:) (Clause ((:) (Atom
+    "Coq.setoid_ring.InitialRing.70" 0) ([])) (Atom
+    "Coq.micromega.RingMicromega.1" 0)) ((:) (Clause ((:) (Atom
+    "Coq.micromega.OrderedRing.1" 0) ([])) (Atom
+    "Coq.micromega.RingMicromega.1" 0)) ((:) (Clause ((:) (Atom
+    "Coq.micromega.OrderedRing.21" 0) ([])) (Atom
+    "Coq.micromega.RingMicromega.1" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0)
+    ([])) (Atom "Coq.micromega.RingMicromega.1" 0)) ((:) (Clause ((:) (Atom
+    "eq_ind_r.u0" 0) ([])) (Atom "Coq.micromega.RingMicromega.1" 0)) ((:)
+    (Clause ((:) (Atom "list.u0" 0) ([])) (Atom
+    "Coq.micromega.RingMicromega.1" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Classes.Morphisms.51" 0) ([])) (Atom "Coq.micromega.RingMicromega.1"
+    0)) ((:) (Clause ((:) (Atom "Coq.micromega.Env.1" 0) ([])) (Atom
+    "Coq.micromega.RingMicromega.1" 0)) ((:) (Clause ((:) (Atom
+    "Coq.micromega.EnvRing.9" 0) ([])) (Atom "Coq.micromega.RingMicromega.1"
+    0)) ((:) (Clause ((:) (Atom "Coq.setoid_ring.Ring_polynom.1" 0) ([]))
+    (Atom "Coq.micromega.RingMicromega.1" 0)) ((:) (Clause ((:) (Atom
+    "Coq.setoid_ring.Ring_theory.1" 0) ([])) (Atom
+    "Coq.micromega.RingMicromega.1" 0)) ((:) (Clause ((:) (Atom
+    "Coq.setoid_ring.Ring_theory.17" 0) ([])) (Atom
+    "Coq.micromega.RingMicromega.1" 0)) ((:) (Clause ((:) (Atom
+    "Coq.setoid_ring.Ring_theory.100" 0) ([])) (Atom
+    "Coq.micromega.RingMicromega.1" 0)) ((:) (Clause ((:) (Atom
+    "Coq.micromega.EnvRing.10" 0) ([])) (Atom "Coq.micromega.RingMicromega.2"
+    0)) ((:) (Clause ((:) (Atom "Coq.micromega.RingMicromega.2" 0) ([]))
+    (Atom "Coq.micromega.EnvRing.10" 0)) ((:) (Clause ((:) (Atom
+    "Coq.micromega.EnvRing.11" 0) ([])) (Atom "Coq.micromega.RingMicromega.3"
+    0)) ((:) (Clause ((:) (Atom "Coq.setoid_ring.Ring_theory.97" 0) ([]))
+    (Atom "Coq.micromega.RingMicromega.3" 0)) ((:) (Clause ((:) (Atom
+    "option.u0" 0) ([])) (Atom "RingMicromega.map_option.u0" 0)) ((:) (Clause
+    ((:) (Atom "option.u0" 0) ([])) (Atom "RingMicromega.map_option.u1" 0))
+    ((:) (Clause ((:) (Atom "option.u0" 0) ([])) (Atom
+    "RingMicromega.map_option2.u0" 0)) ((:) (Clause ((:) (Atom "option.u0" 0)
+    ([])) (Atom "RingMicromega.map_option2.u1" 0)) ((:) (Clause ((:) (Atom
+    "option.u0" 0) ([])) (Atom "RingMicromega.map_option2.u2" 0)) ((:)
+    (Clause ((:) (Atom "EnvRing.PExpr.u0" 0) ([])) (Atom
+    "RingMicromega.Formula.u0" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Lists.List.383" 0) ([])) (Atom "RingMicromega.cnf_of_list.u0" 0))
+    ((:) (Clause ((:) (Atom "prod.u1" 0) ([])) (Atom
+    "RingMicromega.cnf_of_list.u0" 0)) ((:) (Clause ((:) (Atom "list.u0" 0)
+    ([])) (Atom "RingMicromega.cnf_of_list.u0" 0)) ((:) (Clause ((:) (Atom
+    "Coq.micromega.Tauto.52" 0) ([])) (Atom "RingMicromega.cnf_of_list.u0"
+    0)) ((:) (Clause ((:) (Atom "RingMicromega.cnf_of_list.u0" 0) ([])) (Atom
+    "RingMicromega.cnf_of_list_correct.u0" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Lists.List.383" 0) ([])) (Atom
+    "RingMicromega.cnf_of_list_correct.u0" 0)) ((:) (Clause ((:) (Atom
+    "prod.u1" 0) ([])) (Atom "RingMicromega.cnf_of_list_correct.u0" 0)) ((:)
+    (Clause ((:) (Atom "list.u0" 0) ([])) (Atom
+    "RingMicromega.cnf_of_list_correct.u0" 0)) ((:) (Clause ((:) (Atom
+    "Refl.make_conj.u0" 0) ([])) (Atom "RingMicromega.cnf_of_list_correct.u0"
+    0)) ((:) (Clause ((:) (Atom "Coq.micromega.Tauto.52" 0) ([])) (Atom
+    "RingMicromega.cnf_of_list_correct.u0" 0)) ((:) (Clause ((:) (Atom
+    "RingMicromega.cnf_of_list.u0" 0) ([])) (Atom
+    "RingMicromega.cnf_normalise.u0" 0)) ((:) (Clause ((:) (Atom
+    "Coq.micromega.Tauto.52" 0) ([])) (Atom "RingMicromega.cnf_normalise.u0"
+    0)) ((:) (Clause ((:) (Atom "RingMicromega.cnf_of_list.u0" 0) ([])) (Atom
+    "RingMicromega.cnf_negate.u0" 0)) ((:) (Clause ((:) (Atom
+    "Coq.micromega.Tauto.52" 0) ([])) (Atom "RingMicromega.cnf_negate.u0" 0))
+    ((:) (Clause ((:) (Atom "RingMicromega.cnf_of_list.u0" 0) ([])) (Atom
+    "RingMicromega.cnf_normalise_correct.u0" 0)) ((:) (Clause ((:) (Atom
+    "RingMicromega.cnf_of_list_correct.u0" 0) ([])) (Atom
+    "RingMicromega.cnf_normalise_correct.u0" 0)) ((:) (Clause ((:) (Atom
+    "RingMicromega.cnf_normalise.u0" 0) ([])) (Atom
+    "RingMicromega.cnf_normalise_correct.u0" 0)) ((:) (Clause ((:) (Atom
+    "Coq.micromega.Tauto.52" 0) ([])) (Atom
+    "RingMicromega.cnf_normalise_correct.u0" 0)) ((:) (Clause ((:) (Atom
+    "RingMicromega.cnf_of_list.u0" 0) ([])) (Atom
+    "RingMicromega.cnf_negate_correct.u0" 0)) ((:) (Clause ((:) (Atom
+    "RingMicromega.cnf_of_list_correct.u0" 0) ([])) (Atom
+    "RingMicromega.cnf_negate_correct.u0" 0)) ((:) (Clause ((:) (Atom
+    "RingMicromega.cnf_negate.u0" 0) ([])) (Atom
+    "RingMicromega.cnf_negate_correct.u0" 0)) ((:) (Clause ((:) (Atom
+    "Coq.micromega.Tauto.52" 0) ([])) (Atom
+    "RingMicromega.cnf_negate_correct.u0" 0)) ((:) (Clause ((:) (Atom
+    "RingMicromega.Formula.u0" 0) ([])) (Atom
+    "Coq.micromega.RingMicromega.119" 0)) ((:) (Clause ((:) (Atom
+    "EnvRing.PExpr.u0" 0) ([])) (Atom "Coq.micromega.RingMicromega.119" 0))
+    ((:) (Clause ((:) (Atom "Coq.micromega.EnvRing.10" 0) ([])) (Atom
+    "Coq.micromega.RingMicromega.119" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0)
+    ([])) (Atom "Coq.Structures.OrdersFacts.34" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Relations.Relation_Definitions.1" 0) ([])) (Atom
+    "Morphisms_Prop.ex_iff_morphism_obligation_1.u0" 0)) ((:) (Clause ((:)
+    (Atom "ex.u0" 0) ([])) (Atom
+    "Morphisms_Prop.ex_iff_morphism_obligation_1.u0" 0)) ((:) (Clause ((:)
+    (Atom "Coq.Relations.Relation_Definitions.1" 0) ([])) (Atom
+    "Morphisms_Prop.ex_impl_morphism_obligation_1.u0" 0)) ((:) (Clause ((:)
+    (Atom "ex.u0" 0) ([])) (Atom
+    "Morphisms_Prop.ex_impl_morphism_obligation_1.u0" 0)) ((:) (Clause ((:)
+    (Atom "Coq.Relations.Relation_Definitions.1" 0) ([])) (Atom
+    "Morphisms_Prop.ex_flip_impl_morphism_obligation_1.u0" 0)) ((:) (Clause
+    ((:) (Atom "ex.u0" 0) ([])) (Atom
+    "Morphisms_Prop.ex_flip_impl_morphism_obligation_1.u0" 0)) ((:) (Clause
+    ((:) (Atom "Coq.Relations.Relation_Definitions.1" 0) ([])) (Atom
+    "Morphisms_Prop.all_iff_morphism_obligation_1.u0" 0)) ((:) (Clause ((:)
+    (Atom "all.u0" 0) ([])) (Atom
+    "Morphisms_Prop.all_iff_morphism_obligation_1.u0" 0)) ((:) (Clause ((:)
+    (Atom "Coq.Relations.Relation_Definitions.1" 0) ([])) (Atom
+    "Morphisms_Prop.all_impl_morphism_obligation_1.u0" 0)) ((:) (Clause ((:)
+    (Atom "all.u0" 0) ([])) (Atom
+    "Morphisms_Prop.all_impl_morphism_obligation_1.u0" 0)) ((:) (Clause ((:)
+    (Atom "Coq.Relations.Relation_Definitions.1" 0) ([])) (Atom
+    "Morphisms_Prop.all_flip_impl_morphism_obligation_1.u0" 0)) ((:) (Clause
+    ((:) (Atom "all.u0" 0) ([])) (Atom
+    "Morphisms_Prop.all_flip_impl_morphism_obligation_1.u0" 0)) ((:) (Clause
+    ((:) (Atom "Coq.Relations.Relation_Definitions.1" 0) ([])) (Atom
+    "Morphisms_Prop.Acc_pt_morphism.u0" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Init.Wf.1" 0) ([])) (Atom "Morphisms_Prop.Acc_pt_morphism.u0" 0))
+    ((:) (Clause ((:) (Atom "Coq.Classes.Morphisms.51" 0) ([])) (Atom
+    "Morphisms_Prop.Acc_pt_morphism.u0" 0)) ((:) (Clause ((:) (Atom
+    "Morphisms.proper_sym_impl_iff.u0" 0) ([])) (Atom
+    "Morphisms_Prop.Acc_pt_morphism.u0" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Relations.Relation_Definitions.1" 0) ([])) (Atom
+    "Morphisms_Prop.Acc_rel_morphism.u0" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Init.Wf.1" 0) ([])) (Atom "Morphisms_Prop.Acc_rel_morphism.u0" 0))
     ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
-    "FunctionalExtensionality.forall_extensionality.u1" (Prelude.succ 0)))
-    ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
-    "FunctionalExtensionality.forall_extensionality.u3" (Prelude.succ 0)))
-    ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
-    "FunctionalExtensionality.forall_extensionalityS.u1" (Prelude.succ 0)))
-    ((:) (Clause ((:) (Atom "list.u0" 0) ([])) (Atom "hypo.u0" (Prelude.succ
-    0))) ((:) (Clause ((:) (Atom "Set" 0) ([])) (Atom "Prop" (Prelude.succ
-    0))) ((:) (Clause ((:) (Atom "SetoidTactics.DefaultRelation.u0" 0) ([]))
+    "Morphisms_Prop.Acc_rel_morphism.u0" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Init.Logic.11" 0) ([])) (Atom "Morphisms_Prop.Acc_rel_morphism.u0"
+    0)) ((:) (Clause ((:) (Atom "Morphisms.proper_sym_impl_iff_2.u1" 0) ([]))
+    (Atom "Morphisms_Prop.Acc_rel_morphism.u0" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Relations.Relation_Definitions.1" 0) ([])) (Atom
+    "Morphisms_Prop.well_founded_morphism.u0" 0)) ((:) (Clause ((:) (Atom
+    "Morphisms_Prop.all_iff_morphism_obligation_1.u0" 0) ([])) (Atom
+    "Morphisms_Prop.well_founded_morphism.u0" 0)) ((:) (Clause ((:) (Atom
+    "Morphisms_Prop.Acc_rel_morphism.u0" 0) ([])) (Atom
+    "Morphisms_Prop.well_founded_morphism.u0" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Init.Wf.1" 0) ([])) (Atom "Morphisms_Prop.well_founded_morphism.u0"
+    0)) ((:) (Clause ((:) (Atom "all.u0" 0) ([])) (Atom
+    "Morphisms_Prop.well_founded_morphism.u0" 0)) ((:) (Clause ((:) (Atom
+    "DeclConstant.DeclaredConstant.u0" 0) ([])) (Atom "DeclConstant.GT_O.u0"
+    0)) ((:) (Clause ((:) (Atom "DeclConstant.GT.u0" 0) ([])) (Atom
+    "DeclConstant.GT_O.u0" 0)) ((:) (Clause ((:) (Atom
+    "DeclConstant.DeclaredConstant.u0" 0) ([])) (Atom
+    "DeclConstant.GT_APP1.u0" 0)) ((:) (Clause ((:) (Atom
+    "DeclConstant.GT.u0" 0) ([])) (Atom "DeclConstant.GT_APP1.u0" 0)) ((:)
+    (Clause ((:) (Atom "DeclConstant.DeclaredConstant.u0" 0) ([])) (Atom
+    "DeclConstant.GT_APP1.u1" 0)) ((:) (Clause ((:) (Atom
+    "DeclConstant.GT.u0" 0) ([])) (Atom "DeclConstant.GT_APP1.u1" 0)) ((:)
+    (Clause ((:) (Atom "DeclConstant.DeclaredConstant.u0" 0) ([])) (Atom
+    "DeclConstant.GT_APP2.u0" 0)) ((:) (Clause ((:) (Atom
+    "DeclConstant.GT.u0" 0) ([])) (Atom "DeclConstant.GT_APP2.u0" 0)) ((:)
+    (Clause ((:) (Atom "DeclConstant.DeclaredConstant.u0" 0) ([])) (Atom
+    "DeclConstant.GT_APP2.u1" 0)) ((:) (Clause ((:) (Atom
+    "DeclConstant.GT.u0" 0) ([])) (Atom "DeclConstant.GT_APP2.u1" 0)) ((:)
+    (Clause ((:) (Atom "DeclConstant.DeclaredConstant.u0" 0) ([])) (Atom
+    "DeclConstant.GT_APP2.u2" 0)) ((:) (Clause ((:) (Atom
+    "DeclConstant.GT.u0" 0) ([])) (Atom "DeclConstant.GT_APP2.u2" 0)) ((:)
+    (Clause ((:) (Atom "DefaultRelation.u0" 0) ([])) (Atom "Set"
+    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "default_relation.u0" 0) ([]))
     (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
-    "SetoidTactics.default_relation.u0" 0) ([])) (Atom "Set" (Prelude.succ
-    0))) ((:) (Clause ((:) (Atom "SetoidTactics.equivalence_default.u0" 0)
+    "equivalence_default.u0" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:)
+    (Clause ((:) (Atom "Coq.Relations.Relation_Definitions.1" 0) ([])) (Atom
+    "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom "GenericMinMax.gmax.u0"
+    0) ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
+    "GenericMinMax.gmin.u0" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:)
+    (Clause ((:) (Atom "Private_Dec.max_case_strong.u0" 0) ([])) (Atom "Set"
+    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "Private_Dec.max_case.u0" 0)
     ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
-    "Coq.Relations.Relation_Definitions.1" 0) ([])) (Atom "Set" (Prelude.succ
-    0))) ((:) (Clause ((:) (Atom "GenericMinMax.gmax.u0" 0) ([])) (Atom "Set"
-    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "GenericMinMax.gmin.u0" 0)
-    ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
-    "Private_Dec.max_case_strong.u0" 0) ([])) (Atom "Set" (Prelude.succ 0)))
-    ((:) (Clause ((:) (Atom "Private_Dec.max_case.u0" 0) ([])) (Atom "Set"
-    (Prelude.succ 0))) ((:) (Clause ((:) (Atom
     "Private_Dec.min_case_strong.u0" 0) ([])) (Atom "Set" (Prelude.succ 0)))
     ((:) (Clause ((:) (Atom "Private_Dec.min_case.u0" 0) ([])) (Atom "Set"
     (Prelude.succ 0))) ((:) (Clause ((:) (Atom "max_case_strong.u0" 0) ([]))
@@ -658,76 +1079,58 @@ cs4 =
     0))) ((:) (Clause ((:) (Atom "Coq.Relations.Relation_Operators.15" 0)
     ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
     "Coq.Relations.Relation_Operators.16" 0) ([])) (Atom "Set" (Prelude.succ
-    0))) ((:) (Clause ((:) (Atom "FunctionalExtensionality.equal_f.u0" 0)
+    0))) ((:) (Clause ((:) (Atom "equal_f.u0" 0) ([])) (Atom "Set"
+    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "equal_f.u1" 0) ([])) (Atom
+    "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom "equal_f_dep.u0" 0)
     ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
-    "FunctionalExtensionality.equal_f.u1" 0) ([])) (Atom "Set" (Prelude.succ
-    0))) ((:) (Clause ((:) (Atom "FunctionalExtensionality.equal_f_dep.u0" 0)
-    ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
-    "FunctionalExtensionality.equal_f_dep.u1" 0) ([])) (Atom "Set"
+    "equal_f_dep.u1" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause
+    ((:) (Atom "functional_extensionality_dep.u0" 0) ([])) (Atom "Set"
     (Prelude.succ 0))) ((:) (Clause ((:) (Atom
-    "FunctionalExtensionality.functional_extensionality_dep.u0" 0) ([]))
+    "functional_extensionality_dep.u1" 0) ([])) (Atom "Set" (Prelude.succ
+    0))) ((:) (Clause ((:) (Atom "functional_extensionality.u0" 0) ([]))
     (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
-    "FunctionalExtensionality.functional_extensionality_dep.u1" 0) ([]))
+    "functional_extensionality.u1" 0) ([])) (Atom "Set" (Prelude.succ 0)))
+    ((:) (Clause ((:) (Atom "forall_extensionality.u0" 0) ([])) (Atom "Set"
+    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "forall_extensionality.u1" 0)
+    ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
+    "forall_extensionality.u2" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:)
+    (Clause ((:) (Atom "forall_extensionality.u3" 0) ([])) (Atom "Set"
+    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "forall_extensionalityP.u0" 0)
+    ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
+    "forall_extensionalityS.u0" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:)
+    (Clause ((:) (Atom "forall_extensionalityS.u1" 0) ([])) (Atom "Set"
+    (Prelude.succ 0))) ((:) (Clause ((:) (Atom
+    "functional_extensionality_dep_good.u0" 0) ([])) (Atom "Set"
+    (Prelude.succ 0))) ((:) (Clause ((:) (Atom
+    "functional_extensionality_dep_good.u1" 0) ([])) (Atom "Set"
+    (Prelude.succ 0))) ((:) (Clause ((:) (Atom
+    "functional_extensionality_dep_good_refl.u0" 0) ([])) (Atom "Set"
+    (Prelude.succ 0))) ((:) (Clause ((:) (Atom
+    "functional_extensionality_dep_good_refl.u1" 0) ([])) (Atom "Set"
+    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "forall_sig_eq_rect.u0" 0)
+    ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
+    "forall_sig_eq_rect.u1" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:)
+    (Clause ((:) (Atom "forall_sig_eq_rect.u2" 0) ([])) (Atom "Set"
+    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "forall_eq_rect.u0" 0) ([]))
     (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
-    "FunctionalExtensionality.functional_extensionality.u0" 0) ([])) (Atom
+    "forall_eq_rect.u1" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause
+    ((:) (Atom "forall_eq_rect.u2" 0) ([])) (Atom "Set" (Prelude.succ 0)))
+    ((:) (Clause ((:) (Atom "forall_eq_rect_comp.u0" 0) ([])) (Atom "Set"
+    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "forall_eq_rect_comp.u1" 0)
+    ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
+    "forall_eq_rect_comp.u2" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:)
+    (Clause ((:) (Atom "f_equal__functional_extensionality_dep_good.u0" 0)
+    ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
+    "f_equal__functional_extensionality_dep_good.u1" 0) ([])) (Atom "Set"
+    (Prelude.succ 0))) ((:) (Clause ((:) (Atom
+    "f_equal__functional_extensionality_dep_good__fun.u0" 0) ([])) (Atom
     "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
-    "FunctionalExtensionality.functional_extensionality.u1" 0) ([])) (Atom
-    "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
-    "FunctionalExtensionality.forall_extensionality.u0" 0) ([])) (Atom "Set"
-    (Prelude.succ 0))) ((:) (Clause ((:) (Atom
-    "FunctionalExtensionality.forall_extensionality.u1" 0) ([])) (Atom "Set"
-    (Prelude.succ 0))) ((:) (Clause ((:) (Atom
-    "FunctionalExtensionality.forall_extensionality.u2" 0) ([])) (Atom "Set"
-    (Prelude.succ 0))) ((:) (Clause ((:) (Atom
-    "FunctionalExtensionality.forall_extensionality.u3" 0) ([])) (Atom "Set"
-    (Prelude.succ 0))) ((:) (Clause ((:) (Atom
-    "FunctionalExtensionality.forall_extensionalityP.u0" 0) ([])) (Atom "Set"
-    (Prelude.succ 0))) ((:) (Clause ((:) (Atom
-    "FunctionalExtensionality.forall_extensionalityS.u0" 0) ([])) (Atom "Set"
-    (Prelude.succ 0))) ((:) (Clause ((:) (Atom
-    "FunctionalExtensionality.forall_extensionalityS.u1" 0) ([])) (Atom "Set"
-    (Prelude.succ 0))) ((:) (Clause ((:) (Atom
-    "FunctionalExtensionality.functional_extensionality_dep_good.u0" 0) ([]))
-    (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
-    "FunctionalExtensionality.functional_extensionality_dep_good.u1" 0) ([]))
-    (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
-    "FunctionalExtensionality.functional_extensionality_dep_good_refl.u0" 0)
-    ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
-    "FunctionalExtensionality.functional_extensionality_dep_good_refl.u1" 0)
-    ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
-    "FunctionalExtensionality.forall_sig_eq_rect.u0" 0) ([])) (Atom "Set"
-    (Prelude.succ 0))) ((:) (Clause ((:) (Atom
-    "FunctionalExtensionality.forall_sig_eq_rect.u1" 0) ([])) (Atom "Set"
-    (Prelude.succ 0))) ((:) (Clause ((:) (Atom
-    "FunctionalExtensionality.forall_sig_eq_rect.u2" 0) ([])) (Atom "Set"
-    (Prelude.succ 0))) ((:) (Clause ((:) (Atom
-    "FunctionalExtensionality.forall_eq_rect.u0" 0) ([])) (Atom "Set"
-    (Prelude.succ 0))) ((:) (Clause ((:) (Atom
-    "FunctionalExtensionality.forall_eq_rect.u1" 0) ([])) (Atom "Set"
-    (Prelude.succ 0))) ((:) (Clause ((:) (Atom
-    "FunctionalExtensionality.forall_eq_rect.u2" 0) ([])) (Atom "Set"
-    (Prelude.succ 0))) ((:) (Clause ((:) (Atom
-    "FunctionalExtensionality.forall_eq_rect_comp.u0" 0) ([])) (Atom "Set"
-    (Prelude.succ 0))) ((:) (Clause ((:) (Atom
-    "FunctionalExtensionality.forall_eq_rect_comp.u1" 0) ([])) (Atom "Set"
-    (Prelude.succ 0))) ((:) (Clause ((:) (Atom
-    "FunctionalExtensionality.forall_eq_rect_comp.u2" 0) ([])) (Atom "Set"
-    (Prelude.succ 0))) ((:) (Clause ((:) (Atom
-    "FunctionalExtensionality.f_equal__functional_extensionality_dep_good.u0"
+    "f_equal__functional_extensionality_dep_good__fun.u1" 0) ([])) (Atom
+    "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom "eta_expansion_dep.u0"
     0) ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
-    "FunctionalExtensionality.f_equal__functional_extensionality_dep_good.u1"
-    0) ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
-    "FunctionalExtensionality.f_equal__functional_extensionality_dep_good__fun.u0"
-    0) ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
-    "FunctionalExtensionality.f_equal__functional_extensionality_dep_good__fun.u1"
-    0) ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
-    "FunctionalExtensionality.eta_expansion_dep.u0" 0) ([])) (Atom "Set"
-    (Prelude.succ 0))) ((:) (Clause ((:) (Atom
-    "FunctionalExtensionality.eta_expansion_dep.u1" 0) ([])) (Atom "Set"
-    (Prelude.succ 0))) ((:) (Clause ((:) (Atom
-    "FunctionalExtensionality.eta_expansion.u0" 0) ([])) (Atom "Set"
-    (Prelude.succ 0))) ((:) (Clause ((:) (Atom
-    "FunctionalExtensionality.eta_expansion.u1" 0) ([])) (Atom "Set"
+    "eta_expansion_dep.u1" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:)
+    (Clause ((:) (Atom "eta_expansion.u0" 0) ([])) (Atom "Set" (Prelude.succ
+    0))) ((:) (Clause ((:) (Atom "eta_expansion.u1" 0) ([])) (Atom "Set"
     (Prelude.succ 0))) ((:) (Clause ((:) (Atom "Coq.QArith.QArith_base.52" 0)
     ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
     "Coq.QArith.QArith_base.54" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:)
@@ -744,25 +1147,24 @@ cs4 =
     ((:) (Clause ((:) (Atom "Coq.micromega.OrderedRing.21" 0) ([])) (Atom
     "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
     "Coq.Classes.RelationClasses.1" 0) ([])) (Atom "Set" (Prelude.succ 0)))
-    ((:) (Clause ((:) (Atom "RelationClasses.Tlist.u0" 0) ([])) (Atom "Set"
-    (Prelude.succ 0))) ((:) (Clause ((:) (Atom
-    "Coq.Classes.RelationClasses.43" 0) ([])) (Atom "Set" (Prelude.succ 0)))
-    ((:) (Clause ((:) (Atom "RelationClasses.arrows.u0" 0) ([])) (Atom "Set"
-    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "RelationClasses.arrows.u1" 0)
-    ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
-    "RelationClasses.unary_operation.u0" 0) ([])) (Atom "Set" (Prelude.succ
-    0))) ((:) (Clause ((:) (Atom "RelationClasses.binary_operation.u0" 0)
-    ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
-    "RelationClasses.ternary_operation.u0" 0) ([])) (Atom "Set" (Prelude.succ
-    0))) ((:) (Clause ((:) (Atom "RelationClasses.unary_predicate.u0" 0)
-    ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
-    "RelationClasses.binary_relation.u0" 0) ([])) (Atom "Set" (Prelude.succ
-    0))) ((:) (Clause ((:) (Atom "RelationClasses.pointwise_extension.u0" 0)
-    ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
-    "Coq.Classes.RelationClasses.67" 0) ([])) (Atom "Set" (Prelude.succ 0)))
-    ((:) (Clause ((:) (Atom
-    "RelationClasses.subrelation_partial_order_obligation_1.u0" 0) ([]))
+    ((:) (Clause ((:) (Atom "equivalence_rewrite_relation.u0" 0) ([])) (Atom
+    "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom "Tlist.u0" 0) ([]))
     (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
+    "Coq.Classes.RelationClasses.45" 0) ([])) (Atom "Set" (Prelude.succ 0)))
+    ((:) (Clause ((:) (Atom "arrows.u0" 0) ([])) (Atom "Set" (Prelude.succ
+    0))) ((:) (Clause ((:) (Atom "arrows.u1" 0) ([])) (Atom "Set"
+    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "unary_operation.u0" 0) ([]))
+    (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
+    "binary_operation.u0" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:)
+    (Clause ((:) (Atom "ternary_operation.u0" 0) ([])) (Atom "Set"
+    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "unary_predicate.u0" 0) ([]))
+    (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
+    "binary_relation.u0" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause
+    ((:) (Atom "pointwise_extension.u0" 0) ([])) (Atom "Set" (Prelude.succ
+    0))) ((:) (Clause ((:) (Atom "Coq.Classes.RelationClasses.69" 0) ([]))
+    (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
+    "subrelation_partial_order_obligation_1.u0" 0) ([])) (Atom "Set"
+    (Prelude.succ 0))) ((:) (Clause ((:) (Atom
     "Coq.micromega.RingMicromega.1" 0) ([])) (Atom "Set" (Prelude.succ 0)))
     ((:) (Clause ((:) (Atom "Coq.micromega.RingMicromega.2" 0) ([])) (Atom
     "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
@@ -778,7 +1180,7 @@ cs4 =
     "RingMicromega.map_option2.u1" 0) ([])) (Atom "Set" (Prelude.succ 0)))
     ((:) (Clause ((:) (Atom "RingMicromega.map_option2.u2" 0) ([])) (Atom
     "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
-    "Coq.micromega.RingMicromega.47" 0) ([])) (Atom "Set" (Prelude.succ 0)))
+    "Coq.micromega.RingMicromega.46" 0) ([])) (Atom "Set" (Prelude.succ 0)))
     ((:) (Clause ((:) (Atom "RingMicromega.Formula.u0" 0) ([])) (Atom "Set"
     (Prelude.succ 0))) ((:) (Clause ((:) (Atom "RingMicromega.cnf_of_list.u0"
     0) ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
@@ -789,7 +1191,7 @@ cs4 =
     ((:) (Clause ((:) (Atom "RingMicromega.cnf_normalise_correct.u0" 0) ([]))
     (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
     "RingMicromega.cnf_negate_correct.u0" 0) ([])) (Atom "Set" (Prelude.succ
-    0))) ((:) (Clause ((:) (Atom "Coq.micromega.RingMicromega.98" 0) ([]))
+    0))) ((:) (Clause ((:) (Atom "Coq.micromega.RingMicromega.119" 0) ([]))
     (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
     "Coq.Structures.OrdersFacts.34" 0) ([])) (Atom "Set" (Prelude.succ 0)))
     ((:) (Clause ((:) (Atom "Morphisms_Prop.ex_iff_morphism_obligation_1.u0"
@@ -819,69 +1221,142 @@ cs4 =
     ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
     "DeclConstant.GT_APP2.u1" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:)
     (Clause ((:) (Atom "DeclConstant.GT_APP2.u2" 0) ([])) (Atom "Set"
-    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "PLF.Ul.2" 0) ([])) (Atom
-    "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom "PLF.Ul.4" 0) ([]))
-    (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom "PLF.Ul.6" 0)
+    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "TH.Atom.2" 0) ([])) (Atom
+    "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom "eq_sym_iff.u0" 0) ([]))
+    (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom "tuple_fst.u0" 0)
     ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
-    "Coq.Init.Wf.1" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:)
-    (Atom "Coq.Init.Wf.2" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:)
-    (Clause ((:) (Atom "well_founded_induction_type.u0" 0) ([])) (Atom "Set"
-    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "Coq.Init.Wf.4" 0) ([])) (Atom
-    "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom "Coq.Init.Wf.5" 0) ([]))
-    (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom "Coq.Init.Wf.6" 0)
+    "tuple_fst.u1" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:)
+    (Atom "tuple_snd.u0" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause
+    ((:) (Atom "tuple_snd.u1" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:)
+    (Clause ((:) (Atom "Coq.Init.Wf.1" 0) ([])) (Atom "Set" (Prelude.succ
+    0))) ((:) (Clause ((:) (Atom "Coq.Init.Wf.2" 0) ([])) (Atom "Set"
+    (Prelude.succ 0))) ((:) (Clause ((:) (Atom
+    "well_founded_induction_type.u0" 0) ([])) (Atom "Set" (Prelude.succ 0)))
+    ((:) (Clause ((:) (Atom "Coq.Init.Wf.4" 0) ([])) (Atom "Set"
+    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "Coq.Init.Wf.5" 0) ([])) (Atom
+    "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom "Coq.Init.Wf.6" 0) ([]))
+    (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom "Coq.Init.Wf.7" 0)
+    ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom "iter.u0" 0)
     ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
-    "Coq.Init.Wf.7" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:)
-    (Atom "total_map.u0" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause
-    ((:) (Atom "t_empty.u0" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:)
-    (Clause ((:) (Atom "t_update.u0" 0) ([])) (Atom "Set" (Prelude.succ 0)))
-    ((:) (Clause ((:) (Atom "t_apply_empty.u0" 0) ([])) (Atom "Set"
-    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "t_update_eq.u0" 0) ([]))
-    (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom "t_update_neq.u0"
+    "nodup_rm.u0" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:)
+    (Atom "set_diff_NoDup.u0" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:)
+    (Clause ((:) (Atom "set_add_mem_true.u0" 0) ([])) (Atom "Set"
+    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "TH.Sets.4" 0) ([])) (Atom
+    "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom "set_add_mem_false.u0"
     0) ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
-    "t_update_shadow.u0" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause
-    ((:) (Atom "t_update_same.u0" 0) ([])) (Atom "Set" (Prelude.succ 0)))
-    ((:) (Clause ((:) (Atom "t_update_permute.u0" 0) ([])) (Atom "Set"
-    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "partial_map.u0" 0) ([]))
-    (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom "empty.u0" 0)
-    ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom "update.u0"
+    "incl_set_add_reduce.u0" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:)
+    (Clause ((:) (Atom "length_set_add_reduce.u0" 0) ([])) (Atom "Set"
+    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "incl_set_add_cons_reduce.u0"
     0) ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
-    "apply_empty.u0" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause
-    ((:) (Atom "update_eq.u0" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:)
-    (Clause ((:) (Atom "update_neq.u0" 0) ([])) (Atom "Set" (Prelude.succ
-    0))) ((:) (Clause ((:) (Atom "update_shadow.u0" 0) ([])) (Atom "Set"
-    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "update_same.u0" 0) ([]))
-    (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
-    "update_permute.u0" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause
-    ((:) (Atom "inclusion.u0" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:)
-    (Clause ((:) (Atom "inclusion_update.u0" 0) ([])) (Atom "Set"
-    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "iter.u0" 0) ([])) (Atom "Set"
-    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "if_negb.u0" 0) ([])) (Atom
-    "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom "andb_if.u0" 0) ([]))
-    (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom "negb_if.u0" 0)
+    "incl_cons_set_add_reduce.u0" 0) ([])) (Atom "Set" (Prelude.succ 0)))
+    ((:) (Clause ((:) (Atom "incl_fold_right_andb_true.u0" 0) ([])) (Atom
+    "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
+    "incl_fold_right_andb_false.u0" 0) ([])) (Atom "Set" (Prelude.succ 0)))
+    ((:) (Clause ((:) (Atom "set_diff_nil_incl.u0" 0) ([])) (Atom "Set"
+    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "set_diff_nil_false.u0" 0)
     ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
-    "Coq.Bool.Bool.56" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause
-    ((:) (Atom "Coq.Init.Byte.258" 0) ([])) (Atom "Set" (Prelude.succ 0)))
-    ((:) (Clause ((:) (Atom "Coq.Lists.List.1" 0) ([])) (Atom "Set"
-    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "Coq.Lists.List.13" 0) ([]))
-    (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom "app_nil_r.u0" 0)
+    "incl_l_nil_false.u0" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:)
+    (Clause ((:) (Atom "In_incl_singleton.u0" 0) ([])) (Atom "Set"
+    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "set_add_cons.u0" 0) ([]))
+    (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
+    "incl_set_add_reduce_set_mem.u0" 0) ([])) (Atom "Set" (Prelude.succ 0)))
+    ((:) (Clause ((:) (Atom "incl_eq.u0" 0) ([])) (Atom "Set" (Prelude.succ
+    0))) ((:) (Clause ((:) (Atom "nodup_incl2.u0" 0) ([])) (Atom "Set"
+    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "nodup_incl_length.u0" 0)
     ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
-    "app_nil_r.u1" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:)
-    (Atom "app_assoc.u0" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause
-    ((:) (Atom "app_assoc.u1" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:)
-    (Clause ((:) (Atom "app_eq_app.u0" 0) ([])) (Atom "Set" (Prelude.succ
-    0))) ((:) (Clause ((:) (Atom "Coq.Lists.List.44" 0) ([])) (Atom "Set"
-    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "nth_split.u0" 0) ([])) (Atom
-    "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom "nth_ext.u0" 0) ([]))
+    "strict_subset.u0" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause
+    ((:) (Atom "set_add_In.u0" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:)
+    (Clause ((:) (Atom "set_add_not_In.u0" 0) ([])) (Atom "Set" (Prelude.succ
+    0))) ((:) (Clause ((:) (Atom "set_diff_In_emptyR.u0" 0) ([])) (Atom "Set"
+    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "set_diff_nodup_eq.u0" 0)
+    ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
+    "set_union_nil_incl_l.u0" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:)
+    (Clause ((:) (Atom "set_union_nil_incl_r.u0" 0) ([])) (Atom "Set"
+    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "set_union_l_nil.u0" 0) ([]))
     (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
-    "nth_error_split.u0" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause
-    ((:) (Atom "remove_app.u0" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:)
-    (Clause ((:) (Atom "notin_remove.u0" 0) ([])) (Atom "Set" (Prelude.succ
-    0))) ((:) (Clause ((:) (Atom "Coq.Lists.List.247" 0) ([])) (Atom "Set"
-    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "Coq.Lists.List.277" 0) ([]))
+    "set_union_incl_nil.u0" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:)
+    (Clause ((:) (Atom "incl_dec.u0" 0) ([])) (Atom "Set" (Prelude.succ 0)))
+    ((:) (Clause ((:) (Atom "incl_set_add_iff.u0" 0) ([])) (Atom "Set"
+    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "set_union_nil_incl_iff_lr.u0"
+    0) ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
+    "incl_set_union_intro1.u0" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:)
+    (Clause ((:) (Atom "incl_set_union_intro2.u0" 0) ([])) (Atom "Set"
+    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "incl_set_union_elim1.u0" 0)
+    ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
+    "set_diff_not_In_emptyR.u0" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:)
+    (Clause ((:) (Atom "set_add_not_In_length_S_n.u0" 0) ([])) (Atom "Set"
+    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "set_add_In_length_n.u0" 0)
+    ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
+    "set_add_le_length.u0" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:)
+    (Clause ((:) (Atom "set_diff_nil.u0" 0) ([])) (Atom "Set" (Prelude.succ
+    0))) ((:) (Clause ((:) (Atom "set_union_incl.u0" 0) ([])) (Atom "Set"
+    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "set_diff_nil_length_nodup.u0"
+    0) ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
+    "set_add_In_length.u0" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:)
+    (Clause ((:) (Atom "set_diff_In_consR.u0" 0) ([])) (Atom "Set"
+    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "set_diff_In_consL.u0" 0)
+    ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
+    "set_diff_succ.u0" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause
+    ((:) (Atom "set_add_add.u0" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:)
+    (Clause ((:) (Atom "set_union_nodup_r.u0" 0) ([])) (Atom "Set"
+    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "nodup_nil_iff.u0" 0) ([]))
     (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
-    "Coq.Lists.List.278" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause
-    ((:) (Atom "Coq.Lists.List.318" 0) ([])) (Atom "Set" (Prelude.succ 0)))
-    ((:) (Clause ((:) (Atom "Coq.Lists.List.319" 0) ([])) (Atom "Set"
+    "set_union_cons_rm_r.u0" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:)
+    (Clause ((:) (Atom "set_diff_nil_length.u0" 0) ([])) (Atom "Set"
+    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "set_diff_nodup_l.u0" 0) ([]))
+    (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
+    "set_diff_nodup_r.u0" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:)
+    (Clause ((:) (Atom "set_add_length_not_nil.u0" 0) ([])) (Atom "Set"
+    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "set_diff_length_cons_nil.u0"
+    0) ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
+    "set_diff_length_zero.u0" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:)
+    (Clause ((:) (Atom "set_add_length.u0" 0) ([])) (Atom "Set" (Prelude.succ
+    0))) ((:) (Clause ((:) (Atom "set_add_set_diff_length.u0" 0) ([])) (Atom
+    "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom "nodup_length.u0" 0)
+    ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
+    "set_diff_length_le.u0" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:)
+    (Clause ((:) (Atom "set_diff_incl_lt_length.u0" 0) ([])) (Atom "Set"
+    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "set_diff_refl_nil.u0" 0)
+    ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
+    "incl_set_union_l_nil.u0" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:)
+    (Clause ((:) (Atom "incl_set_add_reduce2.u0" 0) ([])) (Atom "Set"
+    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "incl_set_union_nil_l.u0" 0)
+    ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
+    "incl_set_add_set_union_nil.u0" 0) ([])) (Atom "Set" (Prelude.succ 0)))
+    ((:) (Clause ((:) (Atom "incl_set_union_trans.u0" 0) ([])) (Atom "Set"
+    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "set_union_nil_iff.u0" 0)
+    ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
+    "incl_set_union_nodup_l.u0" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:)
+    (Clause ((:) (Atom "length_set_diff_set_union_nodup_l.u0" 0) ([])) (Atom
+    "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
+    "strict_subset_lt_length.u0" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:)
+    (Clause ((:) (Atom "if_negb.u0" 0) ([])) (Atom "Set" (Prelude.succ 0)))
+    ((:) (Clause ((:) (Atom "andb_if.u0" 0) ([])) (Atom "Set" (Prelude.succ
+    0))) ((:) (Clause ((:) (Atom "negb_if.u0" 0) ([])) (Atom "Set"
+    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "Coq.Bool.Bool.56" 0) ([]))
+    (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
+    "Coq.Init.Byte.258" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause
+    ((:) (Atom "Coq.Lists.List.1" 0) ([])) (Atom "Set" (Prelude.succ 0)))
+    ((:) (Clause ((:) (Atom "Coq.Lists.List.13" 0) ([])) (Atom "Set"
+    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "app_nil_r.u0" 0) ([])) (Atom
+    "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom "app_nil_r.u1" 0) ([]))
+    (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom "app_assoc.u0" 0)
+    ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
+    "app_assoc.u1" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:)
+    (Atom "app_eq_app.u0" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:)
+    (Clause ((:) (Atom "Coq.Lists.List.44" 0) ([])) (Atom "Set" (Prelude.succ
+    0))) ((:) (Clause ((:) (Atom "nth_split.u0" 0) ([])) (Atom "Set"
+    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "nth_ext.u0" 0) ([])) (Atom
+    "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom "nth_error_split.u0" 0)
+    ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
+    "remove_app.u0" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:)
+    (Atom "notin_remove.u0" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:)
+    (Clause ((:) (Atom "Coq.Lists.List.247" 0) ([])) (Atom "Set"
+    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "Coq.Lists.List.279" 0) ([]))
+    (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
+    "Coq.Lists.List.280" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause
+    ((:) (Atom "Coq.Lists.List.320" 0) ([])) (Atom "Set" (Prelude.succ 0)))
+    ((:) (Clause ((:) (Atom "Coq.Lists.List.321" 0) ([])) (Atom "Set"
     (Prelude.succ 0))) ((:) (Clause ((:) (Atom "concat_map.u0" 0) ([])) (Atom
     "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom "concat_map.u1" 0) ([]))
     (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom "remove_concat.u0"
@@ -903,12 +1378,12 @@ cs4 =
     (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom "flat_map_ext.u1"
     0) ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
     "nth_nth_nth_map.u0" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause
-    ((:) (Atom "Coq.Lists.List.377" 0) ([])) (Atom "Set" (Prelude.succ 0)))
-    ((:) (Clause ((:) (Atom "Coq.Lists.List.378" 0) ([])) (Atom "Set"
+    ((:) (Atom "Coq.Lists.List.379" 0) ([])) (Atom "Set" (Prelude.succ 0)))
+    ((:) (Clause ((:) (Atom "Coq.Lists.List.380" 0) ([])) (Atom "Set"
     (Prelude.succ 0))) ((:) (Clause ((:) (Atom "fold_left_length.u0" 0) ([]))
     (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
-    "Coq.Lists.List.381" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause
-    ((:) (Atom "Coq.Lists.List.382" 0) ([])) (Atom "Set" (Prelude.succ 0)))
+    "Coq.Lists.List.383" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause
+    ((:) (Atom "Coq.Lists.List.384" 0) ([])) (Atom "Set" (Prelude.succ 0)))
     ((:) (Clause ((:) (Atom "fold_right_app.u0" 0) ([])) (Atom "Set"
     (Prelude.succ 0))) ((:) (Clause ((:) (Atom "fold_right_app.u1" 0) ([]))
     (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
@@ -918,41 +1393,41 @@ cs4 =
     (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom "list_power.u0" 0)
     ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
     "list_power.u1" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:)
-    (Atom "Coq.Lists.List.400" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:)
-    (Clause ((:) (Atom "Coq.Lists.List.454" 0) ([])) (Atom "Set"
+    (Atom "Coq.Lists.List.402" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:)
+    (Clause ((:) (Atom "Coq.Lists.List.456" 0) ([])) (Atom "Set"
     (Prelude.succ 0))) ((:) (Clause ((:) (Atom "filter_ext_in.u0" 0) ([]))
     (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom "remove_alt.u0" 0)
     ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
-    "Coq.Lists.List.465" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause
-    ((:) (Atom "Coq.Lists.List.466" 0) ([])) (Atom "Set" (Prelude.succ 0)))
+    "Coq.Lists.List.468" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause
+    ((:) (Atom "Coq.Lists.List.469" 0) ([])) (Atom "Set" (Prelude.succ 0)))
     ((:) (Clause ((:) (Atom "split_combine.u0" 0) ([])) (Atom "Set"
-    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "Coq.Lists.List.477" 0) ([]))
+    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "Coq.Lists.List.480" 0) ([]))
     (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
-    "Coq.Lists.List.479" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause
+    "Coq.Lists.List.482" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause
     ((:) (Atom "incl_map.u0" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:)
     (Clause ((:) (Atom "incl_map.u1" 0) ([])) (Atom "Set" (Prelude.succ 0)))
-    ((:) (Clause ((:) (Atom "Coq.Lists.List.495" 0) ([])) (Atom "Set"
+    ((:) (Clause ((:) (Atom "Coq.Lists.List.498" 0) ([])) (Atom "Set"
     (Prelude.succ 0))) ((:) (Clause ((:) (Atom "firstn_all2.u0" 0) ([]))
     (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom "firstn_app.u0" 0)
     ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
     "firstn_firstn.u0" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause
     ((:) (Atom "firstn_skipn.u0" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:)
     (Clause ((:) (Atom "firstn_skipn_rev.u0" 0) ([])) (Atom "Set"
-    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "Coq.Lists.List.572" 0) ([]))
+    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "Coq.Lists.List.581" 0) ([]))
     (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom "firstn_map.u0" 0)
     ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
     "firstn_map.u1" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:)
     (Atom "firstn_map.u2" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:)
     (Clause ((:) (Atom "firstn_map.u3" 0) ([])) (Atom "Set" (Prelude.succ
-    0))) ((:) (Clause ((:) (Atom "Coq.Lists.List.581" 0) ([])) (Atom "Set"
-    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "Coq.Lists.List.582" 0) ([]))
+    0))) ((:) (Clause ((:) (Atom "Coq.Lists.List.590" 0) ([])) (Atom "Set"
+    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "Coq.Lists.List.591" 0) ([]))
     (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom "Add_split.u0" 0)
     ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
     "Add_split.u1" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:)
-    (Atom "Coq.Lists.List.615" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:)
+    (Atom "Coq.Lists.List.624" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:)
     (Clause ((:) (Atom "NoDup_map_inv.u0" 0) ([])) (Atom "Set" (Prelude.succ
     0))) ((:) (Clause ((:) (Atom "NoDup_map_inv.u1" 0) ([])) (Atom "Set"
-    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "Coq.Lists.List.702" 0) ([]))
+    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "Coq.Lists.List.711" 0) ([]))
     (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom "Forall_rect.u0"
     0) ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
     "map_ext_Forall.u0" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause
@@ -979,33 +1454,34 @@ cs4 =
     ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
     "notin_flat_map_Forall.u0" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:)
     (Clause ((:) (Atom "notin_flat_map_Forall.u1" 0) ([])) (Atom "Set"
-    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "Coq.Lists.List.821" 0) ([]))
+    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "Coq.Lists.List.850" 0) ([]))
     (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
-    "Coq.Lists.List.838" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause
-    ((:) (Atom "Coq.Lists.List.857" 0) ([])) (Atom "Set" (Prelude.succ 0)))
+    "Coq.Lists.List.867" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause
+    ((:) (Atom "Coq.Lists.List.886" 0) ([])) (Atom "Set" (Prelude.succ 0)))
     ((:) (Clause ((:) (Atom "repeat_cons.u0" 0) ([])) (Atom "Set"
     (Prelude.succ 0))) ((:) (Clause ((:) (Atom "count_occ_unique.u0" 0) ([]))
     (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
     "repeat_to_concat.u0" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:)
     (Clause ((:) (Atom "Coq.Init.Logic.1" 0) ([])) (Atom "Set" (Prelude.succ
     0))) ((:) (Clause ((:) (Atom "Coq.Init.Logic.2" 0) ([])) (Atom "Set"
-    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "Coq.Init.Logic.3" 0) ([]))
+    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "notT.u0" 0) ([])) (Atom "Set"
+    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "Coq.Init.Logic.4" 0) ([]))
     (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom "ex.u0" 0) ([]))
     (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom "ex2.u0" 0) ([]))
     (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom "all.u0" 0) ([]))
-    (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom "Coq.Init.Logic.7"
+    (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom "Coq.Init.Logic.8"
     0) ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom "eq.u0"
     0) ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
-    "Coq.Init.Logic.9" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause
-    ((:) (Atom "Coq.Init.Logic.10" 0) ([])) (Atom "Set" (Prelude.succ 0)))
+    "Coq.Init.Logic.10" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause
+    ((:) (Atom "Coq.Init.Logic.11" 0) ([])) (Atom "Set" (Prelude.succ 0)))
     ((:) (Clause ((:) (Atom "eq_sind_r.u0" 0) ([])) (Atom "Set" (Prelude.succ
     0))) ((:) (Clause ((:) (Atom "eq_ind_r.u0" 0) ([])) (Atom "Set"
     (Prelude.succ 0))) ((:) (Clause ((:) (Atom "eq_rec_r.u0" 0) ([])) (Atom
     "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom "eq_rect_r.u0" 0) ([]))
     (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom "eq_rect_r.u1" 0)
     ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
-    "Coq.Init.Logic.16" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause
-    ((:) (Atom "Coq.Init.Logic.17" 0) ([])) (Atom "Set" (Prelude.succ 0)))
+    "Coq.Init.Logic.17" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause
+    ((:) (Atom "Coq.Init.Logic.18" 0) ([])) (Atom "Set" (Prelude.succ 0)))
     ((:) (Clause ((:) (Atom "f_equal_dep2.u0" 0) ([])) (Atom "Set"
     (Prelude.succ 0))) ((:) (Clause ((:) (Atom "f_equal_dep2.u1" 0) ([]))
     (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom "f_equal_dep2.u2"
@@ -1126,100 +1602,102 @@ cs4 =
     (Clause ((:) (Atom "rew_ex2.u0" 0) ([])) (Atom "Set" (Prelude.succ 0)))
     ((:) (Clause ((:) (Atom "nat_rect_succ_r.u0" 0) ([])) (Atom "Set"
     (Prelude.succ 0))) ((:) (Clause ((:) (Atom "nat_rect_plus.u0" 0) ([]))
-    (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
+    (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom "TH.Clause.2" 0)
+    ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
     "Nnat.N2Nat.inj_iter.u0" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:)
     (Clause ((:) (Atom "Nnat.Nat2N.inj_iter.u0" 0) ([])) (Atom "Set"
-    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "Pnat.Pos2Nat.inj_iter.u0" 0)
-    ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom "sig.u0" 0)
-    ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
-    "Coq.Init.Specif.3" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause
-    ((:) (Atom "sig2.u0" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause
-    ((:) (Atom "Coq.Init.Specif.6" 0) ([])) (Atom "Set" (Prelude.succ 0)))
-    ((:) (Clause ((:) (Atom "sigT.u0" 0) ([])) (Atom "Set" (Prelude.succ 0)))
-    ((:) (Clause ((:) (Atom "sigT.u1" 0) ([])) (Atom "Set" (Prelude.succ 0)))
-    ((:) (Clause ((:) (Atom "Coq.Init.Specif.10" 0) ([])) (Atom "Set"
-    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "sigT2.u0" 0) ([])) (Atom
-    "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom "sigT2.u1" 0) ([]))
-    (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom "sigT2.u2" 0)
-    ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
-    "Coq.Init.Specif.15" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause
-    ((:) (Atom "Coq.Init.Specif.16" 0) ([])) (Atom "Set" (Prelude.succ 0)))
-    ((:) (Clause ((:) (Atom "sig_of_sig2.u0" 0) ([])) (Atom "Set"
-    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "Coq.Init.Specif.21" 0) ([]))
+    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "TH.Ninfty.2" 0) ([])) (Atom
+    "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
+    "Pnat.Pos2Nat.inj_iter.u0" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:)
+    (Clause ((:) (Atom "sig.u0" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:)
+    (Clause ((:) (Atom "Coq.Init.Specif.3" 0) ([])) (Atom "Set" (Prelude.succ
+    0))) ((:) (Clause ((:) (Atom "sig2.u0" 0) ([])) (Atom "Set" (Prelude.succ
+    0))) ((:) (Clause ((:) (Atom "Coq.Init.Specif.6" 0) ([])) (Atom "Set"
+    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "sigT.u0" 0) ([])) (Atom "Set"
+    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "sigT.u1" 0) ([])) (Atom "Set"
+    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "Coq.Init.Specif.10" 0) ([]))
+    (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom "sigT2.u0" 0)
+    ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom "sigT2.u1"
+    0) ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
+    "sigT2.u2" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:)
+    (Atom "Coq.Init.Specif.15" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:)
+    (Clause ((:) (Atom "Coq.Init.Specif.16" 0) ([])) (Atom "Set"
+    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "sig_of_sig2.u0" 0) ([]))
     (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
-    "Coq.Init.Specif.22" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause
-    ((:) (Atom "Coq.Init.Specif.23" 0) ([])) (Atom "Set" (Prelude.succ 0)))
-    ((:) (Clause ((:) (Atom "sigT_of_sigT2.u0" 0) ([])) (Atom "Set"
-    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "sigT_of_sigT2.u1" 0) ([]))
-    (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom "sigT_of_sigT2.u2"
+    "Coq.Init.Specif.21" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause
+    ((:) (Atom "Coq.Init.Specif.22" 0) ([])) (Atom "Set" (Prelude.succ 0)))
+    ((:) (Clause ((:) (Atom "Coq.Init.Specif.23" 0) ([])) (Atom "Set"
+    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "sigT_of_sigT2.u0" 0) ([]))
+    (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom "sigT_of_sigT2.u1"
     0) ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
-    "Coq.Init.Specif.29" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause
-    ((:) (Atom "Coq.Init.Specif.30" 0) ([])) (Atom "Set" (Prelude.succ 0)))
-    ((:) (Clause ((:) (Atom "sig_of_sigT.u0" 0) ([])) (Atom "Set"
-    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "sigT_of_sig.u0" 0) ([]))
-    (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom "sig2_of_sigT2.u0"
+    "sigT_of_sigT2.u2" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause
+    ((:) (Atom "Coq.Init.Specif.29" 0) ([])) (Atom "Set" (Prelude.succ 0)))
+    ((:) (Clause ((:) (Atom "Coq.Init.Specif.30" 0) ([])) (Atom "Set"
+    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "sig_of_sigT.u0" 0) ([]))
+    (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom "sigT_of_sig.u0"
     0) ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
-    "sigT2_of_sig2.u0" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause
-    ((:) (Atom "ex_of_sig.u0" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:)
-    (Clause ((:) (Atom "ex_of_sigT.u0" 0) ([])) (Atom "Set" (Prelude.succ
-    0))) ((:) (Clause ((:) (Atom "ex2_of_sig2.u0" 0) ([])) (Atom "Set"
-    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "ex2_of_sigT2.u0" 0) ([]))
-    (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom "sigT_eta.u0" 0)
+    "sig2_of_sigT2.u0" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause
+    ((:) (Atom "sigT2_of_sig2.u0" 0) ([])) (Atom "Set" (Prelude.succ 0)))
+    ((:) (Clause ((:) (Atom "ex_of_sig.u0" 0) ([])) (Atom "Set" (Prelude.succ
+    0))) ((:) (Clause ((:) (Atom "ex_of_sigT.u0" 0) ([])) (Atom "Set"
+    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "ex2_of_sig2.u0" 0) ([]))
+    (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom "ex2_of_sigT2.u0"
+    0) ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
+    "sigT_eta.u0" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:)
+    (Atom "sigT_eta.u1" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause
+    ((:) (Atom "sig_eta.u0" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:)
+    (Clause ((:) (Atom "sigT2_eta.u0" 0) ([])) (Atom "Set" (Prelude.succ 0)))
+    ((:) (Clause ((:) (Atom "sigT2_eta.u1" 0) ([])) (Atom "Set" (Prelude.succ
+    0))) ((:) (Clause ((:) (Atom "sigT2_eta.u2" 0) ([])) (Atom "Set"
+    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "sig2_eta.u0" 0) ([])) (Atom
+    "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
+    "exists_to_inhabited_sig.u0" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:)
+    (Clause ((:) (Atom "inhabited_sig_to_exists.u0" 0) ([])) (Atom "Set"
+    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "Coq.Init.Specif.78" 0) ([]))
+    (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom "projT1_eq.u0" 0)
     ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
-    "sigT_eta.u1" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:)
-    (Atom "sig_eta.u0" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause
-    ((:) (Atom "sigT2_eta.u0" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:)
-    (Clause ((:) (Atom "sigT2_eta.u1" 0) ([])) (Atom "Set" (Prelude.succ 0)))
-    ((:) (Clause ((:) (Atom "sigT2_eta.u2" 0) ([])) (Atom "Set" (Prelude.succ
-    0))) ((:) (Clause ((:) (Atom "sig2_eta.u0" 0) ([])) (Atom "Set"
-    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "exists_to_inhabited_sig.u0"
-    0) ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
-    "inhabited_sig_to_exists.u0" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:)
-    (Clause ((:) (Atom "Coq.Init.Specif.78" 0) ([])) (Atom "Set"
-    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "projT1_eq.u0" 0) ([])) (Atom
-    "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom "projT1_eq.u1" 0) ([]))
-    (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom "projT2_eq.u0" 0)
+    "projT1_eq.u1" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:)
+    (Atom "projT2_eq.u0" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause
+    ((:) (Atom "projT2_eq.u1" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:)
+    (Clause ((:) (Atom "eq_existT_uncurried.u0" 0) ([])) (Atom "Set"
+    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "eq_existT_uncurried.u1" 0)
     ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
-    "projT2_eq.u1" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:)
-    (Atom "eq_existT_uncurried.u0" 0) ([])) (Atom "Set" (Prelude.succ 0)))
-    ((:) (Clause ((:) (Atom "eq_existT_uncurried.u1" 0) ([])) (Atom "Set"
-    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "eq_sigT_uncurried.u0" 0)
+    "eq_sigT_uncurried.u0" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:)
+    (Clause ((:) (Atom "eq_sigT_uncurried.u1" 0) ([])) (Atom "Set"
+    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "eq_existT_curried.u0" 0)
     ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
-    "eq_sigT_uncurried.u1" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:)
-    (Clause ((:) (Atom "eq_existT_curried.u0" 0) ([])) (Atom "Set"
-    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "eq_existT_curried.u1" 0)
+    "eq_existT_curried.u1" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:)
+    (Clause ((:) (Atom "eq_existT_curried_map.u0" 0) ([])) (Atom "Set"
+    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "eq_existT_curried_map.u1" 0)
     ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
-    "eq_existT_curried_map.u0" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:)
-    (Clause ((:) (Atom "eq_existT_curried_map.u1" 0) ([])) (Atom "Set"
-    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "eq_existT_curried_map.u2" 0)
+    "eq_existT_curried_map.u2" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:)
+    (Clause ((:) (Atom "eq_existT_curried_map.u3" 0) ([])) (Atom "Set"
+    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "eq_existT_curried_trans.u0"
+    0) ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
+    "eq_existT_curried_trans.u1" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:)
+    (Clause ((:) (Atom "eq_existT_curried_congr.u0" 0) ([])) (Atom "Set"
+    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "eq_existT_curried_congr.u1"
+    0) ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
+    "eq_sigT.u0" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:)
+    (Atom "eq_sigT.u1" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause
+    ((:) (Atom "eq_existT_l.u0" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:)
+    (Clause ((:) (Atom "eq_existT_l.u1" 0) ([])) (Atom "Set" (Prelude.succ
+    0))) ((:) (Clause ((:) (Atom "eq_existT_r.u0" 0) ([])) (Atom "Set"
+    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "eq_existT_r.u1" 0) ([]))
+    (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom "eq_sigT_hprop.u0"
+    0) ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
+    "eq_sigT_hprop.u1" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause
+    ((:) (Atom "eq_sigT_uncurried_iff.u0" 0) ([])) (Atom "Set" (Prelude.succ
+    0))) ((:) (Clause ((:) (Atom "eq_sigT_uncurried_iff.u1" 0) ([])) (Atom
+    "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom "eq_sigT_rect.u0" 0)
     ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
-    "eq_existT_curried_map.u3" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:)
-    (Clause ((:) (Atom "eq_existT_curried_trans.u0" 0) ([])) (Atom "Set"
-    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "eq_existT_curried_trans.u1"
+    "eq_sigT_rect.u1" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause
+    ((:) (Atom "eq_sigT_rect.u2" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:)
+    (Clause ((:) (Atom "eq_sigT_rec.u0" 0) ([])) (Atom "Set" (Prelude.succ
+    0))) ((:) (Clause ((:) (Atom "eq_sigT_rec.u1" 0) ([])) (Atom "Set"
+    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "eq_sigT_ind.u0" 0) ([]))
+    (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom "eq_sigT_ind.u1"
     0) ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
-    "eq_existT_curried_congr.u0" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:)
-    (Clause ((:) (Atom "eq_existT_curried_congr.u1" 0) ([])) (Atom "Set"
-    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "eq_sigT.u0" 0) ([])) (Atom
-    "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom "eq_sigT.u1" 0) ([]))
-    (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom "eq_existT_l.u0"
-    0) ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
-    "eq_existT_l.u1" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause
-    ((:) (Atom "eq_existT_r.u0" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:)
-    (Clause ((:) (Atom "eq_existT_r.u1" 0) ([])) (Atom "Set" (Prelude.succ
-    0))) ((:) (Clause ((:) (Atom "eq_sigT_hprop.u0" 0) ([])) (Atom "Set"
-    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "eq_sigT_hprop.u1" 0) ([]))
-    (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
-    "eq_sigT_uncurried_iff.u0" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:)
-    (Clause ((:) (Atom "eq_sigT_uncurried_iff.u1" 0) ([])) (Atom "Set"
-    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "eq_sigT_rect.u0" 0) ([]))
-    (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom "eq_sigT_rect.u1"
-    0) ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
-    "eq_sigT_rect.u2" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause
-    ((:) (Atom "eq_sigT_rec.u0" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:)
-    (Clause ((:) (Atom "eq_sigT_rec.u1" 0) ([])) (Atom "Set" (Prelude.succ
-    0))) ((:) (Clause ((:) (Atom "eq_sigT_ind.u0" 0) ([])) (Atom "Set"
-    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "eq_sigT_ind.u1" 0) ([]))
-    (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
     "eq_sigT_rect_existT_l.u0" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:)
     (Clause ((:) (Atom "eq_sigT_rect_existT_l.u1" 0) ([])) (Atom "Set"
     (Prelude.succ 0))) ((:) (Clause ((:) (Atom "eq_sigT_rect_existT_l.u2" 0)
@@ -1485,46 +1963,60 @@ cs4 =
     (Prelude.succ 0))) ((:) (Clause ((:) (Atom "BinPos.Pos.iter_invariant.u0"
     0) ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
     "BinPos.Pos.iter_op_succ.u0" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:)
-    (Clause ((:) (Atom "Init.Unconvertible.u0" 0) ([])) (Atom "Set"
-    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "Coq.Init.Decimal.13" 0) ([]))
-    (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
-    "Coq.Strings.Ascii.2" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:)
-    (Clause ((:) (Atom "Basics.compose.u0" 0) ([])) (Atom "Set" (Prelude.succ
-    0))) ((:) (Clause ((:) (Atom "Basics.compose.u1" 0) ([])) (Atom "Set"
-    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "Basics.compose.u2" 0) ([]))
-    (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom "Basics.arrow.u0"
+    (Clause ((:) (Atom "Coq.Init.Decimal.13" 0) ([])) (Atom "Set"
+    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "Coq.Lists.ListSet.1" 0) ([]))
+    (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom "set_mem_ind.u0"
     0) ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
-    "Basics.arrow.u1" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause
-    ((:) (Atom "Basics.const.u0" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:)
-    (Clause ((:) (Atom "Basics.const.u1" 0) ([])) (Atom "Set" (Prelude.succ
-    0))) ((:) (Clause ((:) (Atom "Basics.flip.u0" 0) ([])) (Atom "Set"
-    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "Basics.flip.u1" 0) ([]))
-    (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom "Basics.flip.u2"
+    "set_mem_ind2.u0" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause
+    ((:) (Atom "set_prod.u0" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:)
+    (Clause ((:) (Atom "set_prod.u1" 0) ([])) (Atom "Set" (Prelude.succ 0)))
+    ((:) (Clause ((:) (Atom "set_power.u0" 0) ([])) (Atom "Set" (Prelude.succ
+    0))) ((:) (Clause ((:) (Atom "set_power.u1" 0) ([])) (Atom "Set"
+    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "set_fold_left.u0" 0) ([]))
+    (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom "set_fold_left.u1"
     0) ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
-    "Basics.apply.u0" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause
-    ((:) (Atom "Basics.apply.u1" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:)
-    (Clause ((:) (Atom "Coq.Vectors.Fin.3" 0) ([])) (Atom "Set" (Prelude.succ
-    0))) ((:) (Clause ((:) (Atom "Fin.case0.u0" 0) ([])) (Atom "Set"
-    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "Fin.case0.u1" 0) ([])) (Atom
-    "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom "Fin.caseS'.u0" 0) ([]))
-    (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom "Fin.caseS'.u1" 0)
-    ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
-    "Fin.caseS.u0" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:)
-    (Atom "Fin.rectS.u0" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause
-    ((:) (Atom "Fin.rectS.u1" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:)
-    (Clause ((:) (Atom "Fin.rect2.u0" 0) ([])) (Atom "Set" (Prelude.succ 0)))
-    ((:) (Clause ((:) (Atom "Fin.FS_inj.u0" 0) ([])) (Atom "Set"
-    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "Setoid.Seq_refl.u0" 0) ([]))
+    "set_fold_right.u0" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause
+    ((:) (Atom "set_fold_right.u1" 0) ([])) (Atom "Set" (Prelude.succ 0)))
+    ((:) (Clause ((:) (Atom "set_map.u0" 0) ([])) (Atom "Set" (Prelude.succ
+    0))) ((:) (Clause ((:) (Atom "set_map.u1" 0) ([])) (Atom "Set"
+    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "Coq.Strings.Ascii.2" 0) ([]))
     (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
-    "Setoid.Seq_sym.u0" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause
-    ((:) (Atom "Setoid.Seq_trans.u0" 0) ([])) (Atom "Set" (Prelude.succ 0)))
-    ((:) (Clause ((:) (Atom "Coq.Strings.String.1" 0) ([])) (Atom "Set"
-    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "Coq.Numbers.BinNums.1" 0)
+    "Basics.compose.u0" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause
+    ((:) (Atom "Basics.compose.u1" 0) ([])) (Atom "Set" (Prelude.succ 0)))
+    ((:) (Clause ((:) (Atom "Basics.compose.u2" 0) ([])) (Atom "Set"
+    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "Basics.arrow.u0" 0) ([]))
+    (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom "Basics.arrow.u1"
+    0) ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
+    "Basics.const.u0" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause
+    ((:) (Atom "Basics.const.u1" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:)
+    (Clause ((:) (Atom "Basics.flip.u0" 0) ([])) (Atom "Set" (Prelude.succ
+    0))) ((:) (Clause ((:) (Atom "Basics.flip.u1" 0) ([])) (Atom "Set"
+    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "Basics.flip.u2" 0) ([]))
+    (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom "Basics.apply.u0"
+    0) ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
+    "Basics.apply.u1" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause
+    ((:) (Atom "Coq.Vectors.Fin.3" 0) ([])) (Atom "Set" (Prelude.succ 0)))
+    ((:) (Clause ((:) (Atom "Fin.case0.u0" 0) ([])) (Atom "Set" (Prelude.succ
+    0))) ((:) (Clause ((:) (Atom "Fin.case0.u1" 0) ([])) (Atom "Set"
+    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "Fin.caseS'.u0" 0) ([])) (Atom
+    "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom "Fin.caseS'.u1" 0) ([]))
+    (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom "Fin.caseS.u0" 0)
     ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
-    "Coq.Numbers.BinNums.2" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:)
-    (Clause ((:) (Atom "Coq.Numbers.BinNums.3" 0) ([])) (Atom "Set"
-    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "Tactics.fix_proto.u0" 0)
+    "Fin.rectS.u0" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:)
+    (Atom "Fin.rectS.u1" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause
+    ((:) (Atom "Fin.rect2.u0" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:)
+    (Clause ((:) (Atom "Fin.FS_inj.u0" 0) ([])) (Atom "Set" (Prelude.succ
+    0))) ((:) (Clause ((:) (Atom "Seq_refl.u0" 0) ([])) (Atom "Set"
+    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "Seq_sym.u0" 0) ([])) (Atom
+    "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom "Seq_trans.u0" 0) ([]))
+    (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
+    "Coq.Strings.String.1" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:)
+    (Clause ((:) (Atom "Coq.Numbers.BinNums.1" 0) ([])) (Atom "Set"
+    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "Coq.Numbers.BinNums.2" 0)
     ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
+    "Coq.Numbers.BinNums.3" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:)
+    (Clause ((:) (Atom "Tactics.fix_proto.u0" 0) ([])) (Atom "Set"
+    (Prelude.succ 0))) ((:) (Clause ((:) (Atom
     "Coq.Numbers.Natural.Abstract.NAxioms.3" 0) ([])) (Atom "Set"
     (Prelude.succ 0))) ((:) (Clause ((:) (Atom
     "Coq.Numbers.Natural.Abstract.NAxioms.4" 0) ([])) (Atom "Set"
@@ -1537,6 +2029,11 @@ cs4 =
     ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
     "recursion_0.u0" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause
     ((:) (Atom "recursion_succ.u0" 0) ([])) (Atom "Set" (Prelude.succ 0)))
+    ((:) (Clause ((:) (Atom "OddT_EvenT_rect.u0" 0) ([])) (Atom "Set"
+    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "OddT_EvenT_rect.u1" 0) ([]))
+    (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
+    "EvenT_OddT_rect.u0" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause
+    ((:) (Atom "EvenT_OddT_rect.u1" 0) ([])) (Atom "Set" (Prelude.succ 0)))
     ((:) (Clause ((:) (Atom "Coq.Vectors.VectorEq.1" 0) ([])) (Atom "Set"
     (Prelude.succ 0))) ((:) (Clause ((:) (Atom "Vector.eqb_eq.u0" 0) ([]))
     (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom "Vector.cast.u0"
@@ -1626,54 +2123,64 @@ cs4 =
     ((:) (Clause ((:) (Atom "CompSpecT.u0" 0) ([])) (Atom "Set" (Prelude.succ
     0))) ((:) (Clause ((:) (Atom "CompSpecT.u1" 0) ([])) (Atom "Set"
     (Prelude.succ 0))) ((:) (Clause ((:) (Atom "CompSpec2Type.u0" 0) ([]))
-    (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom "identity.u0" 0)
+    (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom "ID.u0" 0) ([]))
+    (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
+    "Decidable.dec_functional_relation.u0" 0) ([])) (Atom "Set" (Prelude.succ
+    0))) ((:) (Clause ((:) (Atom "Decidable.dec_functional_relation.u1" 0)
     ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
-    "Coq.Init.Datatypes.96" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:)
-    (Clause ((:) (Atom "ID.u0" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:)
-    (Clause ((:) (Atom "Decidable.dec_functional_relation.u0" 0) ([])) (Atom
-    "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
-    "Decidable.dec_functional_relation.u1" 0) ([])) (Atom "Set" (Prelude.succ
-    0))) ((:) (Clause ((:) (Atom "Coq.Logic.Eqdep_dec.1" 0) ([])) (Atom "Set"
-    (Prelude.succ 0))) ((:) (Clause ((:) (Atom
-    "Eqdep_dec.eq_proofs_unicity.u0" 0) ([])) (Atom "Set" (Prelude.succ 0)))
-    ((:) (Clause ((:) (Atom "Eqdep_dec.K_dec.u0" 0) ([])) (Atom "Set"
-    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "Eqdep_dec.inj_right_pair.u0"
+    "Coq.Logic.Eqdep_dec.1" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:)
+    (Clause ((:) (Atom "Eqdep_dec.eq_proofs_unicity.u0" 0) ([])) (Atom "Set"
+    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "Eqdep_dec.K_dec.u0" 0) ([]))
+    (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
+    "Eqdep_dec.inj_right_pair.u0" 0) ([])) (Atom "Set" (Prelude.succ 0)))
+    ((:) (Clause ((:) (Atom "Eqdep_dec.K_dec_type.u0" 0) ([])) (Atom "Set"
+    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "Eqdep_dec.eq_rect_eq_dec.u0"
     0) ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
-    "Eqdep_dec.K_dec_type.u0" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:)
-    (Clause ((:) (Atom "Eqdep_dec.eq_rect_eq_dec.u0" 0) ([])) (Atom "Set"
-    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "Eqdep_dec.eq_rect_eq_dec.u1"
+    "Eqdep_dec.eq_rect_eq_dec.u1" 0) ([])) (Atom "Set" (Prelude.succ 0)))
+    ((:) (Clause ((:) (Atom "Eqdep_dec.eq_dep_eq_dec.u0" 0) ([])) (Atom "Set"
+    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "Eqdep_dec.eq_dep_eq_dec.u1"
     0) ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
-    "Eqdep_dec.eq_dep_eq_dec.u0" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:)
-    (Clause ((:) (Atom "Eqdep_dec.eq_dep_eq_dec.u1" 0) ([])) (Atom "Set"
-    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "Eqdep_dec.UIP_dec.u0" 0)
+    "Eqdep_dec.UIP_dec.u0" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:)
+    (Clause ((:) (Atom "Coq.Logic.Eqdep_dec.14" 0) ([])) (Atom "Set"
+    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "Coq.Logic.Eqdep_dec.15" 0)
     ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
-    "Coq.Logic.Eqdep_dec.14" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:)
-    (Clause ((:) (Atom "Coq.Logic.Eqdep_dec.15" 0) ([])) (Atom "Set"
-    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "Coq.Logic.Eqdep_dec.16" 0)
+    "Coq.Logic.Eqdep_dec.16" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:)
+    (Clause ((:) (Atom "Coq.Logic.Eqdep_dec.17" 0) ([])) (Atom "Set"
+    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "Coq.Logic.Eqdep_dec.18" 0)
     ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
-    "Coq.Logic.Eqdep_dec.17" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:)
-    (Clause ((:) (Atom "Coq.Logic.Eqdep_dec.18" 0) ([])) (Atom "Set"
-    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "Coq.Logic.Eqdep_dec.19" 0)
-    ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
-    "Coq.Logic.Eqdep_dec.20" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:)
-    (Clause ((:) (Atom "Eqdep_dec.inj_pair2_eq_dec.u0" 0) ([])) (Atom "Set"
+    "Coq.Logic.Eqdep_dec.19" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:)
+    (Clause ((:) (Atom "Coq.Logic.Eqdep_dec.20" 0) ([])) (Atom "Set"
     (Prelude.succ 0))) ((:) (Clause ((:) (Atom
-    "Eqdep_dec.inj_pair2_eq_dec.u1" 0) ([])) (Atom "Set" (Prelude.succ 0)))
-    ((:) (Clause ((:) (Atom "Coq.Classes.Morphisms.1" 0) ([])) (Atom "Set"
+    "Eqdep_dec.inj_pair2_eq_dec.u0" 0) ([])) (Atom "Set" (Prelude.succ 0)))
+    ((:) (Clause ((:) (Atom "Eqdep_dec.inj_pair2_eq_dec.u1" 0) ([])) (Atom
+    "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
+    "Coq.Classes.Morphisms.1" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:)
+    (Clause ((:) (Atom "Morphisms.respectful_hetero.u0" 0) ([])) (Atom "Set"
     (Prelude.succ 0))) ((:) (Clause ((:) (Atom
-    "Morphisms.respectful_hetero.u0" 0) ([])) (Atom "Set" (Prelude.succ 0)))
-    ((:) (Clause ((:) (Atom "Morphisms.respectful_hetero.u1" 0) ([])) (Atom
+    "Morphisms.respectful_hetero.u1" 0) ([])) (Atom "Set" (Prelude.succ 0)))
+    ((:) (Clause ((:) (Atom "Morphisms.respectful_hetero.u2" 0) ([])) (Atom
     "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
-    "Morphisms.respectful_hetero.u2" 0) ([])) (Atom "Set" (Prelude.succ 0)))
-    ((:) (Clause ((:) (Atom "Morphisms.respectful_hetero.u3" 0) ([])) (Atom
+    "Morphisms.respectful_hetero.u3" 0) ([])) (Atom "Set" (Prelude.succ 0)))
+    ((:) (Clause ((:) (Atom "Morphisms.pointwise_relation.u0" 0) ([])) (Atom
     "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
-    "Coq.Classes.Morphisms.11" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:)
-    (Clause ((:) (Atom "Morphisms.forall_def.u0" 0) ([])) (Atom "Set"
-    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "Coq.Classes.Morphisms.31" 0)
+    "Morphisms.pointwise_relation.u1" 0) ([])) (Atom "Set" (Prelude.succ 0)))
+    ((:) (Clause ((:) (Atom "Morphisms.rewrite_relation_pointwise.u0" 0)
+    ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
+    "Morphisms.rewrite_relation_pointwise.u1" 0) ([])) (Atom "Set"
+    (Prelude.succ 0))) ((:) (Clause ((:) (Atom
+    "Morphisms.rewrite_relation_eq_dom.u0" 0) ([])) (Atom "Set" (Prelude.succ
+    0))) ((:) (Clause ((:) (Atom "Morphisms.rewrite_relation_eq_dom.u1" 0)
+    ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
+    "Morphisms.eq_rewrite_relation.u0" 0) ([])) (Atom "Set" (Prelude.succ
+    0))) ((:) (Clause ((:) (Atom "Coq.Classes.Morphisms.31" 0) ([])) (Atom
+    "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
+    "Morphisms.forall_def.u0" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:)
+    (Clause ((:) (Atom "Morphisms.subrelation_proper.u0" 0) ([])) (Atom "Set"
+    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "Coq.Classes.Morphisms.51" 0)
     ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
     "Morphisms.Params.u0" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:)
     (Clause ((:) (Atom "Morphisms.proper_proper.u0" 0) ([])) (Atom "Set"
-    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "Coq.Classes.Morphisms.76" 0)
+    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "Coq.Classes.Morphisms.95" 0)
     ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
     "Morphisms.flip_arrow.u0" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:)
     (Clause ((:) (Atom "Morphisms.flip_arrow.u1" 0) ([])) (Atom "Set"
@@ -1854,7 +2361,7 @@ cs4 =
     (Prelude.succ 0))) ((:) (Clause ((:) (Atom "Tauto.rxcnf_xcnf.u0" 0) ([]))
     (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
     "Tauto.rxcnf_xcnf.u1" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:)
-    (Clause ((:) (Atom "Coq.micromega.Tauto.324" 0) ([])) (Atom "Set"
+    (Clause ((:) (Atom "Coq.micromega.Tauto.391" 0) ([])) (Atom "Set"
     (Prelude.succ 0))) ((:) (Clause ((:) (Atom "Tauto.eval_bf.u0" 0) ([]))
     (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
     "Tauto.eval_bf_map.u0" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:)
@@ -1895,7 +2402,7 @@ cs4 =
     ((:) (Clause ((:) (Atom "Coq.setoid_ring.Ring_polynom.5" 0) ([])) (Atom
     "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
     "Coq.setoid_ring.Ring_polynom.54" 0) ([])) (Atom "Set" (Prelude.succ 0)))
-    ((:) (Clause ((:) (Atom "Coq.setoid_ring.Ring_polynom.198" 0) ([])) (Atom
+    ((:) (Clause ((:) (Atom "Coq.setoid_ring.Ring_polynom.202" 0) ([])) (Atom
     "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
     "Coq.setoid_ring.Field_theory.1" 0) ([])) (Atom "Set" (Prelude.succ 0)))
     ((:) (Clause ((:) (Atom "Coq.setoid_ring.Field_theory.7" 0) ([])) (Atom
@@ -1904,7 +2411,7 @@ cs4 =
     ((:) (Clause ((:) (Atom "Coq.setoid_ring.Field_theory.204" 0) ([])) (Atom
     "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom "Field_theory.SF2AF.u0"
     0) ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
-    "Coq.setoid_ring.Field_theory.428" 0) ([])) (Atom "Set" (Prelude.succ
+    "Coq.setoid_ring.Field_theory.437" 0) ([])) (Atom "Set" (Prelude.succ
     0))) ((:) (Clause ((:) (Atom "Coq.setoid_ring.Ring_theory.1" 0) ([]))
     (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
     "Coq.setoid_ring.Ring_theory.17" 0) ([])) (Atom "Set" (Prelude.succ 0)))
@@ -1997,76 +2504,69 @@ cs4 =
     ((:) (Clause ((:) (Atom "EqdepFacts.f_eq_dep_non_dep.u1" 0) ([])) (Atom
     "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
     "EqdepFacts.f_eq_dep_non_dep.u2" 0) ([])) (Atom "Set" (Prelude.succ 0)))
-    ((:) (Clause ((:) (Atom "notT.u0" 0) ([])) (Atom "Set" (Prelude.succ 0)))
-    ((:) (Clause ((:) (Atom "Coq.Init.Logic_Type.2" 0) ([])) (Atom "Set"
-    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "identity_ind_r.u0" 0) ([]))
+    ((:) (Clause ((:) (Atom "ZifyClasses.InjTyp.u0" 0) ([])) (Atom "Set"
+    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "ZifyClasses.InjTyp.u1" 0)
+    ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
+    "ZifyClasses.BinOp.u0" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:)
+    (Clause ((:) (Atom "ZifyClasses.BinOp.u1" 0) ([])) (Atom "Set"
+    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "ZifyClasses.BinOp.u2" 0)
+    ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
+    "ZifyClasses.BinOp.u3" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:)
+    (Clause ((:) (Atom "ZifyClasses.BinOp.u4" 0) ([])) (Atom "Set"
+    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "ZifyClasses.BinOp.u5" 0)
+    ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
+    "ZifyClasses.UnOp.u0" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:)
+    (Clause ((:) (Atom "ZifyClasses.UnOp.u1" 0) ([])) (Atom "Set"
+    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "ZifyClasses.UnOp.u2" 0) ([]))
     (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
-    "identity_rec_r.u0" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause
-    ((:) (Atom "identity_rect_r.u0" 0) ([])) (Atom "Set" (Prelude.succ 0)))
-    ((:) (Clause ((:) (Atom "identity_rect_r.u1" 0) ([])) (Atom "Set"
-    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "ZifyClasses.InjTyp.u0" 0)
+    "ZifyClasses.UnOp.u3" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:)
+    (Clause ((:) (Atom "ZifyClasses.CstOp.u0" 0) ([])) (Atom "Set"
+    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "ZifyClasses.CstOp.u1" 0)
     ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
-    "ZifyClasses.InjTyp.u1" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:)
-    (Clause ((:) (Atom "ZifyClasses.BinOp.u0" 0) ([])) (Atom "Set"
-    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "ZifyClasses.BinOp.u1" 0)
+    "ZifyClasses.BinRel.u0" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:)
+    (Clause ((:) (Atom "ZifyClasses.BinRel.u1" 0) ([])) (Atom "Set"
+    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "ZifyClasses.BinOpSpec.u0" 0)
     ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
-    "ZifyClasses.BinOp.u2" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:)
-    (Clause ((:) (Atom "ZifyClasses.BinOp.u3" 0) ([])) (Atom "Set"
-    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "ZifyClasses.BinOp.u4" 0)
+    "ZifyClasses.BinOpSpec.u1" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:)
+    (Clause ((:) (Atom "ZifyClasses.BinOpSpec.u2" 0) ([])) (Atom "Set"
+    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "ZifyClasses.UnOpSpec.u0" 0)
     ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
-    "ZifyClasses.BinOp.u5" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:)
-    (Clause ((:) (Atom "ZifyClasses.UnOp.u0" 0) ([])) (Atom "Set"
-    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "ZifyClasses.UnOp.u1" 0) ([]))
-    (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
-    "ZifyClasses.UnOp.u2" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:)
-    (Clause ((:) (Atom "ZifyClasses.UnOp.u3" 0) ([])) (Atom "Set"
-    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "ZifyClasses.CstOp.u0" 0)
+    "ZifyClasses.UnOpSpec.u1" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:)
+    (Clause ((:) (Atom "ZifyClasses.Saturate.u0" 0) ([])) (Atom "Set"
+    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "ZifyClasses.injterm.u0" 0)
     ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
-    "ZifyClasses.CstOp.u1" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:)
-    (Clause ((:) (Atom "ZifyClasses.BinRel.u0" 0) ([])) (Atom "Set"
-    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "ZifyClasses.BinRel.u1" 0)
+    "ZifyClasses.injterm.u1" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:)
+    (Clause ((:) (Atom "ZifyClasses.mkapp2.u0" 0) ([])) (Atom "Set"
+    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "ZifyClasses.mkapp2.u1" 0)
     ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
-    "ZifyClasses.BinOpSpec.u0" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:)
-    (Clause ((:) (Atom "ZifyClasses.BinOpSpec.u1" 0) ([])) (Atom "Set"
-    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "ZifyClasses.BinOpSpec.u2" 0)
+    "ZifyClasses.mkapp2.u2" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:)
+    (Clause ((:) (Atom "ZifyClasses.mkapp2.u3" 0) ([])) (Atom "Set"
+    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "ZifyClasses.mkapp2.u4" 0)
     ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
-    "ZifyClasses.UnOpSpec.u0" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:)
-    (Clause ((:) (Atom "ZifyClasses.UnOpSpec.u1" 0) ([])) (Atom "Set"
-    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "ZifyClasses.Saturate.u0" 0)
+    "ZifyClasses.mkapp2.u5" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:)
+    (Clause ((:) (Atom "ZifyClasses.mkapp.u0" 0) ([])) (Atom "Set"
+    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "ZifyClasses.mkapp.u1" 0)
     ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
-    "ZifyClasses.injterm.u0" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:)
-    (Clause ((:) (Atom "ZifyClasses.injterm.u1" 0) ([])) (Atom "Set"
-    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "ZifyClasses.mkapp2.u0" 0)
+    "ZifyClasses.mkapp.u2" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:)
+    (Clause ((:) (Atom "ZifyClasses.mkapp.u3" 0) ([])) (Atom "Set"
+    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "ZifyClasses.mkrel.u0" 0)
     ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
-    "ZifyClasses.mkapp2.u1" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:)
-    (Clause ((:) (Atom "ZifyClasses.mkapp2.u2" 0) ([])) (Atom "Set"
-    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "ZifyClasses.mkapp2.u3" 0)
-    ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
-    "ZifyClasses.mkapp2.u4" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:)
-    (Clause ((:) (Atom "ZifyClasses.mkapp2.u5" 0) ([])) (Atom "Set"
-    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "ZifyClasses.mkapp.u0" 0)
-    ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
-    "ZifyClasses.mkapp.u1" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:)
-    (Clause ((:) (Atom "ZifyClasses.mkapp.u2" 0) ([])) (Atom "Set"
-    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "ZifyClasses.mkapp.u3" 0)
-    ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
-    "ZifyClasses.mkrel.u0" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:)
-    (Clause ((:) (Atom "ZifyClasses.mkrel.u1" 0) ([])) (Atom "Set"
-    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "Vector.cons_inj.u0" 0) ([]))
-    (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom "Vector.eta.u0" 0)
-    ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
-    "Vector.eq_nth_iff.u0" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:)
-    (Clause ((:) (Atom "Vector.nth_order_hd.u0" 0) ([])) (Atom "Set"
-    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "Vector.nth_order_tl.u0" 0)
-    ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
-    "Vector.nth_order_last.u0" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:)
-    (Clause ((:) (Atom "Vector.nth_order_ext.u0" 0) ([])) (Atom "Set"
-    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "Vector.shiftin_nth.u0" 0)
-    ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
-    "Vector.shiftin_last.u0" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:)
-    (Clause ((:) (Atom "Vector.shiftrepeat_nth.u0" 0) ([])) (Atom "Set"
-    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "Vector.shiftrepeat_last.u0"
+    "ZifyClasses.mkrel.u1" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:)
+    (Clause ((:) (Atom "Vector.cons_inj.u0" 0) ([])) (Atom "Set"
+    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "Vector.eta.u0" 0) ([])) (Atom
+    "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom "Vector.eq_nth_iff.u0"
     0) ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
+    "Vector.nth_order_hd.u0" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:)
+    (Clause ((:) (Atom "Vector.nth_order_tl.u0" 0) ([])) (Atom "Set"
+    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "Vector.nth_order_last.u0" 0)
+    ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
+    "Vector.nth_order_ext.u0" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:)
+    (Clause ((:) (Atom "Vector.shiftin_nth.u0" 0) ([])) (Atom "Set"
+    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "Vector.shiftin_last.u0" 0)
+    ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
+    "Vector.shiftrepeat_nth.u0" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:)
+    (Clause ((:) (Atom "Vector.shiftrepeat_last.u0" 0) ([])) (Atom "Set"
+    (Prelude.succ 0))) ((:) (Clause ((:) (Atom
     "Vector.nth_order_replace_eq.u0" 0) ([])) (Atom "Set" (Prelude.succ 0)))
     ((:) (Clause ((:) (Atom "Vector.nth_order_replace_neq.u0" 0) ([])) (Atom
     "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom "Vector.replace_id.u0"
@@ -2128,13 +2628,14 @@ cs4 =
     "Vector.to_list_rev_append_tail.u0" 0) ([])) (Atom "Set" (Prelude.succ
     0))) ((:) (Clause ((:) (Atom "Vector.to_list_rev_append.u0" 0) ([]))
     (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
-    "Vector.to_list_rev.u0" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:)
-    (Clause ((:) (Atom "Vector.to_list_map.u0" 0) ([])) (Atom "Set"
-    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "Vector.to_list_map.u1" 0)
+    "Coq.Vectors.VectorSpec.255" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:)
+    (Clause ((:) (Atom "Vector.to_list_rev.u0" 0) ([])) (Atom "Set"
+    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "Vector.to_list_map.u0" 0)
     ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
-    "Vector.to_list_fold_left.u0" 0) ([])) (Atom "Set" (Prelude.succ 0)))
-    ((:) (Clause ((:) (Atom "Vector.to_list_fold_left.u1" 0) ([])) (Atom
-    "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
+    "Vector.to_list_map.u1" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:)
+    (Clause ((:) (Atom "Vector.to_list_fold_left.u0" 0) ([])) (Atom "Set"
+    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "Vector.to_list_fold_left.u1"
+    0) ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
     "Vector.to_list_fold_right.u0" 0) ([])) (Atom "Set" (Prelude.succ 0)))
     ((:) (Clause ((:) (Atom "Vector.to_list_fold_right.u1" 0) ([])) (Atom
     "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
@@ -2163,7 +2664,7 @@ cs4 =
     "ZMicromega.cnfZ.u0" 0) ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause
     ((:) (Atom "ZMicromega.cnfZ.u1" 0) ([])) (Atom "Set" (Prelude.succ 0)))
     ((:) (Clause ((:) (Atom "ZMicromega.cnfZ.u2" 0) ([])) (Atom "Set"
-    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "Coq.micromega.ZMicromega.77"
+    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "Coq.micromega.ZMicromega.127"
     0) ([])) (Atom "Set" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
     "Coq.Relations.Operators_Properties.1" 0) ([])) (Atom "Set" (Prelude.succ
     0))) ((:) (Clause ((:) (Atom "Coq.setoid_ring.BinList.1" 0) ([])) (Atom
@@ -2202,1289 +2703,999 @@ cs4 =
     "Coq.Structures.Equalities.1" 0) ([])) (Atom "Set" (Prelude.succ 0)))
     ((:) (Clause ((:) (Atom "Coq.Init.Hexadecimal.19" 0) ([])) (Atom "Set"
     (Prelude.succ 0))) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
+    "eq_sym_iff.u0" 0)) ((:) (Clause ((:) (Atom "Coq.Init.Logic.11" 0) ([]))
+    (Atom "eq_sym_iff.u0" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
+    "tuple_fst.u0" 0)) ((:) (Clause ((:) (Atom "Coq.Init.Logic.11" 0) ([]))
+    (Atom "tuple_fst.u0" 0)) ((:) (Clause ((:) (Atom "eq_ind_r.u0" 0) ([]))
+    (Atom "tuple_fst.u0" 0)) ((:) (Clause ((:) (Atom "prod.u0" 0) ([])) (Atom
+    "tuple_fst.u0" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
+    "tuple_fst.u1" 0)) ((:) (Clause ((:) (Atom "Coq.Init.Logic.11" 0) ([]))
+    (Atom "tuple_fst.u1" 0)) ((:) (Clause ((:) (Atom "eq_ind_r.u0" 0) ([]))
+    (Atom "tuple_fst.u1" 0)) ((:) (Clause ((:) (Atom "prod.u1" 0) ([])) (Atom
+    "tuple_fst.u1" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
+    "tuple_snd.u0" 0)) ((:) (Clause ((:) (Atom "Coq.Init.Logic.11" 0) ([]))
+    (Atom "tuple_snd.u0" 0)) ((:) (Clause ((:) (Atom "eq_ind_r.u0" 0) ([]))
+    (Atom "tuple_snd.u0" 0)) ((:) (Clause ((:) (Atom "prod.u0" 0) ([])) (Atom
+    "tuple_snd.u0" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
+    "tuple_snd.u1" 0)) ((:) (Clause ((:) (Atom "Coq.Init.Logic.11" 0) ([]))
+    (Atom "tuple_snd.u1" 0)) ((:) (Clause ((:) (Atom "eq_ind_r.u0" 0) ([]))
+    (Atom "tuple_snd.u1" 0)) ((:) (Clause ((:) (Atom "prod.u1" 0) ([])) (Atom
+    "tuple_snd.u1" 0)) ((:) (Clause ((:) (Atom "induction_ltof2.u0" 0) ([]))
+    (Atom "well_founded_induction_type.u0" 0)) ((:) (Clause ((:) (Atom
+    "well_founded_induction_type.u0" 0) ([])) (Atom "induction_ltof2.u0" 0))
+    ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "Coq.Init.Wf.4" 0)) ((:)
+    (Clause ((:) (Atom "Coq.Init.Wf.1" 0) ([])) (Atom "Coq.Init.Wf.5" 0))
+    ((:) (Clause ((:) (Atom "prod.u0" 0) ([])) (Atom "Coq.Init.Wf.5" 0)) ((:)
+    (Clause ((:) (Atom "prod.u1" 0) ([])) (Atom "Coq.Init.Wf.5" 0)) ((:)
+    (Clause ((:) (Atom "Coq.Init.Wf.1" 0) ([])) (Atom "Coq.Init.Wf.7" 0))
+    ((:) (Clause ((:) (Atom "Coq.Init.Datatypes.11" 0) ([])) (Atom "iter.u0"
+    0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.624" 0) ([])) (Atom
+    "nodup_rm.u0" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
+    "nodup_rm.u0" 0)) ((:) (Clause ((:) (Atom "eq_ind_r.u0" 0) ([])) (Atom
+    "nodup_rm.u0" 0)) ((:) (Clause ((:) (Atom "eq_rec_r.u0" 0) ([])) (Atom
+    "nodup_rm.u0" 0)) ((:) (Clause ((:) (Atom "Coq.Lists.ListSet.1" 0) ([]))
+    (Atom "nodup_rm.u0" 0)) ((:) (Clause ((:) (Atom "list.u0" 0) ([])) (Atom
+    "nodup_rm.u0" 0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.624" 0) ([]))
+    (Atom "set_diff_NoDup.u0" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([]))
+    (Atom "set_diff_NoDup.u0" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Lists.ListSet.1" 0) ([])) (Atom "set_diff_NoDup.u0" 0)) ((:) (Clause
+    ((:) (Atom "list.u0" 0) ([])) (Atom "set_diff_NoDup.u0" 0)) ((:) (Clause
+    ((:) (Atom "eq.u0" 0) ([])) (Atom "set_add_mem_true.u0" 0)) ((:) (Clause
+    ((:) (Atom "eq_ind_r.u0" 0) ([])) (Atom "set_add_mem_true.u0" 0)) ((:)
+    (Clause ((:) (Atom "Coq.Lists.ListSet.1" 0) ([])) (Atom
+    "set_add_mem_true.u0" 0)) ((:) (Clause ((:) (Atom "list.u0" 0) ([]))
+    (Atom "set_add_mem_true.u0" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([]))
+    (Atom "set_add_mem_false.u0" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Lists.ListSet.1" 0) ([])) (Atom "set_add_mem_false.u0" 0)) ((:)
+    (Clause ((:) (Atom "list.u0" 0) ([])) (Atom "set_add_mem_false.u0" 0))
+    ((:) (Clause ((:) (Atom "app.u0" 0) ([])) (Atom "set_add_mem_false.u0"
+    0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.1" 0) ([])) (Atom
+    "incl_set_add_reduce.u0" 0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.482"
+    0) ([])) (Atom "incl_set_add_reduce.u0" 0)) ((:) (Clause ((:) (Atom
+    "eq.u0" 0) ([])) (Atom "incl_set_add_reduce.u0" 0)) ((:) (Clause ((:)
+    (Atom "Coq.Lists.ListSet.1" 0) ([])) (Atom "incl_set_add_reduce.u0" 0))
+    ((:) (Clause ((:) (Atom "list.u0" 0) ([])) (Atom "incl_set_add_reduce.u0"
+    0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
+    "length_set_add_reduce.u0" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Lists.ListSet.1" 0) ([])) (Atom "length_set_add_reduce.u0" 0)) ((:)
+    (Clause ((:) (Atom "length.u0" 0) ([])) (Atom "length_set_add_reduce.u0"
+    0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.482" 0) ([])) (Atom
+    "incl_set_add_cons_reduce.u0" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0)
+    ([])) (Atom "incl_set_add_cons_reduce.u0" 0)) ((:) (Clause ((:) (Atom
+    "eq_ind_r.u0" 0) ([])) (Atom "incl_set_add_cons_reduce.u0" 0)) ((:)
+    (Clause ((:) (Atom "Coq.Lists.ListSet.1" 0) ([])) (Atom
+    "incl_set_add_cons_reduce.u0" 0)) ((:) (Clause ((:) (Atom "list.u0" 0)
+    ([])) (Atom "incl_set_add_cons_reduce.u0" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Lists.List.482" 0) ([])) (Atom "incl_cons_set_add_reduce.u0" 0))
+    ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
+    "incl_cons_set_add_reduce.u0" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Lists.ListSet.1" 0) ([])) (Atom "incl_cons_set_add_reduce.u0" 0))
+    ((:) (Clause ((:) (Atom "list.u0" 0) ([])) (Atom
+    "incl_cons_set_add_reduce.u0" 0)) ((:) (Clause ((:) (Atom "app.u0" 0)
+    ([])) (Atom "incl_cons_set_add_reduce.u0" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Lists.List.279" 0) ([])) (Atom "incl_fold_right_andb_true.u0" 0))
+    ((:) (Clause ((:) (Atom "Coq.Lists.List.482" 0) ([])) (Atom
+    "incl_fold_right_andb_true.u0" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0)
+    ([])) (Atom "incl_fold_right_andb_true.u0" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Lists.ListSet.1" 0) ([])) (Atom "incl_fold_right_andb_true.u0" 0))
+    ((:) (Clause ((:) (Atom "list.u0" 0) ([])) (Atom
+    "incl_fold_right_andb_true.u0" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Lists.List.279" 0) ([])) (Atom "incl_fold_right_andb_false.u0" 0))
+    ((:) (Clause ((:) (Atom "Coq.Lists.List.482" 0) ([])) (Atom
+    "incl_fold_right_andb_false.u0" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0)
+    ([])) (Atom "incl_fold_right_andb_false.u0" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Lists.ListSet.1" 0) ([])) (Atom "incl_fold_right_andb_false.u0" 0))
+    ((:) (Clause ((:) (Atom "list.u0" 0) ([])) (Atom
+    "incl_fold_right_andb_false.u0" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Lists.List.482" 0) ([])) (Atom "set_diff_nil_incl.u0" 0)) ((:)
+    (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "set_diff_nil_incl.u0" 0)) ((:)
+    (Clause ((:) (Atom "eq_ind_r.u0" 0) ([])) (Atom "set_diff_nil_incl.u0"
+    0)) ((:) (Clause ((:) (Atom "Coq.Lists.ListSet.1" 0) ([])) (Atom
+    "set_diff_nil_incl.u0" 0)) ((:) (Clause ((:) (Atom "list.u0" 0) ([]))
+    (Atom "set_diff_nil_incl.u0" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([]))
+    (Atom "set_diff_nil_false.u0" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Lists.ListSet.1" 0) ([])) (Atom "set_diff_nil_false.u0" 0)) ((:)
+    (Clause ((:) (Atom "list.u0" 0) ([])) (Atom "set_diff_nil_false.u0" 0))
+    ((:) (Clause ((:) (Atom "Coq.Lists.List.1" 0) ([])) (Atom
+    "incl_l_nil_false.u0" 0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.482" 0)
+    ([])) (Atom "incl_l_nil_false.u0" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Lists.ListSet.1" 0) ([])) (Atom "incl_l_nil_false.u0" 0)) ((:)
+    (Clause ((:) (Atom "list.u0" 0) ([])) (Atom "incl_l_nil_false.u0" 0))
+    ((:) (Clause ((:) (Atom "incl_l_nil_false.u0" 0) ([])) (Atom
+    "In_incl_singleton.u0" 0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.1" 0)
+    ([])) (Atom "In_incl_singleton.u0" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Lists.List.482" 0) ([])) (Atom "In_incl_singleton.u0" 0)) ((:)
+    (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "In_incl_singleton.u0" 0)) ((:)
+    (Clause ((:) (Atom "eq_ind_r.u0" 0) ([])) (Atom "In_incl_singleton.u0"
+    0)) ((:) (Clause ((:) (Atom "Coq.Lists.ListSet.1" 0) ([])) (Atom
+    "In_incl_singleton.u0" 0)) ((:) (Clause ((:) (Atom "list.u0" 0) ([]))
+    (Atom "In_incl_singleton.u0" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([]))
+    (Atom "set_add_cons.u0" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
+    "Coq.Init.Logic.11" 0) ([])) (Atom "set_add_cons.u0" 0)) ((:) (Clause
+    ((:) (Atom "eq_ind_r.u0" 0) ([])) (Atom "set_add_cons.u0" 0)) ((:)
+    (Clause ((:) (Atom "Coq.Lists.ListSet.1" 0) ([])) (Atom "set_add_cons.u0"
+    0)) ((:) (Clause ((:) (Atom "list.u0" 0) ([])) (Atom "set_add_cons.u0"
+    0)) ((:) (Clause ((:) (Atom "app.u0" 0) ([])) (Atom "set_add_cons.u0" 0))
+    ((:) (Clause ((:) (Atom "set_add_mem_false.u0" 0) ([])) (Atom
+    "incl_set_add_reduce_set_mem.u0" 0)) ((:) (Clause ((:) (Atom
+    "set_add_cons.u0" 0) ([])) (Atom "incl_set_add_reduce_set_mem.u0" 0))
+    ((:) (Clause ((:) (Atom "Coq.Lists.List.482" 0) ([])) (Atom
+    "incl_set_add_reduce_set_mem.u0" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0)
+    ([])) (Atom "incl_set_add_reduce_set_mem.u0" 0)) ((:) (Clause ((:) (Atom
+    "eq_ind_r.u0" 0) ([])) (Atom "incl_set_add_reduce_set_mem.u0" 0)) ((:)
+    (Clause ((:) (Atom "Coq.Lists.ListSet.1" 0) ([])) (Atom
+    "incl_set_add_reduce_set_mem.u0" 0)) ((:) (Clause ((:) (Atom "list.u0" 0)
+    ([])) (Atom "incl_set_add_reduce_set_mem.u0" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Lists.List.1" 0) ([])) (Atom "incl_eq.u0" 0)) ((:) (Clause ((:)
+    (Atom "Coq.Lists.List.13" 0) ([])) (Atom "incl_eq.u0" 0)) ((:) (Clause
+    ((:) (Atom "Coq.Lists.List.482" 0) ([])) (Atom "incl_eq.u0" 0)) ((:)
+    (Clause ((:) (Atom "Coq.Lists.List.624" 0) ([])) (Atom "incl_eq.u0" 0))
+    ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "incl_eq.u0" 0)) ((:)
+    (Clause ((:) (Atom "eq_ind_r.u0" 0) ([])) (Atom "incl_eq.u0" 0)) ((:)
+    (Clause ((:) (Atom "Coq.Lists.ListSet.1" 0) ([])) (Atom "incl_eq.u0" 0))
+    ((:) (Clause ((:) (Atom "list.u0" 0) ([])) (Atom "incl_eq.u0" 0)) ((:)
+    (Clause ((:) (Atom "Coq.Lists.List.1" 0) ([])) (Atom "nodup_incl2.u0" 0))
+    ((:) (Clause ((:) (Atom "Coq.Lists.List.13" 0) ([])) (Atom
+    "nodup_incl2.u0" 0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.482" 0)
+    ([])) (Atom "nodup_incl2.u0" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Lists.List.624" 0) ([])) (Atom "nodup_incl2.u0" 0)) ((:) (Clause
+    ((:) (Atom "eq.u0" 0) ([])) (Atom "nodup_incl2.u0" 0)) ((:) (Clause ((:)
+    (Atom "Coq.Lists.ListSet.1" 0) ([])) (Atom "nodup_incl2.u0" 0)) ((:)
+    (Clause ((:) (Atom "list.u0" 0) ([])) (Atom "nodup_incl2.u0" 0)) ((:)
+    (Clause ((:) (Atom "nodup_incl2.u0" 0) ([])) (Atom "nodup_incl_length.u0"
+    0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.482" 0) ([])) (Atom
+    "nodup_incl_length.u0" 0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.624"
+    0) ([])) (Atom "nodup_incl_length.u0" 0)) ((:) (Clause ((:) (Atom "eq.u0"
+    0) ([])) (Atom "nodup_incl_length.u0" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Lists.ListSet.1" 0) ([])) (Atom "nodup_incl_length.u0" 0)) ((:)
+    (Clause ((:) (Atom "length.u0" 0) ([])) (Atom "nodup_incl_length.u0" 0))
+    ((:) (Clause ((:) (Atom "Coq.Lists.List.482" 0) ([])) (Atom
+    "strict_subset.u0" 0)) ((:) (Clause ((:) (Atom "Coq.Lists.ListSet.1" 0)
+    ([])) (Atom "strict_subset.u0" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Lists.List.1" 0) ([])) (Atom "set_add_In.u0" 0)) ((:) (Clause ((:)
+    (Atom "eq.u0" 0) ([])) (Atom "set_add_In.u0" 0)) ((:) (Clause ((:) (Atom
+    "eq_ind_r.u0" 0) ([])) (Atom "set_add_In.u0" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Lists.ListSet.1" 0) ([])) (Atom "set_add_In.u0" 0)) ((:) (Clause
+    ((:) (Atom "list.u0" 0) ([])) (Atom "set_add_In.u0" 0)) ((:) (Clause ((:)
+    (Atom "Coq.Lists.List.1" 0) ([])) (Atom "set_add_not_In.u0" 0)) ((:)
+    (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "set_add_not_In.u0"
+    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "Coq.Init.Logic.11" 0) ([]))
+    (Atom "set_add_not_In.u0" 0)) ((:) (Clause ((:) (Atom "eq_ind_r.u0" 0)
+    ([])) (Atom "set_add_not_In.u0" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Lists.ListSet.1" 0) ([])) (Atom "set_add_not_In.u0" 0)) ((:) (Clause
+    ((:) (Atom "list.u0" 0) ([])) (Atom "set_add_not_In.u0" 0)) ((:) (Clause
+    ((:) (Atom "app.u0" 0) ([])) (Atom "set_add_not_In.u0" 0)) ((:) (Clause
+    ((:) (Atom "Coq.Lists.List.1" 0) ([])) (Atom "set_diff_In_emptyR.u0" 0))
+    ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "set_diff_In_emptyR.u0"
+    0)) ((:) (Clause ((:) (Atom "Coq.Init.Logic.11" 0) ([])) (Atom
+    "set_diff_In_emptyR.u0" 0)) ((:) (Clause ((:) (Atom "eq_ind_r.u0" 0)
+    ([])) (Atom "set_diff_In_emptyR.u0" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Lists.ListSet.1" 0) ([])) (Atom "set_diff_In_emptyR.u0" 0)) ((:)
+    (Clause ((:) (Atom "list.u0" 0) ([])) (Atom "set_diff_In_emptyR.u0" 0))
+    ((:) (Clause ((:) (Atom "set_add_In.u0" 0) ([])) (Atom
+    "set_diff_nodup_eq.u0" 0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.1" 0)
+    ([])) (Atom "set_diff_nodup_eq.u0" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Lists.List.13" 0) ([])) (Atom "set_diff_nodup_eq.u0" 0)) ((:)
+    (Clause ((:) (Atom "Coq.Lists.List.624" 0) ([])) (Atom
+    "set_diff_nodup_eq.u0" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
+    "set_diff_nodup_eq.u0" 0)) ((:) (Clause ((:) (Atom "Coq.Lists.ListSet.1"
+    0) ([])) (Atom "set_diff_nodup_eq.u0" 0)) ((:) (Clause ((:) (Atom
+    "list.u0" 0) ([])) (Atom "set_diff_nodup_eq.u0" 0)) ((:) (Clause ((:)
+    (Atom "incl_set_add_cons_reduce.u0" 0) ([])) (Atom
+    "set_union_nil_incl_l.u0" 0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.1"
+    0) ([])) (Atom "set_union_nil_incl_l.u0" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Lists.List.13" 0) ([])) (Atom "set_union_nil_incl_l.u0" 0)) ((:)
+    (Clause ((:) (Atom "Coq.Lists.List.482" 0) ([])) (Atom
+    "set_union_nil_incl_l.u0" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([]))
+    (Atom "set_union_nil_incl_l.u0" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Lists.ListSet.1" 0) ([])) (Atom "set_union_nil_incl_l.u0" 0)) ((:)
+    (Clause ((:) (Atom "list.u0" 0) ([])) (Atom "set_union_nil_incl_l.u0" 0))
+    ((:) (Clause ((:) (Atom "Coq.Lists.List.482" 0) ([])) (Atom
+    "set_union_nil_incl_r.u0" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([]))
+    (Atom "set_union_nil_incl_r.u0" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Lists.ListSet.1" 0) ([])) (Atom "set_union_nil_incl_r.u0" 0)) ((:)
+    (Clause ((:) (Atom "list.u0" 0) ([])) (Atom "set_union_nil_incl_r.u0" 0))
+    ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "set_union_l_nil.u0" 0))
+    ((:) (Clause ((:) (Atom "Coq.Lists.ListSet.1" 0) ([])) (Atom
+    "set_union_l_nil.u0" 0)) ((:) (Clause ((:) (Atom "list.u0" 0) ([])) (Atom
+    "set_union_l_nil.u0" 0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.482" 0)
+    ([])) (Atom "set_union_incl_nil.u0" 0)) ((:) (Clause ((:) (Atom "eq.u0"
+    0) ([])) (Atom "set_union_incl_nil.u0" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Lists.ListSet.1" 0) ([])) (Atom "set_union_incl_nil.u0" 0)) ((:)
+    (Clause ((:) (Atom "list.u0" 0) ([])) (Atom "set_union_incl_nil.u0" 0))
+    ((:) (Clause ((:) (Atom "Coq.Lists.List.1" 0) ([])) (Atom "incl_dec.u0"
+    0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.13" 0) ([])) (Atom
+    "incl_dec.u0" 0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.482" 0) ([]))
+    (Atom "incl_dec.u0" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
+    "incl_dec.u0" 0)) ((:) (Clause ((:) (Atom "Coq.Lists.ListSet.1" 0) ([]))
+    (Atom "incl_dec.u0" 0)) ((:) (Clause ((:) (Atom "list.u0" 0) ([])) (Atom
+    "incl_dec.u0" 0)) ((:) (Clause ((:) (Atom "In_incl_singleton.u0" 0) ([]))
+    (Atom "incl_set_add_iff.u0" 0)) ((:) (Clause ((:) (Atom "set_add_In.u0"
+    0) ([])) (Atom "incl_set_add_iff.u0" 0)) ((:) (Clause ((:) (Atom
+    "set_add_not_In.u0" 0) ([])) (Atom "incl_set_add_iff.u0" 0)) ((:) (Clause
+    ((:) (Atom "Coq.Lists.List.1" 0) ([])) (Atom "incl_set_add_iff.u0" 0))
+    ((:) (Clause ((:) (Atom "Coq.Lists.List.13" 0) ([])) (Atom
+    "incl_set_add_iff.u0" 0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.482" 0)
+    ([])) (Atom "incl_set_add_iff.u0" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0)
+    ([])) (Atom "incl_set_add_iff.u0" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Lists.ListSet.1" 0) ([])) (Atom "incl_set_add_iff.u0" 0)) ((:)
+    (Clause ((:) (Atom "list.u0" 0) ([])) (Atom "incl_set_add_iff.u0" 0))
+    ((:) (Clause ((:) (Atom "In_incl_singleton.u0" 0) ([])) (Atom
+    "set_union_nil_incl_iff_lr.u0" 0)) ((:) (Clause ((:) (Atom
+    "set_add_In.u0" 0) ([])) (Atom "set_union_nil_incl_iff_lr.u0" 0)) ((:)
+    (Clause ((:) (Atom "set_add_not_In.u0" 0) ([])) (Atom
+    "set_union_nil_incl_iff_lr.u0" 0)) ((:) (Clause ((:) (Atom
+    "incl_set_add_iff.u0" 0) ([])) (Atom "set_union_nil_incl_iff_lr.u0" 0))
+    ((:) (Clause ((:) (Atom "Coq.Lists.List.1" 0) ([])) (Atom
+    "set_union_nil_incl_iff_lr.u0" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Lists.List.13" 0) ([])) (Atom "set_union_nil_incl_iff_lr.u0" 0))
+    ((:) (Clause ((:) (Atom "Coq.Lists.List.482" 0) ([])) (Atom
+    "set_union_nil_incl_iff_lr.u0" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0)
+    ([])) (Atom "set_union_nil_incl_iff_lr.u0" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Lists.ListSet.1" 0) ([])) (Atom "set_union_nil_incl_iff_lr.u0" 0))
+    ((:) (Clause ((:) (Atom "list.u0" 0) ([])) (Atom
+    "set_union_nil_incl_iff_lr.u0" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Lists.List.482" 0) ([])) (Atom "incl_set_union_intro1.u0" 0)) ((:)
+    (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "incl_set_union_intro1.u0" 0))
+    ((:) (Clause ((:) (Atom "Coq.Lists.ListSet.1" 0) ([])) (Atom
+    "incl_set_union_intro1.u0" 0)) ((:) (Clause ((:) (Atom "list.u0" 0) ([]))
+    (Atom "incl_set_union_intro1.u0" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Lists.List.482" 0) ([])) (Atom "incl_set_union_intro2.u0" 0)) ((:)
+    (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "incl_set_union_intro2.u0" 0))
+    ((:) (Clause ((:) (Atom "Coq.Lists.ListSet.1" 0) ([])) (Atom
+    "incl_set_union_intro2.u0" 0)) ((:) (Clause ((:) (Atom "list.u0" 0) ([]))
+    (Atom "incl_set_union_intro2.u0" 0)) ((:) (Clause ((:) (Atom
+    "incl_set_add_reduce.u0" 0) ([])) (Atom "incl_set_union_elim1.u0" 0))
+    ((:) (Clause ((:) (Atom "Coq.Lists.List.482" 0) ([])) (Atom
+    "incl_set_union_elim1.u0" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([]))
+    (Atom "incl_set_union_elim1.u0" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Lists.ListSet.1" 0) ([])) (Atom "incl_set_union_elim1.u0" 0)) ((:)
+    (Clause ((:) (Atom "list.u0" 0) ([])) (Atom "incl_set_union_elim1.u0" 0))
+    ((:) (Clause ((:) (Atom "Coq.Lists.List.1" 0) ([])) (Atom
+    "set_diff_not_In_emptyR.u0" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([]))
+    (Atom "set_diff_not_In_emptyR.u0" 0)) ((:) (Clause ((:) (Atom
+    "eq_ind_r.u0" 0) ([])) (Atom "set_diff_not_In_emptyR.u0" 0)) ((:) (Clause
+    ((:) (Atom "Coq.Lists.ListSet.1" 0) ([])) (Atom
+    "set_diff_not_In_emptyR.u0" 0)) ((:) (Clause ((:) (Atom "list.u0" 0)
+    ([])) (Atom "set_diff_not_In_emptyR.u0" 0)) ((:) (Clause ((:) (Atom
+    "eq_sym_iff.u0" 0) ([])) (Atom "set_add_not_In_length_S_n.u0" 0)) ((:)
+    (Clause ((:) (Atom "Coq.Lists.List.1" 0) ([])) (Atom
+    "set_add_not_In_length_S_n.u0" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0)
+    ([])) (Atom "set_add_not_In_length_S_n.u0" 0)) ((:) (Clause ((:) (Atom
+    "eq_ind_r.u0" 0) ([])) (Atom "set_add_not_In_length_S_n.u0" 0)) ((:)
+    (Clause ((:) (Atom "Coq.Lists.ListSet.1" 0) ([])) (Atom
+    "set_add_not_In_length_S_n.u0" 0)) ((:) (Clause ((:) (Atom "list.u0" 0)
+    ([])) (Atom "set_add_not_In_length_S_n.u0" 0)) ((:) (Clause ((:) (Atom
+    "length.u0" 0) ([])) (Atom "set_add_not_In_length_S_n.u0" 0)) ((:)
+    (Clause ((:) (Atom "Coq.Lists.List.1" 0) ([])) (Atom
+    "set_add_In_length_n.u0" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([]))
+    (Atom "set_add_In_length_n.u0" 0)) ((:) (Clause ((:) (Atom "eq_ind_r.u0"
+    0) ([])) (Atom "set_add_In_length_n.u0" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Lists.ListSet.1" 0) ([])) (Atom "set_add_In_length_n.u0" 0)) ((:)
+    (Clause ((:) (Atom "list.u0" 0) ([])) (Atom "set_add_In_length_n.u0" 0))
+    ((:) (Clause ((:) (Atom "length.u0" 0) ([])) (Atom
+    "set_add_In_length_n.u0" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([]))
+    (Atom "set_add_le_length.u0" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Lists.ListSet.1" 0) ([])) (Atom "set_add_le_length.u0" 0)) ((:)
+    (Clause ((:) (Atom "list.u0" 0) ([])) (Atom "set_add_le_length.u0" 0))
+    ((:) (Clause ((:) (Atom "length.u0" 0) ([])) (Atom "set_add_le_length.u0"
+    0)) ((:) (Clause ((:) (Atom "set_add_not_In_length_S_n.u0" 0) ([])) (Atom
+    "set_diff_nil.u0" 0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.1" 0) ([]))
+    (Atom "set_diff_nil.u0" 0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.13"
+    0) ([])) (Atom "set_diff_nil.u0" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Lists.List.624" 0) ([])) (Atom "set_diff_nil.u0" 0)) ((:) (Clause
+    ((:) (Atom "eq.u0" 0) ([])) (Atom "set_diff_nil.u0" 0)) ((:) (Clause ((:)
+    (Atom "Coq.Lists.ListSet.1" 0) ([])) (Atom "set_diff_nil.u0" 0)) ((:)
+    (Clause ((:) (Atom "list.u0" 0) ([])) (Atom "set_diff_nil.u0" 0)) ((:)
+    (Clause ((:) (Atom "length.u0" 0) ([])) (Atom "set_diff_nil.u0" 0)) ((:)
+    (Clause ((:) (Atom "Coq.Lists.List.482" 0) ([])) (Atom
+    "set_union_incl.u0" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
+    "set_union_incl.u0" 0)) ((:) (Clause ((:) (Atom "Coq.Lists.ListSet.1" 0)
+    ([])) (Atom "set_union_incl.u0" 0)) ((:) (Clause ((:) (Atom "list.u0" 0)
+    ([])) (Atom "set_union_incl.u0" 0)) ((:) (Clause ((:) (Atom
+    "set_add_In.u0" 0) ([])) (Atom "set_diff_nil_length_nodup.u0" 0)) ((:)
+    (Clause ((:) (Atom "set_add_not_In.u0" 0) ([])) (Atom
+    "set_diff_nil_length_nodup.u0" 0)) ((:) (Clause ((:) (Atom
+    "set_diff_In_emptyR.u0" 0) ([])) (Atom "set_diff_nil_length_nodup.u0" 0))
+    ((:) (Clause ((:) (Atom "set_diff_not_In_emptyR.u0" 0) ([])) (Atom
+    "set_diff_nil_length_nodup.u0" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Lists.List.1" 0) ([])) (Atom "set_diff_nil_length_nodup.u0" 0)) ((:)
+    (Clause ((:) (Atom "Coq.Lists.List.13" 0) ([])) (Atom
+    "set_diff_nil_length_nodup.u0" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Lists.List.624" 0) ([])) (Atom "set_diff_nil_length_nodup.u0" 0))
+    ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
+    "set_diff_nil_length_nodup.u0" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Lists.ListSet.1" 0) ([])) (Atom "set_diff_nil_length_nodup.u0" 0))
+    ((:) (Clause ((:) (Atom "list.u0" 0) ([])) (Atom
+    "set_diff_nil_length_nodup.u0" 0)) ((:) (Clause ((:) (Atom "length.u0" 0)
+    ([])) (Atom "set_diff_nil_length_nodup.u0" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Lists.List.1" 0) ([])) (Atom "set_add_In_length.u0" 0)) ((:) (Clause
+    ((:) (Atom "eq.u0" 0) ([])) (Atom "set_add_In_length.u0" 0)) ((:) (Clause
+    ((:) (Atom "eq_ind_r.u0" 0) ([])) (Atom "set_add_In_length.u0" 0)) ((:)
+    (Clause ((:) (Atom "Coq.Lists.ListSet.1" 0) ([])) (Atom
+    "set_add_In_length.u0" 0)) ((:) (Clause ((:) (Atom "list.u0" 0) ([]))
+    (Atom "set_add_In_length.u0" 0)) ((:) (Clause ((:) (Atom "length.u0" 0)
+    ([])) (Atom "set_add_In_length.u0" 0)) ((:) (Clause ((:) (Atom
+    "set_add_In.u0" 0) ([])) (Atom "set_diff_In_consR.u0" 0)) ((:) (Clause
+    ((:) (Atom "Coq.Lists.List.1" 0) ([])) (Atom "set_diff_In_consR.u0" 0))
+    ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "set_diff_In_consR.u0" 0))
+    ((:) (Clause ((:) (Atom "Coq.Lists.ListSet.1" 0) ([])) (Atom
+    "set_diff_In_consR.u0" 0)) ((:) (Clause ((:) (Atom "list.u0" 0) ([]))
+    (Atom "set_diff_In_consR.u0" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Lists.List.1" 0) ([])) (Atom "set_diff_In_consL.u0" 0)) ((:) (Clause
+    ((:) (Atom "eq.u0" 0) ([])) (Atom "set_diff_In_consL.u0" (Prelude.succ
+    0))) ((:) (Clause ((:) (Atom "eq_ind_r.u0" 0) ([])) (Atom
+    "set_diff_In_consL.u0" 0)) ((:) (Clause ((:) (Atom "Coq.Lists.ListSet.1"
+    0) ([])) (Atom "set_diff_In_consL.u0" 0)) ((:) (Clause ((:) (Atom
+    "list.u0" 0) ([])) (Atom "set_diff_In_consL.u0" 0)) ((:) (Clause ((:)
+    (Atom "Coq.Lists.List.482" 0) ([])) (Atom "set_diff_succ.u0" 0)) ((:)
+    (Clause ((:) (Atom "Coq.Lists.List.624" 0) ([])) (Atom "set_diff_succ.u0"
+    0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "set_diff_succ.u0" 0))
+    ((:) (Clause ((:) (Atom "Coq.Lists.ListSet.1" 0) ([])) (Atom
+    "set_diff_succ.u0" 0)) ((:) (Clause ((:) (Atom "length.u0" 0) ([])) (Atom
+    "set_diff_succ.u0" 0)) ((:) (Clause ((:) (Atom "set_add_In.u0" 0) ([]))
+    (Atom "set_add_add.u0" 0)) ((:) (Clause ((:) (Atom "set_add_not_In.u0" 0)
+    ([])) (Atom "set_add_add.u0" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Lists.List.1" 0) ([])) (Atom "set_add_add.u0" 0)) ((:) (Clause ((:)
+    (Atom "Coq.Lists.List.13" 0) ([])) (Atom "set_add_add.u0" 0)) ((:)
+    (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "set_add_add.u0" 0)) ((:)
+    (Clause ((:) (Atom "Coq.Lists.ListSet.1" 0) ([])) (Atom "set_add_add.u0"
+    0)) ((:) (Clause ((:) (Atom "list.u0" 0) ([])) (Atom "set_add_add.u0" 0))
+    ((:) (Clause ((:) (Atom "app.u0" 0) ([])) (Atom "set_add_add.u0" 0)) ((:)
+    (Clause ((:) (Atom "set_add_In.u0" 0) ([])) (Atom "set_union_nodup_r.u0"
+    0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.1" 0) ([])) (Atom
+    "set_union_nodup_r.u0" 0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.13" 0)
+    ([])) (Atom "set_union_nodup_r.u0" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Lists.List.624" 0) ([])) (Atom "set_union_nodup_r.u0" 0)) ((:)
+    (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "set_union_nodup_r.u0" 0)) ((:)
+    (Clause ((:) (Atom "Coq.Lists.ListSet.1" 0) ([])) (Atom
+    "set_union_nodup_r.u0" 0)) ((:) (Clause ((:) (Atom "list.u0" 0) ([]))
+    (Atom "set_union_nodup_r.u0" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Lists.List.1" 0) ([])) (Atom "nodup_nil_iff.u0" 0)) ((:) (Clause
+    ((:) (Atom "Coq.Lists.List.13" 0) ([])) (Atom "nodup_nil_iff.u0" 0)) ((:)
+    (Clause ((:) (Atom "Coq.Lists.List.624" 0) ([])) (Atom "nodup_nil_iff.u0"
+    0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "nodup_nil_iff.u0" 0))
+    ((:) (Clause ((:) (Atom "Coq.Lists.ListSet.1" 0) ([])) (Atom
+    "nodup_nil_iff.u0" 0)) ((:) (Clause ((:) (Atom "list.u0" 0) ([])) (Atom
+    "nodup_nil_iff.u0" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
+    "set_union_cons_rm_r.u0" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
+    "Coq.Lists.ListSet.1" 0) ([])) (Atom "set_union_cons_rm_r.u0" 0)) ((:)
+    (Clause ((:) (Atom "list.u0" 0) ([])) (Atom "set_union_cons_rm_r.u0" 0))
+    ((:) (Clause ((:) (Atom "set_add_In.u0" 0) ([])) (Atom
+    "set_diff_nil_length.u0" 0)) ((:) (Clause ((:) (Atom "set_add_not_In.u0"
+    0) ([])) (Atom "set_diff_nil_length.u0" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Lists.List.1" 0) ([])) (Atom "set_diff_nil_length.u0" 0)) ((:)
+    (Clause ((:) (Atom "Coq.Lists.List.13" 0) ([])) (Atom
+    "set_diff_nil_length.u0" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([]))
+    (Atom "set_diff_nil_length.u0" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Lists.ListSet.1" 0) ([])) (Atom "set_diff_nil_length.u0" 0)) ((:)
+    (Clause ((:) (Atom "list.u0" 0) ([])) (Atom "set_diff_nil_length.u0" 0))
+    ((:) (Clause ((:) (Atom "length.u0" 0) ([])) (Atom
+    "set_diff_nil_length.u0" 0)) ((:) (Clause ((:) (Atom "set_add_In.u0" 0)
+    ([])) (Atom "set_diff_nodup_l.u0" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Lists.List.1" 0) ([])) (Atom "set_diff_nodup_l.u0" 0)) ((:) (Clause
+    ((:) (Atom "Coq.Lists.List.13" 0) ([])) (Atom "set_diff_nodup_l.u0" 0))
+    ((:) (Clause ((:) (Atom "Coq.Lists.List.624" 0) ([])) (Atom
+    "set_diff_nodup_l.u0" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
+    "set_diff_nodup_l.u0" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
+    "Coq.Lists.ListSet.1" 0) ([])) (Atom "set_diff_nodup_l.u0" 0)) ((:)
+    (Clause ((:) (Atom "list.u0" 0) ([])) (Atom "set_diff_nodup_l.u0" 0))
+    ((:) (Clause ((:) (Atom "Coq.Lists.List.1" 0) ([])) (Atom
+    "set_diff_nodup_r.u0" 0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.624" 0)
+    ([])) (Atom "set_diff_nodup_r.u0" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0)
+    ([])) (Atom "set_diff_nodup_r.u0" (Prelude.succ 0))) ((:) (Clause ((:)
+    (Atom "Coq.Lists.ListSet.1" 0) ([])) (Atom "set_diff_nodup_r.u0" 0)) ((:)
+    (Clause ((:) (Atom "list.u0" 0) ([])) (Atom "set_diff_nodup_r.u0" 0))
+    ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
+    "set_add_length_not_nil.u0" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Lists.ListSet.1" 0) ([])) (Atom "set_add_length_not_nil.u0" 0)) ((:)
+    (Clause ((:) (Atom "list.u0" 0) ([])) (Atom "set_add_length_not_nil.u0"
+    0)) ((:) (Clause ((:) (Atom "length.u0" 0) ([])) (Atom
+    "set_add_length_not_nil.u0" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Lists.List.1" 0) ([])) (Atom "set_diff_length_cons_nil.u0" 0)) ((:)
+    (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "set_diff_length_cons_nil.u0"
+    0)) ((:) (Clause ((:) (Atom "Coq.Lists.ListSet.1" 0) ([])) (Atom
+    "set_diff_length_cons_nil.u0" 0)) ((:) (Clause ((:) (Atom "list.u0" 0)
+    ([])) (Atom "set_diff_length_cons_nil.u0" 0)) ((:) (Clause ((:) (Atom
+    "length.u0" 0) ([])) (Atom "set_diff_length_cons_nil.u0" 0)) ((:) (Clause
+    ((:) (Atom "Coq.Lists.List.624" 0) ([])) (Atom "set_diff_length_zero.u0"
+    0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
+    "set_diff_length_zero.u0" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Lists.ListSet.1" 0) ([])) (Atom "set_diff_length_zero.u0" 0)) ((:)
+    (Clause ((:) (Atom "list.u0" 0) ([])) (Atom "set_diff_length_zero.u0" 0))
+    ((:) (Clause ((:) (Atom "length.u0" 0) ([])) (Atom
+    "set_diff_length_zero.u0" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([]))
+    (Atom "set_add_length.u0" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Lists.ListSet.1" 0) ([])) (Atom "set_add_length.u0" 0)) ((:) (Clause
+    ((:) (Atom "list.u0" 0) ([])) (Atom "set_add_length.u0" 0)) ((:) (Clause
+    ((:) (Atom "length.u0" 0) ([])) (Atom "set_add_length.u0" 0)) ((:)
+    (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "set_add_set_diff_length.u0"
+    0)) ((:) (Clause ((:) (Atom "Coq.Lists.ListSet.1" 0) ([])) (Atom
+    "set_add_set_diff_length.u0" 0)) ((:) (Clause ((:) (Atom "length.u0" 0)
+    ([])) (Atom "set_add_set_diff_length.u0" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Lists.List.1" 0) ([])) (Atom "nodup_length.u0" 0)) ((:) (Clause ((:)
+    (Atom "Coq.Lists.List.13" 0) ([])) (Atom "nodup_length.u0" 0)) ((:)
+    (Clause ((:) (Atom "Coq.Lists.List.624" 0) ([])) (Atom "nodup_length.u0"
+    0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "nodup_length.u0" 0))
+    ((:) (Clause ((:) (Atom "Coq.Lists.ListSet.1" 0) ([])) (Atom
+    "nodup_length.u0" 0)) ((:) (Clause ((:) (Atom "list.u0" 0) ([])) (Atom
+    "nodup_length.u0" 0)) ((:) (Clause ((:) (Atom "length.u0" 0) ([])) (Atom
+    "nodup_length.u0" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
+    "set_diff_length_le.u0" 0)) ((:) (Clause ((:) (Atom "Coq.Lists.ListSet.1"
+    0) ([])) (Atom "set_diff_length_le.u0" 0)) ((:) (Clause ((:) (Atom
+    "length.u0" 0) ([])) (Atom "set_diff_length_le.u0" 0)) ((:) (Clause ((:)
+    (Atom "Coq.Lists.List.482" 0) ([])) (Atom "set_diff_incl_lt_length.u0"
+    0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
+    "set_diff_incl_lt_length.u0" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Lists.ListSet.1" 0) ([])) (Atom "set_diff_incl_lt_length.u0" 0))
+    ((:) (Clause ((:) (Atom "list.u0" 0) ([])) (Atom
+    "set_diff_incl_lt_length.u0" 0)) ((:) (Clause ((:) (Atom "length.u0" 0)
+    ([])) (Atom "set_diff_incl_lt_length.u0" 0)) ((:) (Clause ((:) (Atom
+    "set_diff_nil_incl.u0" 0) ([])) (Atom "set_diff_refl_nil.u0" 0)) ((:)
+    (Clause ((:) (Atom "Coq.Lists.List.482" 0) ([])) (Atom
+    "set_diff_refl_nil.u0" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
+    "set_diff_refl_nil.u0" 0)) ((:) (Clause ((:) (Atom "Coq.Lists.ListSet.1"
+    0) ([])) (Atom "set_diff_refl_nil.u0" 0)) ((:) (Clause ((:) (Atom
+    "list.u0" 0) ([])) (Atom "set_diff_refl_nil.u0" 0)) ((:) (Clause ((:)
+    (Atom "Coq.Lists.List.482" 0) ([])) (Atom "incl_set_union_l_nil.u0" 0))
+    ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "incl_set_union_l_nil.u0"
+    0)) ((:) (Clause ((:) (Atom "Coq.Lists.ListSet.1" 0) ([])) (Atom
+    "incl_set_union_l_nil.u0" 0)) ((:) (Clause ((:) (Atom "list.u0" 0) ([]))
+    (Atom "incl_set_union_l_nil.u0" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Lists.List.482" 0) ([])) (Atom "incl_set_add_reduce2.u0" 0)) ((:)
+    (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "incl_set_add_reduce2.u0" 0))
+    ((:) (Clause ((:) (Atom "Coq.Lists.ListSet.1" 0) ([])) (Atom
+    "incl_set_add_reduce2.u0" 0)) ((:) (Clause ((:) (Atom "list.u0" 0) ([]))
+    (Atom "incl_set_add_reduce2.u0" 0)) ((:) (Clause ((:) (Atom
+    "incl_set_add_iff.u0" 0) ([])) (Atom "incl_set_union_nil_l.u0" 0)) ((:)
+    (Clause ((:) (Atom "Coq.Lists.List.482" 0) ([])) (Atom
+    "incl_set_union_nil_l.u0" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([]))
+    (Atom "incl_set_union_nil_l.u0" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Lists.ListSet.1" 0) ([])) (Atom "incl_set_union_nil_l.u0" 0)) ((:)
+    (Clause ((:) (Atom "list.u0" 0) ([])) (Atom "incl_set_union_nil_l.u0" 0))
+    ((:) (Clause ((:) (Atom "incl_l_nil_false.u0" 0) ([])) (Atom
+    "incl_set_add_set_union_nil.u0" 0)) ((:) (Clause ((:) (Atom
+    "incl_set_add_iff.u0" 0) ([])) (Atom "incl_set_add_set_union_nil.u0" 0))
+    ((:) (Clause ((:) (Atom "incl_set_union_nil_l.u0" 0) ([])) (Atom
+    "incl_set_add_set_union_nil.u0" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Lists.List.482" 0) ([])) (Atom "incl_set_add_set_union_nil.u0" 0))
+    ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
+    "incl_set_add_set_union_nil.u0" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Lists.ListSet.1" 0) ([])) (Atom "incl_set_add_set_union_nil.u0" 0))
+    ((:) (Clause ((:) (Atom "list.u0" 0) ([])) (Atom
+    "incl_set_add_set_union_nil.u0" 0)) ((:) (Clause ((:) (Atom
+    "incl_l_nil_false.u0" 0) ([])) (Atom "incl_set_union_trans.u0" 0)) ((:)
+    (Clause ((:) (Atom "set_union_incl_nil.u0" 0) ([])) (Atom
+    "incl_set_union_trans.u0" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Lists.List.482" 0) ([])) (Atom "incl_set_union_trans.u0" 0)) ((:)
+    (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "incl_set_union_trans.u0" 0))
+    ((:) (Clause ((:) (Atom "Coq.Lists.ListSet.1" 0) ([])) (Atom
+    "incl_set_union_trans.u0" 0)) ((:) (Clause ((:) (Atom "list.u0" 0) ([]))
+    (Atom "incl_set_union_trans.u0" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0)
+    ([])) (Atom "set_union_nil_iff.u0" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Lists.ListSet.1" 0) ([])) (Atom "set_union_nil_iff.u0" 0)) ((:)
+    (Clause ((:) (Atom "list.u0" 0) ([])) (Atom "set_union_nil_iff.u0" 0))
+    ((:) (Clause ((:) (Atom "Coq.Lists.List.1" 0) ([])) (Atom
+    "incl_set_union_nodup_l.u0" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Lists.List.482" 0) ([])) (Atom "incl_set_union_nodup_l.u0" 0)) ((:)
+    (Clause ((:) (Atom "Coq.Lists.List.624" 0) ([])) (Atom
+    "incl_set_union_nodup_l.u0" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([]))
+    (Atom "incl_set_union_nodup_l.u0" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Lists.ListSet.1" 0) ([])) (Atom "incl_set_union_nodup_l.u0" 0)) ((:)
+    (Clause ((:) (Atom "list.u0" 0) ([])) (Atom "incl_set_union_nodup_l.u0"
+    0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.624" 0) ([])) (Atom
+    "length_set_diff_set_union_nodup_l.u0" 0)) ((:) (Clause ((:) (Atom
+    "eq.u0" 0) ([])) (Atom "length_set_diff_set_union_nodup_l.u0" 0)) ((:)
+    (Clause ((:) (Atom "Coq.Lists.ListSet.1" 0) ([])) (Atom
+    "length_set_diff_set_union_nodup_l.u0" 0)) ((:) (Clause ((:) (Atom
+    "length.u0" 0) ([])) (Atom "length_set_diff_set_union_nodup_l.u0" 0))
+    ((:) (Clause ((:) (Atom "nodup_incl2.u0" 0) ([])) (Atom
+    "strict_subset_lt_length.u0" 0)) ((:) (Clause ((:) (Atom
+    "nodup_incl_length.u0" 0) ([])) (Atom "strict_subset_lt_length.u0" 0))
+    ((:) (Clause ((:) (Atom "strict_subset.u0" 0) ([])) (Atom
+    "strict_subset_lt_length.u0" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Lists.List.624" 0) ([])) (Atom "strict_subset_lt_length.u0" 0)) ((:)
+    (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "strict_subset_lt_length.u0"
+    0)) ((:) (Clause ((:) (Atom "Coq.Lists.ListSet.1" 0) ([])) (Atom
+    "strict_subset_lt_length.u0" 0)) ((:) (Clause ((:) (Atom "length.u0" 0)
+    ([])) (Atom "strict_subset_lt_length.u0" 0)) ((:) (Clause ((:) (Atom
+    "eq.u0" 0) ([])) (Atom "if_negb.u0" 0)) ((:) (Clause ((:) (Atom "eq.u0"
+    0) ([])) (Atom "andb_if.u0" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([]))
+    (Atom "negb_if.u0" 0)) ((:) (Clause ((:) (Atom "Coq.Lists.ListSet.1" 0)
+    ([])) (Atom "Coq.Lists.List.1" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Lists.List.1" 0) ([])) (Atom "Coq.Lists.ListSet.1" 0)) ((:) (Clause
+    ((:) (Atom "Coq.Lists.ListSet.1" 0) ([])) (Atom "Coq.Lists.List.13" 0))
+    ((:) (Clause ((:) (Atom "Coq.Lists.List.13" 0) ([])) (Atom
+    "Coq.Lists.ListSet.1" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
     "app_nil_r.u0" (Prelude.succ 0))) ((:) (Clause ((:) (Atom "eq.u0" 0)
     ([])) (Atom "app_nil_r.u1" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
     "eq.u0" 0) ([])) (Atom "app_assoc.u0" (Prelude.succ 0))) ((:) (Clause
     ((:) (Atom "eq.u0" 0) ([])) (Atom "app_assoc.u1" (Prelude.succ 0))) ((:)
-    (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "nth_split.u0" (Prelude.succ
-    0))) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "nth_ext.u0"
-    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
-    "nth_error_split.u0" (Prelude.succ 0))) ((:) (Clause ((:) (Atom "eq.u0"
-    0) ([])) (Atom "remove_app.u0" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
-    "eq.u0" 0) ([])) (Atom "notin_remove.u0" (Prelude.succ 0))) ((:) (Clause
-    ((:) (Atom "eq.u0" 0) ([])) (Atom "filter_ext_in.u0" (Prelude.succ 0)))
-    ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "remove_alt.u0"
-    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
-    "split_combine.u0" (Prelude.succ 0))) ((:) (Clause ((:) (Atom "eq.u0" 0)
-    ([])) (Atom "firstn_all2.u0" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
-    "eq.u0" 0) ([])) (Atom "firstn_app.u0" (Prelude.succ 0))) ((:) (Clause
-    ((:) (Atom "eq.u0" 0) ([])) (Atom "firstn_firstn.u0" (Prelude.succ 0)))
-    ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "firstn_skipn.u0"
-    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
-    "firstn_skipn_rev.u0" (Prelude.succ 0))) ((:) (Clause ((:) (Atom "eq.u0"
-    0) ([])) (Atom "firstn_map.u0" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
-    "eq.u0" 0) ([])) (Atom "firstn_map.u1" (Prelude.succ 0))) ((:) (Clause
-    ((:) (Atom "eq.u0" 0) ([])) (Atom "firstn_map.u2" (Prelude.succ 0))) ((:)
-    (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "firstn_map.u3" (Prelude.succ
-    0))) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "Add_split.u0"
-    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
-    "Add_split.u1" (Prelude.succ 0))) ((:) (Clause ((:) (Atom "eq.u0" 0)
-    ([])) (Atom "repeat_cons.u0" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
-    "eq.u0" 0) ([])) (Atom "count_occ_unique.u0" (Prelude.succ 0))) ((:)
-    (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "repeat_to_concat.u0"
-    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "Fin.caseS'.u1" 0) ([])) (Atom
-    "Fin.caseS'.u0" (Prelude.succ 0))) ((:) (Clause ((:) (Atom "eq.u0" 0)
-    ([])) (Atom "Vector.eqb_eq.u0" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
-    "Vector.caseS'.u2" 0) ([])) (Atom "Vector.caseS'.u1" (Prelude.succ 0)))
-    ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "EnvRing.env_morph.u0"
-    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
-    "EnvRing.Pjump_add.u0" (Prelude.succ 0))) ((:) (Clause ((:) (Atom "eq.u0"
-    0) ([])) (Atom "EnvRing.Mphi_morph.u0" (Prelude.succ 0))) ((:) (Clause
-    ((:) (Atom "eq.u0" 0) ([])) (Atom "Vector.eq_nth_iff.u0" (Prelude.succ
-    0))) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
-    "Vector.replace_replace_neq.u0" (Prelude.succ 0))) ((:) (Clause ((:)
-    (Atom "eq.u0" 0) ([])) (Atom "Vector.fold_left_right_assoc_eq.u0"
-    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
-    "Vector.fold_left_right_assoc_eq.u1" (Prelude.succ 0))) ((:) (Clause ((:)
-    (Atom "eq.u0" 0) ([])) (Atom "Vector.append_splitat.u0" (Prelude.succ
-    0))) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
-    "Vector.to_list_of_list_opp.u0" (Prelude.succ 0))) ((:) (Clause ((:)
-    (Atom "eq.u0" 0) ([])) (Atom "Vector.of_list_to_list_opp.u0"
-    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
-    "Vector.to_list_append.u0" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
-    "eq.u0" 0) ([])) (Atom "Vector.to_list_map.u1" (Prelude.succ 0))) ((:)
-    (Clause ((:) (Atom "Coq.Relations.Relation_Definitions.1" 0) ([])) (Atom
-    "SetoidTactics.DefaultRelation.u0" 0)) ((:) (Clause ((:) (Atom
-    "SetoidTactics.DefaultRelation.u0" 0) ([])) (Atom
-    "SetoidTactics.default_relation.u0" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Relations.Relation_Definitions.1" 0) ([])) (Atom
-    "SetoidTactics.default_relation.u0" 0)) ((:) (Clause ((:) (Atom
-    "SetoidTactics.DefaultRelation.u0" 0) ([])) (Atom
-    "SetoidTactics.equivalence_default.u0" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Relations.Relation_Definitions.1" 0) ([])) (Atom
-    "SetoidTactics.equivalence_default.u0" 0)) ((:) (Clause ((:) (Atom
-    "ex.u0" 0) ([])) (Atom "Coq.Relations.Relation_Definitions.1" 0)) ((:)
-    (Clause ((:) (Atom "ex2.u0" 0) ([])) (Atom
-    "Coq.Relations.Relation_Definitions.1" 0)) ((:) (Clause ((:) (Atom
-    "eq.u0" 0) ([])) (Atom "Coq.Relations.Relation_Definitions.1" 0)) ((:)
-    (Clause ((:) (Atom "Coq.Init.Logic.10" 0) ([])) (Atom
-    "Coq.Relations.Relation_Definitions.1" 0)) ((:) (Clause ((:) (Atom
-    "eq_ind_r.u0" 0) ([])) (Atom "Coq.Relations.Relation_Definitions.1" 0))
-    ((:) (Clause ((:) (Atom "Init.Unconvertible.u0" 0) ([])) (Atom
-    "Coq.Relations.Relation_Definitions.1" 0)) ((:) (Clause ((:) (Atom
-    "Basics.flip.u0" 0) ([])) (Atom "Coq.Relations.Relation_Definitions.1"
-    0)) ((:) (Clause ((:) (Atom "Basics.flip.u1" 0) ([])) (Atom
-    "Coq.Relations.Relation_Definitions.1" 0)) ((:) (Clause ((:) (Atom
-    "ID.u0" 0) ([])) (Atom "Coq.Relations.Relation_Definitions.1" 0)) ((:)
-    (Clause ((:) (Atom "Morphisms.respectful_hetero.u0" 0) ([])) (Atom
-    "Coq.Relations.Relation_Definitions.1" 0)) ((:) (Clause ((:) (Atom
-    "Morphisms.respectful_hetero.u1" 0) ([])) (Atom
-    "Coq.Relations.Relation_Definitions.1" 0)) ((:) (Clause ((:) (Atom
-    "Morphisms.respectful_hetero.u2" 0) ([])) (Atom
-    "Coq.Relations.Relation_Definitions.1" 0)) ((:) (Clause ((:) (Atom
-    "Morphisms.respectful_hetero.u3" 0) ([])) (Atom
-    "Coq.Relations.Relation_Definitions.1" 0)) ((:) (Clause ((:) (Atom
-    "Morphisms.forall_def.u0" 0) ([])) (Atom
-    "Coq.Relations.Relation_Definitions.1" 0)) ((:) (Clause ((:) (Atom
-    "Private_Dec.max_case_strong.u0" 0) ([])) (Atom "Private_Dec.max_case.u0"
-    0)) ((:) (Clause ((:) (Atom "Private_Dec.min_case_strong.u0" 0) ([]))
-    (Atom "Private_Dec.min_case.u0" 0)) ((:) (Clause ((:) (Atom
-    "Private_Dec.max_case_strong.u0" 0) ([])) (Atom "max_case_strong.u0" 0))
-    ((:) (Clause ((:) (Atom "Coq.Init.Logic.9" 0) ([])) (Atom
-    "max_case_strong.u0" 0)) ((:) (Clause ((:) (Atom "max_case_strong.u0" 0)
-    ([])) (Atom "max_case.u0" 0)) ((:) (Clause ((:) (Atom
-    "Private_Dec.min_case_strong.u0" 0) ([])) (Atom "min_case_strong.u0" 0))
-    ((:) (Clause ((:) (Atom "Coq.Init.Logic.9" 0) ([])) (Atom
-    "min_case_strong.u0" 0)) ((:) (Clause ((:) (Atom "min_case_strong.u0" 0)
-    ([])) (Atom "min_case.u0" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Relations.Relation_Definitions.1" 0) ([])) (Atom
-    "Coq.Relations.Relation_Operators.1" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Relations.Relation_Definitions.1" 0) ([])) (Atom
-    "Coq.Relations.Relation_Operators.2" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Relations.Relation_Definitions.1" 0) ([])) (Atom
-    "Coq.Relations.Relation_Operators.3" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Relations.Relation_Definitions.1" 0) ([])) (Atom
-    "Coq.Relations.Relation_Operators.4" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Relations.Relation_Definitions.1" 0) ([])) (Atom
-    "Coq.Relations.Relation_Operators.5" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Relations.Relation_Definitions.1" 0) ([])) (Atom
-    "Coq.Relations.Relation_Operators.6" 0)) ((:) (Clause ((:) (Atom "sum.u0"
-    0) ([])) (Atom "Coq.Relations.Relation_Operators.7" 0)) ((:) (Clause ((:)
-    (Atom "sum.u1" 0) ([])) (Atom "Coq.Relations.Relation_Operators.7" 0))
-    ((:) (Clause ((:) (Atom "sigT.u0" 0) ([])) (Atom
-    "Coq.Relations.Relation_Operators.8" 0)) ((:) (Clause ((:) (Atom
-    "sigT.u1" 0) ([])) (Atom "Coq.Relations.Relation_Operators.9" 0)) ((:)
-    (Clause ((:) (Atom "Coq.Relations.Relation_Operators.8" 0) ([])) (Atom
-    "Coq.Relations.Relation_Operators.10" 0)) ((:) (Clause ((:) (Atom "eq.u0"
-    0) ([])) (Atom "Coq.Relations.Relation_Operators.10" 0)) ((:) (Clause
-    ((:) (Atom "Coq.Init.Logic.10" 0) ([])) (Atom
-    "Coq.Relations.Relation_Operators.10" 0)) ((:) (Clause ((:) (Atom
-    "eq_ind_r.u0" 0) ([])) (Atom "Coq.Relations.Relation_Operators.10" 0))
-    ((:) (Clause ((:) (Atom "sigT.u0" 0) ([])) (Atom
-    "Coq.Relations.Relation_Operators.10" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Init.Specif.78" 0) ([])) (Atom "Coq.Relations.Relation_Operators.10"
-    0)) ((:) (Clause ((:) (Atom "prod.u0" 0) ([])) (Atom
-    "Coq.Relations.Relation_Operators.10" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Relations.Relation_Operators.9" 0) ([])) (Atom
-    "Coq.Relations.Relation_Operators.11" 0)) ((:) (Clause ((:) (Atom "eq.u0"
-    0) ([])) (Atom "Coq.Relations.Relation_Operators.11" 0)) ((:) (Clause
-    ((:) (Atom "Coq.Init.Logic.10" 0) ([])) (Atom
-    "Coq.Relations.Relation_Operators.11" 0)) ((:) (Clause ((:) (Atom
-    "eq_ind_r.u0" 0) ([])) (Atom "Coq.Relations.Relation_Operators.11" 0))
-    ((:) (Clause ((:) (Atom "sigT.u1" 0) ([])) (Atom
-    "Coq.Relations.Relation_Operators.11" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Init.Specif.78" 0) ([])) (Atom "Coq.Relations.Relation_Operators.11"
-    0)) ((:) (Clause ((:) (Atom "prod.u1" 0) ([])) (Atom
-    "Coq.Relations.Relation_Operators.11" 0)) ((:) (Clause ((:) (Atom
-    "prod.u0" 0) ([])) (Atom "Coq.Relations.Relation_Operators.14" 0)) ((:)
-    (Clause ((:) (Atom "prod.u1" 0) ([])) (Atom
-    "Coq.Relations.Relation_Operators.15" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Relations.Relation_Operators.14" 0) ([])) (Atom
-    "Coq.Relations.Relation_Operators.16" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Relations.Relation_Operators.15" 0) ([])) (Atom
-    "Coq.Relations.Relation_Operators.16" 0)) ((:) (Clause ((:) (Atom
-    "prod.u0" 0) ([])) (Atom "Coq.Relations.Relation_Operators.16" 0)) ((:)
-    (Clause ((:) (Atom "prod.u1" 0) ([])) (Atom
-    "Coq.Relations.Relation_Operators.16" 0)) ((:) (Clause ((:) (Atom "eq.u0"
-    0) ([])) (Atom "FunctionalExtensionality.equal_f.u0" 0)) ((:) (Clause
-    ((:) (Atom "eq_ind_r.u0" 0) ([])) (Atom
-    "FunctionalExtensionality.equal_f.u0" 0)) ((:) (Clause ((:) (Atom "eq.u0"
-    0) ([])) (Atom "FunctionalExtensionality.equal_f.u1" 0)) ((:) (Clause
-    ((:) (Atom "eq_ind_r.u0" 0) ([])) (Atom
-    "FunctionalExtensionality.equal_f.u1" 0)) ((:) (Clause ((:) (Atom "eq.u0"
-    0) ([])) (Atom "FunctionalExtensionality.equal_f_dep.u0" 0)) ((:) (Clause
-    ((:) (Atom "eq.u0" 0) ([])) (Atom
-    "FunctionalExtensionality.equal_f_dep.u1" 0)) ((:) (Clause ((:) (Atom
-    "eq.u0" 0) ([])) (Atom
-    "FunctionalExtensionality.functional_extensionality_dep.u0" 0)) ((:)
-    (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
-    "FunctionalExtensionality.functional_extensionality_dep.u1" 0)) ((:)
-    (Clause ((:) (Atom
-    "FunctionalExtensionality.functional_extensionality_dep.u0" 0) ([]))
-    (Atom "FunctionalExtensionality.functional_extensionality.u0" 0)) ((:)
-    (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
-    "FunctionalExtensionality.functional_extensionality.u0" 0)) ((:) (Clause
-    ((:) (Atom "FunctionalExtensionality.functional_extensionality_dep.u1" 0)
-    ([])) (Atom "FunctionalExtensionality.functional_extensionality.u1" 0))
-    ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
-    "FunctionalExtensionality.functional_extensionality.u1" 0)) ((:) (Clause
-    ((:) (Atom "FunctionalExtensionality.functional_extensionality.u0" 0)
-    ([])) (Atom "FunctionalExtensionality.forall_extensionality.u0" 0)) ((:)
-    (Clause ((:) (Atom "FunctionalExtensionality.forall_extensionality.u3" 0)
-    ([])) (Atom "FunctionalExtensionality.forall_extensionality.u0" 0)) ((:)
-    (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
-    "FunctionalExtensionality.forall_extensionality.u0" 0)) ((:) (Clause ((:)
-    (Atom "FunctionalExtensionality.forall_extensionality.u3" 0) ([])) (Atom
-    "FunctionalExtensionality.forall_extensionality.u1" 0)) ((:) (Clause ((:)
-    (Atom "FunctionalExtensionality.forall_extensionality.u1" 0) ([])) (Atom
-    "FunctionalExtensionality.forall_extensionality.u2" 0)) ((:) (Clause ((:)
-    (Atom "FunctionalExtensionality.forall_extensionality.u3" 0) ([])) (Atom
-    "FunctionalExtensionality.forall_extensionality.u2" 0)) ((:) (Clause ((:)
-    (Atom "FunctionalExtensionality.functional_extensionality.u0" 0) ([]))
-    (Atom "FunctionalExtensionality.forall_extensionalityP.u0" 0)) ((:)
-    (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
-    "FunctionalExtensionality.forall_extensionalityP.u0" 0)) ((:) (Clause
-    ((:) (Atom "FunctionalExtensionality.functional_extensionality.u0" 0)
-    ([])) (Atom "FunctionalExtensionality.forall_extensionalityS.u0" 0)) ((:)
-    (Clause ((:) (Atom "FunctionalExtensionality.forall_extensionalityS.u1"
-    0) ([])) (Atom "FunctionalExtensionality.forall_extensionalityS.u0" 0))
-    ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
-    "FunctionalExtensionality.forall_extensionalityS.u0" 0)) ((:) (Clause
-    ((:) (Atom "FunctionalExtensionality.functional_extensionality_dep.u0" 0)
-    ([])) (Atom
-    "FunctionalExtensionality.functional_extensionality_dep_good.u0" 0)) ((:)
-    (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
-    "FunctionalExtensionality.functional_extensionality_dep_good.u0" 0)) ((:)
-    (Clause ((:) (Atom "Coq.Init.Logic.10" 0) ([])) (Atom
-    "FunctionalExtensionality.functional_extensionality_dep_good.u0" 0)) ((:)
-    (Clause ((:) (Atom
-    "FunctionalExtensionality.functional_extensionality_dep.u1" 0) ([]))
-    (Atom "FunctionalExtensionality.functional_extensionality_dep_good.u1"
-    0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
-    "FunctionalExtensionality.functional_extensionality_dep_good.u1" 0)) ((:)
-    (Clause ((:) (Atom "Coq.Init.Logic.10" 0) ([])) (Atom
-    "FunctionalExtensionality.functional_extensionality_dep_good.u1" 0)) ((:)
-    (Clause ((:) (Atom
-    "FunctionalExtensionality.functional_extensionality_dep.u0" 0) ([]))
-    (Atom
-    "FunctionalExtensionality.functional_extensionality_dep_good_refl.u0" 0))
-    ((:) (Clause ((:) (Atom
-    "FunctionalExtensionality.functional_extensionality_dep_good.u0" 0) ([]))
-    (Atom
-    "FunctionalExtensionality.functional_extensionality_dep_good_refl.u0" 0))
-    ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
-    "FunctionalExtensionality.functional_extensionality_dep_good_refl.u0" 0))
-    ((:) (Clause ((:) (Atom "Coq.Init.Logic.10" 0) ([])) (Atom
-    "FunctionalExtensionality.functional_extensionality_dep_good_refl.u0" 0))
-    ((:) (Clause ((:) (Atom
-    "FunctionalExtensionality.functional_extensionality_dep.u1" 0) ([]))
-    (Atom
-    "FunctionalExtensionality.functional_extensionality_dep_good_refl.u1" 0))
-    ((:) (Clause ((:) (Atom
-    "FunctionalExtensionality.functional_extensionality_dep_good.u1" 0) ([]))
-    (Atom
-    "FunctionalExtensionality.functional_extensionality_dep_good_refl.u1" 0))
-    ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
-    "FunctionalExtensionality.functional_extensionality_dep_good_refl.u1" 0))
-    ((:) (Clause ((:) (Atom "Coq.Init.Logic.10" 0) ([])) (Atom
-    "FunctionalExtensionality.functional_extensionality_dep_good_refl.u1" 0))
-    ((:) (Clause ((:) (Atom
-    "FunctionalExtensionality.functional_extensionality_dep_good.u0" 0) ([]))
-    (Atom "FunctionalExtensionality.forall_sig_eq_rect.u0" 0)) ((:) (Clause
-    ((:) (Atom "eq.u0" 0) ([])) (Atom
-    "FunctionalExtensionality.forall_sig_eq_rect.u0" 0)) ((:) (Clause ((:)
-    (Atom "sig.u0" 0) ([])) (Atom
-    "FunctionalExtensionality.forall_sig_eq_rect.u0" 0)) ((:) (Clause ((:)
-    (Atom "FunctionalExtensionality.functional_extensionality_dep_good.u1" 0)
-    ([])) (Atom "FunctionalExtensionality.forall_sig_eq_rect.u1" 0)) ((:)
-    (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
-    "FunctionalExtensionality.forall_sig_eq_rect.u1" 0)) ((:) (Clause ((:)
-    (Atom "sig.u0" 0) ([])) (Atom
-    "FunctionalExtensionality.forall_sig_eq_rect.u1" 0)) ((:) (Clause ((:)
-    (Atom "Coq.Init.Specif.16" 0) ([])) (Atom
-    "FunctionalExtensionality.forall_sig_eq_rect.u1" 0)) ((:) (Clause ((:)
-    (Atom "FunctionalExtensionality.forall_sig_eq_rect.u0" 0) ([])) (Atom
-    "FunctionalExtensionality.forall_eq_rect.u0" 0)) ((:) (Clause ((:) (Atom
-    "sig.u0" 0) ([])) (Atom "FunctionalExtensionality.forall_eq_rect.u0" 0))
-    ((:) (Clause ((:) (Atom "Coq.Init.Specif.16" 0) ([])) (Atom
-    "FunctionalExtensionality.forall_eq_rect.u0" 0)) ((:) (Clause ((:) (Atom
-    "FunctionalExtensionality.forall_sig_eq_rect.u1" 0) ([])) (Atom
-    "FunctionalExtensionality.forall_eq_rect.u1" 0)) ((:) (Clause ((:) (Atom
-    "eq.u0" 0) ([])) (Atom "FunctionalExtensionality.forall_eq_rect.u1" 0))
-    ((:) (Clause ((:) (Atom "sig.u0" 0) ([])) (Atom
-    "FunctionalExtensionality.forall_eq_rect.u1" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Init.Specif.16" 0) ([])) (Atom
-    "FunctionalExtensionality.forall_eq_rect.u1" 0)) ((:) (Clause ((:) (Atom
-    "FunctionalExtensionality.forall_sig_eq_rect.u2" 0) ([])) (Atom
-    "FunctionalExtensionality.forall_eq_rect.u2" 0)) ((:) (Clause ((:) (Atom
-    "FunctionalExtensionality.functional_extensionality_dep_good_refl.u0" 0)
-    ([])) (Atom "FunctionalExtensionality.forall_eq_rect_comp.u0" 0)) ((:)
-    (Clause ((:) (Atom "FunctionalExtensionality.forall_eq_rect.u0" 0) ([]))
-    (Atom "FunctionalExtensionality.forall_eq_rect_comp.u0" 0)) ((:) (Clause
-    ((:) (Atom "eq.u0" 0) ([])) (Atom
-    "FunctionalExtensionality.forall_eq_rect_comp.u0" 0)) ((:) (Clause ((:)
-    (Atom
-    "FunctionalExtensionality.functional_extensionality_dep_good_refl.u1" 0)
-    ([])) (Atom "FunctionalExtensionality.forall_eq_rect_comp.u1" 0)) ((:)
-    (Clause ((:) (Atom "FunctionalExtensionality.forall_eq_rect.u1" 0) ([]))
-    (Atom "FunctionalExtensionality.forall_eq_rect_comp.u1" 0)) ((:) (Clause
-    ((:) (Atom "eq.u0" 0) ([])) (Atom
-    "FunctionalExtensionality.forall_eq_rect_comp.u1" 0)) ((:) (Clause ((:)
-    (Atom "sig.u0" 0) ([])) (Atom
-    "FunctionalExtensionality.forall_eq_rect_comp.u1" 0)) ((:) (Clause ((:)
-    (Atom "Coq.Init.Specif.16" 0) ([])) (Atom
-    "FunctionalExtensionality.forall_eq_rect_comp.u1" 0)) ((:) (Clause ((:)
-    (Atom "FunctionalExtensionality.forall_eq_rect.u2" 0) ([])) (Atom
-    "FunctionalExtensionality.forall_eq_rect_comp.u2" 0)) ((:) (Clause ((:)
-    (Atom "eq.u0" 0) ([])) (Atom
-    "FunctionalExtensionality.forall_eq_rect_comp.u2" 0)) ((:) (Clause ((:)
-    (Atom "FunctionalExtensionality.functional_extensionality_dep_good.u0" 0)
-    ([])) (Atom
-    "FunctionalExtensionality.f_equal__functional_extensionality_dep_good.u0"
-    0)) ((:) (Clause ((:) (Atom
-    "FunctionalExtensionality.functional_extensionality_dep_good_refl.u0" 0)
-    ([])) (Atom
-    "FunctionalExtensionality.f_equal__functional_extensionality_dep_good.u0"
-    0)) ((:) (Clause ((:) (Atom "FunctionalExtensionality.forall_eq_rect.u0"
-    0) ([])) (Atom
-    "FunctionalExtensionality.f_equal__functional_extensionality_dep_good.u0"
-    0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
-    "FunctionalExtensionality.f_equal__functional_extensionality_dep_good.u0"
-    0)) ((:) (Clause ((:) (Atom "Coq.Init.Logic.10" 0) ([])) (Atom
-    "FunctionalExtensionality.f_equal__functional_extensionality_dep_good.u0"
-    0)) ((:) (Clause ((:) (Atom
-    "FunctionalExtensionality.functional_extensionality_dep_good.u1" 0) ([]))
-    (Atom
-    "FunctionalExtensionality.f_equal__functional_extensionality_dep_good.u1"
-    0)) ((:) (Clause ((:) (Atom
-    "FunctionalExtensionality.functional_extensionality_dep_good_refl.u1" 0)
-    ([])) (Atom
-    "FunctionalExtensionality.f_equal__functional_extensionality_dep_good.u1"
-    0)) ((:) (Clause ((:) (Atom "FunctionalExtensionality.forall_eq_rect.u1"
-    0) ([])) (Atom
-    "FunctionalExtensionality.f_equal__functional_extensionality_dep_good.u1"
-    0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
-    "FunctionalExtensionality.f_equal__functional_extensionality_dep_good.u1"
-    0)) ((:) (Clause ((:) (Atom "Coq.Init.Logic.10" 0) ([])) (Atom
-    "FunctionalExtensionality.f_equal__functional_extensionality_dep_good.u1"
-    0)) ((:) (Clause ((:) (Atom
-    "FunctionalExtensionality.functional_extensionality_dep_good.u0" 0) ([]))
-    (Atom
-    "FunctionalExtensionality.f_equal__functional_extensionality_dep_good__fun.u0"
-    0)) ((:) (Clause ((:) (Atom
-    "FunctionalExtensionality.f_equal__functional_extensionality_dep_good.u0"
-    0) ([])) (Atom
-    "FunctionalExtensionality.f_equal__functional_extensionality_dep_good__fun.u0"
-    0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
-    "FunctionalExtensionality.f_equal__functional_extensionality_dep_good__fun.u0"
-    0)) ((:) (Clause ((:) (Atom "Coq.Init.Logic.10" 0) ([])) (Atom
-    "FunctionalExtensionality.f_equal__functional_extensionality_dep_good__fun.u0"
-    0)) ((:) (Clause ((:) (Atom
-    "FunctionalExtensionality.functional_extensionality_dep_good.u1" 0) ([]))
-    (Atom
-    "FunctionalExtensionality.f_equal__functional_extensionality_dep_good__fun.u1"
-    0)) ((:) (Clause ((:) (Atom
-    "FunctionalExtensionality.f_equal__functional_extensionality_dep_good.u1"
-    0) ([])) (Atom
-    "FunctionalExtensionality.f_equal__functional_extensionality_dep_good__fun.u1"
-    0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
-    "FunctionalExtensionality.f_equal__functional_extensionality_dep_good__fun.u1"
-    0)) ((:) (Clause ((:) (Atom "Coq.Init.Logic.10" 0) ([])) (Atom
-    "FunctionalExtensionality.f_equal__functional_extensionality_dep_good__fun.u1"
-    0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
-    "FunctionalExtensionality.eta_expansion_dep.u0" 0)) ((:) (Clause ((:)
-    (Atom "eq.u0" 0) ([])) (Atom
-    "FunctionalExtensionality.eta_expansion_dep.u1" 0)) ((:) (Clause ((:)
-    (Atom "FunctionalExtensionality.eta_expansion_dep.u0" 0) ([])) (Atom
-    "FunctionalExtensionality.eta_expansion.u0" 0)) ((:) (Clause ((:) (Atom
-    "eq.u0" 0) ([])) (Atom "FunctionalExtensionality.eta_expansion.u0" 0))
-    ((:) (Clause ((:) (Atom "FunctionalExtensionality.eta_expansion_dep.u1"
-    0) ([])) (Atom "FunctionalExtensionality.eta_expansion.u1" 0)) ((:)
-    (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
-    "FunctionalExtensionality.eta_expansion.u1" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Relations.Relation_Definitions.1" 0) ([])) (Atom
-    "Coq.setoid_ring.InitialRing.1" 0)) ((:) (Clause ((:) (Atom
-    "Setoid.Seq_refl.u0" 0) ([])) (Atom "Coq.setoid_ring.InitialRing.1" 0))
-    ((:) (Clause ((:) (Atom "Coq.Classes.Morphisms.31" 0) ([])) (Atom
-    "Coq.setoid_ring.InitialRing.1" 0)) ((:) (Clause ((:) (Atom
-    "Coq.setoid_ring.Ring_theory.17" 0) ([])) (Atom
-    "Coq.setoid_ring.InitialRing.1" 0)) ((:) (Clause ((:) (Atom
-    "Coq.setoid_ring.Ring_theory.100" 0) ([])) (Atom
-    "Coq.setoid_ring.InitialRing.1" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Relations.Relation_Definitions.1" 0) ([])) (Atom
-    "Coq.setoid_ring.InitialRing.32" 0)) ((:) (Clause ((:) (Atom
-    "Coq.setoid_ring.InitialRing.1" 0) ([])) (Atom
-    "Coq.setoid_ring.InitialRing.32" 0)) ((:) (Clause ((:) (Atom
-    "Setoid.Seq_refl.u0" 0) ([])) (Atom "Coq.setoid_ring.InitialRing.32" 0))
-    ((:) (Clause ((:) (Atom "Coq.Classes.Morphisms.31" 0) ([])) (Atom
-    "Coq.setoid_ring.InitialRing.32" 0)) ((:) (Clause ((:) (Atom
-    "Coq.setoid_ring.Ring_theory.17" 0) ([])) (Atom
-    "Coq.setoid_ring.InitialRing.32" 0)) ((:) (Clause ((:) (Atom
-    "Coq.setoid_ring.Ring_theory.100" 0) ([])) (Atom
-    "Coq.setoid_ring.InitialRing.32" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Relations.Relation_Definitions.1" 0) ([])) (Atom
-    "Coq.setoid_ring.InitialRing.49" 0)) ((:) (Clause ((:) (Atom
-    "Coq.setoid_ring.InitialRing.1" 0) ([])) (Atom
-    "Coq.setoid_ring.InitialRing.49" 0)) ((:) (Clause ((:) (Atom
-    "Coq.setoid_ring.InitialRing.32" 0) ([])) (Atom
-    "Coq.setoid_ring.InitialRing.49" 0)) ((:) (Clause ((:) (Atom
-    "Setoid.Seq_refl.u0" 0) ([])) (Atom "Coq.setoid_ring.InitialRing.49" 0))
-    ((:) (Clause ((:) (Atom "Coq.Classes.Morphisms.31" 0) ([])) (Atom
-    "Coq.setoid_ring.InitialRing.49" 0)) ((:) (Clause ((:) (Atom
-    "Coq.setoid_ring.Ring_theory.17" 0) ([])) (Atom
-    "Coq.setoid_ring.InitialRing.49" 0)) ((:) (Clause ((:) (Atom
-    "Coq.setoid_ring.Ring_theory.100" 0) ([])) (Atom
-    "Coq.setoid_ring.InitialRing.49" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Relations.Relation_Definitions.1" 0) ([])) (Atom
-    "Coq.setoid_ring.InitialRing.70" 0)) ((:) (Clause ((:) (Atom
-    "Setoid.Seq_refl.u0" 0) ([])) (Atom "Coq.setoid_ring.InitialRing.70" 0))
-    ((:) (Clause ((:) (Atom "Coq.Classes.Morphisms.31" 0) ([])) (Atom
-    "Coq.setoid_ring.InitialRing.70" 0)) ((:) (Clause ((:) (Atom
-    "Coq.setoid_ring.Ring_theory.17" 0) ([])) (Atom
-    "Coq.setoid_ring.InitialRing.70" 0)) ((:) (Clause ((:) (Atom
-    "Coq.setoid_ring.Ring_theory.100" 0) ([])) (Atom
-    "Coq.setoid_ring.InitialRing.70" 0)) ((:) (Clause ((:) (Atom "prod.u0" 0)
-    ([])) (Atom "Coq.setoid_ring.InitialRing.71" 0)) ((:) (Clause ((:) (Atom
-    "prod.u1" 0) ([])) (Atom "Coq.setoid_ring.InitialRing.71" 0)) ((:)
-    (Clause ((:) (Atom "Coq.setoid_ring.Ring_theory.74" 0) ([])) (Atom
-    "Coq.setoid_ring.InitialRing.71" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Relations.Relation_Definitions.1" 0) ([])) (Atom
-    "Coq.micromega.OrderedRing.1" 0)) ((:) (Clause ((:) (Atom
-    "Coq.setoid_ring.Ring_theory.17" 0) ([])) (Atom
-    "Coq.micromega.OrderedRing.1" 0)) ((:) (Clause ((:) (Atom
-    "SetoidTactics.default_relation.u0" 0) ([])) (Atom
-    "Coq.micromega.OrderedRing.21" 0)) ((:) (Clause ((:) (Atom
-    "SetoidTactics.equivalence_default.u0" 0) ([])) (Atom
-    "Coq.micromega.OrderedRing.21" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Relations.Relation_Definitions.1" 0) ([])) (Atom
-    "Coq.micromega.OrderedRing.21" 0)) ((:) (Clause ((:) (Atom
-    "Coq.setoid_ring.InitialRing.1" 0) ([])) (Atom
-    "Coq.micromega.OrderedRing.21" 0)) ((:) (Clause ((:) (Atom
-    "Coq.setoid_ring.InitialRing.70" 0) ([])) (Atom
-    "Coq.micromega.OrderedRing.21" 0)) ((:) (Clause ((:) (Atom
-    "Coq.micromega.OrderedRing.1" 0) ([])) (Atom
-    "Coq.micromega.OrderedRing.21" 0)) ((:) (Clause ((:) (Atom "list.u0" 0)
-    ([])) (Atom "Coq.micromega.OrderedRing.21" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Classes.Morphisms.31" 0) ([])) (Atom "Coq.micromega.OrderedRing.21"
-    0)) ((:) (Clause ((:) (Atom "Coq.setoid_ring.Ring_polynom.1" 0) ([]))
-    (Atom "Coq.micromega.OrderedRing.21" 0)) ((:) (Clause ((:) (Atom
-    "Coq.setoid_ring.Ring_theory.17" 0) ([])) (Atom
-    "Coq.micromega.OrderedRing.21" 0)) ((:) (Clause ((:) (Atom
-    "Coq.setoid_ring.Ring_theory.100" 0) ([])) (Atom
-    "Coq.micromega.OrderedRing.21" 0)) ((:) (Clause ((:) (Atom
-    "RelationClasses.Tlist.u0" 0) ([])) (Atom
-    "RelationClasses.unary_operation.u0" 0)) ((:) (Clause ((:) (Atom
-    "RelationClasses.arrows.u0" 0) ([])) (Atom
-    "RelationClasses.unary_operation.u0" 0)) ((:) (Clause ((:) (Atom
-    "RelationClasses.binary_operation.u0" 0) ([])) (Atom
-    "RelationClasses.ternary_operation.u0" 0)) ((:) (Clause ((:) (Atom
-    "RelationClasses.binary_operation.u0" 0) ([])) (Atom
-    "RelationClasses.unary_predicate.u0" 0)) ((:) (Clause ((:) (Atom
-    "RelationClasses.binary_operation.u0" 0) ([])) (Atom
-    "RelationClasses.pointwise_extension.u0" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Relations.Relation_Definitions.1" 0) ([])) (Atom
-    "RelationClasses.subrelation_partial_order_obligation_1.u0" 0)) ((:)
-    (Clause ((:) (Atom "SetoidTactics.default_relation.u0" 0) ([])) (Atom
-    "Coq.micromega.RingMicromega.1" 0)) ((:) (Clause ((:) (Atom
-    "SetoidTactics.equivalence_default.u0" 0) ([])) (Atom
-    "Coq.micromega.RingMicromega.1" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Relations.Relation_Definitions.1" 0) ([])) (Atom
-    "Coq.micromega.RingMicromega.1" 0)) ((:) (Clause ((:) (Atom
-    "Coq.setoid_ring.InitialRing.1" 0) ([])) (Atom
-    "Coq.micromega.RingMicromega.1" 0)) ((:) (Clause ((:) (Atom
-    "Coq.setoid_ring.InitialRing.70" 0) ([])) (Atom
-    "Coq.micromega.RingMicromega.1" 0)) ((:) (Clause ((:) (Atom
-    "Coq.micromega.OrderedRing.1" 0) ([])) (Atom
-    "Coq.micromega.RingMicromega.1" 0)) ((:) (Clause ((:) (Atom
-    "Coq.micromega.OrderedRing.21" 0) ([])) (Atom
-    "Coq.micromega.RingMicromega.1" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0)
-    ([])) (Atom "Coq.micromega.RingMicromega.1" 0)) ((:) (Clause ((:) (Atom
-    "eq_ind_r.u0" 0) ([])) (Atom "Coq.micromega.RingMicromega.1" 0)) ((:)
-    (Clause ((:) (Atom "list.u0" 0) ([])) (Atom
-    "Coq.micromega.RingMicromega.1" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Classes.Morphisms.31" 0) ([])) (Atom "Coq.micromega.RingMicromega.1"
-    0)) ((:) (Clause ((:) (Atom "Coq.micromega.Env.1" 0) ([])) (Atom
-    "Coq.micromega.RingMicromega.1" 0)) ((:) (Clause ((:) (Atom
-    "Coq.micromega.EnvRing.9" 0) ([])) (Atom "Coq.micromega.RingMicromega.1"
-    0)) ((:) (Clause ((:) (Atom "Coq.setoid_ring.Ring_polynom.1" 0) ([]))
-    (Atom "Coq.micromega.RingMicromega.1" 0)) ((:) (Clause ((:) (Atom
-    "Coq.setoid_ring.Ring_theory.1" 0) ([])) (Atom
-    "Coq.micromega.RingMicromega.1" 0)) ((:) (Clause ((:) (Atom
-    "Coq.setoid_ring.Ring_theory.17" 0) ([])) (Atom
-    "Coq.micromega.RingMicromega.1" 0)) ((:) (Clause ((:) (Atom
-    "Coq.setoid_ring.Ring_theory.100" 0) ([])) (Atom
-    "Coq.micromega.RingMicromega.1" 0)) ((:) (Clause ((:) (Atom
-    "Coq.micromega.EnvRing.11" 0) ([])) (Atom "Coq.micromega.RingMicromega.3"
-    0)) ((:) (Clause ((:) (Atom "Coq.setoid_ring.Ring_theory.97" 0) ([]))
-    (Atom "Coq.micromega.RingMicromega.3" 0)) ((:) (Clause ((:) (Atom
-    "option.u0" 0) ([])) (Atom "RingMicromega.map_option.u0" 0)) ((:) (Clause
-    ((:) (Atom "option.u0" 0) ([])) (Atom "RingMicromega.map_option.u1" 0))
-    ((:) (Clause ((:) (Atom "option.u0" 0) ([])) (Atom
-    "RingMicromega.map_option2.u0" 0)) ((:) (Clause ((:) (Atom "option.u0" 0)
-    ([])) (Atom "RingMicromega.map_option2.u1" 0)) ((:) (Clause ((:) (Atom
-    "option.u0" 0) ([])) (Atom "RingMicromega.map_option2.u2" 0)) ((:)
-    (Clause ((:) (Atom "EnvRing.PExpr.u0" 0) ([])) (Atom
-    "RingMicromega.Formula.u0" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Lists.List.381" 0) ([])) (Atom "RingMicromega.cnf_of_list.u0" 0))
-    ((:) (Clause ((:) (Atom "prod.u1" 0) ([])) (Atom
-    "RingMicromega.cnf_of_list.u0" 0)) ((:) (Clause ((:) (Atom "list.u0" 0)
-    ([])) (Atom "RingMicromega.cnf_of_list.u0" 0)) ((:) (Clause ((:) (Atom
-    "Coq.micromega.Tauto.52" 0) ([])) (Atom "RingMicromega.cnf_of_list.u0"
-    0)) ((:) (Clause ((:) (Atom "RingMicromega.cnf_of_list.u0" 0) ([])) (Atom
-    "RingMicromega.cnf_of_list_correct.u0" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Lists.List.381" 0) ([])) (Atom
-    "RingMicromega.cnf_of_list_correct.u0" 0)) ((:) (Clause ((:) (Atom
-    "prod.u1" 0) ([])) (Atom "RingMicromega.cnf_of_list_correct.u0" 0)) ((:)
-    (Clause ((:) (Atom "list.u0" 0) ([])) (Atom
-    "RingMicromega.cnf_of_list_correct.u0" 0)) ((:) (Clause ((:) (Atom
-    "Refl.make_conj.u0" 0) ([])) (Atom "RingMicromega.cnf_of_list_correct.u0"
-    0)) ((:) (Clause ((:) (Atom "Coq.micromega.Tauto.52" 0) ([])) (Atom
-    "RingMicromega.cnf_of_list_correct.u0" 0)) ((:) (Clause ((:) (Atom
-    "RingMicromega.cnf_of_list.u0" 0) ([])) (Atom
-    "RingMicromega.cnf_normalise.u0" 0)) ((:) (Clause ((:) (Atom
-    "Coq.micromega.Tauto.52" 0) ([])) (Atom "RingMicromega.cnf_normalise.u0"
-    0)) ((:) (Clause ((:) (Atom "RingMicromega.cnf_of_list.u0" 0) ([])) (Atom
-    "RingMicromega.cnf_negate.u0" 0)) ((:) (Clause ((:) (Atom
-    "Coq.micromega.Tauto.52" 0) ([])) (Atom "RingMicromega.cnf_negate.u0" 0))
-    ((:) (Clause ((:) (Atom "RingMicromega.cnf_of_list.u0" 0) ([])) (Atom
-    "RingMicromega.cnf_normalise_correct.u0" 0)) ((:) (Clause ((:) (Atom
-    "RingMicromega.cnf_of_list_correct.u0" 0) ([])) (Atom
-    "RingMicromega.cnf_normalise_correct.u0" 0)) ((:) (Clause ((:) (Atom
-    "RingMicromega.cnf_normalise.u0" 0) ([])) (Atom
-    "RingMicromega.cnf_normalise_correct.u0" 0)) ((:) (Clause ((:) (Atom
-    "Coq.micromega.Tauto.52" 0) ([])) (Atom
-    "RingMicromega.cnf_normalise_correct.u0" 0)) ((:) (Clause ((:) (Atom
-    "RingMicromega.cnf_of_list.u0" 0) ([])) (Atom
-    "RingMicromega.cnf_negate_correct.u0" 0)) ((:) (Clause ((:) (Atom
-    "RingMicromega.cnf_of_list_correct.u0" 0) ([])) (Atom
-    "RingMicromega.cnf_negate_correct.u0" 0)) ((:) (Clause ((:) (Atom
-    "RingMicromega.cnf_negate.u0" 0) ([])) (Atom
-    "RingMicromega.cnf_negate_correct.u0" 0)) ((:) (Clause ((:) (Atom
-    "Coq.micromega.Tauto.52" 0) ([])) (Atom
-    "RingMicromega.cnf_negate_correct.u0" 0)) ((:) (Clause ((:) (Atom
-    "RingMicromega.Formula.u0" 0) ([])) (Atom
-    "Coq.micromega.RingMicromega.98" 0)) ((:) (Clause ((:) (Atom
-    "EnvRing.PExpr.u0" 0) ([])) (Atom "Coq.micromega.RingMicromega.98" 0))
-    ((:) (Clause ((:) (Atom "Coq.micromega.EnvRing.10" 0) ([])) (Atom
-    "Coq.micromega.RingMicromega.98" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0)
-    ([])) (Atom "Coq.Structures.OrdersFacts.34" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Relations.Relation_Definitions.1" 0) ([])) (Atom
-    "Morphisms_Prop.ex_iff_morphism_obligation_1.u0" 0)) ((:) (Clause ((:)
-    (Atom "ex.u0" 0) ([])) (Atom
-    "Morphisms_Prop.ex_iff_morphism_obligation_1.u0" 0)) ((:) (Clause ((:)
-    (Atom "Coq.Relations.Relation_Definitions.1" 0) ([])) (Atom
-    "Morphisms_Prop.ex_impl_morphism_obligation_1.u0" 0)) ((:) (Clause ((:)
-    (Atom "ex.u0" 0) ([])) (Atom
-    "Morphisms_Prop.ex_impl_morphism_obligation_1.u0" 0)) ((:) (Clause ((:)
-    (Atom "Coq.Relations.Relation_Definitions.1" 0) ([])) (Atom
-    "Morphisms_Prop.ex_flip_impl_morphism_obligation_1.u0" 0)) ((:) (Clause
-    ((:) (Atom "ex.u0" 0) ([])) (Atom
-    "Morphisms_Prop.ex_flip_impl_morphism_obligation_1.u0" 0)) ((:) (Clause
-    ((:) (Atom "Coq.Relations.Relation_Definitions.1" 0) ([])) (Atom
-    "Morphisms_Prop.all_iff_morphism_obligation_1.u0" 0)) ((:) (Clause ((:)
-    (Atom "all.u0" 0) ([])) (Atom
-    "Morphisms_Prop.all_iff_morphism_obligation_1.u0" 0)) ((:) (Clause ((:)
-    (Atom "Coq.Relations.Relation_Definitions.1" 0) ([])) (Atom
-    "Morphisms_Prop.all_impl_morphism_obligation_1.u0" 0)) ((:) (Clause ((:)
-    (Atom "all.u0" 0) ([])) (Atom
-    "Morphisms_Prop.all_impl_morphism_obligation_1.u0" 0)) ((:) (Clause ((:)
-    (Atom "Coq.Relations.Relation_Definitions.1" 0) ([])) (Atom
-    "Morphisms_Prop.all_flip_impl_morphism_obligation_1.u0" 0)) ((:) (Clause
-    ((:) (Atom "all.u0" 0) ([])) (Atom
-    "Morphisms_Prop.all_flip_impl_morphism_obligation_1.u0" 0)) ((:) (Clause
-    ((:) (Atom "Coq.Relations.Relation_Definitions.1" 0) ([])) (Atom
-    "Morphisms_Prop.Acc_pt_morphism.u0" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Init.Wf.1" 0) ([])) (Atom "Morphisms_Prop.Acc_pt_morphism.u0" 0))
-    ((:) (Clause ((:) (Atom "Coq.Classes.Morphisms.31" 0) ([])) (Atom
-    "Morphisms_Prop.Acc_pt_morphism.u0" 0)) ((:) (Clause ((:) (Atom
-    "Morphisms.proper_sym_impl_iff.u0" 0) ([])) (Atom
-    "Morphisms_Prop.Acc_pt_morphism.u0" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Relations.Relation_Definitions.1" 0) ([])) (Atom
-    "Morphisms_Prop.Acc_rel_morphism.u0" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Init.Wf.1" 0) ([])) (Atom "Morphisms_Prop.Acc_rel_morphism.u0" 0))
-    ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
-    "Morphisms_Prop.Acc_rel_morphism.u0" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Init.Logic.10" 0) ([])) (Atom "Morphisms_Prop.Acc_rel_morphism.u0"
-    0)) ((:) (Clause ((:) (Atom "Morphisms.proper_sym_impl_iff_2.u1" 0) ([]))
-    (Atom "Morphisms_Prop.Acc_rel_morphism.u0" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Relations.Relation_Definitions.1" 0) ([])) (Atom
-    "Morphisms_Prop.well_founded_morphism.u0" 0)) ((:) (Clause ((:) (Atom
-    "Morphisms_Prop.all_iff_morphism_obligation_1.u0" 0) ([])) (Atom
-    "Morphisms_Prop.well_founded_morphism.u0" 0)) ((:) (Clause ((:) (Atom
-    "Morphisms_Prop.Acc_rel_morphism.u0" 0) ([])) (Atom
-    "Morphisms_Prop.well_founded_morphism.u0" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Init.Wf.1" 0) ([])) (Atom "Morphisms_Prop.well_founded_morphism.u0"
-    0)) ((:) (Clause ((:) (Atom "all.u0" 0) ([])) (Atom
-    "Morphisms_Prop.well_founded_morphism.u0" 0)) ((:) (Clause ((:) (Atom
-    "DeclConstant.DeclaredConstant.u0" 0) ([])) (Atom "DeclConstant.GT_O.u0"
-    0)) ((:) (Clause ((:) (Atom "DeclConstant.GT.u0" 0) ([])) (Atom
-    "DeclConstant.GT_O.u0" 0)) ((:) (Clause ((:) (Atom
-    "DeclConstant.DeclaredConstant.u0" 0) ([])) (Atom
-    "DeclConstant.GT_APP1.u0" 0)) ((:) (Clause ((:) (Atom
-    "DeclConstant.GT.u0" 0) ([])) (Atom "DeclConstant.GT_APP1.u0" 0)) ((:)
-    (Clause ((:) (Atom "DeclConstant.DeclaredConstant.u0" 0) ([])) (Atom
-    "DeclConstant.GT_APP1.u1" 0)) ((:) (Clause ((:) (Atom
-    "DeclConstant.GT.u0" 0) ([])) (Atom "DeclConstant.GT_APP1.u1" 0)) ((:)
-    (Clause ((:) (Atom "DeclConstant.DeclaredConstant.u0" 0) ([])) (Atom
-    "DeclConstant.GT_APP2.u0" 0)) ((:) (Clause ((:) (Atom
-    "DeclConstant.GT.u0" 0) ([])) (Atom "DeclConstant.GT_APP2.u0" 0)) ((:)
-    (Clause ((:) (Atom "DeclConstant.DeclaredConstant.u0" 0) ([])) (Atom
-    "DeclConstant.GT_APP2.u1" 0)) ((:) (Clause ((:) (Atom
-    "DeclConstant.GT.u0" 0) ([])) (Atom "DeclConstant.GT_APP2.u1" 0)) ((:)
-    (Clause ((:) (Atom "DeclConstant.DeclaredConstant.u0" 0) ([])) (Atom
-    "DeclConstant.GT_APP2.u2" 0)) ((:) (Clause ((:) (Atom
-    "DeclConstant.GT.u0" 0) ([])) (Atom "DeclConstant.GT_APP2.u2" 0)) ((:)
-    (Clause ((:) (Atom "Coq.Init.Wf.2" 0) ([])) (Atom
-    "well_founded_induction_type.u0" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0)
-    ([])) (Atom "Coq.Init.Wf.4" 0)) ((:) (Clause ((:) (Atom "Coq.Init.Wf.1"
-    0) ([])) (Atom "Coq.Init.Wf.5" 0)) ((:) (Clause ((:) (Atom "prod.u0" 0)
-    ([])) (Atom "Coq.Init.Wf.5" 0)) ((:) (Clause ((:) (Atom "prod.u1" 0)
-    ([])) (Atom "Coq.Init.Wf.5" 0)) ((:) (Clause ((:) (Atom "Coq.Init.Wf.1"
-    0) ([])) (Atom "Coq.Init.Wf.7" 0)) ((:) (Clause ((:) (Atom "total_map.u0"
-    0) ([])) (Atom "t_empty.u0" 0)) ((:) (Clause ((:) (Atom "total_map.u0" 0)
-    ([])) (Atom "t_update.u0" 0)) ((:) (Clause ((:) (Atom "t_empty.u0" 0)
-    ([])) (Atom "t_apply_empty.u0" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0)
-    ([])) (Atom "t_apply_empty.u0" 0)) ((:) (Clause ((:) (Atom "eq_ind_r.u0"
-    0) ([])) (Atom "t_apply_empty.u0" 0)) ((:) (Clause ((:) (Atom
-    "total_map.u0" 0) ([])) (Atom "t_update_eq.u0" 0)) ((:) (Clause ((:)
-    (Atom "t_update.u0" 0) ([])) (Atom "t_update_eq.u0" 0)) ((:) (Clause ((:)
-    (Atom "eq.u0" 0) ([])) (Atom "t_update_eq.u0" 0)) ((:) (Clause ((:) (Atom
-    "eq_ind_r.u0" 0) ([])) (Atom "t_update_eq.u0" 0)) ((:) (Clause ((:) (Atom
-    "total_map.u0" 0) ([])) (Atom "t_update_neq.u0" 0)) ((:) (Clause ((:)
-    (Atom "t_update.u0" 0) ([])) (Atom "t_update_neq.u0" 0)) ((:) (Clause
-    ((:) (Atom "eq.u0" 0) ([])) (Atom "t_update_neq.u0" 0)) ((:) (Clause ((:)
-    (Atom "eq_ind_r.u0" 0) ([])) (Atom "t_update_neq.u0" 0)) ((:) (Clause
-    ((:) (Atom "total_map.u0" 0) ([])) (Atom "t_update_shadow.u0" 0)) ((:)
-    (Clause ((:) (Atom "t_update.u0" 0) ([])) (Atom "t_update_shadow.u0" 0))
-    ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "t_update_shadow.u0" 0))
-    ((:) (Clause ((:) (Atom "eq_ind_r.u0" 0) ([])) (Atom "t_update_shadow.u0"
-    0)) ((:) (Clause ((:) (Atom "total_map.u0" 0) ([])) (Atom
-    "t_update_same.u0" 0)) ((:) (Clause ((:) (Atom "t_update.u0" 0) ([]))
-    (Atom "t_update_same.u0" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([]))
-    (Atom "t_update_same.u0" 0)) ((:) (Clause ((:) (Atom "total_map.u0" 0)
-    ([])) (Atom "t_update_permute.u0" 0)) ((:) (Clause ((:) (Atom
-    "t_update.u0" 0) ([])) (Atom "t_update_permute.u0" 0)) ((:) (Clause ((:)
-    (Atom "eq.u0" 0) ([])) (Atom "t_update_permute.u0" 0)) ((:) (Clause ((:)
-    (Atom "total_map.u0" 0) ([])) (Atom "partial_map.u0" 0)) ((:) (Clause
-    ((:) (Atom "option.u0" 0) ([])) (Atom "partial_map.u0" 0)) ((:) (Clause
-    ((:) (Atom "t_empty.u0" 0) ([])) (Atom "empty.u0" 0)) ((:) (Clause ((:)
-    (Atom "partial_map.u0" 0) ([])) (Atom "empty.u0" 0)) ((:) (Clause ((:)
-    (Atom "option.u0" 0) ([])) (Atom "empty.u0" 0)) ((:) (Clause ((:) (Atom
-    "t_update.u0" 0) ([])) (Atom "update.u0" 0)) ((:) (Clause ((:) (Atom
-    "partial_map.u0" 0) ([])) (Atom "update.u0" 0)) ((:) (Clause ((:) (Atom
-    "option.u0" 0) ([])) (Atom "update.u0" 0)) ((:) (Clause ((:) (Atom
-    "t_apply_empty.u0" 0) ([])) (Atom "apply_empty.u0" 0)) ((:) (Clause ((:)
-    (Atom "empty.u0" 0) ([])) (Atom "apply_empty.u0" 0)) ((:) (Clause ((:)
-    (Atom "eq.u0" 0) ([])) (Atom "apply_empty.u0" 0)) ((:) (Clause ((:) (Atom
-    "option.u0" 0) ([])) (Atom "apply_empty.u0" 0)) ((:) (Clause ((:) (Atom
-    "t_update_eq.u0" 0) ([])) (Atom "update_eq.u0" 0)) ((:) (Clause ((:)
-    (Atom "partial_map.u0" 0) ([])) (Atom "update_eq.u0" 0)) ((:) (Clause
-    ((:) (Atom "update.u0" 0) ([])) (Atom "update_eq.u0" 0)) ((:) (Clause
-    ((:) (Atom "eq.u0" 0) ([])) (Atom "update_eq.u0" 0)) ((:) (Clause ((:)
-    (Atom "eq_ind_r.u0" 0) ([])) (Atom "update_eq.u0" 0)) ((:) (Clause ((:)
-    (Atom "option.u0" 0) ([])) (Atom "update_eq.u0" 0)) ((:) (Clause ((:)
-    (Atom "t_update_neq.u0" 0) ([])) (Atom "update_neq.u0" 0)) ((:) (Clause
-    ((:) (Atom "partial_map.u0" 0) ([])) (Atom "update_neq.u0" 0)) ((:)
-    (Clause ((:) (Atom "update.u0" 0) ([])) (Atom "update_neq.u0" 0)) ((:)
-    (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "update_neq.u0" 0)) ((:)
-    (Clause ((:) (Atom "eq_ind_r.u0" 0) ([])) (Atom "update_neq.u0" 0)) ((:)
-    (Clause ((:) (Atom "option.u0" 0) ([])) (Atom "update_neq.u0" 0)) ((:)
-    (Clause ((:) (Atom "t_update.u0" 0) ([])) (Atom "update_shadow.u0" 0))
-    ((:) (Clause ((:) (Atom "t_update_shadow.u0" 0) ([])) (Atom
-    "update_shadow.u0" 0)) ((:) (Clause ((:) (Atom "partial_map.u0" 0) ([]))
-    (Atom "update_shadow.u0" 0)) ((:) (Clause ((:) (Atom "update.u0" 0) ([]))
-    (Atom "update_shadow.u0" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([]))
-    (Atom "update_shadow.u0" 0)) ((:) (Clause ((:) (Atom "option.u0" 0) ([]))
-    (Atom "update_shadow.u0" 0)) ((:) (Clause ((:) (Atom "t_update.u0" 0)
-    ([])) (Atom "update_same.u0" 0)) ((:) (Clause ((:) (Atom
-    "t_update_same.u0" 0) ([])) (Atom "update_same.u0" 0)) ((:) (Clause ((:)
-    (Atom "partial_map.u0" 0) ([])) (Atom "update_same.u0" 0)) ((:) (Clause
-    ((:) (Atom "update.u0" 0) ([])) (Atom "update_same.u0" 0)) ((:) (Clause
-    ((:) (Atom "eq.u0" 0) ([])) (Atom "update_same.u0" 0)) ((:) (Clause ((:)
-    (Atom "option.u0" 0) ([])) (Atom "update_same.u0" 0)) ((:) (Clause ((:)
-    (Atom "t_update_permute.u0" 0) ([])) (Atom "update_permute.u0" 0)) ((:)
-    (Clause ((:) (Atom "partial_map.u0" 0) ([])) (Atom "update_permute.u0"
-    0)) ((:) (Clause ((:) (Atom "update.u0" 0) ([])) (Atom
-    "update_permute.u0" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
-    "update_permute.u0" 0)) ((:) (Clause ((:) (Atom "option.u0" 0) ([]))
-    (Atom "update_permute.u0" 0)) ((:) (Clause ((:) (Atom "partial_map.u0" 0)
-    ([])) (Atom "inclusion.u0" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([]))
-    (Atom "inclusion.u0" 0)) ((:) (Clause ((:) (Atom "option.u0" 0) ([]))
-    (Atom "inclusion.u0" 0)) ((:) (Clause ((:) (Atom "partial_map.u0" 0)
-    ([])) (Atom "inclusion_update.u0" 0)) ((:) (Clause ((:) (Atom "update.u0"
-    0) ([])) (Atom "inclusion_update.u0" 0)) ((:) (Clause ((:) (Atom
-    "update_eq.u0" 0) ([])) (Atom "inclusion_update.u0" 0)) ((:) (Clause ((:)
-    (Atom "update_neq.u0" 0) ([])) (Atom "inclusion_update.u0" 0)) ((:)
-    (Clause ((:) (Atom "inclusion.u0" 0) ([])) (Atom "inclusion_update.u0"
-    0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "inclusion_update.u0"
-    0)) ((:) (Clause ((:) (Atom "option.u0" 0) ([])) (Atom
-    "inclusion_update.u0" 0)) ((:) (Clause ((:) (Atom "Coq.Init.Datatypes.11"
-    0) ([])) (Atom "iter.u0" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([]))
-    (Atom "if_negb.u0" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
-    "andb_if.u0" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
-    "negb_if.u0" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
-    "Coq.Lists.List.1" 0)) ((:) (Clause ((:) (Atom "option.u0" 0) ([])) (Atom
-    "Coq.Lists.List.1" 0)) ((:) (Clause ((:) (Atom "list.u0" 0) ([])) (Atom
-    "Coq.Lists.List.1" 0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.1" 0)
-    ([])) (Atom "Coq.Lists.List.13" 0)) ((:) (Clause ((:) (Atom
-    "app_nil_r.u0" 0) ([])) (Atom "Coq.Lists.List.13" 0)) ((:) (Clause ((:)
-    (Atom "app_nil_r.u1" 0) ([])) (Atom "Coq.Lists.List.13" 0)) ((:) (Clause
-    ((:) (Atom "app_assoc.u0" 0) ([])) (Atom "Coq.Lists.List.13" 0)) ((:)
-    (Clause ((:) (Atom "app_assoc.u1" 0) ([])) (Atom "Coq.Lists.List.13" 0))
-    ((:) (Clause ((:) (Atom "app_eq_app.u0" 0) ([])) (Atom
-    "Coq.Lists.List.13" 0)) ((:) (Clause ((:) (Atom "ex.u0" 0) ([])) (Atom
-    "Coq.Lists.List.13" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
-    "Coq.Lists.List.13" 0)) ((:) (Clause ((:) (Atom "Coq.Init.Logic.10" 0)
-    ([])) (Atom "Coq.Lists.List.13" 0)) ((:) (Clause ((:) (Atom "eq_ind_r.u0"
-    0) ([])) (Atom "Coq.Lists.List.13" 0)) ((:) (Clause ((:) (Atom "sig.u0"
-    0) ([])) (Atom "Coq.Lists.List.13" 0)) ((:) (Clause ((:) (Atom "sigT.u0"
-    0) ([])) (Atom "Coq.Lists.List.13" 0)) ((:) (Clause ((:) (Atom "sigT.u1"
-    0) ([])) (Atom "Coq.Lists.List.13" 0)) ((:) (Clause ((:) (Atom "sumor.u0"
-    0) ([])) (Atom "Coq.Lists.List.13" 0)) ((:) (Clause ((:) (Atom
-    "option.u0" 0) ([])) (Atom "Coq.Lists.List.13" 0)) ((:) (Clause ((:)
-    (Atom "list.u0" 0) ([])) (Atom "Coq.Lists.List.13" 0)) ((:) (Clause ((:)
-    (Atom "Coq.Init.Datatypes.61" 0) ([])) (Atom "Coq.Lists.List.13" 0)) ((:)
-    (Clause ((:) (Atom "length.u0" 0) ([])) (Atom "Coq.Lists.List.13" 0))
-    ((:) (Clause ((:) (Atom "app.u0" 0) ([])) (Atom "Coq.Lists.List.13" 0))
-    ((:) (Clause ((:) (Atom "ex.u0" 0) ([])) (Atom "app_eq_app.u0" 0)) ((:)
-    (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "app_eq_app.u0" 0)) ((:)
-    (Clause ((:) (Atom "Coq.Init.Logic.10" 0) ([])) (Atom "app_eq_app.u0" 0))
-    ((:) (Clause ((:) (Atom "eq_ind_r.u0" 0) ([])) (Atom "app_eq_app.u0" 0))
-    ((:) (Clause ((:) (Atom "list.u0" 0) ([])) (Atom "app_eq_app.u0" 0)) ((:)
-    (Clause ((:) (Atom "app.u0" 0) ([])) (Atom "app_eq_app.u0" 0)) ((:)
-    (Clause ((:) (Atom "Coq.Relations.Relation_Definitions.1" 0) ([])) (Atom
-    "Coq.Lists.List.44" 0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.1" 0)
-    ([])) (Atom "Coq.Lists.List.44" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Lists.List.13" 0) ([])) (Atom "Coq.Lists.List.44" 0)) ((:) (Clause
-    ((:) (Atom "nth_split.u0" 0) ([])) (Atom "Coq.Lists.List.44" 0)) ((:)
-    (Clause ((:) (Atom "nth_ext.u0" 0) ([])) (Atom "Coq.Lists.List.44" 0))
-    ((:) (Clause ((:) (Atom "nth_error_split.u0" 0) ([])) (Atom
-    "Coq.Lists.List.44" 0)) ((:) (Clause ((:) (Atom "remove_app.u0" 0) ([]))
-    (Atom "Coq.Lists.List.44" 0)) ((:) (Clause ((:) (Atom "notin_remove.u0"
-    0) ([])) (Atom "Coq.Lists.List.44" 0)) ((:) (Clause ((:) (Atom "ex.u0" 0)
-    ([])) (Atom "Coq.Lists.List.44" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0)
-    ([])) (Atom "Coq.Lists.List.44" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Init.Logic.10" 0) ([])) (Atom "Coq.Lists.List.44" 0)) ((:) (Clause
-    ((:) (Atom "eq_ind_r.u0" 0) ([])) (Atom "Coq.Lists.List.44" 0)) ((:)
-    (Clause ((:) (Atom "eq_rect_r.u0" 0) ([])) (Atom "Coq.Lists.List.44" 0))
-    ((:) (Clause ((:) (Atom "eq_rect_r.u1" 0) ([])) (Atom "Coq.Lists.List.44"
-    0)) ((:) (Clause ((:) (Atom "sig.u0" 0) ([])) (Atom "Coq.Lists.List.44"
-    0)) ((:) (Clause ((:) (Atom "sigT.u0" 0) ([])) (Atom "Coq.Lists.List.44"
-    0)) ((:) (Clause ((:) (Atom "sigT.u1" 0) ([])) (Atom "Coq.Lists.List.44"
-    0)) ((:) (Clause ((:) (Atom "option.u0" 0) ([])) (Atom
-    "Coq.Lists.List.44" 0)) ((:) (Clause ((:) (Atom "list.u0" 0) ([])) (Atom
-    "Coq.Lists.List.44" 0)) ((:) (Clause ((:) (Atom "Coq.Init.Datatypes.61"
+    (Clause ((:) (Atom "Coq.Lists.ListSet.1" 0) ([])) (Atom "app_eq_app.u0"
+    0)) ((:) (Clause ((:) (Atom "app_eq_app.u0" 0) ([])) (Atom
+    "Coq.Lists.ListSet.1" 0)) ((:) (Clause ((:) (Atom "Coq.Lists.ListSet.1"
     0) ([])) (Atom "Coq.Lists.List.44" 0)) ((:) (Clause ((:) (Atom
-    "length.u0" 0) ([])) (Atom "Coq.Lists.List.44" 0)) ((:) (Clause ((:)
-    (Atom "app.u0" 0) ([])) (Atom "Coq.Lists.List.44" 0)) ((:) (Clause ((:)
-    (Atom "Coq.Classes.Morphisms.31" 0) ([])) (Atom "Coq.Lists.List.44" 0))
-    ((:) (Clause ((:) (Atom "Coq.Lists.List.1" 0) ([])) (Atom
-    "Coq.Lists.List.247" 0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.13" 0)
-    ([])) (Atom "Coq.Lists.List.247" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Lists.List.44" 0) ([])) (Atom "Coq.Lists.List.247" 0)) ((:) (Clause
-    ((:) (Atom "ex.u0" 0) ([])) (Atom "Coq.Lists.List.247" 0)) ((:) (Clause
-    ((:) (Atom "eq.u0" 0) ([])) (Atom "Coq.Lists.List.247" 0)) ((:) (Clause
-    ((:) (Atom "Coq.Init.Logic.10" 0) ([])) (Atom "Coq.Lists.List.247" 0))
-    ((:) (Clause ((:) (Atom "eq_ind_r.u0" 0) ([])) (Atom "Coq.Lists.List.247"
-    0)) ((:) (Clause ((:) (Atom "list.u0" 0) ([])) (Atom "Coq.Lists.List.247"
-    0)) ((:) (Clause ((:) (Atom "Coq.Init.Datatypes.61" 0) ([])) (Atom
-    "Coq.Lists.List.247" 0)) ((:) (Clause ((:) (Atom "length.u0" 0) ([]))
-    (Atom "Coq.Lists.List.247" 0)) ((:) (Clause ((:) (Atom "app.u0" 0) ([]))
-    (Atom "Coq.Lists.List.247" 0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.1"
-    0) ([])) (Atom "Coq.Lists.List.277" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Lists.List.44" 0) ([])) (Atom "Coq.Lists.List.277" 0)) ((:) (Clause
-    ((:) (Atom "Coq.Lists.List.247" 0) ([])) (Atom "Coq.Lists.List.277" 0))
-    ((:) (Clause ((:) (Atom "ex.u0" 0) ([])) (Atom "Coq.Lists.List.277" 0))
-    ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "Coq.Lists.List.277" 0))
-    ((:) (Clause ((:) (Atom "eq_ind_r.u0" 0) ([])) (Atom "Coq.Lists.List.277"
-    0)) ((:) (Clause ((:) (Atom "option.u0" 0) ([])) (Atom
-    "Coq.Lists.List.277" 0)) ((:) (Clause ((:) (Atom "option_map.u0" 0) ([]))
-    (Atom "Coq.Lists.List.277" 0)) ((:) (Clause ((:) (Atom "list.u0" 0) ([]))
-    (Atom "Coq.Lists.List.277" 0)) ((:) (Clause ((:) (Atom "length.u0" 0)
-    ([])) (Atom "Coq.Lists.List.277" 0)) ((:) (Clause ((:) (Atom "app.u0" 0)
-    ([])) (Atom "Coq.Lists.List.277" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Lists.List.1" 0) ([])) (Atom "Coq.Lists.List.278" 0)) ((:) (Clause
-    ((:) (Atom "Coq.Lists.List.13" 0) ([])) (Atom "Coq.Lists.List.278" 0))
-    ((:) (Clause ((:) (Atom "Coq.Lists.List.44" 0) ([])) (Atom
-    "Coq.Lists.List.278" 0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.247" 0)
-    ([])) (Atom "Coq.Lists.List.278" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0)
-    ([])) (Atom "Coq.Lists.List.278" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Init.Logic.10" 0) ([])) (Atom "Coq.Lists.List.278" 0)) ((:) (Clause
-    ((:) (Atom "eq_ind_r.u0" 0) ([])) (Atom "Coq.Lists.List.278" 0)) ((:)
-    (Clause ((:) (Atom "option.u0" 0) ([])) (Atom "Coq.Lists.List.278" 0))
-    ((:) (Clause ((:) (Atom "option_map.u1" 0) ([])) (Atom
-    "Coq.Lists.List.278" 0)) ((:) (Clause ((:) (Atom "list.u0" 0) ([])) (Atom
-    "Coq.Lists.List.278" 0)) ((:) (Clause ((:) (Atom "length.u0" 0) ([]))
-    (Atom "Coq.Lists.List.278" 0)) ((:) (Clause ((:) (Atom "app.u0" 0) ([]))
-    (Atom "Coq.Lists.List.278" 0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.1"
-    0) ([])) (Atom "Coq.Lists.List.318" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Lists.List.277" 0) ([])) (Atom "Coq.Lists.List.318" 0)) ((:) (Clause
-    ((:) (Atom "ex.u0" 0) ([])) (Atom "Coq.Lists.List.318" 0)) ((:) (Clause
-    ((:) (Atom "list.u0" 0) ([])) (Atom "Coq.Lists.List.318" 0)) ((:) (Clause
-    ((:) (Atom "app.u0" 0) ([])) (Atom "Coq.Lists.List.318" 0)) ((:) (Clause
-    ((:) (Atom "Coq.Lists.List.1" 0) ([])) (Atom "Coq.Lists.List.319" 0))
-    ((:) (Clause ((:) (Atom "Coq.Lists.List.247" 0) ([])) (Atom
-    "Coq.Lists.List.319" 0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.278" 0)
-    ([])) (Atom "Coq.Lists.List.319" 0)) ((:) (Clause ((:) (Atom "ex.u0" 0)
-    ([])) (Atom "Coq.Lists.List.319" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0)
-    ([])) (Atom "Coq.Lists.List.319" 0)) ((:) (Clause ((:) (Atom
-    "eq_ind_r.u0" 0) ([])) (Atom "Coq.Lists.List.319" 0)) ((:) (Clause ((:)
-    (Atom "list.u0" 0) ([])) (Atom "Coq.Lists.List.319" 0)) ((:) (Clause ((:)
-    (Atom "app.u0" 0) ([])) (Atom "Coq.Lists.List.319" 0)) ((:) (Clause ((:)
-    (Atom "Coq.Lists.List.247" 0) ([])) (Atom "concat_map.u0" 0)) ((:)
-    (Clause ((:) (Atom "Coq.Lists.List.277" 0) ([])) (Atom "concat_map.u0"
-    0)) ((:) (Clause ((:) (Atom "list.u0" 0) ([])) (Atom "concat_map.u0" 0))
-    ((:) (Clause ((:) (Atom "Coq.Lists.List.247" 0) ([])) (Atom
-    "concat_map.u1" 0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.278" 0) ([]))
-    (Atom "concat_map.u1" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
-    "concat_map.u1" 0)) ((:) (Clause ((:) (Atom "eq_ind_r.u0" 0) ([])) (Atom
-    "concat_map.u1" 0)) ((:) (Clause ((:) (Atom "list.u0" 0) ([])) (Atom
-    "concat_map.u1" 0)) ((:) (Clause ((:) (Atom "app.u0" 0) ([])) (Atom
-    "concat_map.u1" 0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.44" 0) ([]))
-    (Atom "remove_concat.u0" 0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.247"
-    0) ([])) (Atom "remove_concat.u0" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Lists.List.318" 0) ([])) (Atom "remove_concat.u0" 0)) ((:) (Clause
-    ((:) (Atom "Coq.Lists.List.319" 0) ([])) (Atom "remove_concat.u0" 0))
-    ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "remove_concat.u0" 0))
-    ((:) (Clause ((:) (Atom "eq_ind_r.u0" 0) ([])) (Atom "remove_concat.u0"
-    0)) ((:) (Clause ((:) (Atom "list.u0" 0) ([])) (Atom "remove_concat.u0"
-    0)) ((:) (Clause ((:) (Atom "app.u0" 0) ([])) (Atom "remove_concat.u0"
-    0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.277" 0) ([])) (Atom
-    "map_id.u0" 0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.278" 0) ([]))
-    (Atom "map_id.u0" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
-    "map_id.u0" 0)) ((:) (Clause ((:) (Atom "eq_ind_r.u0" 0) ([])) (Atom
-    "map_id.u0" 0)) ((:) (Clause ((:) (Atom "list.u0" 0) ([])) (Atom
-    "map_id.u0" 0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.277" 0) ([]))
-    (Atom "map_map.u0" 0)) ((:) (Clause ((:) (Atom "list.u0" 0) ([])) (Atom
-    "map_map.u0" 0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.277" 0) ([]))
-    (Atom "map_map.u1" 0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.278" 0)
-    ([])) (Atom "map_map.u1" 0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.278"
-    0) ([])) (Atom "map_map.u2" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([]))
-    (Atom "map_map.u2" 0)) ((:) (Clause ((:) (Atom "eq_ind_r.u0" 0) ([]))
-    (Atom "map_map.u2" 0)) ((:) (Clause ((:) (Atom "list.u0" 0) ([])) (Atom
-    "map_map.u2" 0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.1" 0) ([]))
-    (Atom "map_ext_in.u0" 0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.277" 0)
-    ([])) (Atom "map_ext_in.u0" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([]))
-    (Atom "map_ext_in.u0" 0)) ((:) (Clause ((:) (Atom "list.u0" 0) ([]))
-    (Atom "map_ext_in.u0" 0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.278" 0)
-    ([])) (Atom "map_ext_in.u1" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([]))
-    (Atom "map_ext_in.u1" 0)) ((:) (Clause ((:) (Atom "eq_ind_r.u0" 0) ([]))
-    (Atom "map_ext_in.u1" 0)) ((:) (Clause ((:) (Atom "list.u0" 0) ([]))
-    (Atom "map_ext_in.u1" 0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.1" 0)
-    ([])) (Atom "ext_in_map.u0" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Lists.List.277" 0) ([])) (Atom "ext_in_map.u0" 0)) ((:) (Clause ((:)
-    (Atom "eq_ind_r.u0" 0) ([])) (Atom "ext_in_map.u0" 0)) ((:) (Clause ((:)
-    (Atom "list.u0" 0) ([])) (Atom "ext_in_map.u0" 0)) ((:) (Clause ((:)
-    (Atom "Coq.Lists.List.278" 0) ([])) (Atom "ext_in_map.u1" 0)) ((:)
-    (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "ext_in_map.u1" 0)) ((:)
-    (Clause ((:) (Atom "Coq.Init.Logic.10" 0) ([])) (Atom "ext_in_map.u1" 0))
-    ((:) (Clause ((:) (Atom "list.u0" 0) ([])) (Atom "ext_in_map.u1" 0)) ((:)
-    (Clause ((:) (Atom "Coq.Lists.List.1" 0) ([])) (Atom "map_ext_in_iff.u0"
-    0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.277" 0) ([])) (Atom
-    "map_ext_in_iff.u0" 0)) ((:) (Clause ((:) (Atom "map_ext_in.u0" 0) ([]))
-    (Atom "map_ext_in_iff.u0" 0)) ((:) (Clause ((:) (Atom "ext_in_map.u0" 0)
-    ([])) (Atom "map_ext_in_iff.u0" 0)) ((:) (Clause ((:) (Atom "list.u0" 0)
-    ([])) (Atom "map_ext_in_iff.u0" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Lists.List.278" 0) ([])) (Atom "map_ext_in_iff.u1" 0)) ((:) (Clause
-    ((:) (Atom "map_ext_in.u1" 0) ([])) (Atom "map_ext_in_iff.u1" 0)) ((:)
-    (Clause ((:) (Atom "ext_in_map.u1" 0) ([])) (Atom "map_ext_in_iff.u1" 0))
-    ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "map_ext_in_iff.u1" 0))
-    ((:) (Clause ((:) (Atom "list.u0" 0) ([])) (Atom "map_ext_in_iff.u1" 0))
-    ((:) (Clause ((:) (Atom "Coq.Lists.List.277" 0) ([])) (Atom "map_ext.u0"
-    0)) ((:) (Clause ((:) (Atom "map_ext_in.u0" 0) ([])) (Atom "map_ext.u0"
-    0)) ((:) (Clause ((:) (Atom "list.u0" 0) ([])) (Atom "map_ext.u0" 0))
-    ((:) (Clause ((:) (Atom "Coq.Lists.List.278" 0) ([])) (Atom "map_ext.u1"
-    0)) ((:) (Clause ((:) (Atom "map_ext_in.u1" 0) ([])) (Atom "map_ext.u1"
-    0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "map_ext.u1" 0)) ((:)
-    (Clause ((:) (Atom "eq_ind_r.u0" 0) ([])) (Atom "map_ext.u1" 0)) ((:)
-    (Clause ((:) (Atom "list.u0" 0) ([])) (Atom "map_ext.u1" 0)) ((:) (Clause
-    ((:) (Atom "Coq.Lists.List.277" 0) ([])) (Atom "flat_map_ext.u0" 0)) ((:)
-    (Clause ((:) (Atom "Coq.Lists.List.318" 0) ([])) (Atom "flat_map_ext.u0"
-    0)) ((:) (Clause ((:) (Atom "map_ext.u0" 0) ([])) (Atom "flat_map_ext.u0"
-    0)) ((:) (Clause ((:) (Atom "list.u0" 0) ([])) (Atom "flat_map_ext.u0"
-    0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.247" 0) ([])) (Atom
-    "flat_map_ext.u1" 0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.278" 0)
-    ([])) (Atom "flat_map_ext.u1" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Lists.List.319" 0) ([])) (Atom "flat_map_ext.u1" 0)) ((:) (Clause
-    ((:) (Atom "map_ext.u1" 0) ([])) (Atom "flat_map_ext.u1" 0)) ((:) (Clause
-    ((:) (Atom "eq.u0" 0) ([])) (Atom "flat_map_ext.u1" 0)) ((:) (Clause ((:)
-    (Atom "eq_ind_r.u0" 0) ([])) (Atom "flat_map_ext.u1" 0)) ((:) (Clause
-    ((:) (Atom "list.u0" 0) ([])) (Atom "flat_map_ext.u1" 0)) ((:) (Clause
-    ((:) (Atom "Coq.Lists.List.44" 0) ([])) (Atom "nth_nth_nth_map.u0" 0))
-    ((:) (Clause ((:) (Atom "Coq.Lists.List.278" 0) ([])) (Atom
-    "nth_nth_nth_map.u0" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
-    "nth_nth_nth_map.u0" 0)) ((:) (Clause ((:) (Atom "eq_ind_r.u0" 0) ([]))
-    (Atom "nth_nth_nth_map.u0" 0)) ((:) (Clause ((:) (Atom "list.u0" 0) ([]))
-    (Atom "nth_nth_nth_map.u0" 0)) ((:) (Clause ((:) (Atom "length.u0" 0)
-    ([])) (Atom "nth_nth_nth_map.u0" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0)
-    ([])) (Atom "Coq.Lists.List.377" 0)) ((:) (Clause ((:) (Atom
-    "eq_ind_r.u0" 0) ([])) (Atom "Coq.Lists.List.377" 0)) ((:) (Clause ((:)
-    (Atom "list.u0" 0) ([])) (Atom "Coq.Lists.List.378" 0)) ((:) (Clause ((:)
-    (Atom "app.u0" 0) ([])) (Atom "Coq.Lists.List.378" 0)) ((:) (Clause ((:)
-    (Atom "Coq.Lists.List.13" 0) ([])) (Atom "fold_left_length.u0" 0)) ((:)
+    "Coq.Lists.List.44" 0) ([])) (Atom "Coq.Lists.ListSet.1" 0)) ((:) (Clause
+    ((:) (Atom "eq.u0" 0) ([])) (Atom "nth_split.u0" (Prelude.succ 0))) ((:)
+    (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "nth_ext.u0" (Prelude.succ 0)))
+    ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "nth_error_split.u0"
+    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
+    "remove_app.u0" (Prelude.succ 0))) ((:) (Clause ((:) (Atom "eq.u0" 0)
+    ([])) (Atom "notin_remove.u0" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
+    "Coq.Lists.ListSet.1" 0) ([])) (Atom "Coq.Lists.List.247" 0)) ((:)
     (Clause ((:) (Atom "Coq.Lists.List.247" 0) ([])) (Atom
-    "fold_left_length.u0" 0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.378" 0)
+    "Coq.Lists.ListSet.1" 0)) ((:) (Clause ((:) (Atom "Coq.Lists.ListSet.1"
+    0) ([])) (Atom "Coq.Lists.List.279" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Lists.List.279" 0) ([])) (Atom "Coq.Lists.ListSet.1" 0)) ((:)
+    (Clause ((:) (Atom "Coq.Lists.ListSet.1" 0) ([])) (Atom
+    "Coq.Lists.List.280" 0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.280" 0)
+    ([])) (Atom "Coq.Lists.ListSet.1" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Lists.ListSet.1" 0) ([])) (Atom "Coq.Lists.List.320" 0)) ((:)
+    (Clause ((:) (Atom "Coq.Lists.List.320" 0) ([])) (Atom
+    "Coq.Lists.ListSet.1" 0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.1" 0)
+    ([])) (Atom "Coq.Lists.List.321" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Lists.List.247" 0) ([])) (Atom "Coq.Lists.List.321" 0)) ((:) (Clause
+    ((:) (Atom "Coq.Lists.List.280" 0) ([])) (Atom "Coq.Lists.List.321" 0))
+    ((:) (Clause ((:) (Atom "ex.u0" 0) ([])) (Atom "Coq.Lists.List.321" 0))
+    ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "Coq.Lists.List.321" 0))
+    ((:) (Clause ((:) (Atom "eq_ind_r.u0" 0) ([])) (Atom "Coq.Lists.List.321"
+    0)) ((:) (Clause ((:) (Atom "list.u0" 0) ([])) (Atom "Coq.Lists.List.321"
+    0)) ((:) (Clause ((:) (Atom "app.u0" 0) ([])) (Atom "Coq.Lists.List.321"
+    0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.247" 0) ([])) (Atom
+    "concat_map.u0" 0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.279" 0) ([]))
+    (Atom "concat_map.u0" 0)) ((:) (Clause ((:) (Atom "list.u0" 0) ([]))
+    (Atom "concat_map.u0" 0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.247" 0)
+    ([])) (Atom "concat_map.u1" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Lists.List.280" 0) ([])) (Atom "concat_map.u1" 0)) ((:) (Clause ((:)
+    (Atom "eq.u0" 0) ([])) (Atom "concat_map.u1" 0)) ((:) (Clause ((:) (Atom
+    "eq_ind_r.u0" 0) ([])) (Atom "concat_map.u1" 0)) ((:) (Clause ((:) (Atom
+    "list.u0" 0) ([])) (Atom "concat_map.u1" 0)) ((:) (Clause ((:) (Atom
+    "app.u0" 0) ([])) (Atom "concat_map.u1" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Lists.List.44" 0) ([])) (Atom "remove_concat.u0" 0)) ((:) (Clause
+    ((:) (Atom "Coq.Lists.List.247" 0) ([])) (Atom "remove_concat.u0" 0))
+    ((:) (Clause ((:) (Atom "Coq.Lists.List.320" 0) ([])) (Atom
+    "remove_concat.u0" 0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.321" 0)
+    ([])) (Atom "remove_concat.u0" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0)
+    ([])) (Atom "remove_concat.u0" 0)) ((:) (Clause ((:) (Atom "eq_ind_r.u0"
+    0) ([])) (Atom "remove_concat.u0" 0)) ((:) (Clause ((:) (Atom "list.u0"
+    0) ([])) (Atom "remove_concat.u0" 0)) ((:) (Clause ((:) (Atom "app.u0" 0)
+    ([])) (Atom "remove_concat.u0" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Lists.List.279" 0) ([])) (Atom "map_id.u0" 0)) ((:) (Clause ((:)
+    (Atom "Coq.Lists.List.280" 0) ([])) (Atom "map_id.u0" 0)) ((:) (Clause
+    ((:) (Atom "eq.u0" 0) ([])) (Atom "map_id.u0" 0)) ((:) (Clause ((:) (Atom
+    "eq_ind_r.u0" 0) ([])) (Atom "map_id.u0" 0)) ((:) (Clause ((:) (Atom
+    "list.u0" 0) ([])) (Atom "map_id.u0" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Lists.List.279" 0) ([])) (Atom "map_map.u0" 0)) ((:) (Clause ((:)
+    (Atom "list.u0" 0) ([])) (Atom "map_map.u0" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Lists.List.279" 0) ([])) (Atom "map_map.u1" 0)) ((:) (Clause ((:)
+    (Atom "Coq.Lists.List.280" 0) ([])) (Atom "map_map.u1" 0)) ((:) (Clause
+    ((:) (Atom "Coq.Lists.List.280" 0) ([])) (Atom "map_map.u2" 0)) ((:)
+    (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "map_map.u2" 0)) ((:) (Clause
+    ((:) (Atom "eq_ind_r.u0" 0) ([])) (Atom "map_map.u2" 0)) ((:) (Clause
+    ((:) (Atom "list.u0" 0) ([])) (Atom "map_map.u2" 0)) ((:) (Clause ((:)
+    (Atom "Coq.Lists.List.1" 0) ([])) (Atom "map_ext_in.u0" 0)) ((:) (Clause
+    ((:) (Atom "Coq.Lists.List.279" 0) ([])) (Atom "map_ext_in.u0" 0)) ((:)
+    (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "map_ext_in.u0" 0)) ((:)
+    (Clause ((:) (Atom "list.u0" 0) ([])) (Atom "map_ext_in.u0" 0)) ((:)
+    (Clause ((:) (Atom "Coq.Lists.List.280" 0) ([])) (Atom "map_ext_in.u1"
+    0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "map_ext_in.u1" 0))
+    ((:) (Clause ((:) (Atom "eq_ind_r.u0" 0) ([])) (Atom "map_ext_in.u1" 0))
+    ((:) (Clause ((:) (Atom "list.u0" 0) ([])) (Atom "map_ext_in.u1" 0)) ((:)
+    (Clause ((:) (Atom "Coq.Lists.List.1" 0) ([])) (Atom "ext_in_map.u0" 0))
+    ((:) (Clause ((:) (Atom "Coq.Lists.List.279" 0) ([])) (Atom
+    "ext_in_map.u0" 0)) ((:) (Clause ((:) (Atom "eq_ind_r.u0" 0) ([])) (Atom
+    "ext_in_map.u0" 0)) ((:) (Clause ((:) (Atom "list.u0" 0) ([])) (Atom
+    "ext_in_map.u0" 0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.280" 0) ([]))
+    (Atom "ext_in_map.u1" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
+    "ext_in_map.u1" 0)) ((:) (Clause ((:) (Atom "Coq.Init.Logic.11" 0) ([]))
+    (Atom "ext_in_map.u1" 0)) ((:) (Clause ((:) (Atom "list.u0" 0) ([]))
+    (Atom "ext_in_map.u1" 0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.1" 0)
+    ([])) (Atom "map_ext_in_iff.u0" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Lists.List.279" 0) ([])) (Atom "map_ext_in_iff.u0" 0)) ((:) (Clause
+    ((:) (Atom "map_ext_in.u0" 0) ([])) (Atom "map_ext_in_iff.u0" 0)) ((:)
+    (Clause ((:) (Atom "ext_in_map.u0" 0) ([])) (Atom "map_ext_in_iff.u0" 0))
+    ((:) (Clause ((:) (Atom "list.u0" 0) ([])) (Atom "map_ext_in_iff.u0" 0))
+    ((:) (Clause ((:) (Atom "Coq.Lists.List.280" 0) ([])) (Atom
+    "map_ext_in_iff.u1" 0)) ((:) (Clause ((:) (Atom "map_ext_in.u1" 0) ([]))
+    (Atom "map_ext_in_iff.u1" 0)) ((:) (Clause ((:) (Atom "ext_in_map.u1" 0)
+    ([])) (Atom "map_ext_in_iff.u1" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0)
+    ([])) (Atom "map_ext_in_iff.u1" 0)) ((:) (Clause ((:) (Atom "list.u0" 0)
+    ([])) (Atom "map_ext_in_iff.u1" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Lists.List.279" 0) ([])) (Atom "map_ext.u0" 0)) ((:) (Clause ((:)
+    (Atom "map_ext_in.u0" 0) ([])) (Atom "map_ext.u0" 0)) ((:) (Clause ((:)
+    (Atom "list.u0" 0) ([])) (Atom "map_ext.u0" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Lists.List.280" 0) ([])) (Atom "map_ext.u1" 0)) ((:) (Clause ((:)
+    (Atom "map_ext_in.u1" 0) ([])) (Atom "map_ext.u1" 0)) ((:) (Clause ((:)
+    (Atom "eq.u0" 0) ([])) (Atom "map_ext.u1" 0)) ((:) (Clause ((:) (Atom
+    "eq_ind_r.u0" 0) ([])) (Atom "map_ext.u1" 0)) ((:) (Clause ((:) (Atom
+    "list.u0" 0) ([])) (Atom "map_ext.u1" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Lists.List.279" 0) ([])) (Atom "flat_map_ext.u0" 0)) ((:) (Clause
+    ((:) (Atom "Coq.Lists.List.320" 0) ([])) (Atom "flat_map_ext.u0" 0)) ((:)
+    (Clause ((:) (Atom "map_ext.u0" 0) ([])) (Atom "flat_map_ext.u0" 0)) ((:)
+    (Clause ((:) (Atom "list.u0" 0) ([])) (Atom "flat_map_ext.u0" 0)) ((:)
+    (Clause ((:) (Atom "Coq.Lists.List.247" 0) ([])) (Atom "flat_map_ext.u1"
+    0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.280" 0) ([])) (Atom
+    "flat_map_ext.u1" 0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.321" 0)
+    ([])) (Atom "flat_map_ext.u1" 0)) ((:) (Clause ((:) (Atom "map_ext.u1" 0)
+    ([])) (Atom "flat_map_ext.u1" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0)
+    ([])) (Atom "flat_map_ext.u1" 0)) ((:) (Clause ((:) (Atom "eq_ind_r.u0"
+    0) ([])) (Atom "flat_map_ext.u1" 0)) ((:) (Clause ((:) (Atom "list.u0" 0)
+    ([])) (Atom "flat_map_ext.u1" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Lists.List.44" 0) ([])) (Atom "nth_nth_nth_map.u0" 0)) ((:) (Clause
+    ((:) (Atom "Coq.Lists.List.280" 0) ([])) (Atom "nth_nth_nth_map.u0" 0))
+    ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "nth_nth_nth_map.u0" 0))
+    ((:) (Clause ((:) (Atom "eq_ind_r.u0" 0) ([])) (Atom "nth_nth_nth_map.u0"
+    0)) ((:) (Clause ((:) (Atom "list.u0" 0) ([])) (Atom "nth_nth_nth_map.u0"
+    0)) ((:) (Clause ((:) (Atom "length.u0" 0) ([])) (Atom
+    "nth_nth_nth_map.u0" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
+    "Coq.Lists.List.379" 0)) ((:) (Clause ((:) (Atom "eq_ind_r.u0" 0) ([]))
+    (Atom "Coq.Lists.List.379" 0)) ((:) (Clause ((:) (Atom "list.u0" 0) ([]))
+    (Atom "Coq.Lists.List.380" 0)) ((:) (Clause ((:) (Atom "app.u0" 0) ([]))
+    (Atom "Coq.Lists.List.380" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Lists.List.13" 0) ([])) (Atom "fold_left_length.u0" 0)) ((:) (Clause
+    ((:) (Atom "Coq.Lists.List.247" 0) ([])) (Atom "fold_left_length.u0" 0))
+    ((:) (Clause ((:) (Atom "Coq.Lists.List.380" 0) ([])) (Atom
+    "fold_left_length.u0" 0)) ((:) (Clause ((:) (Atom "list.u0" 0) ([]))
+    (Atom "fold_left_length.u0" 0)) ((:) (Clause ((:) (Atom "length.u0" 0)
+    ([])) (Atom "fold_left_length.u0" 0)) ((:) (Clause ((:) (Atom "app.u0" 0)
     ([])) (Atom "fold_left_length.u0" 0)) ((:) (Clause ((:) (Atom "list.u0"
-    0) ([])) (Atom "fold_left_length.u0" 0)) ((:) (Clause ((:) (Atom
-    "length.u0" 0) ([])) (Atom "fold_left_length.u0" 0)) ((:) (Clause ((:)
-    (Atom "app.u0" 0) ([])) (Atom "fold_left_length.u0" 0)) ((:) (Clause ((:)
-    (Atom "list.u0" 0) ([])) (Atom "Coq.Lists.List.382" 0)) ((:) (Clause ((:)
-    (Atom "Coq.Lists.List.382" 0) ([])) (Atom "fold_right_app.u0" 0)) ((:)
-    (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "fold_right_app.u0" 0)) ((:)
-    (Clause ((:) (Atom "list.u0" 0) ([])) (Atom "fold_right_app.u0" 0)) ((:)
-    (Clause ((:) (Atom "app.u0" 0) ([])) (Atom "fold_right_app.u0" 0)) ((:)
-    (Clause ((:) (Atom "Coq.Lists.List.381" 0) ([])) (Atom
-    "fold_right_app.u1" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
-    "fold_right_app.u1" 0)) ((:) (Clause ((:) (Atom "Coq.Init.Logic.10" 0)
-    ([])) (Atom "fold_right_app.u1" 0)) ((:) (Clause ((:) (Atom "eq_ind_r.u0"
-    0) ([])) (Atom "fold_right_app.u1" 0)) ((:) (Clause ((:) (Atom
+    0) ([])) (Atom "Coq.Lists.List.384" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Lists.List.384" 0) ([])) (Atom "fold_right_app.u0" 0)) ((:) (Clause
+    ((:) (Atom "eq.u0" 0) ([])) (Atom "fold_right_app.u0" 0)) ((:) (Clause
+    ((:) (Atom "list.u0" 0) ([])) (Atom "fold_right_app.u0" 0)) ((:) (Clause
+    ((:) (Atom "app.u0" 0) ([])) (Atom "fold_right_app.u0" 0)) ((:) (Clause
+    ((:) (Atom "Coq.Lists.List.383" 0) ([])) (Atom "fold_right_app.u1" 0))
+    ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "fold_right_app.u1" 0))
+    ((:) (Clause ((:) (Atom "Coq.Init.Logic.11" 0) ([])) (Atom
+    "fold_right_app.u1" 0)) ((:) (Clause ((:) (Atom "eq_ind_r.u0" 0) ([]))
+    (Atom "fold_right_app.u1" 0)) ((:) (Clause ((:) (Atom
     "Coq.Lists.List.247" 0) ([])) (Atom "fold_left_rev_right.u0" 0)) ((:)
-    (Clause ((:) (Atom "Coq.Lists.List.378" 0) ([])) (Atom
-    "fold_left_rev_right.u0" 0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.382"
+    (Clause ((:) (Atom "Coq.Lists.List.380" 0) ([])) (Atom
+    "fold_left_rev_right.u0" 0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.384"
     0) ([])) (Atom "fold_left_rev_right.u0" 0)) ((:) (Clause ((:) (Atom
     "fold_right_app.u0" 0) ([])) (Atom "fold_left_rev_right.u0" 0)) ((:)
     (Clause ((:) (Atom "list.u0" 0) ([])) (Atom "fold_left_rev_right.u0" 0))
-    ((:) (Clause ((:) (Atom "Coq.Lists.List.377" 0) ([])) (Atom
-    "fold_left_rev_right.u1" 0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.381"
+    ((:) (Clause ((:) (Atom "Coq.Lists.List.379" 0) ([])) (Atom
+    "fold_left_rev_right.u1" 0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.383"
     0) ([])) (Atom "fold_left_rev_right.u1" 0)) ((:) (Clause ((:) (Atom
     "fold_right_app.u1" 0) ([])) (Atom "fold_left_rev_right.u1" 0)) ((:)
     (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "fold_left_rev_right.u1" 0))
-    ((:) (Clause ((:) (Atom "Coq.Lists.List.377" 0) ([])) (Atom
-    "fold_symmetric.u0" 0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.378" 0)
+    ((:) (Clause ((:) (Atom "Coq.Lists.List.379" 0) ([])) (Atom
+    "fold_symmetric.u0" 0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.380" 0)
     ([])) (Atom "fold_symmetric.u0" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Lists.List.381" 0) ([])) (Atom "fold_symmetric.u0" 0)) ((:) (Clause
-    ((:) (Atom "Coq.Lists.List.382" 0) ([])) (Atom "fold_symmetric.u0" 0))
+    "Coq.Lists.List.383" 0) ([])) (Atom "fold_symmetric.u0" 0)) ((:) (Clause
+    ((:) (Atom "Coq.Lists.List.384" 0) ([])) (Atom "fold_symmetric.u0" 0))
     ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "fold_symmetric.u0" 0))
-    ((:) (Clause ((:) (Atom "Coq.Init.Logic.10" 0) ([])) (Atom
+    ((:) (Clause ((:) (Atom "Coq.Init.Logic.11" 0) ([])) (Atom
     "fold_symmetric.u0" 0)) ((:) (Clause ((:) (Atom "eq_ind_r.u0" 0) ([]))
     (Atom "fold_symmetric.u0" 0)) ((:) (Clause ((:) (Atom "list.u0" 0) ([]))
-    (Atom "fold_symmetric.u0" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Lists.List.278" 0) ([])) (Atom "list_power.u0" 0)) ((:) (Clause ((:)
-    (Atom "Coq.Lists.List.318" 0) ([])) (Atom "list_power.u0" 0)) ((:)
-    (Clause ((:) (Atom "Coq.Lists.List.319" 0) ([])) (Atom "list_power.u0"
-    0)) ((:) (Clause ((:) (Atom "prod.u0" 0) ([])) (Atom "list_power.u0" 0))
-    ((:) (Clause ((:) (Atom "list.u0" 0) ([])) (Atom "list_power.u0" 0)) ((:)
-    (Clause ((:) (Atom "Coq.Lists.List.277" 0) ([])) (Atom "list_power.u1"
-    0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.278" 0) ([])) (Atom
-    "list_power.u1" 0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.318" 0) ([]))
-    (Atom "list_power.u1" 0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.319" 0)
-    ([])) (Atom "list_power.u1" 0)) ((:) (Clause ((:) (Atom "prod.u1" 0)
-    ([])) (Atom "list_power.u1" 0)) ((:) (Clause ((:) (Atom "list.u0" 0)
-    ([])) (Atom "list_power.u1" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Lists.List.1" 0) ([])) (Atom "Coq.Lists.List.400" 0)) ((:) (Clause
-    ((:) (Atom "Coq.Lists.List.44" 0) ([])) (Atom "Coq.Lists.List.400" 0))
-    ((:) (Clause ((:) (Atom "Coq.Lists.List.247" 0) ([])) (Atom
-    "Coq.Lists.List.400" 0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.277" 0)
-    ([])) (Atom "Coq.Lists.List.400" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Lists.List.278" 0) ([])) (Atom "Coq.Lists.List.400" 0)) ((:) (Clause
-    ((:) (Atom "ex.u0" 0) ([])) (Atom "Coq.Lists.List.400" 0)) ((:) (Clause
-    ((:) (Atom "eq.u0" 0) ([])) (Atom "Coq.Lists.List.400" 0)) ((:) (Clause
-    ((:) (Atom "Coq.Init.Logic.10" 0) ([])) (Atom "Coq.Lists.List.400" 0))
-    ((:) (Clause ((:) (Atom "eq_ind_r.u0" 0) ([])) (Atom "Coq.Lists.List.400"
-    0)) ((:) (Clause ((:) (Atom "option.u0" 0) ([])) (Atom
-    "Coq.Lists.List.400" 0)) ((:) (Clause ((:) (Atom "prod.u0" 0) ([])) (Atom
-    "Coq.Lists.List.400" 0)) ((:) (Clause ((:) (Atom "prod.u1" 0) ([])) (Atom
-    "Coq.Lists.List.400" 0)) ((:) (Clause ((:) (Atom "list.u0" 0) ([])) (Atom
-    "Coq.Lists.List.400" 0)) ((:) (Clause ((:) (Atom "length.u0" 0) ([]))
-    (Atom "Coq.Lists.List.400" 0)) ((:) (Clause ((:) (Atom "app.u0" 0) ([]))
-    (Atom "Coq.Lists.List.400" 0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.1"
-    0) ([])) (Atom "Coq.Lists.List.454" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Lists.List.44" 0) ([])) (Atom "Coq.Lists.List.454" 0)) ((:) (Clause
-    ((:) (Atom "Coq.Lists.List.277" 0) ([])) (Atom "Coq.Lists.List.454" 0))
+    (Atom "fold_symmetric.u0" 0)) ((:) (Clause ((:) (Atom "set_power.u0" 0)
+    ([])) (Atom "list_power.u0" 0)) ((:) (Clause ((:) (Atom "list_power.u0"
+    0) ([])) (Atom "set_power.u0" 0)) ((:) (Clause ((:) (Atom "set_power.u1"
+    0) ([])) (Atom "list_power.u1" 0)) ((:) (Clause ((:) (Atom
+    "list_power.u1" 0) ([])) (Atom "set_power.u1" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Lists.ListSet.1" 0) ([])) (Atom "Coq.Lists.List.402" 0)) ((:)
+    (Clause ((:) (Atom "Coq.Lists.List.402" 0) ([])) (Atom
+    "Coq.Lists.ListSet.1" 0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.1" 0)
+    ([])) (Atom "Coq.Lists.List.456" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Lists.List.44" 0) ([])) (Atom "Coq.Lists.List.456" 0)) ((:) (Clause
+    ((:) (Atom "Coq.Lists.List.279" 0) ([])) (Atom "Coq.Lists.List.456" 0))
     ((:) (Clause ((:) (Atom "map_ext_in_iff.u0" 0) ([])) (Atom
-    "Coq.Lists.List.454" 0)) ((:) (Clause ((:) (Atom "map_ext.u0" 0) ([]))
-    (Atom "Coq.Lists.List.454" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Lists.List.400" 0) ([])) (Atom "Coq.Lists.List.454" 0)) ((:) (Clause
-    ((:) (Atom "filter_ext_in.u0" 0) ([])) (Atom "Coq.Lists.List.454" 0))
+    "Coq.Lists.List.456" 0)) ((:) (Clause ((:) (Atom "map_ext.u0" 0) ([]))
+    (Atom "Coq.Lists.List.456" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Lists.List.402" 0) ([])) (Atom "Coq.Lists.List.456" 0)) ((:) (Clause
+    ((:) (Atom "filter_ext_in.u0" 0) ([])) (Atom "Coq.Lists.List.456" 0))
     ((:) (Clause ((:) (Atom "remove_alt.u0" 0) ([])) (Atom
-    "Coq.Lists.List.454" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
-    "Coq.Lists.List.454" 0)) ((:) (Clause ((:) (Atom "Coq.Init.Logic.10" 0)
-    ([])) (Atom "Coq.Lists.List.454" 0)) ((:) (Clause ((:) (Atom
-    "eq_ind_r.u0" 0) ([])) (Atom "Coq.Lists.List.454" 0)) ((:) (Clause ((:)
-    (Atom "list.u0" 0) ([])) (Atom "Coq.Lists.List.454" 0)) ((:) (Clause ((:)
-    (Atom "length.u0" 0) ([])) (Atom "Coq.Lists.List.454" 0)) ((:) (Clause
-    ((:) (Atom "Coq.Lists.List.1" 0) ([])) (Atom "Coq.Lists.List.465" 0))
-    ((:) (Clause ((:) (Atom "Coq.Lists.List.13" 0) ([])) (Atom
-    "Coq.Lists.List.465" 0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.44" 0)
-    ([])) (Atom "Coq.Lists.List.465" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Lists.List.278" 0) ([])) (Atom "Coq.Lists.List.465" 0)) ((:) (Clause
-    ((:) (Atom "split_combine.u0" 0) ([])) (Atom "Coq.Lists.List.465" 0))
-    ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "Coq.Lists.List.465" 0))
-    ((:) (Clause ((:) (Atom "Coq.Init.Logic.10" 0) ([])) (Atom
-    "Coq.Lists.List.465" 0)) ((:) (Clause ((:) (Atom "eq_ind_r.u0" 0) ([]))
-    (Atom "Coq.Lists.List.465" 0)) ((:) (Clause ((:) (Atom "prod.u0" 0) ([]))
-    (Atom "Coq.Lists.List.465" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Init.Datatypes.26" 0) ([])) (Atom "Coq.Lists.List.465" 0)) ((:)
-    (Clause ((:) (Atom "list.u0" 0) ([])) (Atom "Coq.Lists.List.465" 0)) ((:)
-    (Clause ((:) (Atom "length.u0" 0) ([])) (Atom "Coq.Lists.List.465" 0))
-    ((:) (Clause ((:) (Atom "app.u0" 0) ([])) (Atom "Coq.Lists.List.465" 0))
-    ((:) (Clause ((:) (Atom "Coq.Lists.List.1" 0) ([])) (Atom
-    "Coq.Lists.List.466" 0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.13" 0)
-    ([])) (Atom "Coq.Lists.List.466" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Lists.List.44" 0) ([])) (Atom "Coq.Lists.List.466" 0)) ((:) (Clause
-    ((:) (Atom "Coq.Lists.List.277" 0) ([])) (Atom "Coq.Lists.List.466" 0))
-    ((:) (Clause ((:) (Atom "Coq.Lists.List.278" 0) ([])) (Atom
-    "Coq.Lists.List.466" 0)) ((:) (Clause ((:) (Atom "split_combine.u0" 0)
-    ([])) (Atom "Coq.Lists.List.466" 0)) ((:) (Clause ((:) (Atom "ex.u0" 0)
-    ([])) (Atom "Coq.Lists.List.466" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0)
-    ([])) (Atom "Coq.Lists.List.466" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Init.Logic.10" 0) ([])) (Atom "Coq.Lists.List.466" 0)) ((:) (Clause
-    ((:) (Atom "eq_ind_r.u0" 0) ([])) (Atom "Coq.Lists.List.466" 0)) ((:)
-    (Clause ((:) (Atom "prod.u1" 0) ([])) (Atom "Coq.Lists.List.466" 0)) ((:)
-    (Clause ((:) (Atom "Coq.Init.Datatypes.27" 0) ([])) (Atom
-    "Coq.Lists.List.466" 0)) ((:) (Clause ((:) (Atom "list.u0" 0) ([])) (Atom
-    "Coq.Lists.List.466" 0)) ((:) (Clause ((:) (Atom "length.u0" 0) ([]))
-    (Atom "Coq.Lists.List.466" 0)) ((:) (Clause ((:) (Atom "app.u0" 0) ([]))
-    (Atom "Coq.Lists.List.466" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([]))
-    (Atom "Coq.Lists.List.477" 0)) ((:) (Clause ((:) (Atom "list.u0" 0) ([]))
-    (Atom "Coq.Lists.List.477" 0)) ((:) (Clause ((:) (Atom "length.u0" 0)
-    ([])) (Atom "Coq.Lists.List.477" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Lists.List.1" 0) ([])) (Atom "Coq.Lists.List.479" 0)) ((:) (Clause
-    ((:) (Atom "Coq.Lists.List.13" 0) ([])) (Atom "Coq.Lists.List.479" 0))
-    ((:) (Clause ((:) (Atom "Coq.Lists.List.44" 0) ([])) (Atom
-    "Coq.Lists.List.479" 0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.400" 0)
-    ([])) (Atom "Coq.Lists.List.479" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0)
-    ([])) (Atom "Coq.Lists.List.479" 0)) ((:) (Clause ((:) (Atom
-    "eq_ind_r.u0" 0) ([])) (Atom "Coq.Lists.List.479" 0)) ((:) (Clause ((:)
-    (Atom "list.u0" 0) ([])) (Atom "Coq.Lists.List.479" 0)) ((:) (Clause ((:)
-    (Atom "app.u0" 0) ([])) (Atom "Coq.Lists.List.479" 0)) ((:) (Clause ((:)
-    (Atom "Coq.Lists.List.1" 0) ([])) (Atom "incl_map.u0" 0)) ((:) (Clause
-    ((:) (Atom "Coq.Lists.List.277" 0) ([])) (Atom "incl_map.u0" 0)) ((:)
-    (Clause ((:) (Atom "Coq.Lists.List.479" 0) ([])) (Atom "incl_map.u0" 0))
-    ((:) (Clause ((:) (Atom "ex.u0" 0) ([])) (Atom "incl_map.u0" 0)) ((:)
-    (Clause ((:) (Atom "list.u0" 0) ([])) (Atom "incl_map.u0" 0)) ((:)
-    (Clause ((:) (Atom "Coq.Lists.List.1" 0) ([])) (Atom "incl_map.u1" 0))
-    ((:) (Clause ((:) (Atom "Coq.Lists.List.278" 0) ([])) (Atom "incl_map.u1"
-    0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.479" 0) ([])) (Atom
-    "incl_map.u1" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
-    "incl_map.u1" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Relations.Relation_Definitions.1" 0) ([])) (Atom
-    "Coq.Lists.List.495" 0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.13" 0)
-    ([])) (Atom "Coq.Lists.List.495" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Lists.List.44" 0) ([])) (Atom "Coq.Lists.List.495" 0)) ((:) (Clause
-    ((:) (Atom "Coq.Lists.List.247" 0) ([])) (Atom "Coq.Lists.List.495" 0))
+    "Coq.Lists.List.456" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
+    "Coq.Lists.List.456" 0)) ((:) (Clause ((:) (Atom "Coq.Init.Logic.11" 0)
+    ([])) (Atom "Coq.Lists.List.456" 0)) ((:) (Clause ((:) (Atom
+    "eq_ind_r.u0" 0) ([])) (Atom "Coq.Lists.List.456" 0)) ((:) (Clause ((:)
+    (Atom "list.u0" 0) ([])) (Atom "Coq.Lists.List.456" 0)) ((:) (Clause ((:)
+    (Atom "length.u0" 0) ([])) (Atom "Coq.Lists.List.456" 0)) ((:) (Clause
+    ((:) (Atom "eq.u0" 0) ([])) (Atom "filter_ext_in.u0" (Prelude.succ 0)))
+    ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "remove_alt.u0"
+    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "set_prod.u0" 0) ([])) (Atom
+    "Coq.Lists.List.468" 0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.468" 0)
+    ([])) (Atom "set_prod.u0" 0)) ((:) (Clause ((:) (Atom "set_prod.u1" 0)
+    ([])) (Atom "Coq.Lists.List.469" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Lists.List.469" 0) ([])) (Atom "set_prod.u1" 0)) ((:) (Clause ((:)
+    (Atom "eq.u0" 0) ([])) (Atom "split_combine.u0" (Prelude.succ 0))) ((:)
+    (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "Coq.Lists.List.480" 0)) ((:)
+    (Clause ((:) (Atom "list.u0" 0) ([])) (Atom "Coq.Lists.List.480" 0)) ((:)
+    (Clause ((:) (Atom "length.u0" 0) ([])) (Atom "Coq.Lists.List.480" 0))
+    ((:) (Clause ((:) (Atom "Coq.Lists.ListSet.1" 0) ([])) (Atom
+    "Coq.Lists.List.482" 0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.482" 0)
+    ([])) (Atom "Coq.Lists.ListSet.1" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Lists.List.1" 0) ([])) (Atom "incl_map.u0" 0)) ((:) (Clause ((:)
+    (Atom "Coq.Lists.List.279" 0) ([])) (Atom "incl_map.u0" 0)) ((:) (Clause
+    ((:) (Atom "Coq.Lists.List.482" 0) ([])) (Atom "incl_map.u0" 0)) ((:)
+    (Clause ((:) (Atom "ex.u0" 0) ([])) (Atom "incl_map.u0" 0)) ((:) (Clause
+    ((:) (Atom "list.u0" 0) ([])) (Atom "incl_map.u0" 0)) ((:) (Clause ((:)
+    (Atom "Coq.Lists.List.1" 0) ([])) (Atom "incl_map.u1" 0)) ((:) (Clause
+    ((:) (Atom "Coq.Lists.List.280" 0) ([])) (Atom "incl_map.u1" 0)) ((:)
+    (Clause ((:) (Atom "Coq.Lists.List.482" 0) ([])) (Atom "incl_map.u1" 0))
+    ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "incl_map.u1" 0)) ((:)
+    (Clause ((:) (Atom "Coq.Relations.Relation_Definitions.1" 0) ([])) (Atom
+    "Coq.Lists.List.498" 0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.13" 0)
+    ([])) (Atom "Coq.Lists.List.498" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Lists.List.44" 0) ([])) (Atom "Coq.Lists.List.498" 0)) ((:) (Clause
+    ((:) (Atom "Coq.Lists.List.247" 0) ([])) (Atom "Coq.Lists.List.498" 0))
     ((:) (Clause ((:) (Atom "firstn_all2.u0" 0) ([])) (Atom
-    "Coq.Lists.List.495" 0)) ((:) (Clause ((:) (Atom "firstn_app.u0" 0) ([]))
-    (Atom "Coq.Lists.List.495" 0)) ((:) (Clause ((:) (Atom "firstn_firstn.u0"
-    0) ([])) (Atom "Coq.Lists.List.495" 0)) ((:) (Clause ((:) (Atom
-    "firstn_skipn.u0" 0) ([])) (Atom "Coq.Lists.List.495" 0)) ((:) (Clause
-    ((:) (Atom "firstn_skipn_rev.u0" 0) ([])) (Atom "Coq.Lists.List.495" 0))
-    ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "Coq.Lists.List.495" 0))
-    ((:) (Clause ((:) (Atom "Coq.Init.Logic.10" 0) ([])) (Atom
-    "Coq.Lists.List.495" 0)) ((:) (Clause ((:) (Atom "eq_ind_r.u0" 0) ([]))
-    (Atom "Coq.Lists.List.495" 0)) ((:) (Clause ((:) (Atom "list.u0" 0) ([]))
-    (Atom "Coq.Lists.List.495" 0)) ((:) (Clause ((:) (Atom "length.u0" 0)
-    ([])) (Atom "Coq.Lists.List.495" 0)) ((:) (Clause ((:) (Atom "app.u0" 0)
-    ([])) (Atom "Coq.Lists.List.495" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Classes.Morphisms.31" 0) ([])) (Atom "Coq.Lists.List.495" 0)) ((:)
-    (Clause ((:) (Atom "Coq.Lists.List.277" 0) ([])) (Atom
-    "Coq.Lists.List.572" 0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.278" 0)
-    ([])) (Atom "Coq.Lists.List.572" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Lists.List.495" 0) ([])) (Atom "Coq.Lists.List.572" 0)) ((:) (Clause
-    ((:) (Atom "firstn_map.u0" 0) ([])) (Atom "Coq.Lists.List.572" 0)) ((:)
-    (Clause ((:) (Atom "firstn_map.u1" 0) ([])) (Atom "Coq.Lists.List.572"
-    0)) ((:) (Clause ((:) (Atom "firstn_map.u2" 0) ([])) (Atom
-    "Coq.Lists.List.572" 0)) ((:) (Clause ((:) (Atom "firstn_map.u3" 0) ([]))
-    (Atom "Coq.Lists.List.572" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([]))
-    (Atom "Coq.Lists.List.572" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Init.Logic.10" 0) ([])) (Atom "Coq.Lists.List.572" 0)) ((:) (Clause
-    ((:) (Atom "list.u0" 0) ([])) (Atom "Coq.Lists.List.572" 0)) ((:) (Clause
-    ((:) (Atom "Coq.Lists.List.13" 0) ([])) (Atom "Coq.Lists.List.581" 0))
-    ((:) (Clause ((:) (Atom "Coq.Lists.List.465" 0) ([])) (Atom
-    "Coq.Lists.List.581" 0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.466" 0)
+    "Coq.Lists.List.498" 0)) ((:) (Clause ((:) (Atom "firstn_app.u0" 0) ([]))
+    (Atom "Coq.Lists.List.498" 0)) ((:) (Clause ((:) (Atom "firstn_firstn.u0"
+    0) ([])) (Atom "Coq.Lists.List.498" 0)) ((:) (Clause ((:) (Atom
+    "firstn_skipn.u0" 0) ([])) (Atom "Coq.Lists.List.498" 0)) ((:) (Clause
+    ((:) (Atom "firstn_skipn_rev.u0" 0) ([])) (Atom "Coq.Lists.List.498" 0))
+    ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "Coq.Lists.List.498" 0))
+    ((:) (Clause ((:) (Atom "Coq.Init.Logic.11" 0) ([])) (Atom
+    "Coq.Lists.List.498" 0)) ((:) (Clause ((:) (Atom "eq_ind_r.u0" 0) ([]))
+    (Atom "Coq.Lists.List.498" 0)) ((:) (Clause ((:) (Atom "list.u0" 0) ([]))
+    (Atom "Coq.Lists.List.498" 0)) ((:) (Clause ((:) (Atom "length.u0" 0)
+    ([])) (Atom "Coq.Lists.List.498" 0)) ((:) (Clause ((:) (Atom "app.u0" 0)
+    ([])) (Atom "Coq.Lists.List.498" 0)) ((:) (Clause ((:) (Atom
+    "Morphisms.rewrite_relation_eq_dom.u0" 0) ([])) (Atom
+    "Coq.Lists.List.498" 0)) ((:) (Clause ((:) (Atom
+    "Morphisms.rewrite_relation_eq_dom.u1" 0) ([])) (Atom
+    "Coq.Lists.List.498" 0)) ((:) (Clause ((:) (Atom
+    "Morphisms.eq_rewrite_relation.u0" 0) ([])) (Atom "Coq.Lists.List.498"
+    0)) ((:) (Clause ((:) (Atom "Coq.Classes.Morphisms.51" 0) ([])) (Atom
+    "Coq.Lists.List.498" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
+    "firstn_all2.u0" (Prelude.succ 0))) ((:) (Clause ((:) (Atom "eq.u0" 0)
+    ([])) (Atom "firstn_app.u0" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
+    "eq.u0" 0) ([])) (Atom "firstn_firstn.u0" (Prelude.succ 0))) ((:) (Clause
+    ((:) (Atom "eq.u0" 0) ([])) (Atom "firstn_skipn.u0" (Prelude.succ 0)))
+    ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "firstn_skipn_rev.u0"
+    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "Coq.Lists.List.279" 0) ([]))
+    (Atom "Coq.Lists.List.581" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Lists.List.280" 0) ([])) (Atom "Coq.Lists.List.581" 0)) ((:) (Clause
+    ((:) (Atom "Coq.Lists.List.498" 0) ([])) (Atom "Coq.Lists.List.581" 0))
+    ((:) (Clause ((:) (Atom "firstn_map.u0" 0) ([])) (Atom
+    "Coq.Lists.List.581" 0)) ((:) (Clause ((:) (Atom "firstn_map.u1" 0) ([]))
+    (Atom "Coq.Lists.List.581" 0)) ((:) (Clause ((:) (Atom "firstn_map.u2" 0)
     ([])) (Atom "Coq.Lists.List.581" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Lists.List.495" 0) ([])) (Atom "Coq.Lists.List.581" 0)) ((:) (Clause
-    ((:) (Atom "eq.u0" 0) ([])) (Atom "Coq.Lists.List.581" 0)) ((:) (Clause
-    ((:) (Atom "eq_ind_r.u0" 0) ([])) (Atom "Coq.Lists.List.581" 0)) ((:)
-    (Clause ((:) (Atom "prod.u0" 0) ([])) (Atom "Coq.Lists.List.581" 0)) ((:)
-    (Clause ((:) (Atom "prod.u1" 0) ([])) (Atom "Coq.Lists.List.581" 0)) ((:)
+    "firstn_map.u3" 0) ([])) (Atom "Coq.Lists.List.581" 0)) ((:) (Clause ((:)
+    (Atom "eq.u0" 0) ([])) (Atom "Coq.Lists.List.581" 0)) ((:) (Clause ((:)
+    (Atom "Coq.Init.Logic.11" 0) ([])) (Atom "Coq.Lists.List.581" 0)) ((:)
     (Clause ((:) (Atom "list.u0" 0) ([])) (Atom "Coq.Lists.List.581" 0)) ((:)
-    (Clause ((:) (Atom "length.u0" 0) ([])) (Atom "Coq.Lists.List.581" 0))
-    ((:) (Clause ((:) (Atom "Coq.Lists.List.1" 0) ([])) (Atom
-    "Coq.Lists.List.582" 0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.13" 0)
-    ([])) (Atom "Coq.Lists.List.582" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Lists.List.479" 0) ([])) (Atom "Coq.Lists.List.582" 0)) ((:) (Clause
-    ((:) (Atom "Add_split.u0" 0) ([])) (Atom "Coq.Lists.List.582" 0)) ((:)
-    (Clause ((:) (Atom "Add_split.u1" 0) ([])) (Atom "Coq.Lists.List.582" 0))
-    ((:) (Clause ((:) (Atom "ex.u0" 0) ([])) (Atom "Coq.Lists.List.582" 0))
-    ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "Coq.Lists.List.582" 0))
-    ((:) (Clause ((:) (Atom "Coq.Init.Logic.10" 0) ([])) (Atom
-    "Coq.Lists.List.582" 0)) ((:) (Clause ((:) (Atom "eq_ind_r.u0" 0) ([]))
-    (Atom "Coq.Lists.List.582" 0)) ((:) (Clause ((:) (Atom "list.u0" 0) ([]))
-    (Atom "Coq.Lists.List.582" 0)) ((:) (Clause ((:) (Atom "length.u0" 0)
-    ([])) (Atom "Coq.Lists.List.582" 0)) ((:) (Clause ((:) (Atom "app.u0" 0)
-    ([])) (Atom "Coq.Lists.List.582" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Relations.Relation_Definitions.1" 0) ([])) (Atom
-    "Coq.Lists.List.615" 0)) ((:) (Clause ((:) (Atom
-    "Morphisms_Prop.all_iff_morphism_obligation_1.u0" 0) ([])) (Atom
-    "Coq.Lists.List.615" 0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.1" 0)
-    ([])) (Atom "Coq.Lists.List.615" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Lists.List.13" 0) ([])) (Atom "Coq.Lists.List.615" 0)) ((:) (Clause
-    ((:) (Atom "Coq.Lists.List.44" 0) ([])) (Atom "Coq.Lists.List.615" 0))
-    ((:) (Clause ((:) (Atom "Coq.Lists.List.247" 0) ([])) (Atom
-    "Coq.Lists.List.615" 0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.400" 0)
-    ([])) (Atom "Coq.Lists.List.615" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Lists.List.479" 0) ([])) (Atom "Coq.Lists.List.615" 0)) ((:) (Clause
-    ((:) (Atom "Coq.Lists.List.582" 0) ([])) (Atom "Coq.Lists.List.615" 0))
-    ((:) (Clause ((:) (Atom "ex.u0" 0) ([])) (Atom "Coq.Lists.List.615" 0))
-    ((:) (Clause ((:) (Atom "all.u0" 0) ([])) (Atom "Coq.Lists.List.615" 0))
-    ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "Coq.Lists.List.615" 0))
-    ((:) (Clause ((:) (Atom "Coq.Init.Logic.10" 0) ([])) (Atom
-    "Coq.Lists.List.615" 0)) ((:) (Clause ((:) (Atom "eq_ind_r.u0" 0) ([]))
-    (Atom "Coq.Lists.List.615" 0)) ((:) (Clause ((:) (Atom "option.u0" 0)
-    ([])) (Atom "Coq.Lists.List.615" 0)) ((:) (Clause ((:) (Atom "list.u0" 0)
-    ([])) (Atom "Coq.Lists.List.615" 0)) ((:) (Clause ((:) (Atom "length.u0"
-    0) ([])) (Atom "Coq.Lists.List.615" 0)) ((:) (Clause ((:) (Atom "app.u0"
-    0) ([])) (Atom "Coq.Lists.List.615" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Classes.Morphisms.31" 0) ([])) (Atom "Coq.Lists.List.615" 0)) ((:)
-    (Clause ((:) (Atom "Coq.Lists.List.277" 0) ([])) (Atom "NoDup_map_inv.u0"
-    0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.615" 0) ([])) (Atom
-    "NoDup_map_inv.u0" 0)) ((:) (Clause ((:) (Atom "list.u0" 0) ([])) (Atom
-    "NoDup_map_inv.u0" 0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.1" 0)
-    ([])) (Atom "NoDup_map_inv.u1" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Lists.List.278" 0) ([])) (Atom "NoDup_map_inv.u1" 0)) ((:) (Clause
-    ((:) (Atom "Coq.Lists.List.615" 0) ([])) (Atom "NoDup_map_inv.u1" 0))
-    ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "NoDup_map_inv.u1" 0))
-    ((:) (Clause ((:) (Atom "Coq.Init.Logic.10" 0) ([])) (Atom
-    "NoDup_map_inv.u1" 0)) ((:) (Clause ((:) (Atom "eq_ind_r.u0" 0) ([]))
-    (Atom "NoDup_map_inv.u1" 0)) ((:) (Clause ((:) (Atom "list.u0" 0) ([]))
-    (Atom "NoDup_map_inv.u1" 0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.1"
-    0) ([])) (Atom "Coq.Lists.List.702" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Lists.List.13" 0) ([])) (Atom "Coq.Lists.List.702" 0)) ((:) (Clause
-    ((:) (Atom "Coq.Lists.List.44" 0) ([])) (Atom "Coq.Lists.List.702" 0))
-    ((:) (Clause ((:) (Atom "Coq.Lists.List.247" 0) ([])) (Atom
-    "Coq.Lists.List.702" 0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.277" 0)
-    ([])) (Atom "Coq.Lists.List.702" 0)) ((:) (Clause ((:) (Atom
-    "map_ext_in.u0" 0) ([])) (Atom "Coq.Lists.List.702" 0)) ((:) (Clause ((:)
-    (Atom "Coq.Lists.List.382" 0) ([])) (Atom "Coq.Lists.List.702" 0)) ((:)
-    (Clause ((:) (Atom "Coq.Lists.List.479" 0) ([])) (Atom
-    "Coq.Lists.List.702" 0)) ((:) (Clause ((:) (Atom "ex.u0" 0) ([])) (Atom
-    "Coq.Lists.List.702" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
-    "Coq.Lists.List.702" 0)) ((:) (Clause ((:) (Atom "Coq.Init.Logic.10" 0)
-    ([])) (Atom "Coq.Lists.List.702" 0)) ((:) (Clause ((:) (Atom
-    "eq_ind_r.u0" 0) ([])) (Atom "Coq.Lists.List.702" 0)) ((:) (Clause ((:)
-    (Atom "list.u0" 0) ([])) (Atom "Coq.Lists.List.702" 0)) ((:) (Clause ((:)
-    (Atom "length.u0" 0) ([])) (Atom "Coq.Lists.List.702" 0)) ((:) (Clause
-    ((:) (Atom "app.u0" 0) ([])) (Atom "Coq.Lists.List.702" 0)) ((:) (Clause
-    ((:) (Atom "Coq.Init.Datatypes.61" 0) ([])) (Atom "Forall_rect.u0" 0))
-    ((:) (Clause ((:) (Atom "Coq.Lists.List.278" 0) ([])) (Atom
-    "map_ext_Forall.u0" 0)) ((:) (Clause ((:) (Atom "map_ext_in.u1" 0) ([]))
-    (Atom "map_ext_Forall.u0" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([]))
-    (Atom "map_ext_Forall.u0" 0)) ((:) (Clause ((:) (Atom "list.u0" 0) ([]))
-    (Atom "map_ext_Forall.u0" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Lists.List.277" 0) ([])) (Atom "Exists_map.u0" 0)) ((:) (Clause ((:)
-    (Atom "Coq.Lists.List.702" 0) ([])) (Atom "Exists_map.u0" 0)) ((:)
-    (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "Exists_map.u0" 0)) ((:)
-    (Clause ((:) (Atom "list.u0" 0) ([])) (Atom "Exists_map.u0" 0)) ((:)
-    (Clause ((:) (Atom "Coq.Lists.List.278" 0) ([])) (Atom "Exists_map.u1"
-    0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.702" 0) ([])) (Atom
+    (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "firstn_map.u0" (Prelude.succ
+    0))) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "firstn_map.u1"
+    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
+    "firstn_map.u2" (Prelude.succ 0))) ((:) (Clause ((:) (Atom "eq.u0" 0)
+    ([])) (Atom "firstn_map.u3" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
+    "Coq.Lists.List.13" 0) ([])) (Atom "Coq.Lists.List.590" 0)) ((:) (Clause
+    ((:) (Atom "Coq.Lists.List.468" 0) ([])) (Atom "Coq.Lists.List.590" 0))
+    ((:) (Clause ((:) (Atom "Coq.Lists.List.469" 0) ([])) (Atom
+    "Coq.Lists.List.590" 0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.498" 0)
+    ([])) (Atom "Coq.Lists.List.590" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0)
+    ([])) (Atom "Coq.Lists.List.590" 0)) ((:) (Clause ((:) (Atom
+    "eq_ind_r.u0" 0) ([])) (Atom "Coq.Lists.List.590" 0)) ((:) (Clause ((:)
+    (Atom "prod.u0" 0) ([])) (Atom "Coq.Lists.List.590" 0)) ((:) (Clause ((:)
+    (Atom "prod.u1" 0) ([])) (Atom "Coq.Lists.List.590" 0)) ((:) (Clause ((:)
+    (Atom "list.u0" 0) ([])) (Atom "Coq.Lists.List.590" 0)) ((:) (Clause ((:)
+    (Atom "length.u0" 0) ([])) (Atom "Coq.Lists.List.590" 0)) ((:) (Clause
+    ((:) (Atom "Coq.Lists.ListSet.1" 0) ([])) (Atom "Coq.Lists.List.591" 0))
+    ((:) (Clause ((:) (Atom "Coq.Lists.List.591" 0) ([])) (Atom
+    "Coq.Lists.ListSet.1" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
+    "Add_split.u0" (Prelude.succ 0))) ((:) (Clause ((:) (Atom "eq.u0" 0)
+    ([])) (Atom "Add_split.u1" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
+    "Coq.Lists.ListSet.1" 0) ([])) (Atom "Coq.Lists.List.624" 0)) ((:)
+    (Clause ((:) (Atom "Coq.Lists.List.624" 0) ([])) (Atom
+    "Coq.Lists.ListSet.1" 0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.279" 0)
+    ([])) (Atom "NoDup_map_inv.u0" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Lists.List.624" 0) ([])) (Atom "NoDup_map_inv.u0" 0)) ((:) (Clause
+    ((:) (Atom "list.u0" 0) ([])) (Atom "NoDup_map_inv.u0" 0)) ((:) (Clause
+    ((:) (Atom "Coq.Lists.List.1" 0) ([])) (Atom "NoDup_map_inv.u1" 0)) ((:)
+    (Clause ((:) (Atom "Coq.Lists.List.280" 0) ([])) (Atom "NoDup_map_inv.u1"
+    0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.624" 0) ([])) (Atom
+    "NoDup_map_inv.u1" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
+    "NoDup_map_inv.u1" 0)) ((:) (Clause ((:) (Atom "Coq.Init.Logic.11" 0)
+    ([])) (Atom "NoDup_map_inv.u1" 0)) ((:) (Clause ((:) (Atom "eq_ind_r.u0"
+    0) ([])) (Atom "NoDup_map_inv.u1" 0)) ((:) (Clause ((:) (Atom "list.u0"
+    0) ([])) (Atom "NoDup_map_inv.u1" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Lists.List.1" 0) ([])) (Atom "Coq.Lists.List.711" 0)) ((:) (Clause
+    ((:) (Atom "Coq.Lists.List.13" 0) ([])) (Atom "Coq.Lists.List.711" 0))
+    ((:) (Clause ((:) (Atom "Coq.Lists.List.44" 0) ([])) (Atom
+    "Coq.Lists.List.711" 0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.247" 0)
+    ([])) (Atom "Coq.Lists.List.711" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Lists.List.279" 0) ([])) (Atom "Coq.Lists.List.711" 0)) ((:) (Clause
+    ((:) (Atom "map_ext_in.u0" 0) ([])) (Atom "Coq.Lists.List.711" 0)) ((:)
+    (Clause ((:) (Atom "Coq.Lists.List.384" 0) ([])) (Atom
+    "Coq.Lists.List.711" 0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.482" 0)
+    ([])) (Atom "Coq.Lists.List.711" 0)) ((:) (Clause ((:) (Atom "ex.u0" 0)
+    ([])) (Atom "Coq.Lists.List.711" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0)
+    ([])) (Atom "Coq.Lists.List.711" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Init.Logic.11" 0) ([])) (Atom "Coq.Lists.List.711" 0)) ((:) (Clause
+    ((:) (Atom "eq_ind_r.u0" 0) ([])) (Atom "Coq.Lists.List.711" 0)) ((:)
+    (Clause ((:) (Atom "list.u0" 0) ([])) (Atom "Coq.Lists.List.711" 0)) ((:)
+    (Clause ((:) (Atom "length.u0" 0) ([])) (Atom "Coq.Lists.List.711" 0))
+    ((:) (Clause ((:) (Atom "app.u0" 0) ([])) (Atom "Coq.Lists.List.711" 0))
+    ((:) (Clause ((:) (Atom "Coq.Init.Datatypes.61" 0) ([])) (Atom
+    "Forall_rect.u0" 0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.280" 0)
+    ([])) (Atom "map_ext_Forall.u0" 0)) ((:) (Clause ((:) (Atom
+    "map_ext_in.u1" 0) ([])) (Atom "map_ext_Forall.u0" 0)) ((:) (Clause ((:)
+    (Atom "eq.u0" 0) ([])) (Atom "map_ext_Forall.u0" 0)) ((:) (Clause ((:)
+    (Atom "list.u0" 0) ([])) (Atom "map_ext_Forall.u0" 0)) ((:) (Clause ((:)
+    (Atom "Coq.Lists.List.279" 0) ([])) (Atom "Exists_map.u0" 0)) ((:)
+    (Clause ((:) (Atom "Coq.Lists.List.711" 0) ([])) (Atom "Exists_map.u0"
+    0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "Exists_map.u0" 0))
+    ((:) (Clause ((:) (Atom "list.u0" 0) ([])) (Atom "Exists_map.u0" 0)) ((:)
+    (Clause ((:) (Atom "Coq.Lists.List.280" 0) ([])) (Atom "Exists_map.u1"
+    0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.711" 0) ([])) (Atom
     "Exists_map.u1" 0)) ((:) (Clause ((:) (Atom "list.u0" 0) ([])) (Atom
     "Exists_map.u1" 0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.247" 0) ([]))
-    (Atom "Exists_concat.u0" 0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.702"
+    (Atom "Exists_concat.u0" 0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.711"
     0) ([])) (Atom "Exists_concat.u0" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0)
     ([])) (Atom "Exists_concat.u0" 0)) ((:) (Clause ((:) (Atom "list.u0" 0)
     ([])) (Atom "Exists_concat.u0" 0)) ((:) (Clause ((:) (Atom "app.u0" 0)
     ([])) (Atom "Exists_concat.u0" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Lists.List.277" 0) ([])) (Atom "Exists_flat_map.u0" 0)) ((:) (Clause
-    ((:) (Atom "Coq.Lists.List.318" 0) ([])) (Atom "Exists_flat_map.u0" 0))
-    ((:) (Clause ((:) (Atom "Coq.Lists.List.702" 0) ([])) (Atom
+    "Coq.Lists.List.279" 0) ([])) (Atom "Exists_flat_map.u0" 0)) ((:) (Clause
+    ((:) (Atom "Coq.Lists.List.320" 0) ([])) (Atom "Exists_flat_map.u0" 0))
+    ((:) (Clause ((:) (Atom "Coq.Lists.List.711" 0) ([])) (Atom
     "Exists_flat_map.u0" 0)) ((:) (Clause ((:) (Atom "Exists_map.u0" 0) ([]))
     (Atom "Exists_flat_map.u0" 0)) ((:) (Clause ((:) (Atom "list.u0" 0) ([]))
     (Atom "Exists_flat_map.u0" 0)) ((:) (Clause ((:) (Atom
     "Coq.Lists.List.247" 0) ([])) (Atom "Exists_flat_map.u1" 0)) ((:) (Clause
-    ((:) (Atom "Coq.Lists.List.278" 0) ([])) (Atom "Exists_flat_map.u1" 0))
-    ((:) (Clause ((:) (Atom "Coq.Lists.List.319" 0) ([])) (Atom
-    "Exists_flat_map.u1" 0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.702" 0)
+    ((:) (Atom "Coq.Lists.List.280" 0) ([])) (Atom "Exists_flat_map.u1" 0))
+    ((:) (Clause ((:) (Atom "Coq.Lists.List.321" 0) ([])) (Atom
+    "Exists_flat_map.u1" 0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.711" 0)
     ([])) (Atom "Exists_flat_map.u1" 0)) ((:) (Clause ((:) (Atom
     "Exists_map.u1" 0) ([])) (Atom "Exists_flat_map.u1" 0)) ((:) (Clause ((:)
     (Atom "Exists_concat.u0" 0) ([])) (Atom "Exists_flat_map.u1" 0)) ((:)
     (Clause ((:) (Atom "list.u0" 0) ([])) (Atom "Exists_flat_map.u1" 0)) ((:)
-    (Clause ((:) (Atom "Coq.Lists.List.277" 0) ([])) (Atom "Forall_map.u0"
-    0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.702" 0) ([])) (Atom
+    (Clause ((:) (Atom "Coq.Lists.List.279" 0) ([])) (Atom "Forall_map.u0"
+    0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.711" 0) ([])) (Atom
     "Forall_map.u0" 0)) ((:) (Clause ((:) (Atom "list.u0" 0) ([])) (Atom
-    "Forall_map.u0" 0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.278" 0) ([]))
-    (Atom "Forall_map.u1" 0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.702" 0)
+    "Forall_map.u0" 0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.280" 0) ([]))
+    (Atom "Forall_map.u1" 0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.711" 0)
     ([])) (Atom "Forall_map.u1" 0)) ((:) (Clause ((:) (Atom "list.u0" 0)
     ([])) (Atom "Forall_map.u1" 0)) ((:) (Clause ((:) (Atom
     "Coq.Lists.List.247" 0) ([])) (Atom "Forall_concat.u0" 0)) ((:) (Clause
-    ((:) (Atom "Coq.Lists.List.702" 0) ([])) (Atom "Forall_concat.u0" 0))
+    ((:) (Atom "Coq.Lists.List.711" 0) ([])) (Atom "Forall_concat.u0" 0))
     ((:) (Clause ((:) (Atom "list.u0" 0) ([])) (Atom "Forall_concat.u0" 0))
     ((:) (Clause ((:) (Atom "app.u0" 0) ([])) (Atom "Forall_concat.u0" 0))
-    ((:) (Clause ((:) (Atom "Coq.Lists.List.277" 0) ([])) (Atom
-    "Forall_flat_map.u0" 0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.318" 0)
+    ((:) (Clause ((:) (Atom "Coq.Lists.List.279" 0) ([])) (Atom
+    "Forall_flat_map.u0" 0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.320" 0)
     ([])) (Atom "Forall_flat_map.u0" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Lists.List.702" 0) ([])) (Atom "Forall_flat_map.u0" 0)) ((:) (Clause
+    "Coq.Lists.List.711" 0) ([])) (Atom "Forall_flat_map.u0" 0)) ((:) (Clause
     ((:) (Atom "Forall_map.u0" 0) ([])) (Atom "Forall_flat_map.u0" 0)) ((:)
     (Clause ((:) (Atom "list.u0" 0) ([])) (Atom "Forall_flat_map.u0" 0)) ((:)
     (Clause ((:) (Atom "Coq.Lists.List.247" 0) ([])) (Atom
-    "Forall_flat_map.u1" 0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.278" 0)
+    "Forall_flat_map.u1" 0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.280" 0)
     ([])) (Atom "Forall_flat_map.u1" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Lists.List.319" 0) ([])) (Atom "Forall_flat_map.u1" 0)) ((:) (Clause
-    ((:) (Atom "Coq.Lists.List.702" 0) ([])) (Atom "Forall_flat_map.u1" 0))
+    "Coq.Lists.List.321" 0) ([])) (Atom "Forall_flat_map.u1" 0)) ((:) (Clause
+    ((:) (Atom "Coq.Lists.List.711" 0) ([])) (Atom "Forall_flat_map.u1" 0))
     ((:) (Clause ((:) (Atom "Forall_map.u1" 0) ([])) (Atom
     "Forall_flat_map.u1" 0)) ((:) (Clause ((:) (Atom "Forall_concat.u0" 0)
     ([])) (Atom "Forall_flat_map.u1" 0)) ((:) (Clause ((:) (Atom "list.u0" 0)
     ([])) (Atom "Forall_flat_map.u1" 0)) ((:) (Clause ((:) (Atom "ex.u0" 0)
     ([])) (Atom "exists_Forall.u0" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Lists.List.702" 0) ([])) (Atom "exists_Forall.u1" 0)) ((:) (Clause
+    "Coq.Lists.List.711" 0) ([])) (Atom "exists_Forall.u1" 0)) ((:) (Clause
     ((:) (Atom "eq.u0" 0) ([])) (Atom "exists_Forall.u1" 0)) ((:) (Clause
-    ((:) (Atom "Coq.Init.Logic.10" 0) ([])) (Atom "exists_Forall.u1" 0)) ((:)
+    ((:) (Atom "Coq.Init.Logic.11" 0) ([])) (Atom "exists_Forall.u1" 0)) ((:)
     (Clause ((:) (Atom "eq_ind_r.u0" 0) ([])) (Atom "exists_Forall.u1" 0))
     ((:) (Clause ((:) (Atom "list.u0" 0) ([])) (Atom "exists_Forall.u1" 0))
-    ((:) (Clause ((:) (Atom "Coq.Lists.List.277" 0) ([])) (Atom
+    ((:) (Clause ((:) (Atom "Coq.Lists.List.279" 0) ([])) (Atom
     "Forall_image.u0" 0)) ((:) (Clause ((:) (Atom "ex.u0" 0) ([])) (Atom
     "Forall_image.u0" 0)) ((:) (Clause ((:) (Atom "list.u0" 0) ([])) (Atom
-    "Forall_image.u0" 0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.278" 0)
+    "Forall_image.u0" 0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.280" 0)
     ([])) (Atom "Forall_image.u1" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Lists.List.702" 0) ([])) (Atom "Forall_image.u1" 0)) ((:) (Clause
+    "Coq.Lists.List.711" 0) ([])) (Atom "Forall_image.u1" 0)) ((:) (Clause
     ((:) (Atom "eq.u0" 0) ([])) (Atom "Forall_image.u1" 0)) ((:) (Clause ((:)
-    (Atom "Coq.Init.Logic.10" 0) ([])) (Atom "Forall_image.u1" 0)) ((:)
+    (Atom "Coq.Init.Logic.11" 0) ([])) (Atom "Forall_image.u1" 0)) ((:)
     (Clause ((:) (Atom "eq_ind_r.u0" 0) ([])) (Atom "Forall_image.u1" 0))
     ((:) (Clause ((:) (Atom "list.u0" 0) ([])) (Atom "Forall_image.u1" 0))
     ((:) (Clause ((:) (Atom "Coq.Lists.List.13" 0) ([])) (Atom
     "concat_nil_Forall.u0" 0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.247"
     0) ([])) (Atom "concat_nil_Forall.u0" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Lists.List.702" 0) ([])) (Atom "concat_nil_Forall.u0" 0)) ((:)
+    "Coq.Lists.List.711" 0) ([])) (Atom "concat_nil_Forall.u0" 0)) ((:)
     (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "concat_nil_Forall.u0" 0)) ((:)
-    (Clause ((:) (Atom "Coq.Init.Logic.10" 0) ([])) (Atom
+    (Clause ((:) (Atom "Coq.Init.Logic.11" 0) ([])) (Atom
     "concat_nil_Forall.u0" 0)) ((:) (Clause ((:) (Atom "eq_ind_r.u0" 0) ([]))
     (Atom "concat_nil_Forall.u0" 0)) ((:) (Clause ((:) (Atom "list.u0" 0)
     ([])) (Atom "concat_nil_Forall.u0" 0)) ((:) (Clause ((:) (Atom "app.u0"
     0) ([])) (Atom "concat_nil_Forall.u0" 0)) ((:) (Clause ((:) (Atom
     "Coq.Lists.List.1" 0) ([])) (Atom "in_flat_map_Exists.u0" 0)) ((:)
-    (Clause ((:) (Atom "Coq.Lists.List.318" 0) ([])) (Atom
-    "in_flat_map_Exists.u0" 0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.702"
+    (Clause ((:) (Atom "Coq.Lists.List.320" 0) ([])) (Atom
+    "in_flat_map_Exists.u0" 0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.711"
     0) ([])) (Atom "in_flat_map_Exists.u0" 0)) ((:) (Clause ((:) (Atom
     "ex.u0" 0) ([])) (Atom "in_flat_map_Exists.u0" 0)) ((:) (Clause ((:)
     (Atom "list.u0" 0) ([])) (Atom "in_flat_map_Exists.u0" 0)) ((:) (Clause
     ((:) (Atom "Coq.Lists.List.1" 0) ([])) (Atom "in_flat_map_Exists.u1" 0))
-    ((:) (Clause ((:) (Atom "Coq.Lists.List.319" 0) ([])) (Atom
+    ((:) (Clause ((:) (Atom "Coq.Lists.List.321" 0) ([])) (Atom
     "in_flat_map_Exists.u1" 0)) ((:) (Clause ((:) (Atom "list.u0" 0) ([]))
     (Atom "in_flat_map_Exists.u1" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Lists.List.318" 0) ([])) (Atom "notin_flat_map_Forall.u0" 0)) ((:)
-    (Clause ((:) (Atom "Coq.Lists.List.702" 0) ([])) (Atom
+    "Coq.Lists.List.320" 0) ([])) (Atom "notin_flat_map_Forall.u0" 0)) ((:)
+    (Clause ((:) (Atom "Coq.Lists.List.711" 0) ([])) (Atom
     "notin_flat_map_Forall.u0" 0)) ((:) (Clause ((:) (Atom
     "in_flat_map_Exists.u0" 0) ([])) (Atom "notin_flat_map_Forall.u0" 0))
     ((:) (Clause ((:) (Atom "list.u0" 0) ([])) (Atom
     "notin_flat_map_Forall.u0" 0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.1"
     0) ([])) (Atom "notin_flat_map_Forall.u1" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Lists.List.319" 0) ([])) (Atom "notin_flat_map_Forall.u1" 0)) ((:)
+    "Coq.Lists.List.321" 0) ([])) (Atom "notin_flat_map_Forall.u1" 0)) ((:)
     (Clause ((:) (Atom "in_flat_map_Exists.u1" 0) ([])) (Atom
     "notin_flat_map_Forall.u1" 0)) ((:) (Clause ((:) (Atom "list.u0" 0) ([]))
     (Atom "notin_flat_map_Forall.u1" 0)) ((:) (Clause ((:) (Atom "ex.u0" 0)
-    ([])) (Atom "Coq.Lists.List.821" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0)
-    ([])) (Atom "Coq.Lists.List.821" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Init.Logic.10" 0) ([])) (Atom "Coq.Lists.List.821" 0)) ((:) (Clause
-    ((:) (Atom "eq_ind_r.u0" 0) ([])) (Atom "Coq.Lists.List.821" 0)) ((:)
-    (Clause ((:) (Atom "list.u0" 0) ([])) (Atom "Coq.Lists.List.821" 0)) ((:)
-    (Clause ((:) (Atom "app.u0" 0) ([])) (Atom "Coq.Lists.List.821" 0)) ((:)
-    (Clause ((:) (Atom "Coq.Lists.List.1" 0) ([])) (Atom "Coq.Lists.List.838"
-    0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.702" 0) ([])) (Atom
-    "Coq.Lists.List.838" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
-    "Coq.Lists.List.838" 0)) ((:) (Clause ((:) (Atom "eq_ind_r.u0" 0) ([]))
-    (Atom "Coq.Lists.List.838" 0)) ((:) (Clause ((:) (Atom "list.u0" 0) ([]))
-    (Atom "Coq.Lists.List.838" 0)) ((:) (Clause ((:) (Atom
+    ([])) (Atom "Coq.Lists.List.850" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0)
+    ([])) (Atom "Coq.Lists.List.850" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Init.Logic.11" 0) ([])) (Atom "Coq.Lists.List.850" 0)) ((:) (Clause
+    ((:) (Atom "eq_ind_r.u0" 0) ([])) (Atom "Coq.Lists.List.850" 0)) ((:)
+    (Clause ((:) (Atom "list.u0" 0) ([])) (Atom "Coq.Lists.List.850" 0)) ((:)
+    (Clause ((:) (Atom "app.u0" 0) ([])) (Atom "Coq.Lists.List.850" 0)) ((:)
+    (Clause ((:) (Atom "Coq.Lists.List.1" 0) ([])) (Atom "Coq.Lists.List.867"
+    0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.711" 0) ([])) (Atom
+    "Coq.Lists.List.867" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
+    "Coq.Lists.List.867" 0)) ((:) (Clause ((:) (Atom "eq_ind_r.u0" 0) ([]))
+    (Atom "Coq.Lists.List.867" 0)) ((:) (Clause ((:) (Atom "list.u0" 0) ([]))
+    (Atom "Coq.Lists.List.867" 0)) ((:) (Clause ((:) (Atom
     "Coq.Relations.Relation_Definitions.1" 0) ([])) (Atom
-    "Coq.Lists.List.857" 0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.1" 0)
-    ([])) (Atom "Coq.Lists.List.857" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Lists.List.44" 0) ([])) (Atom "Coq.Lists.List.857" 0)) ((:) (Clause
-    ((:) (Atom "Coq.Lists.List.702" 0) ([])) (Atom "Coq.Lists.List.857" 0))
+    "Coq.Lists.List.886" 0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.1" 0)
+    ([])) (Atom "Coq.Lists.List.886" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Lists.List.44" 0) ([])) (Atom "Coq.Lists.List.886" 0)) ((:) (Clause
+    ((:) (Atom "Coq.Lists.List.711" 0) ([])) (Atom "Coq.Lists.List.886" 0))
     ((:) (Clause ((:) (Atom "repeat_cons.u0" 0) ([])) (Atom
-    "Coq.Lists.List.857" 0)) ((:) (Clause ((:) (Atom "count_occ_unique.u0" 0)
-    ([])) (Atom "Coq.Lists.List.857" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0)
-    ([])) (Atom "Coq.Lists.List.857" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Init.Logic.10" 0) ([])) (Atom "Coq.Lists.List.857" 0)) ((:) (Clause
-    ((:) (Atom "eq_ind_r.u0" 0) ([])) (Atom "Coq.Lists.List.857" 0)) ((:)
-    (Clause ((:) (Atom "option.u0" 0) ([])) (Atom "Coq.Lists.List.857" 0))
-    ((:) (Clause ((:) (Atom "list.u0" 0) ([])) (Atom "Coq.Lists.List.857" 0))
-    ((:) (Clause ((:) (Atom "length.u0" 0) ([])) (Atom "Coq.Lists.List.857"
-    0)) ((:) (Clause ((:) (Atom "app.u0" 0) ([])) (Atom "Coq.Lists.List.857"
-    0)) ((:) (Clause ((:) (Atom "Coq.Classes.Morphisms.31" 0) ([])) (Atom
-    "Coq.Lists.List.857" 0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.247" 0)
-    ([])) (Atom "repeat_to_concat.u0" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Lists.List.857" 0) ([])) (Atom "repeat_to_concat.u0" 0)) ((:)
-    (Clause ((:) (Atom "Coq.Init.Logic.10" 0) ([])) (Atom
-    "repeat_to_concat.u0" 0)) ((:) (Clause ((:) (Atom "list.u0" 0) ([]))
-    (Atom "repeat_to_concat.u0" 0)) ((:) (Clause ((:) (Atom "all.u0" 0) ([]))
-    (Atom "Coq.Init.Logic.7" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([]))
-    (Atom "Coq.Init.Logic.10" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([]))
-    (Atom "eq_sind_r.u0" 0)) ((:) (Clause ((:) (Atom "Coq.Init.Logic.10" 0)
-    ([])) (Atom "eq_sind_r.u0" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([]))
-    (Atom "eq_ind_r.u0" 0)) ((:) (Clause ((:) (Atom "Coq.Init.Logic.10" 0)
-    ([])) (Atom "eq_ind_r.u0" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([]))
-    (Atom "eq_rec_r.u0" 0)) ((:) (Clause ((:) (Atom "Coq.Init.Logic.10" 0)
-    ([])) (Atom "eq_rec_r.u0" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([]))
-    (Atom "eq_rect_r.u0" 0)) ((:) (Clause ((:) (Atom "Coq.Init.Logic.10" 0)
-    ([])) (Atom "eq_rect_r.u0" 0)) ((:) (Clause ((:) (Atom "Coq.Init.Logic.9"
-    0) ([])) (Atom "eq_rect_r.u1" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0)
-    ([])) (Atom "Coq.Init.Logic.16" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0)
-    ([])) (Atom "Coq.Init.Logic.17" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Init.Logic.9" 0) ([])) (Atom "Coq.Init.Logic.17" 0)) ((:) (Clause
-    ((:) (Atom "eq.u0" 0) ([])) (Atom "f_equal_dep2.u0" 0)) ((:) (Clause ((:)
-    (Atom "Coq.Init.Logic.10" 0) ([])) (Atom "f_equal_dep2.u0" 0)) ((:)
-    (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "f_equal_dep2.u1" 0)) ((:)
-    (Clause ((:) (Atom "Coq.Init.Logic.10" 0) ([])) (Atom "f_equal_dep2.u1"
-    0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "f_equal_dep2.u2" 0))
-    ((:) (Clause ((:) (Atom "Coq.Init.Logic.9" 0) ([])) (Atom
-    "f_equal_dep2.u2" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
-    "f_equal_dep2.u3" 0)) ((:) (Clause ((:) (Atom "Coq.Init.Logic.9" 0) ([]))
-    (Atom "f_equal_dep2.u3" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([]))
-    (Atom "rew_opp_r.u0" 0)) ((:) (Clause ((:) (Atom "eq_rect_r.u0" 0) ([]))
-    (Atom "rew_opp_r.u0" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
-    "rew_opp_r.u1" 0)) ((:) (Clause ((:) (Atom "Coq.Init.Logic.9" 0) ([]))
-    (Atom "rew_opp_r.u1" 0)) ((:) (Clause ((:) (Atom "eq_rect_r.u1" 0) ([]))
-    (Atom "rew_opp_r.u1" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
-    "rew_opp_l.u0" 0)) ((:) (Clause ((:) (Atom "eq_rect_r.u0" 0) ([])) (Atom
-    "rew_opp_l.u0" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
-    "rew_opp_l.u1" 0)) ((:) (Clause ((:) (Atom "Coq.Init.Logic.9" 0) ([]))
-    (Atom "rew_opp_l.u1" 0)) ((:) (Clause ((:) (Atom "eq_rect_r.u1" 0) ([]))
-    (Atom "rew_opp_l.u1" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
-    "f_equal2.u0" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
-    "f_equal2.u1" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
-    "f_equal2.u2" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
-    "f_equal3.u0" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
-    "f_equal3.u1" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
-    "f_equal3.u2" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
+    "Coq.Lists.List.886" 0)) ((:) (Clause ((:) (Atom "count_occ_unique.u0" 0)
+    ([])) (Atom "Coq.Lists.List.886" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0)
+    ([])) (Atom "Coq.Lists.List.886" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Init.Logic.11" 0) ([])) (Atom "Coq.Lists.List.886" 0)) ((:) (Clause
+    ((:) (Atom "eq_ind_r.u0" 0) ([])) (Atom "Coq.Lists.List.886" 0)) ((:)
+    (Clause ((:) (Atom "option.u0" 0) ([])) (Atom "Coq.Lists.List.886" 0))
+    ((:) (Clause ((:) (Atom "list.u0" 0) ([])) (Atom "Coq.Lists.List.886" 0))
+    ((:) (Clause ((:) (Atom "length.u0" 0) ([])) (Atom "Coq.Lists.List.886"
+    0)) ((:) (Clause ((:) (Atom "app.u0" 0) ([])) (Atom "Coq.Lists.List.886"
+    0)) ((:) (Clause ((:) (Atom "Morphisms.rewrite_relation_eq_dom.u0" 0)
+    ([])) (Atom "Coq.Lists.List.886" 0)) ((:) (Clause ((:) (Atom
+    "Morphisms.rewrite_relation_eq_dom.u1" 0) ([])) (Atom
+    "Coq.Lists.List.886" 0)) ((:) (Clause ((:) (Atom
+    "Morphisms.eq_rewrite_relation.u0" 0) ([])) (Atom "Coq.Lists.List.886"
+    0)) ((:) (Clause ((:) (Atom "Coq.Classes.Morphisms.51" 0) ([])) (Atom
+    "Coq.Lists.List.886" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
+    "repeat_cons.u0" (Prelude.succ 0))) ((:) (Clause ((:) (Atom "eq.u0" 0)
+    ([])) (Atom "count_occ_unique.u0" (Prelude.succ 0))) ((:) (Clause ((:)
+    (Atom "Coq.Lists.List.247" 0) ([])) (Atom "repeat_to_concat.u0" 0)) ((:)
+    (Clause ((:) (Atom "Coq.Lists.List.886" 0) ([])) (Atom
+    "repeat_to_concat.u0" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
+    "repeat_to_concat.u0" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
+    "Coq.Init.Logic.11" 0) ([])) (Atom "repeat_to_concat.u0" 0)) ((:) (Clause
+    ((:) (Atom "list.u0" 0) ([])) (Atom "repeat_to_concat.u0" 0)) ((:)
+    (Clause ((:) (Atom "all.u0" 0) ([])) (Atom "Coq.Init.Logic.8" 0)) ((:)
+    (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "Coq.Init.Logic.11" 0)) ((:)
+    (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "eq_sind_r.u0" 0)) ((:) (Clause
+    ((:) (Atom "Coq.Init.Logic.11" 0) ([])) (Atom "eq_sind_r.u0" 0)) ((:)
+    (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "eq_ind_r.u0" 0)) ((:) (Clause
+    ((:) (Atom "Coq.Init.Logic.11" 0) ([])) (Atom "eq_ind_r.u0" 0)) ((:)
+    (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "eq_rec_r.u0" 0)) ((:) (Clause
+    ((:) (Atom "Coq.Init.Logic.11" 0) ([])) (Atom "eq_rec_r.u0" 0)) ((:)
+    (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "eq_rect_r.u0" 0)) ((:) (Clause
+    ((:) (Atom "Coq.Init.Logic.11" 0) ([])) (Atom "eq_rect_r.u0" 0)) ((:)
+    (Clause ((:) (Atom "Coq.Init.Logic.10" 0) ([])) (Atom "eq_rect_r.u1" 0))
+    ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "Coq.Init.Logic.17" 0))
+    ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "Coq.Init.Logic.18" 0))
+    ((:) (Clause ((:) (Atom "Coq.Init.Logic.10" 0) ([])) (Atom
+    "Coq.Init.Logic.18" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
+    "f_equal_dep2.u0" 0)) ((:) (Clause ((:) (Atom "Coq.Init.Logic.11" 0)
+    ([])) (Atom "f_equal_dep2.u0" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0)
+    ([])) (Atom "f_equal_dep2.u1" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Init.Logic.11" 0) ([])) (Atom "f_equal_dep2.u1" 0)) ((:) (Clause
+    ((:) (Atom "eq.u0" 0) ([])) (Atom "f_equal_dep2.u2" 0)) ((:) (Clause ((:)
+    (Atom "Coq.Init.Logic.10" 0) ([])) (Atom "f_equal_dep2.u2" 0)) ((:)
+    (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "f_equal_dep2.u3" 0)) ((:)
+    (Clause ((:) (Atom "Coq.Init.Logic.10" 0) ([])) (Atom "f_equal_dep2.u3"
+    0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "rew_opp_r.u0" 0))
+    ((:) (Clause ((:) (Atom "eq_rect_r.u0" 0) ([])) (Atom "rew_opp_r.u0" 0))
+    ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "rew_opp_r.u1" 0)) ((:)
+    (Clause ((:) (Atom "Coq.Init.Logic.10" 0) ([])) (Atom "rew_opp_r.u1" 0))
+    ((:) (Clause ((:) (Atom "eq_rect_r.u1" 0) ([])) (Atom "rew_opp_r.u1" 0))
+    ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "rew_opp_l.u0" 0)) ((:)
+    (Clause ((:) (Atom "eq_rect_r.u0" 0) ([])) (Atom "rew_opp_l.u0" 0)) ((:)
+    (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "rew_opp_l.u1" 0)) ((:) (Clause
+    ((:) (Atom "Coq.Init.Logic.10" 0) ([])) (Atom "rew_opp_l.u1" 0)) ((:)
+    (Clause ((:) (Atom "eq_rect_r.u1" 0) ([])) (Atom "rew_opp_l.u1" 0)) ((:)
+    (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "f_equal2.u0" 0)) ((:) (Clause
+    ((:) (Atom "eq.u0" 0) ([])) (Atom "f_equal2.u1" 0)) ((:) (Clause ((:)
+    (Atom "eq.u0" 0) ([])) (Atom "f_equal2.u2" 0)) ((:) (Clause ((:) (Atom
+    "eq.u0" 0) ([])) (Atom "f_equal3.u0" 0)) ((:) (Clause ((:) (Atom "eq.u0"
+    0) ([])) (Atom "f_equal3.u1" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([]))
+    (Atom "f_equal3.u2" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
     "f_equal3.u3" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
     "f_equal4.u0" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
     "f_equal4.u1" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
@@ -3497,101 +3708,101 @@ cs4 =
     "f_equal5.u3" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
     "f_equal5.u4" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
     "f_equal5.u5" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
-    "f_equal_compose.u0" 0)) ((:) (Clause ((:) (Atom "Coq.Init.Logic.10" 0)
+    "f_equal_compose.u0" 0)) ((:) (Clause ((:) (Atom "Coq.Init.Logic.11" 0)
     ([])) (Atom "f_equal_compose.u0" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Init.Logic.10" 0) ([])) (Atom "f_equal_compose.u1" 0)) ((:) (Clause
+    "Coq.Init.Logic.11" 0) ([])) (Atom "f_equal_compose.u1" 0)) ((:) (Clause
     ((:) (Atom "eq.u0" 0) ([])) (Atom "f_equal_compose.u2" 0)) ((:) (Clause
-    ((:) (Atom "Coq.Init.Logic.10" 0) ([])) (Atom "f_equal_compose.u2" 0))
+    ((:) (Atom "Coq.Init.Logic.11" 0) ([])) (Atom "f_equal_compose.u2" 0))
     ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "eq_trans_refl_l.u0" 0))
-    ((:) (Clause ((:) (Atom "Coq.Init.Logic.10" 0) ([])) (Atom
+    ((:) (Clause ((:) (Atom "Coq.Init.Logic.11" 0) ([])) (Atom
     "eq_trans_refl_l.u0" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
-    "eq_trans_refl_r.u0" 0)) ((:) (Clause ((:) (Atom "Coq.Init.Logic.10" 0)
+    "eq_trans_refl_r.u0" 0)) ((:) (Clause ((:) (Atom "Coq.Init.Logic.11" 0)
     ([])) (Atom "eq_trans_refl_r.u0" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0)
     ([])) (Atom "eq_sym_involutive.u0" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Init.Logic.10" 0) ([])) (Atom "eq_sym_involutive.u0" 0)) ((:)
+    "Coq.Init.Logic.11" 0) ([])) (Atom "eq_sym_involutive.u0" 0)) ((:)
     (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "eq_trans_sym_inv_l.u0" 0))
-    ((:) (Clause ((:) (Atom "Coq.Init.Logic.10" 0) ([])) (Atom
+    ((:) (Clause ((:) (Atom "Coq.Init.Logic.11" 0) ([])) (Atom
     "eq_trans_sym_inv_l.u0" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([]))
     (Atom "eq_trans_sym_inv_r.u0" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Init.Logic.10" 0) ([])) (Atom "eq_trans_sym_inv_r.u0" 0)) ((:)
+    "Coq.Init.Logic.11" 0) ([])) (Atom "eq_trans_sym_inv_r.u0" 0)) ((:)
     (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "eq_trans_assoc.u0" 0)) ((:)
-    (Clause ((:) (Atom "Coq.Init.Logic.10" 0) ([])) (Atom "eq_trans_assoc.u0"
+    (Clause ((:) (Atom "Coq.Init.Logic.11" 0) ([])) (Atom "eq_trans_assoc.u0"
     0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "rew_map.u0" 0)) ((:)
-    (Clause ((:) (Atom "Coq.Init.Logic.10" 0) ([])) (Atom "rew_map.u0" 0))
+    (Clause ((:) (Atom "Coq.Init.Logic.11" 0) ([])) (Atom "rew_map.u0" 0))
     ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "rew_map.u1" 0)) ((:)
-    (Clause ((:) (Atom "Coq.Init.Logic.9" 0) ([])) (Atom "rew_map.u1" 0))
+    (Clause ((:) (Atom "Coq.Init.Logic.10" 0) ([])) (Atom "rew_map.u1" 0))
     ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "rew_map.u2" 0)) ((:)
-    (Clause ((:) (Atom "Coq.Init.Logic.10" 0) ([])) (Atom "rew_map.u2" 0))
+    (Clause ((:) (Atom "Coq.Init.Logic.11" 0) ([])) (Atom "rew_map.u2" 0))
     ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "eq_trans_map.u0" 0)) ((:)
-    (Clause ((:) (Atom "Coq.Init.Logic.10" 0) ([])) (Atom "eq_trans_map.u0"
+    (Clause ((:) (Atom "Coq.Init.Logic.11" 0) ([])) (Atom "eq_trans_map.u0"
     0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "eq_trans_map.u1" 0))
-    ((:) (Clause ((:) (Atom "Coq.Init.Logic.9" 0) ([])) (Atom
-    "eq_trans_map.u1" 0)) ((:) (Clause ((:) (Atom "Coq.Init.Logic.10" 0)
+    ((:) (Clause ((:) (Atom "Coq.Init.Logic.10" 0) ([])) (Atom
+    "eq_trans_map.u1" 0)) ((:) (Clause ((:) (Atom "Coq.Init.Logic.11" 0)
     ([])) (Atom "eq_trans_map.u1" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0)
-    ([])) (Atom "map_subst.u0" 0)) ((:) (Clause ((:) (Atom "Coq.Init.Logic.9"
-    0) ([])) (Atom "map_subst.u1" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0)
-    ([])) (Atom "map_subst.u2" 0)) ((:) (Clause ((:) (Atom "Coq.Init.Logic.9"
-    0) ([])) (Atom "map_subst.u2" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0)
-    ([])) (Atom "map_subst_map.u0" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Init.Logic.10" 0) ([])) (Atom "map_subst_map.u0" 0)) ((:) (Clause
-    ((:) (Atom "Coq.Init.Logic.9" 0) ([])) (Atom "map_subst_map.u1" 0)) ((:)
-    (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "map_subst_map.u2" 0)) ((:)
-    (Clause ((:) (Atom "Coq.Init.Logic.10" 0) ([])) (Atom "map_subst_map.u2"
-    0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "map_subst_map.u3" 0))
-    ((:) (Clause ((:) (Atom "Coq.Init.Logic.9" 0) ([])) (Atom
-    "map_subst_map.u3" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
-    "rew_swap.u0" 0)) ((:) (Clause ((:) (Atom "eq_rect_r.u0" 0) ([])) (Atom
-    "rew_swap.u0" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
-    "rew_swap.u1" 0)) ((:) (Clause ((:) (Atom "Coq.Init.Logic.9" 0) ([]))
-    (Atom "rew_swap.u1" 0)) ((:) (Clause ((:) (Atom "eq_rect_r.u1" 0) ([]))
-    (Atom "rew_swap.u1" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
-    "rew_compose.u0" 0)) ((:) (Clause ((:) (Atom "Coq.Init.Logic.10" 0) ([]))
-    (Atom "rew_compose.u0" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
-    "rew_compose.u1" 0)) ((:) (Clause ((:) (Atom "Coq.Init.Logic.9" 0) ([]))
-    (Atom "rew_compose.u1" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
-    "eq_id_comm_l.u0" 0)) ((:) (Clause ((:) (Atom "Coq.Init.Logic.10" 0)
-    ([])) (Atom "eq_id_comm_l.u0" 0)) ((:) (Clause ((:) (Atom
+    ([])) (Atom "map_subst.u0" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Init.Logic.10" 0) ([])) (Atom "map_subst.u1" 0)) ((:) (Clause ((:)
+    (Atom "eq.u0" 0) ([])) (Atom "map_subst.u2" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Init.Logic.10" 0) ([])) (Atom "map_subst.u2" 0)) ((:) (Clause ((:)
+    (Atom "eq.u0" 0) ([])) (Atom "map_subst_map.u0" 0)) ((:) (Clause ((:)
+    (Atom "Coq.Init.Logic.11" 0) ([])) (Atom "map_subst_map.u0" 0)) ((:)
+    (Clause ((:) (Atom "Coq.Init.Logic.10" 0) ([])) (Atom "map_subst_map.u1"
+    0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "map_subst_map.u2" 0))
+    ((:) (Clause ((:) (Atom "Coq.Init.Logic.11" 0) ([])) (Atom
+    "map_subst_map.u2" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
+    "map_subst_map.u3" 0)) ((:) (Clause ((:) (Atom "Coq.Init.Logic.10" 0)
+    ([])) (Atom "map_subst_map.u3" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0)
+    ([])) (Atom "rew_swap.u0" 0)) ((:) (Clause ((:) (Atom "eq_rect_r.u0" 0)
+    ([])) (Atom "rew_swap.u0" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([]))
+    (Atom "rew_swap.u1" 0)) ((:) (Clause ((:) (Atom "Coq.Init.Logic.10" 0)
+    ([])) (Atom "rew_swap.u1" 0)) ((:) (Clause ((:) (Atom "eq_rect_r.u1" 0)
+    ([])) (Atom "rew_swap.u1" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([]))
+    (Atom "rew_compose.u0" 0)) ((:) (Clause ((:) (Atom "Coq.Init.Logic.11" 0)
+    ([])) (Atom "rew_compose.u0" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([]))
+    (Atom "rew_compose.u1" 0)) ((:) (Clause ((:) (Atom "Coq.Init.Logic.10" 0)
+    ([])) (Atom "rew_compose.u1" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([]))
+    (Atom "eq_id_comm_l.u0" 0)) ((:) (Clause ((:) (Atom "Coq.Init.Logic.11"
+    0) ([])) (Atom "eq_id_comm_l.u0" 0)) ((:) (Clause ((:) (Atom
     "eq_trans_sym_inv_l.u0" 0) ([])) (Atom "eq_id_comm_l.u0" 0)) ((:) (Clause
     ((:) (Atom "eq.u0" 0) ([])) (Atom "eq_id_comm_r.u0" 0)) ((:) (Clause ((:)
-    (Atom "Coq.Init.Logic.10" 0) ([])) (Atom "eq_id_comm_r.u0" 0)) ((:)
+    (Atom "Coq.Init.Logic.11" 0) ([])) (Atom "eq_id_comm_r.u0" 0)) ((:)
     (Clause ((:) (Atom "eq_trans_refl_l.u0" 0) ([])) (Atom "eq_id_comm_r.u0"
     0)) ((:) (Clause ((:) (Atom "eq_trans_sym_inv_l.u0" 0) ([])) (Atom
     "eq_id_comm_r.u0" 0)) ((:) (Clause ((:) (Atom "eq_id_comm_l.u0" 0) ([]))
     (Atom "eq_id_comm_r.u0" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([]))
     (Atom "eq_refl_map_distr.u0" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Init.Logic.10" 0) ([])) (Atom "eq_refl_map_distr.u0" 0)) ((:)
+    "Coq.Init.Logic.11" 0) ([])) (Atom "eq_refl_map_distr.u0" 0)) ((:)
     (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "eq_refl_map_distr.u1" 0)) ((:)
-    (Clause ((:) (Atom "Coq.Init.Logic.10" 0) ([])) (Atom
+    (Clause ((:) (Atom "Coq.Init.Logic.11" 0) ([])) (Atom
     "eq_refl_map_distr.u1" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
-    "eq_trans_map_distr.u0" 0)) ((:) (Clause ((:) (Atom "Coq.Init.Logic.10"
+    "eq_trans_map_distr.u0" 0)) ((:) (Clause ((:) (Atom "Coq.Init.Logic.11"
     0) ([])) (Atom "eq_trans_map_distr.u0" 0)) ((:) (Clause ((:) (Atom
     "eq.u0" 0) ([])) (Atom "eq_trans_map_distr.u1" 0)) ((:) (Clause ((:)
-    (Atom "Coq.Init.Logic.10" 0) ([])) (Atom "eq_trans_map_distr.u1" 0)) ((:)
+    (Atom "Coq.Init.Logic.11" 0) ([])) (Atom "eq_trans_map_distr.u1" 0)) ((:)
     (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "eq_sym_map_distr.u0" 0)) ((:)
-    (Clause ((:) (Atom "Coq.Init.Logic.10" 0) ([])) (Atom
+    (Clause ((:) (Atom "Coq.Init.Logic.11" 0) ([])) (Atom
     "eq_sym_map_distr.u0" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
-    "eq_sym_map_distr.u1" 0)) ((:) (Clause ((:) (Atom "Coq.Init.Logic.10" 0)
+    "eq_sym_map_distr.u1" 0)) ((:) (Clause ((:) (Atom "Coq.Init.Logic.11" 0)
     ([])) (Atom "eq_sym_map_distr.u1" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0)
     ([])) (Atom "eq_trans_sym_distr.u0" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Init.Logic.10" 0) ([])) (Atom "eq_trans_sym_distr.u0" 0)) ((:)
+    "Coq.Init.Logic.11" 0) ([])) (Atom "eq_trans_sym_distr.u0" 0)) ((:)
     (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "eq_trans_rew_distr.u0" 0))
-    ((:) (Clause ((:) (Atom "Coq.Init.Logic.10" 0) ([])) (Atom
+    ((:) (Clause ((:) (Atom "Coq.Init.Logic.11" 0) ([])) (Atom
     "eq_trans_rew_distr.u0" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([]))
     (Atom "eq_trans_rew_distr.u1" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Init.Logic.9" 0) ([])) (Atom "eq_trans_rew_distr.u1" 0)) ((:)
+    "Coq.Init.Logic.10" 0) ([])) (Atom "eq_trans_rew_distr.u1" 0)) ((:)
     (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "rew_const.u0" 0)) ((:) (Clause
     ((:) (Atom "eq.u0" 0) ([])) (Atom "rew_const.u1" 0)) ((:) (Clause ((:)
-    (Atom "Coq.Init.Logic.9" 0) ([])) (Atom "rew_const.u1" 0)) ((:) (Clause
+    (Atom "Coq.Init.Logic.10" 0) ([])) (Atom "rew_const.u1" 0)) ((:) (Clause
     ((:) (Atom "eq.u0" 0) ([])) (Atom "unique.u0" 0)) ((:) (Clause ((:) (Atom
     "eq.u0" 0) ([])) (Atom "uniqueness.u0" 0)) ((:) (Clause ((:) (Atom
     "ex.u0" 0) ([])) (Atom "unique_existence.u0" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Init.Logic.10" 0) ([])) (Atom "unique_existence.u0" 0)) ((:) (Clause
+    "Coq.Init.Logic.11" 0) ([])) (Atom "unique_existence.u0" 0)) ((:) (Clause
     ((:) (Atom "unique.u0" 0) ([])) (Atom "unique_existence.u0" 0)) ((:)
     (Clause ((:) (Atom "uniqueness.u0" 0) ([])) (Atom "unique_existence.u0"
     0)) ((:) (Clause ((:) (Atom "ex.u0" 0) ([])) (Atom
     "forall_exists_unique_domain_coincide.u0" 0)) ((:) (Clause ((:) (Atom
     "eq.u0" 0) ([])) (Atom "forall_exists_unique_domain_coincide.u0" 0)) ((:)
-    (Clause ((:) (Atom "Coq.Init.Logic.10" 0) ([])) (Atom
+    (Clause ((:) (Atom "Coq.Init.Logic.11" 0) ([])) (Atom
     "forall_exists_unique_domain_coincide.u0" 0)) ((:) (Clause ((:) (Atom
     "unique.u0" 0) ([])) (Atom "forall_exists_unique_domain_coincide.u0" 0))
     ((:) (Clause ((:) (Atom "ex.u0" 0) ([])) (Atom
@@ -3659,7 +3870,7 @@ cs4 =
     (Clause ((:) (Atom "BinNat.N.iter.u0" 0) ([])) (Atom
     "Nnat.Nat2N.inj_iter.u0" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([]))
     (Atom "Pnat.Pos2Nat.inj_iter.u0" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Init.Logic.10" 0) ([])) (Atom "Pnat.Pos2Nat.inj_iter.u0" 0)) ((:)
+    "Coq.Init.Logic.11" 0) ([])) (Atom "Pnat.Pos2Nat.inj_iter.u0" 0)) ((:)
     (Clause ((:) (Atom "BinPos.Pos.iter_succ.u0" 0) ([])) (Atom
     "Pnat.Pos2Nat.inj_iter.u0" 0)) ((:) (Clause ((:) (Atom
     "BinPos.Pos.iter.u0" 0) ([])) (Atom "Pnat.Pos2Nat.inj_iter.u0" 0)) ((:)
@@ -3769,11 +3980,11 @@ cs4 =
     0) ([])) (Atom "Coq.Init.Specif.78" 0)) ((:) (Clause ((:) (Atom
     "Coq.Init.Datatypes.27" 0) ([])) (Atom "Coq.Init.Specif.78" 0)) ((:)
     (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "projT1_eq.u0" 0)) ((:) (Clause
-    ((:) (Atom "Coq.Init.Logic.10" 0) ([])) (Atom "projT1_eq.u0" 0)) ((:)
+    ((:) (Atom "Coq.Init.Logic.11" 0) ([])) (Atom "projT1_eq.u0" 0)) ((:)
     (Clause ((:) (Atom "sigT.u0" 0) ([])) (Atom "projT1_eq.u0" 0)) ((:)
     (Clause ((:) (Atom "Coq.Init.Specif.22" 0) ([])) (Atom "projT1_eq.u0" 0))
     ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "projT1_eq.u1" 0)) ((:)
-    (Clause ((:) (Atom "Coq.Init.Logic.10" 0) ([])) (Atom "projT1_eq.u1" 0))
+    (Clause ((:) (Atom "Coq.Init.Logic.11" 0) ([])) (Atom "projT1_eq.u1" 0))
     ((:) (Clause ((:) (Atom "sigT.u1" 0) ([])) (Atom "projT1_eq.u1" 0)) ((:)
     (Clause ((:) (Atom "Coq.Init.Specif.23" 0) ([])) (Atom "projT1_eq.u1" 0))
     ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "projT2_eq.u0" 0)) ((:)
@@ -3781,7 +3992,7 @@ cs4 =
     (Clause ((:) (Atom "Coq.Init.Specif.22" 0) ([])) (Atom "projT2_eq.u0" 0))
     ((:) (Clause ((:) (Atom "projT1_eq.u0" 0) ([])) (Atom "projT2_eq.u0" 0))
     ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "projT2_eq.u1" 0)) ((:)
-    (Clause ((:) (Atom "Coq.Init.Logic.9" 0) ([])) (Atom "projT2_eq.u1" 0))
+    (Clause ((:) (Atom "Coq.Init.Logic.10" 0) ([])) (Atom "projT2_eq.u1" 0))
     ((:) (Clause ((:) (Atom "sigT.u1" 0) ([])) (Atom "projT2_eq.u1" 0)) ((:)
     (Clause ((:) (Atom "Coq.Init.Specif.23" 0) ([])) (Atom "projT2_eq.u1" 0))
     ((:) (Clause ((:) (Atom "projT1_eq.u1" 0) ([])) (Atom "projT2_eq.u1" 0))
@@ -3789,7 +4000,7 @@ cs4 =
     0)) ((:) (Clause ((:) (Atom "sigT.u0" 0) ([])) (Atom
     "eq_existT_uncurried.u0" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([]))
     (Atom "eq_existT_uncurried.u1" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Init.Logic.9" 0) ([])) (Atom "eq_existT_uncurried.u1" 0)) ((:)
+    "Coq.Init.Logic.10" 0) ([])) (Atom "eq_existT_uncurried.u1" 0)) ((:)
     (Clause ((:) (Atom "sigT.u1" 0) ([])) (Atom "eq_existT_uncurried.u1" 0))
     ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "eq_sigT_uncurried.u0" 0))
     ((:) (Clause ((:) (Atom "sigT.u0" 0) ([])) (Atom "eq_sigT_uncurried.u0"
@@ -3797,7 +4008,7 @@ cs4 =
     "eq_sigT_uncurried.u0" 0)) ((:) (Clause ((:) (Atom
     "eq_existT_uncurried.u0" 0) ([])) (Atom "eq_sigT_uncurried.u0" 0)) ((:)
     (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "eq_sigT_uncurried.u1" 0)) ((:)
-    (Clause ((:) (Atom "Coq.Init.Logic.9" 0) ([])) (Atom
+    (Clause ((:) (Atom "Coq.Init.Logic.10" 0) ([])) (Atom
     "eq_sigT_uncurried.u1" 0)) ((:) (Clause ((:) (Atom "sigT.u1" 0) ([]))
     (Atom "eq_sigT_uncurried.u1" 0)) ((:) (Clause ((:) (Atom
     "Coq.Init.Specif.23" 0) ([])) (Atom "eq_sigT_uncurried.u1" 0)) ((:)
@@ -3807,12 +4018,12 @@ cs4 =
     (Atom "eq_existT_curried.u0" 0)) ((:) (Clause ((:) (Atom
     "eq_sigT_uncurried.u0" 0) ([])) (Atom "eq_existT_curried.u0" 0)) ((:)
     (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "eq_existT_curried.u1" 0)) ((:)
-    (Clause ((:) (Atom "Coq.Init.Logic.9" 0) ([])) (Atom
+    (Clause ((:) (Atom "Coq.Init.Logic.10" 0) ([])) (Atom
     "eq_existT_curried.u1" 0)) ((:) (Clause ((:) (Atom "sigT.u1" 0) ([]))
     (Atom "eq_existT_curried.u1" 0)) ((:) (Clause ((:) (Atom
     "eq_sigT_uncurried.u1" 0) ([])) (Atom "eq_existT_curried.u1" 0)) ((:)
     (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "eq_existT_curried_map.u0" 0))
-    ((:) (Clause ((:) (Atom "Coq.Init.Logic.10" 0) ([])) (Atom
+    ((:) (Clause ((:) (Atom "Coq.Init.Logic.11" 0) ([])) (Atom
     "eq_existT_curried_map.u0" 0)) ((:) (Clause ((:) (Atom "f_equal_dep2.u0"
     0) ([])) (Atom "eq_existT_curried_map.u0" 0)) ((:) (Clause ((:) (Atom
     "sigT.u0" 0) ([])) (Atom "eq_existT_curried_map.u0" 0)) ((:) (Clause ((:)
@@ -3820,15 +4031,15 @@ cs4 =
     ((:) (Clause ((:) (Atom "eq_existT_curried.u0" 0) ([])) (Atom
     "eq_existT_curried_map.u0" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([]))
     (Atom "eq_existT_curried_map.u1" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Init.Logic.10" 0) ([])) (Atom "eq_existT_curried_map.u1" 0)) ((:)
+    "Coq.Init.Logic.11" 0) ([])) (Atom "eq_existT_curried_map.u1" 0)) ((:)
     (Clause ((:) (Atom "f_equal_dep2.u1" 0) ([])) (Atom
     "eq_existT_curried_map.u1" 0)) ((:) (Clause ((:) (Atom "sigT.u0" 0) ([]))
     (Atom "eq_existT_curried_map.u1" 0)) ((:) (Clause ((:) (Atom
     "eq_existT_curried.u0" 0) ([])) (Atom "eq_existT_curried_map.u1" 0)) ((:)
     (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "eq_existT_curried_map.u2" 0))
-    ((:) (Clause ((:) (Atom "Coq.Init.Logic.9" 0) ([])) (Atom
+    ((:) (Clause ((:) (Atom "Coq.Init.Logic.10" 0) ([])) (Atom
     "eq_existT_curried_map.u2" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Init.Logic.10" 0) ([])) (Atom "eq_existT_curried_map.u2" 0)) ((:)
+    "Coq.Init.Logic.11" 0) ([])) (Atom "eq_existT_curried_map.u2" 0)) ((:)
     (Clause ((:) (Atom "f_equal_dep2.u2" 0) ([])) (Atom
     "eq_existT_curried_map.u2" 0)) ((:) (Clause ((:) (Atom "sigT.u1" 0) ([]))
     (Atom "eq_existT_curried_map.u2" 0)) ((:) (Clause ((:) (Atom
@@ -3836,21 +4047,21 @@ cs4 =
     (Clause ((:) (Atom "eq_existT_curried.u1" 0) ([])) (Atom
     "eq_existT_curried_map.u2" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([]))
     (Atom "eq_existT_curried_map.u3" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Init.Logic.10" 0) ([])) (Atom "eq_existT_curried_map.u3" 0)) ((:)
+    "Coq.Init.Logic.11" 0) ([])) (Atom "eq_existT_curried_map.u3" 0)) ((:)
     (Clause ((:) (Atom "f_equal_dep2.u3" 0) ([])) (Atom
     "eq_existT_curried_map.u3" 0)) ((:) (Clause ((:) (Atom "sigT.u1" 0) ([]))
     (Atom "eq_existT_curried_map.u3" 0)) ((:) (Clause ((:) (Atom
     "eq_existT_curried.u1" 0) ([])) (Atom "eq_existT_curried_map.u3" 0)) ((:)
     (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "eq_existT_curried_trans.u0"
-    0)) ((:) (Clause ((:) (Atom "Coq.Init.Logic.10" 0) ([])) (Atom
+    0)) ((:) (Clause ((:) (Atom "Coq.Init.Logic.11" 0) ([])) (Atom
     "eq_existT_curried_trans.u0" 0)) ((:) (Clause ((:) (Atom
     "eq_trans_map.u0" 0) ([])) (Atom "eq_existT_curried_trans.u0" 0)) ((:)
     (Clause ((:) (Atom "sigT.u0" 0) ([])) (Atom "eq_existT_curried_trans.u0"
     0)) ((:) (Clause ((:) (Atom "eq_existT_curried.u0" 0) ([])) (Atom
     "eq_existT_curried_trans.u0" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([]))
     (Atom "eq_existT_curried_trans.u1" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Init.Logic.9" 0) ([])) (Atom "eq_existT_curried_trans.u1" 0)) ((:)
-    (Clause ((:) (Atom "Coq.Init.Logic.10" 0) ([])) (Atom
+    "Coq.Init.Logic.10" 0) ([])) (Atom "eq_existT_curried_trans.u1" 0)) ((:)
+    (Clause ((:) (Atom "Coq.Init.Logic.11" 0) ([])) (Atom
     "eq_existT_curried_trans.u1" 0)) ((:) (Clause ((:) (Atom
     "eq_trans_map.u1" 0) ([])) (Atom "eq_existT_curried_trans.u1" 0)) ((:)
     (Clause ((:) (Atom "sigT.u1" 0) ([])) (Atom "eq_existT_curried_trans.u1"
@@ -3861,7 +4072,7 @@ cs4 =
     "eq_existT_curried.u0" 0) ([])) (Atom "eq_existT_curried_congr.u0" 0))
     ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
     "eq_existT_curried_congr.u1" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Init.Logic.9" 0) ([])) (Atom "eq_existT_curried_congr.u1" 0)) ((:)
+    "Coq.Init.Logic.10" 0) ([])) (Atom "eq_existT_curried_congr.u1" 0)) ((:)
     (Clause ((:) (Atom "sigT.u1" 0) ([])) (Atom "eq_existT_curried_congr.u1"
     0)) ((:) (Clause ((:) (Atom "eq_existT_curried.u1" 0) ([])) (Atom
     "eq_existT_curried_congr.u1" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([]))
@@ -3869,7 +4080,7 @@ cs4 =
     "eq_sigT.u0" 0)) ((:) (Clause ((:) (Atom "Coq.Init.Specif.22" 0) ([]))
     (Atom "eq_sigT.u0" 0)) ((:) (Clause ((:) (Atom "eq_sigT_uncurried.u0" 0)
     ([])) (Atom "eq_sigT.u0" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([]))
-    (Atom "eq_sigT.u1" 0)) ((:) (Clause ((:) (Atom "Coq.Init.Logic.9" 0)
+    (Atom "eq_sigT.u1" 0)) ((:) (Clause ((:) (Atom "Coq.Init.Logic.10" 0)
     ([])) (Atom "eq_sigT.u1" 0)) ((:) (Clause ((:) (Atom "sigT.u1" 0) ([]))
     (Atom "eq_sigT.u1" 0)) ((:) (Clause ((:) (Atom "Coq.Init.Specif.23" 0)
     ([])) (Atom "eq_sigT.u1" 0)) ((:) (Clause ((:) (Atom
@@ -3879,43 +4090,43 @@ cs4 =
     "Coq.Init.Specif.22" 0) ([])) (Atom "eq_existT_l.u0" 0)) ((:) (Clause
     ((:) (Atom "eq_sigT.u0" 0) ([])) (Atom "eq_existT_l.u0" 0)) ((:) (Clause
     ((:) (Atom "eq.u0" 0) ([])) (Atom "eq_existT_l.u1" 0)) ((:) (Clause ((:)
-    (Atom "Coq.Init.Logic.9" 0) ([])) (Atom "eq_existT_l.u1" 0)) ((:) (Clause
-    ((:) (Atom "sigT.u1" 0) ([])) (Atom "eq_existT_l.u1" 0)) ((:) (Clause
-    ((:) (Atom "Coq.Init.Specif.23" 0) ([])) (Atom "eq_existT_l.u1" 0)) ((:)
-    (Clause ((:) (Atom "eq_sigT.u1" 0) ([])) (Atom "eq_existT_l.u1" 0)) ((:)
-    (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "eq_existT_r.u0" 0)) ((:)
-    (Clause ((:) (Atom "sigT.u0" 0) ([])) (Atom "eq_existT_r.u0" 0)) ((:)
-    (Clause ((:) (Atom "Coq.Init.Specif.22" 0) ([])) (Atom "eq_existT_r.u0"
-    0)) ((:) (Clause ((:) (Atom "eq_sigT.u0" 0) ([])) (Atom "eq_existT_r.u0"
-    0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "eq_existT_r.u1" 0))
-    ((:) (Clause ((:) (Atom "Coq.Init.Logic.9" 0) ([])) (Atom
-    "eq_existT_r.u1" 0)) ((:) (Clause ((:) (Atom "sigT.u1" 0) ([])) (Atom
-    "eq_existT_r.u1" 0)) ((:) (Clause ((:) (Atom "Coq.Init.Specif.23" 0)
-    ([])) (Atom "eq_existT_r.u1" 0)) ((:) (Clause ((:) (Atom "eq_sigT.u1" 0)
-    ([])) (Atom "eq_existT_r.u1" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([]))
-    (Atom "eq_sigT_hprop.u0" 0)) ((:) (Clause ((:) (Atom "sigT.u0" 0) ([]))
-    (Atom "eq_sigT_hprop.u0" 0)) ((:) (Clause ((:) (Atom "Coq.Init.Specif.22"
-    0) ([])) (Atom "eq_sigT_hprop.u0" 0)) ((:) (Clause ((:) (Atom
-    "eq_sigT.u0" 0) ([])) (Atom "eq_sigT_hprop.u0" 0)) ((:) (Clause ((:)
-    (Atom "eq.u0" 0) ([])) (Atom "eq_sigT_hprop.u1" 0)) ((:) (Clause ((:)
-    (Atom "Coq.Init.Logic.9" 0) ([])) (Atom "eq_sigT_hprop.u1" 0)) ((:)
-    (Clause ((:) (Atom "sigT.u1" 0) ([])) (Atom "eq_sigT_hprop.u1" 0)) ((:)
-    (Clause ((:) (Atom "Coq.Init.Specif.23" 0) ([])) (Atom "eq_sigT_hprop.u1"
-    0)) ((:) (Clause ((:) (Atom "eq_sigT.u1" 0) ([])) (Atom
-    "eq_sigT_hprop.u1" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
-    "eq_sigT_uncurried_iff.u0" 0)) ((:) (Clause ((:) (Atom "eq_ind_r.u0" 0)
-    ([])) (Atom "eq_sigT_uncurried_iff.u0" 0)) ((:) (Clause ((:) (Atom
-    "sigT.u0" 0) ([])) (Atom "eq_sigT_uncurried_iff.u0" 0)) ((:) (Clause ((:)
-    (Atom "Coq.Init.Specif.22" 0) ([])) (Atom "eq_sigT_uncurried_iff.u0" 0))
-    ((:) (Clause ((:) (Atom "eq_sigT_uncurried.u0" 0) ([])) (Atom
-    "eq_sigT_uncurried_iff.u0" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([]))
-    (Atom "eq_sigT_uncurried_iff.u1" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Init.Logic.9" 0) ([])) (Atom "eq_sigT_uncurried_iff.u1" 0)) ((:)
-    (Clause ((:) (Atom "eq_ind_r.u0" 0) ([])) (Atom
-    "eq_sigT_uncurried_iff.u1" 0)) ((:) (Clause ((:) (Atom "sigT.u1" 0) ([]))
-    (Atom "eq_sigT_uncurried_iff.u1" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Init.Specif.23" 0) ([])) (Atom "eq_sigT_uncurried_iff.u1" 0)) ((:)
-    (Clause ((:) (Atom "eq_sigT_uncurried.u1" 0) ([])) (Atom
+    (Atom "Coq.Init.Logic.10" 0) ([])) (Atom "eq_existT_l.u1" 0)) ((:)
+    (Clause ((:) (Atom "sigT.u1" 0) ([])) (Atom "eq_existT_l.u1" 0)) ((:)
+    (Clause ((:) (Atom "Coq.Init.Specif.23" 0) ([])) (Atom "eq_existT_l.u1"
+    0)) ((:) (Clause ((:) (Atom "eq_sigT.u1" 0) ([])) (Atom "eq_existT_l.u1"
+    0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "eq_existT_r.u0" 0))
+    ((:) (Clause ((:) (Atom "sigT.u0" 0) ([])) (Atom "eq_existT_r.u0" 0))
+    ((:) (Clause ((:) (Atom "Coq.Init.Specif.22" 0) ([])) (Atom
+    "eq_existT_r.u0" 0)) ((:) (Clause ((:) (Atom "eq_sigT.u0" 0) ([])) (Atom
+    "eq_existT_r.u0" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
+    "eq_existT_r.u1" 0)) ((:) (Clause ((:) (Atom "Coq.Init.Logic.10" 0) ([]))
+    (Atom "eq_existT_r.u1" 0)) ((:) (Clause ((:) (Atom "sigT.u1" 0) ([]))
+    (Atom "eq_existT_r.u1" 0)) ((:) (Clause ((:) (Atom "Coq.Init.Specif.23"
+    0) ([])) (Atom "eq_existT_r.u1" 0)) ((:) (Clause ((:) (Atom "eq_sigT.u1"
+    0) ([])) (Atom "eq_existT_r.u1" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0)
+    ([])) (Atom "eq_sigT_hprop.u0" 0)) ((:) (Clause ((:) (Atom "sigT.u0" 0)
+    ([])) (Atom "eq_sigT_hprop.u0" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Init.Specif.22" 0) ([])) (Atom "eq_sigT_hprop.u0" 0)) ((:) (Clause
+    ((:) (Atom "eq_sigT.u0" 0) ([])) (Atom "eq_sigT_hprop.u0" 0)) ((:)
+    (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "eq_sigT_hprop.u1" 0)) ((:)
+    (Clause ((:) (Atom "Coq.Init.Logic.10" 0) ([])) (Atom "eq_sigT_hprop.u1"
+    0)) ((:) (Clause ((:) (Atom "sigT.u1" 0) ([])) (Atom "eq_sigT_hprop.u1"
+    0)) ((:) (Clause ((:) (Atom "Coq.Init.Specif.23" 0) ([])) (Atom
+    "eq_sigT_hprop.u1" 0)) ((:) (Clause ((:) (Atom "eq_sigT.u1" 0) ([]))
+    (Atom "eq_sigT_hprop.u1" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([]))
+    (Atom "eq_sigT_uncurried_iff.u0" 0)) ((:) (Clause ((:) (Atom
+    "eq_ind_r.u0" 0) ([])) (Atom "eq_sigT_uncurried_iff.u0" 0)) ((:) (Clause
+    ((:) (Atom "sigT.u0" 0) ([])) (Atom "eq_sigT_uncurried_iff.u0" 0)) ((:)
+    (Clause ((:) (Atom "Coq.Init.Specif.22" 0) ([])) (Atom
+    "eq_sigT_uncurried_iff.u0" 0)) ((:) (Clause ((:) (Atom
+    "eq_sigT_uncurried.u0" 0) ([])) (Atom "eq_sigT_uncurried_iff.u0" 0)) ((:)
+    (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "eq_sigT_uncurried_iff.u1" 0))
+    ((:) (Clause ((:) (Atom "Coq.Init.Logic.10" 0) ([])) (Atom
+    "eq_sigT_uncurried_iff.u1" 0)) ((:) (Clause ((:) (Atom "eq_ind_r.u0" 0)
+    ([])) (Atom "eq_sigT_uncurried_iff.u1" 0)) ((:) (Clause ((:) (Atom
+    "sigT.u1" 0) ([])) (Atom "eq_sigT_uncurried_iff.u1" 0)) ((:) (Clause ((:)
+    (Atom "Coq.Init.Specif.23" 0) ([])) (Atom "eq_sigT_uncurried_iff.u1" 0))
+    ((:) (Clause ((:) (Atom "eq_sigT_uncurried.u1" 0) ([])) (Atom
     "eq_sigT_uncurried_iff.u1" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([]))
     (Atom "eq_sigT_rect.u0" 0)) ((:) (Clause ((:) (Atom "sigT.u0" 0) ([]))
     (Atom "eq_sigT_rect.u0" 0)) ((:) (Clause ((:) (Atom "Coq.Init.Specif.22"
@@ -3924,7 +4135,7 @@ cs4 =
     (Atom "projT2_eq.u0" 0) ([])) (Atom "eq_sigT_rect.u0" 0)) ((:) (Clause
     ((:) (Atom "eq_sigT.u0" 0) ([])) (Atom "eq_sigT_rect.u0" 0)) ((:) (Clause
     ((:) (Atom "eq.u0" 0) ([])) (Atom "eq_sigT_rect.u1" 0)) ((:) (Clause ((:)
-    (Atom "Coq.Init.Logic.9" 0) ([])) (Atom "eq_sigT_rect.u1" 0)) ((:)
+    (Atom "Coq.Init.Logic.10" 0) ([])) (Atom "eq_sigT_rect.u1" 0)) ((:)
     (Clause ((:) (Atom "sigT.u1" 0) ([])) (Atom "eq_sigT_rect.u1" 0)) ((:)
     (Clause ((:) (Atom "Coq.Init.Specif.23" 0) ([])) (Atom "eq_sigT_rect.u1"
     0)) ((:) (Clause ((:) (Atom "projT1_eq.u1" 0) ([])) (Atom
@@ -3952,7 +4163,7 @@ cs4 =
     "eq_sigT_rect_existT_l.u1" 0)) ((:) (Clause ((:) (Atom "eq_sigT_rect.u0"
     0) ([])) (Atom "eq_sigT_rect_existT_l.u1" 0)) ((:) (Clause ((:) (Atom
     "eq.u0" 0) ([])) (Atom "eq_sigT_rect_existT_l.u2" 0)) ((:) (Clause ((:)
-    (Atom "Coq.Init.Logic.9" 0) ([])) (Atom "eq_sigT_rect_existT_l.u2" 0))
+    (Atom "Coq.Init.Logic.10" 0) ([])) (Atom "eq_sigT_rect_existT_l.u2" 0))
     ((:) (Clause ((:) (Atom "sigT.u1" 0) ([])) (Atom
     "eq_sigT_rect_existT_l.u2" 0)) ((:) (Clause ((:) (Atom
     "Coq.Init.Specif.23" 0) ([])) (Atom "eq_sigT_rect_existT_l.u2" 0)) ((:)
@@ -3968,7 +4179,7 @@ cs4 =
     "eq_sigT_rect_existT_r.u1" 0)) ((:) (Clause ((:) (Atom "eq_sigT_rect.u0"
     0) ([])) (Atom "eq_sigT_rect_existT_r.u1" 0)) ((:) (Clause ((:) (Atom
     "eq.u0" 0) ([])) (Atom "eq_sigT_rect_existT_r.u2" 0)) ((:) (Clause ((:)
-    (Atom "Coq.Init.Logic.9" 0) ([])) (Atom "eq_sigT_rect_existT_r.u2" 0))
+    (Atom "Coq.Init.Logic.10" 0) ([])) (Atom "eq_sigT_rect_existT_r.u2" 0))
     ((:) (Clause ((:) (Atom "sigT.u1" 0) ([])) (Atom
     "eq_sigT_rect_existT_r.u2" 0)) ((:) (Clause ((:) (Atom
     "Coq.Init.Specif.23" 0) ([])) (Atom "eq_sigT_rect_existT_r.u2" 0)) ((:)
@@ -3982,7 +4193,7 @@ cs4 =
     "eq_sigT_rect_existT.u1" 0)) ((:) (Clause ((:) (Atom "eq_sigT_rect.u0" 0)
     ([])) (Atom "eq_sigT_rect_existT.u1" 0)) ((:) (Clause ((:) (Atom "eq.u0"
     0) ([])) (Atom "eq_sigT_rect_existT.u2" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Init.Logic.9" 0) ([])) (Atom "eq_sigT_rect_existT.u2" 0)) ((:)
+    "Coq.Init.Logic.10" 0) ([])) (Atom "eq_sigT_rect_existT.u2" 0)) ((:)
     (Clause ((:) (Atom "sigT.u1" 0) ([])) (Atom "eq_sigT_rect_existT.u2" 0))
     ((:) (Clause ((:) (Atom "eq_existT_curried.u1" 0) ([])) (Atom
     "eq_sigT_rect_existT.u2" 0)) ((:) (Clause ((:) (Atom "eq_sigT_rect.u1" 0)
@@ -3994,7 +4205,7 @@ cs4 =
     ([])) (Atom "eq_sigT_rect_uncurried.u0" 0)) ((:) (Clause ((:) (Atom
     "eq_sigT_rect.u0" 0) ([])) (Atom "eq_sigT_rect_uncurried.u0" 0)) ((:)
     (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "eq_sigT_rect_uncurried.u1" 0))
-    ((:) (Clause ((:) (Atom "Coq.Init.Logic.9" 0) ([])) (Atom
+    ((:) (Clause ((:) (Atom "Coq.Init.Logic.10" 0) ([])) (Atom
     "eq_sigT_rect_uncurried.u1" 0)) ((:) (Clause ((:) (Atom "sigT.u1" 0)
     ([])) (Atom "eq_sigT_rect_uncurried.u1" 0)) ((:) (Clause ((:) (Atom
     "Coq.Init.Specif.23" 0) ([])) (Atom "eq_sigT_rect_uncurried.u1" 0)) ((:)
@@ -4019,13 +4230,13 @@ cs4 =
     "eq_sigT_ind_uncurried.u1" 0)) ((:) (Clause ((:) (Atom
     "eq_sigT_rec_uncurried.u1" 0) ([])) (Atom "eq_sigT_ind_uncurried.u1" 0))
     ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "eq_sigT_hprop_iff.u0" 0))
-    ((:) (Clause ((:) (Atom "Coq.Init.Logic.10" 0) ([])) (Atom
+    ((:) (Clause ((:) (Atom "Coq.Init.Logic.11" 0) ([])) (Atom
     "eq_sigT_hprop_iff.u0" 0)) ((:) (Clause ((:) (Atom "sigT.u0" 0) ([]))
     (Atom "eq_sigT_hprop_iff.u0" 0)) ((:) (Clause ((:) (Atom
     "Coq.Init.Specif.22" 0) ([])) (Atom "eq_sigT_hprop_iff.u0" 0)) ((:)
     (Clause ((:) (Atom "eq_sigT_hprop.u0" 0) ([])) (Atom
     "eq_sigT_hprop_iff.u0" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
-    "eq_sigT_hprop_iff.u1" 0)) ((:) (Clause ((:) (Atom "Coq.Init.Logic.10" 0)
+    "eq_sigT_hprop_iff.u1" 0)) ((:) (Clause ((:) (Atom "Coq.Init.Logic.11" 0)
     ([])) (Atom "eq_sigT_hprop_iff.u1" 0)) ((:) (Clause ((:) (Atom "sigT.u1"
     0) ([])) (Atom "eq_sigT_hprop_iff.u1" 0)) ((:) (Clause ((:) (Atom
     "Coq.Init.Specif.23" 0) ([])) (Atom "eq_sigT_hprop_iff.u1" 0)) ((:)
@@ -4037,8 +4248,8 @@ cs4 =
     "Coq.Init.Specif.22" 0) ([])) (Atom "eq_sigT_nondep.u0" 0)) ((:) (Clause
     ((:) (Atom "eq_sigT.u0" 0) ([])) (Atom "eq_sigT_nondep.u0" 0)) ((:)
     (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "eq_sigT_nondep.u1" 0)) ((:)
-    (Clause ((:) (Atom "Coq.Init.Logic.9" 0) ([])) (Atom "eq_sigT_nondep.u1"
-    0)) ((:) (Clause ((:) (Atom "Coq.Init.Logic.10" 0) ([])) (Atom
+    (Clause ((:) (Atom "Coq.Init.Logic.10" 0) ([])) (Atom "eq_sigT_nondep.u1"
+    0)) ((:) (Clause ((:) (Atom "Coq.Init.Logic.11" 0) ([])) (Atom
     "eq_sigT_nondep.u1" 0)) ((:) (Clause ((:) (Atom "rew_const.u1" 0) ([]))
     (Atom "eq_sigT_nondep.u1" 0)) ((:) (Clause ((:) (Atom "sigT.u1" 0) ([]))
     (Atom "eq_sigT_nondep.u1" 0)) ((:) (Clause ((:) (Atom
@@ -4046,11 +4257,11 @@ cs4 =
     ((:) (Atom "eq_sigT.u1" 0) ([])) (Atom "eq_sigT_nondep.u1" 0)) ((:)
     (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "rew_sigT.u0" 0)) ((:) (Clause
     ((:) (Atom "eq.u0" 0) ([])) (Atom "rew_sigT.u1" 0)) ((:) (Clause ((:)
-    (Atom "Coq.Init.Logic.9" 0) ([])) (Atom "rew_sigT.u1" 0)) ((:) (Clause
+    (Atom "Coq.Init.Logic.10" 0) ([])) (Atom "rew_sigT.u1" 0)) ((:) (Clause
     ((:) (Atom "sigT.u0" 0) ([])) (Atom "rew_sigT.u1" 0)) ((:) (Clause ((:)
     (Atom "Coq.Init.Specif.22" 0) ([])) (Atom "rew_sigT.u1" 0)) ((:) (Clause
     ((:) (Atom "eq.u0" 0) ([])) (Atom "proj1_sig_eq.u0" 0)) ((:) (Clause ((:)
-    (Atom "Coq.Init.Logic.10" 0) ([])) (Atom "proj1_sig_eq.u0" 0)) ((:)
+    (Atom "Coq.Init.Logic.11" 0) ([])) (Atom "proj1_sig_eq.u0" 0)) ((:)
     (Clause ((:) (Atom "sig.u0" 0) ([])) (Atom "proj1_sig_eq.u0" 0)) ((:)
     (Clause ((:) (Atom "Coq.Init.Specif.16" 0) ([])) (Atom "proj1_sig_eq.u0"
     0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "proj2_sig_eq.u0" 0))
@@ -4139,29 +4350,29 @@ cs4 =
     ((:) (Clause ((:) (Atom "eq_sig_uncurried.u0" 0) ([])) (Atom
     "eq_sig_uncurried_iff.u0" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([]))
     (Atom "eq_sig_hprop_iff.u0" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Init.Logic.10" 0) ([])) (Atom "eq_sig_hprop_iff.u0" 0)) ((:) (Clause
+    "Coq.Init.Logic.11" 0) ([])) (Atom "eq_sig_hprop_iff.u0" 0)) ((:) (Clause
     ((:) (Atom "sig.u0" 0) ([])) (Atom "eq_sig_hprop_iff.u0" 0)) ((:) (Clause
     ((:) (Atom "Coq.Init.Specif.16" 0) ([])) (Atom "eq_sig_hprop_iff.u0" 0))
     ((:) (Clause ((:) (Atom "eq_sig_hprop.u0" 0) ([])) (Atom
     "eq_sig_hprop_iff.u0" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
     "rew_sig.u0" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
-    "rew_sig.u1" 0)) ((:) (Clause ((:) (Atom "Coq.Init.Logic.9" 0) ([]))
+    "rew_sig.u1" 0)) ((:) (Clause ((:) (Atom "Coq.Init.Logic.10" 0) ([]))
     (Atom "rew_sig.u1" 0)) ((:) (Clause ((:) (Atom "sig.u0" 0) ([])) (Atom
     "rew_sig.u1" 0)) ((:) (Clause ((:) (Atom "Coq.Init.Specif.16" 0) ([]))
     (Atom "rew_sig.u1" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
-    "sigT_of_sigT2_eq.u0" 0)) ((:) (Clause ((:) (Atom "Coq.Init.Logic.10" 0)
+    "sigT_of_sigT2_eq.u0" 0)) ((:) (Clause ((:) (Atom "Coq.Init.Logic.11" 0)
     ([])) (Atom "sigT_of_sigT2_eq.u0" 0)) ((:) (Clause ((:) (Atom "sigT.u0"
     0) ([])) (Atom "sigT_of_sigT2_eq.u0" 0)) ((:) (Clause ((:) (Atom
     "sigT2.u0" 0) ([])) (Atom "sigT_of_sigT2_eq.u0" 0)) ((:) (Clause ((:)
     (Atom "sigT_of_sigT2.u0" 0) ([])) (Atom "sigT_of_sigT2_eq.u0" 0)) ((:)
     (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "sigT_of_sigT2_eq.u1" 0)) ((:)
-    (Clause ((:) (Atom "Coq.Init.Logic.10" 0) ([])) (Atom
+    (Clause ((:) (Atom "Coq.Init.Logic.11" 0) ([])) (Atom
     "sigT_of_sigT2_eq.u1" 0)) ((:) (Clause ((:) (Atom "sigT.u1" 0) ([]))
     (Atom "sigT_of_sigT2_eq.u1" 0)) ((:) (Clause ((:) (Atom "sigT2.u1" 0)
     ([])) (Atom "sigT_of_sigT2_eq.u1" 0)) ((:) (Clause ((:) (Atom
     "sigT_of_sigT2.u1" 0) ([])) (Atom "sigT_of_sigT2_eq.u1" 0)) ((:) (Clause
     ((:) (Atom "eq.u0" 0) ([])) (Atom "sigT_of_sigT2_eq.u2" 0)) ((:) (Clause
-    ((:) (Atom "Coq.Init.Logic.10" 0) ([])) (Atom "sigT_of_sigT2_eq.u2" 0))
+    ((:) (Atom "Coq.Init.Logic.11" 0) ([])) (Atom "sigT_of_sigT2_eq.u2" 0))
     ((:) (Clause ((:) (Atom "sigT2.u2" 0) ([])) (Atom "sigT_of_sigT2_eq.u2"
     0)) ((:) (Clause ((:) (Atom "sigT_of_sigT2.u2" 0) ([])) (Atom
     "sigT_of_sigT2_eq.u2" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
@@ -4192,7 +4403,7 @@ cs4 =
     "projT2_of_sigT2_eq.u0" 0)) ((:) (Clause ((:) (Atom
     "projT1_of_sigT2_eq.u0" 0) ([])) (Atom "projT2_of_sigT2_eq.u0" 0)) ((:)
     (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "projT2_of_sigT2_eq.u1" 0))
-    ((:) (Clause ((:) (Atom "Coq.Init.Logic.9" 0) ([])) (Atom
+    ((:) (Clause ((:) (Atom "Coq.Init.Logic.10" 0) ([])) (Atom
     "projT2_of_sigT2_eq.u1" 0)) ((:) (Clause ((:) (Atom "sigT2.u1" 0) ([]))
     (Atom "projT2_of_sigT2_eq.u1" 0)) ((:) (Clause ((:) (Atom
     "Coq.Init.Specif.23" 0) ([])) (Atom "projT2_of_sigT2_eq.u1" 0)) ((:)
@@ -4218,7 +4429,7 @@ cs4 =
     "Coq.Init.Specif.30" 0) ([])) (Atom "projT3_eq.u1" 0)) ((:) (Clause ((:)
     (Atom "projT1_of_sigT2_eq.u1" 0) ([])) (Atom "projT3_eq.u1" 0)) ((:)
     (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "projT3_eq.u2" 0)) ((:) (Clause
-    ((:) (Atom "Coq.Init.Logic.9" 0) ([])) (Atom "projT3_eq.u2" 0)) ((:)
+    ((:) (Atom "Coq.Init.Logic.10" 0) ([])) (Atom "projT3_eq.u2" 0)) ((:)
     (Clause ((:) (Atom "sigT2.u2" 0) ([])) (Atom "projT3_eq.u2" 0)) ((:)
     (Clause ((:) (Atom "sigT_of_sigT2.u2" 0) ([])) (Atom "projT3_eq.u2" 0))
     ((:) (Clause ((:) (Atom "Coq.Init.Specif.30" 0) ([])) (Atom
@@ -4227,10 +4438,10 @@ cs4 =
     (Atom "eq_existT2_uncurried.u0" 0)) ((:) (Clause ((:) (Atom "sigT2.u0" 0)
     ([])) (Atom "eq_existT2_uncurried.u0" 0)) ((:) (Clause ((:) (Atom "eq.u0"
     0) ([])) (Atom "eq_existT2_uncurried.u1" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Init.Logic.9" 0) ([])) (Atom "eq_existT2_uncurried.u1" 0)) ((:)
+    "Coq.Init.Logic.10" 0) ([])) (Atom "eq_existT2_uncurried.u1" 0)) ((:)
     (Clause ((:) (Atom "sigT2.u1" 0) ([])) (Atom "eq_existT2_uncurried.u1"
     0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
-    "eq_existT2_uncurried.u2" 0)) ((:) (Clause ((:) (Atom "Coq.Init.Logic.9"
+    "eq_existT2_uncurried.u2" 0)) ((:) (Clause ((:) (Atom "Coq.Init.Logic.10"
     0) ([])) (Atom "eq_existT2_uncurried.u2" 0)) ((:) (Clause ((:) (Atom
     "sigT2.u2" 0) ([])) (Atom "eq_existT2_uncurried.u2" 0)) ((:) (Clause ((:)
     (Atom "eq.u0" 0) ([])) (Atom "eq_sigT2_uncurried.u0" 0)) ((:) (Clause
@@ -4242,7 +4453,7 @@ cs4 =
     (Clause ((:) (Atom "eq_existT2_uncurried.u0" 0) ([])) (Atom
     "eq_sigT2_uncurried.u0" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([]))
     (Atom "eq_sigT2_uncurried.u1" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Init.Logic.9" 0) ([])) (Atom "eq_sigT2_uncurried.u1" 0)) ((:)
+    "Coq.Init.Logic.10" 0) ([])) (Atom "eq_sigT2_uncurried.u1" 0)) ((:)
     (Clause ((:) (Atom "sigT2.u1" 0) ([])) (Atom "eq_sigT2_uncurried.u1" 0))
     ((:) (Clause ((:) (Atom "Coq.Init.Specif.23" 0) ([])) (Atom
     "eq_sigT2_uncurried.u1" 0)) ((:) (Clause ((:) (Atom "sigT_of_sigT2.u1" 0)
@@ -4251,7 +4462,7 @@ cs4 =
     (Clause ((:) (Atom "eq_existT2_uncurried.u1" 0) ([])) (Atom
     "eq_sigT2_uncurried.u1" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([]))
     (Atom "eq_sigT2_uncurried.u2" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Init.Logic.9" 0) ([])) (Atom "eq_sigT2_uncurried.u2" 0)) ((:)
+    "Coq.Init.Logic.10" 0) ([])) (Atom "eq_sigT2_uncurried.u2" 0)) ((:)
     (Clause ((:) (Atom "sigT2.u2" 0) ([])) (Atom "eq_sigT2_uncurried.u2" 0))
     ((:) (Clause ((:) (Atom "sigT_of_sigT2.u2" 0) ([])) (Atom
     "eq_sigT2_uncurried.u2" 0)) ((:) (Clause ((:) (Atom "Coq.Init.Specif.30"
@@ -4262,12 +4473,12 @@ cs4 =
     0)) ((:) (Clause ((:) (Atom "eq_sigT2_uncurried.u0" 0) ([])) (Atom
     "eq_existT2_curried.u0" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([]))
     (Atom "eq_existT2_curried.u1" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Init.Logic.9" 0) ([])) (Atom "eq_existT2_curried.u1" 0)) ((:)
+    "Coq.Init.Logic.10" 0) ([])) (Atom "eq_existT2_curried.u1" 0)) ((:)
     (Clause ((:) (Atom "sigT2.u1" 0) ([])) (Atom "eq_existT2_curried.u1" 0))
     ((:) (Clause ((:) (Atom "eq_sigT2_uncurried.u1" 0) ([])) (Atom
     "eq_existT2_curried.u1" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([]))
     (Atom "eq_existT2_curried.u2" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Init.Logic.9" 0) ([])) (Atom "eq_existT2_curried.u2" 0)) ((:)
+    "Coq.Init.Logic.10" 0) ([])) (Atom "eq_existT2_curried.u2" 0)) ((:)
     (Clause ((:) (Atom "sigT2.u2" 0) ([])) (Atom "eq_existT2_curried.u2" 0))
     ((:) (Clause ((:) (Atom "eq_sigT2_uncurried.u2" 0) ([])) (Atom
     "eq_existT2_curried.u2" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([]))
@@ -4278,14 +4489,14 @@ cs4 =
     "Coq.Init.Specif.29" 0) ([])) (Atom "eq_sigT2.u0" 0)) ((:) (Clause ((:)
     (Atom "eq_sigT2_uncurried.u0" 0) ([])) (Atom "eq_sigT2.u0" 0)) ((:)
     (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "eq_sigT2.u1" 0)) ((:) (Clause
-    ((:) (Atom "Coq.Init.Logic.9" 0) ([])) (Atom "eq_sigT2.u1" 0)) ((:)
+    ((:) (Atom "Coq.Init.Logic.10" 0) ([])) (Atom "eq_sigT2.u1" 0)) ((:)
     (Clause ((:) (Atom "sigT2.u1" 0) ([])) (Atom "eq_sigT2.u1" 0)) ((:)
     (Clause ((:) (Atom "Coq.Init.Specif.23" 0) ([])) (Atom "eq_sigT2.u1" 0))
     ((:) (Clause ((:) (Atom "sigT_of_sigT2.u1" 0) ([])) (Atom "eq_sigT2.u1"
     0)) ((:) (Clause ((:) (Atom "Coq.Init.Specif.30" 0) ([])) (Atom
     "eq_sigT2.u1" 0)) ((:) (Clause ((:) (Atom "eq_sigT2_uncurried.u1" 0)
     ([])) (Atom "eq_sigT2.u1" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([]))
-    (Atom "eq_sigT2.u2" 0)) ((:) (Clause ((:) (Atom "Coq.Init.Logic.9" 0)
+    (Atom "eq_sigT2.u2" 0)) ((:) (Clause ((:) (Atom "Coq.Init.Logic.10" 0)
     ([])) (Atom "eq_sigT2.u2" 0)) ((:) (Clause ((:) (Atom "sigT2.u2" 0) ([]))
     (Atom "eq_sigT2.u2" 0)) ((:) (Clause ((:) (Atom "sigT_of_sigT2.u2" 0)
     ([])) (Atom "eq_sigT2.u2" 0)) ((:) (Clause ((:) (Atom
@@ -4299,16 +4510,16 @@ cs4 =
     ([])) (Atom "eq_existT2_l.u0" 0)) ((:) (Clause ((:) (Atom "eq_sigT2.u0"
     0) ([])) (Atom "eq_existT2_l.u0" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0)
     ([])) (Atom "eq_existT2_l.u1" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Init.Logic.9" 0) ([])) (Atom "eq_existT2_l.u1" 0)) ((:) (Clause ((:)
-    (Atom "sigT2.u1" 0) ([])) (Atom "eq_existT2_l.u1" 0)) ((:) (Clause ((:)
-    (Atom "Coq.Init.Specif.23" 0) ([])) (Atom "eq_existT2_l.u1" 0)) ((:)
+    "Coq.Init.Logic.10" 0) ([])) (Atom "eq_existT2_l.u1" 0)) ((:) (Clause
+    ((:) (Atom "sigT2.u1" 0) ([])) (Atom "eq_existT2_l.u1" 0)) ((:) (Clause
+    ((:) (Atom "Coq.Init.Specif.23" 0) ([])) (Atom "eq_existT2_l.u1" 0)) ((:)
     (Clause ((:) (Atom "sigT_of_sigT2.u1" 0) ([])) (Atom "eq_existT2_l.u1"
     0)) ((:) (Clause ((:) (Atom "Coq.Init.Specif.30" 0) ([])) (Atom
     "eq_existT2_l.u1" 0)) ((:) (Clause ((:) (Atom "eq_sigT2.u1" 0) ([]))
     (Atom "eq_existT2_l.u1" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([]))
-    (Atom "eq_existT2_l.u2" 0)) ((:) (Clause ((:) (Atom "Coq.Init.Logic.9" 0)
-    ([])) (Atom "eq_existT2_l.u2" 0)) ((:) (Clause ((:) (Atom "sigT2.u2" 0)
-    ([])) (Atom "eq_existT2_l.u2" 0)) ((:) (Clause ((:) (Atom
+    (Atom "eq_existT2_l.u2" 0)) ((:) (Clause ((:) (Atom "Coq.Init.Logic.10"
+    0) ([])) (Atom "eq_existT2_l.u2" 0)) ((:) (Clause ((:) (Atom "sigT2.u2"
+    0) ([])) (Atom "eq_existT2_l.u2" 0)) ((:) (Clause ((:) (Atom
     "sigT_of_sigT2.u2" 0) ([])) (Atom "eq_existT2_l.u2" 0)) ((:) (Clause ((:)
     (Atom "Coq.Init.Specif.30" 0) ([])) (Atom "eq_existT2_l.u2" 0)) ((:)
     (Clause ((:) (Atom "eq_sigT2.u2" 0) ([])) (Atom "eq_existT2_l.u2" 0))
@@ -4320,16 +4531,16 @@ cs4 =
     ([])) (Atom "eq_existT2_r.u0" 0)) ((:) (Clause ((:) (Atom "eq_sigT2.u0"
     0) ([])) (Atom "eq_existT2_r.u0" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0)
     ([])) (Atom "eq_existT2_r.u1" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Init.Logic.9" 0) ([])) (Atom "eq_existT2_r.u1" 0)) ((:) (Clause ((:)
-    (Atom "sigT2.u1" 0) ([])) (Atom "eq_existT2_r.u1" 0)) ((:) (Clause ((:)
-    (Atom "Coq.Init.Specif.23" 0) ([])) (Atom "eq_existT2_r.u1" 0)) ((:)
+    "Coq.Init.Logic.10" 0) ([])) (Atom "eq_existT2_r.u1" 0)) ((:) (Clause
+    ((:) (Atom "sigT2.u1" 0) ([])) (Atom "eq_existT2_r.u1" 0)) ((:) (Clause
+    ((:) (Atom "Coq.Init.Specif.23" 0) ([])) (Atom "eq_existT2_r.u1" 0)) ((:)
     (Clause ((:) (Atom "sigT_of_sigT2.u1" 0) ([])) (Atom "eq_existT2_r.u1"
     0)) ((:) (Clause ((:) (Atom "Coq.Init.Specif.30" 0) ([])) (Atom
     "eq_existT2_r.u1" 0)) ((:) (Clause ((:) (Atom "eq_sigT2.u1" 0) ([]))
     (Atom "eq_existT2_r.u1" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([]))
-    (Atom "eq_existT2_r.u2" 0)) ((:) (Clause ((:) (Atom "Coq.Init.Logic.9" 0)
-    ([])) (Atom "eq_existT2_r.u2" 0)) ((:) (Clause ((:) (Atom "sigT2.u2" 0)
-    ([])) (Atom "eq_existT2_r.u2" 0)) ((:) (Clause ((:) (Atom
+    (Atom "eq_existT2_r.u2" 0)) ((:) (Clause ((:) (Atom "Coq.Init.Logic.10"
+    0) ([])) (Atom "eq_existT2_r.u2" 0)) ((:) (Clause ((:) (Atom "sigT2.u2"
+    0) ([])) (Atom "eq_existT2_r.u2" 0)) ((:) (Clause ((:) (Atom
     "sigT_of_sigT2.u2" 0) ([])) (Atom "eq_existT2_r.u2" 0)) ((:) (Clause ((:)
     (Atom "Coq.Init.Specif.30" 0) ([])) (Atom "eq_existT2_r.u2" 0)) ((:)
     (Clause ((:) (Atom "eq_sigT2.u2" 0) ([])) (Atom "eq_existT2_r.u2" 0))
@@ -4344,7 +4555,7 @@ cs4 =
     (Clause ((:) (Atom "projT2_eq.u0" 0) ([])) (Atom "eq_sigT2_hprop.u0" 0))
     ((:) (Clause ((:) (Atom "eq_sigT2.u0" 0) ([])) (Atom "eq_sigT2_hprop.u0"
     0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "eq_sigT2_hprop.u1"
-    0)) ((:) (Clause ((:) (Atom "Coq.Init.Logic.9" 0) ([])) (Atom
+    0)) ((:) (Clause ((:) (Atom "Coq.Init.Logic.10" 0) ([])) (Atom
     "eq_sigT2_hprop.u1" 0)) ((:) (Clause ((:) (Atom "sigT2.u2" 0) ([])) (Atom
     "eq_sigT2_hprop.u1" 0)) ((:) (Clause ((:) (Atom "sigT_of_sigT2.u2" 0)
     ([])) (Atom "eq_sigT2_hprop.u1" 0)) ((:) (Clause ((:) (Atom
@@ -4372,7 +4583,7 @@ cs4 =
     "eq_sigT2_uncurried.u0" 0) ([])) (Atom "eq_sigT2_uncurried_iff.u0" 0))
     ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
     "eq_sigT2_uncurried_iff.u1" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Init.Logic.9" 0) ([])) (Atom "eq_sigT2_uncurried_iff.u1" 0)) ((:)
+    "Coq.Init.Logic.10" 0) ([])) (Atom "eq_sigT2_uncurried_iff.u1" 0)) ((:)
     (Clause ((:) (Atom "eq_ind_r.u0" 0) ([])) (Atom
     "eq_sigT2_uncurried_iff.u1" 0)) ((:) (Clause ((:) (Atom "sigT2.u1" 0)
     ([])) (Atom "eq_sigT2_uncurried_iff.u1" 0)) ((:) (Clause ((:) (Atom
@@ -4383,7 +4594,7 @@ cs4 =
     (Clause ((:) (Atom "eq_sigT2_uncurried.u1" 0) ([])) (Atom
     "eq_sigT2_uncurried_iff.u1" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([]))
     (Atom "eq_sigT2_uncurried_iff.u2" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Init.Logic.9" 0) ([])) (Atom "eq_sigT2_uncurried_iff.u2" 0)) ((:)
+    "Coq.Init.Logic.10" 0) ([])) (Atom "eq_sigT2_uncurried_iff.u2" 0)) ((:)
     (Clause ((:) (Atom "eq_ind_r.u0" 0) ([])) (Atom
     "eq_sigT2_uncurried_iff.u2" 0)) ((:) (Clause ((:) (Atom "sigT2.u2" 0)
     ([])) (Atom "eq_sigT2_uncurried_iff.u2" 0)) ((:) (Clause ((:) (Atom
@@ -4403,7 +4614,7 @@ cs4 =
     (Atom "eq_sigT2_rect.u0" 0)) ((:) (Clause ((:) (Atom "eq_sigT2.u0" 0)
     ([])) (Atom "eq_sigT2_rect.u0" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0)
     ([])) (Atom "eq_sigT2_rect.u1" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Init.Logic.9" 0) ([])) (Atom "eq_sigT2_rect.u1" 0)) ((:) (Clause
+    "Coq.Init.Logic.10" 0) ([])) (Atom "eq_sigT2_rect.u1" 0)) ((:) (Clause
     ((:) (Atom "sigT2.u1" 0) ([])) (Atom "eq_sigT2_rect.u1" 0)) ((:) (Clause
     ((:) (Atom "Coq.Init.Specif.23" 0) ([])) (Atom "eq_sigT2_rect.u1" 0))
     ((:) (Clause ((:) (Atom "sigT_of_sigT2.u1" 0) ([])) (Atom
@@ -4415,7 +4626,7 @@ cs4 =
     (Atom "eq_sigT2_rect.u1" 0)) ((:) (Clause ((:) (Atom "eq_sigT2.u1" 0)
     ([])) (Atom "eq_sigT2_rect.u1" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0)
     ([])) (Atom "eq_sigT2_rect.u2" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Init.Logic.9" 0) ([])) (Atom "eq_sigT2_rect.u2" 0)) ((:) (Clause
+    "Coq.Init.Logic.10" 0) ([])) (Atom "eq_sigT2_rect.u2" 0)) ((:) (Clause
     ((:) (Atom "sigT2.u2" 0) ([])) (Atom "eq_sigT2_rect.u2" 0)) ((:) (Clause
     ((:) (Atom "sigT_of_sigT2.u2" 0) ([])) (Atom "eq_sigT2_rect.u2" 0)) ((:)
     (Clause ((:) (Atom "Coq.Init.Specif.30" 0) ([])) (Atom "eq_sigT2_rect.u2"
@@ -4455,7 +4666,7 @@ cs4 =
     "eq_sigT2_rect_existT2_l.u1" 0)) ((:) (Clause ((:) (Atom
     "eq_sigT2_rect.u0" 0) ([])) (Atom "eq_sigT2_rect_existT2_l.u1" 0)) ((:)
     (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "eq_sigT2_rect_existT2_l.u2"
-    0)) ((:) (Clause ((:) (Atom "Coq.Init.Logic.9" 0) ([])) (Atom
+    0)) ((:) (Clause ((:) (Atom "Coq.Init.Logic.10" 0) ([])) (Atom
     "eq_sigT2_rect_existT2_l.u2" 0)) ((:) (Clause ((:) (Atom "sigT2.u1" 0)
     ([])) (Atom "eq_sigT2_rect_existT2_l.u2" 0)) ((:) (Clause ((:) (Atom
     "Coq.Init.Specif.23" 0) ([])) (Atom "eq_sigT2_rect_existT2_l.u2" 0)) ((:)
@@ -4466,7 +4677,7 @@ cs4 =
     "eq_sigT2_rect_existT2_l.u2" 0)) ((:) (Clause ((:) (Atom
     "eq_sigT2_rect.u1" 0) ([])) (Atom "eq_sigT2_rect_existT2_l.u2" 0)) ((:)
     (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "eq_sigT2_rect_existT2_l.u3"
-    0)) ((:) (Clause ((:) (Atom "Coq.Init.Logic.9" 0) ([])) (Atom
+    0)) ((:) (Clause ((:) (Atom "Coq.Init.Logic.10" 0) ([])) (Atom
     "eq_sigT2_rect_existT2_l.u3" 0)) ((:) (Clause ((:) (Atom "sigT2.u2" 0)
     ([])) (Atom "eq_sigT2_rect_existT2_l.u3" 0)) ((:) (Clause ((:) (Atom
     "sigT_of_sigT2.u2" 0) ([])) (Atom "eq_sigT2_rect_existT2_l.u3" 0)) ((:)
@@ -4487,7 +4698,7 @@ cs4 =
     "eq_sigT2_rect_existT2_r.u1" 0)) ((:) (Clause ((:) (Atom
     "eq_sigT2_rect.u0" 0) ([])) (Atom "eq_sigT2_rect_existT2_r.u1" 0)) ((:)
     (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "eq_sigT2_rect_existT2_r.u2"
-    0)) ((:) (Clause ((:) (Atom "Coq.Init.Logic.9" 0) ([])) (Atom
+    0)) ((:) (Clause ((:) (Atom "Coq.Init.Logic.10" 0) ([])) (Atom
     "eq_sigT2_rect_existT2_r.u2" 0)) ((:) (Clause ((:) (Atom "sigT2.u1" 0)
     ([])) (Atom "eq_sigT2_rect_existT2_r.u2" 0)) ((:) (Clause ((:) (Atom
     "Coq.Init.Specif.23" 0) ([])) (Atom "eq_sigT2_rect_existT2_r.u2" 0)) ((:)
@@ -4498,7 +4709,7 @@ cs4 =
     "eq_sigT2_rect_existT2_r.u2" 0)) ((:) (Clause ((:) (Atom
     "eq_sigT2_rect.u1" 0) ([])) (Atom "eq_sigT2_rect_existT2_r.u2" 0)) ((:)
     (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "eq_sigT2_rect_existT2_r.u3"
-    0)) ((:) (Clause ((:) (Atom "Coq.Init.Logic.9" 0) ([])) (Atom
+    0)) ((:) (Clause ((:) (Atom "Coq.Init.Logic.10" 0) ([])) (Atom
     "eq_sigT2_rect_existT2_r.u3" 0)) ((:) (Clause ((:) (Atom "sigT2.u2" 0)
     ([])) (Atom "eq_sigT2_rect_existT2_r.u3" 0)) ((:) (Clause ((:) (Atom
     "sigT_of_sigT2.u2" 0) ([])) (Atom "eq_sigT2_rect_existT2_r.u3" 0)) ((:)
@@ -4515,13 +4726,13 @@ cs4 =
     ((:) (Clause ((:) (Atom "eq_sigT2_rect.u0" 0) ([])) (Atom
     "eq_sigT2_rect_existT2.u1" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([]))
     (Atom "eq_sigT2_rect_existT2.u2" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Init.Logic.9" 0) ([])) (Atom "eq_sigT2_rect_existT2.u2" 0)) ((:)
+    "Coq.Init.Logic.10" 0) ([])) (Atom "eq_sigT2_rect_existT2.u2" 0)) ((:)
     (Clause ((:) (Atom "sigT2.u1" 0) ([])) (Atom "eq_sigT2_rect_existT2.u2"
     0)) ((:) (Clause ((:) (Atom "eq_existT2_curried.u1" 0) ([])) (Atom
     "eq_sigT2_rect_existT2.u2" 0)) ((:) (Clause ((:) (Atom "eq_sigT2_rect.u1"
     0) ([])) (Atom "eq_sigT2_rect_existT2.u2" 0)) ((:) (Clause ((:) (Atom
     "eq.u0" 0) ([])) (Atom "eq_sigT2_rect_existT2.u3" 0)) ((:) (Clause ((:)
-    (Atom "Coq.Init.Logic.9" 0) ([])) (Atom "eq_sigT2_rect_existT2.u3" 0))
+    (Atom "Coq.Init.Logic.10" 0) ([])) (Atom "eq_sigT2_rect_existT2.u3" 0))
     ((:) (Clause ((:) (Atom "sigT2.u2" 0) ([])) (Atom
     "eq_sigT2_rect_existT2.u3" 0)) ((:) (Clause ((:) (Atom
     "eq_existT2_curried.u2" 0) ([])) (Atom "eq_sigT2_rect_existT2.u3" 0))
@@ -4537,7 +4748,7 @@ cs4 =
     "eq_sigT2_rect_uncurried.u0" 0)) ((:) (Clause ((:) (Atom
     "eq_sigT2_rect.u0" 0) ([])) (Atom "eq_sigT2_rect_uncurried.u0" 0)) ((:)
     (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "eq_sigT2_rect_uncurried.u1"
-    0)) ((:) (Clause ((:) (Atom "Coq.Init.Logic.9" 0) ([])) (Atom
+    0)) ((:) (Clause ((:) (Atom "Coq.Init.Logic.10" 0) ([])) (Atom
     "eq_sigT2_rect_uncurried.u1" 0)) ((:) (Clause ((:) (Atom "sigT2.u1" 0)
     ([])) (Atom "eq_sigT2_rect_uncurried.u1" 0)) ((:) (Clause ((:) (Atom
     "Coq.Init.Specif.23" 0) ([])) (Atom "eq_sigT2_rect_uncurried.u1" 0)) ((:)
@@ -4548,7 +4759,7 @@ cs4 =
     "eq_sigT2_rect_uncurried.u1" 0)) ((:) (Clause ((:) (Atom
     "eq_sigT2_rect.u1" 0) ([])) (Atom "eq_sigT2_rect_uncurried.u1" 0)) ((:)
     (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "eq_sigT2_rect_uncurried.u2"
-    0)) ((:) (Clause ((:) (Atom "Coq.Init.Logic.9" 0) ([])) (Atom
+    0)) ((:) (Clause ((:) (Atom "Coq.Init.Logic.10" 0) ([])) (Atom
     "eq_sigT2_rect_uncurried.u2" 0)) ((:) (Clause ((:) (Atom "sigT2.u2" 0)
     ([])) (Atom "eq_sigT2_rect_uncurried.u2" 0)) ((:) (Clause ((:) (Atom
     "sigT_of_sigT2.u2" 0) ([])) (Atom "eq_sigT2_rect_uncurried.u2" 0)) ((:)
@@ -4582,7 +4793,7 @@ cs4 =
     ([])) (Atom "eq_sigT2_ind_uncurried.u2" 0)) ((:) (Clause ((:) (Atom
     "eq_sigT2_rec_uncurried.u2" 0) ([])) (Atom "eq_sigT2_ind_uncurried.u2"
     0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
-    "eq_sigT2_hprop_iff.u0" 0)) ((:) (Clause ((:) (Atom "Coq.Init.Logic.10"
+    "eq_sigT2_hprop_iff.u0" 0)) ((:) (Clause ((:) (Atom "Coq.Init.Logic.11"
     0) ([])) (Atom "eq_sigT2_hprop_iff.u0" 0)) ((:) (Clause ((:) (Atom
     "sigT.u0" 0) ([])) (Atom "eq_sigT2_hprop_iff.u0" 0)) ((:) (Clause ((:)
     (Atom "sigT2.u0" 0) ([])) (Atom "eq_sigT2_hprop_iff.u0" 0)) ((:) (Clause
@@ -4590,13 +4801,13 @@ cs4 =
     ((:) (Clause ((:) (Atom "eq_sigT2_hprop.u0" 0) ([])) (Atom
     "eq_sigT2_hprop_iff.u0" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([]))
     (Atom "eq_sigT2_hprop_iff.u1" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Init.Logic.10" 0) ([])) (Atom "eq_sigT2_hprop_iff.u1" 0)) ((:)
+    "Coq.Init.Logic.11" 0) ([])) (Atom "eq_sigT2_hprop_iff.u1" 0)) ((:)
     (Clause ((:) (Atom "sigT2.u2" 0) ([])) (Atom "eq_sigT2_hprop_iff.u1" 0))
     ((:) (Clause ((:) (Atom "sigT_of_sigT2.u2" 0) ([])) (Atom
     "eq_sigT2_hprop_iff.u1" 0)) ((:) (Clause ((:) (Atom "eq_sigT2_hprop.u1"
     0) ([])) (Atom "eq_sigT2_hprop_iff.u1" 0)) ((:) (Clause ((:) (Atom
     "eq.u0" 0) ([])) (Atom "eq_sigT2_hprop_iff.u2" 0)) ((:) (Clause ((:)
-    (Atom "Coq.Init.Logic.10" 0) ([])) (Atom "eq_sigT2_hprop_iff.u2" 0)) ((:)
+    (Atom "Coq.Init.Logic.11" 0) ([])) (Atom "eq_sigT2_hprop_iff.u2" 0)) ((:)
     (Clause ((:) (Atom "sigT.u1" 0) ([])) (Atom "eq_sigT2_hprop_iff.u2" 0))
     ((:) (Clause ((:) (Atom "sigT2.u1" 0) ([])) (Atom "eq_sigT2_hprop_iff.u2"
     0)) ((:) (Clause ((:) (Atom "sigT_of_sigT2.u1" 0) ([])) (Atom
@@ -4611,8 +4822,8 @@ cs4 =
     ([])) (Atom "eq_sigT2_nondep.u0" 0)) ((:) (Clause ((:) (Atom
     "eq_sigT2.u0" 0) ([])) (Atom "eq_sigT2_nondep.u0" 0)) ((:) (Clause ((:)
     (Atom "eq.u0" 0) ([])) (Atom "eq_sigT2_nondep.u1" 0)) ((:) (Clause ((:)
-    (Atom "Coq.Init.Logic.9" 0) ([])) (Atom "eq_sigT2_nondep.u1" 0)) ((:)
-    (Clause ((:) (Atom "Coq.Init.Logic.10" 0) ([])) (Atom
+    (Atom "Coq.Init.Logic.10" 0) ([])) (Atom "eq_sigT2_nondep.u1" 0)) ((:)
+    (Clause ((:) (Atom "Coq.Init.Logic.11" 0) ([])) (Atom
     "eq_sigT2_nondep.u1" 0)) ((:) (Clause ((:) (Atom "rew_const.u1" 0) ([]))
     (Atom "eq_sigT2_nondep.u1" 0)) ((:) (Clause ((:) (Atom "sigT2.u1" 0)
     ([])) (Atom "eq_sigT2_nondep.u1" 0)) ((:) (Clause ((:) (Atom
@@ -4621,24 +4832,24 @@ cs4 =
     ((:) (Clause ((:) (Atom "Coq.Init.Specif.30" 0) ([])) (Atom
     "eq_sigT2_nondep.u1" 0)) ((:) (Clause ((:) (Atom "eq_sigT2.u1" 0) ([]))
     (Atom "eq_sigT2_nondep.u1" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([]))
-    (Atom "eq_sigT2_nondep.u2" 0)) ((:) (Clause ((:) (Atom "Coq.Init.Logic.9"
-    0) ([])) (Atom "eq_sigT2_nondep.u2" 0)) ((:) (Clause ((:) (Atom
+    (Atom "eq_sigT2_nondep.u2" 0)) ((:) (Clause ((:) (Atom
     "Coq.Init.Logic.10" 0) ([])) (Atom "eq_sigT2_nondep.u2" 0)) ((:) (Clause
-    ((:) (Atom "rew_const.u1" 0) ([])) (Atom "eq_sigT2_nondep.u2" 0)) ((:)
-    (Clause ((:) (Atom "sigT2.u2" 0) ([])) (Atom "eq_sigT2_nondep.u2" 0))
-    ((:) (Clause ((:) (Atom "sigT_of_sigT2.u2" 0) ([])) (Atom
-    "eq_sigT2_nondep.u2" 0)) ((:) (Clause ((:) (Atom "Coq.Init.Specif.30" 0)
-    ([])) (Atom "eq_sigT2_nondep.u2" 0)) ((:) (Clause ((:) (Atom
-    "eq_sigT2.u2" 0) ([])) (Atom "eq_sigT2_nondep.u2" 0)) ((:) (Clause ((:)
-    (Atom "eq.u0" 0) ([])) (Atom "rew_sigT2.u0" 0)) ((:) (Clause ((:) (Atom
-    "eq.u0" 0) ([])) (Atom "rew_sigT2.u1" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Init.Logic.9" 0) ([])) (Atom "rew_sigT2.u1" 0)) ((:) (Clause ((:)
-    (Atom "sigT2.u0" 0) ([])) (Atom "rew_sigT2.u1" 0)) ((:) (Clause ((:)
+    ((:) (Atom "Coq.Init.Logic.11" 0) ([])) (Atom "eq_sigT2_nondep.u2" 0))
+    ((:) (Clause ((:) (Atom "rew_const.u1" 0) ([])) (Atom
+    "eq_sigT2_nondep.u2" 0)) ((:) (Clause ((:) (Atom "sigT2.u2" 0) ([]))
+    (Atom "eq_sigT2_nondep.u2" 0)) ((:) (Clause ((:) (Atom "sigT_of_sigT2.u2"
+    0) ([])) (Atom "eq_sigT2_nondep.u2" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Init.Specif.30" 0) ([])) (Atom "eq_sigT2_nondep.u2" 0)) ((:) (Clause
+    ((:) (Atom "eq_sigT2.u2" 0) ([])) (Atom "eq_sigT2_nondep.u2" 0)) ((:)
+    (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "rew_sigT2.u0" 0)) ((:) (Clause
+    ((:) (Atom "eq.u0" 0) ([])) (Atom "rew_sigT2.u1" 0)) ((:) (Clause ((:)
+    (Atom "Coq.Init.Logic.10" 0) ([])) (Atom "rew_sigT2.u1" 0)) ((:) (Clause
+    ((:) (Atom "sigT2.u0" 0) ([])) (Atom "rew_sigT2.u1" 0)) ((:) (Clause ((:)
     (Atom "Coq.Init.Specif.22" 0) ([])) (Atom "rew_sigT2.u1" 0)) ((:) (Clause
     ((:) (Atom "sigT_of_sigT2.u0" 0) ([])) (Atom "rew_sigT2.u1" 0)) ((:)
     (Clause ((:) (Atom "Coq.Init.Specif.29" 0) ([])) (Atom "rew_sigT2.u1" 0))
     ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "sig_of_sig2_eq.u0" 0))
-    ((:) (Clause ((:) (Atom "Coq.Init.Logic.10" 0) ([])) (Atom
+    ((:) (Clause ((:) (Atom "Coq.Init.Logic.11" 0) ([])) (Atom
     "sig_of_sig2_eq.u0" 0)) ((:) (Clause ((:) (Atom "sig.u0" 0) ([])) (Atom
     "sig_of_sig2_eq.u0" 0)) ((:) (Clause ((:) (Atom "sig2.u0" 0) ([])) (Atom
     "sig_of_sig2_eq.u0" 0)) ((:) (Clause ((:) (Atom "sig_of_sig2.u0" 0) ([]))
@@ -4779,7 +4990,7 @@ cs4 =
     "eq_sig2_ind_uncurried.u0" 0)) ((:) (Clause ((:) (Atom
     "eq_sig2_rec_uncurried.u0" 0) ([])) (Atom "eq_sig2_ind_uncurried.u0" 0))
     ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "eq_sig2_hprop_iff.u0" 0))
-    ((:) (Clause ((:) (Atom "Coq.Init.Logic.10" 0) ([])) (Atom
+    ((:) (Clause ((:) (Atom "Coq.Init.Logic.11" 0) ([])) (Atom
     "eq_sig2_hprop_iff.u0" 0)) ((:) (Clause ((:) (Atom "sig.u0" 0) ([]))
     (Atom "eq_sig2_hprop_iff.u0" 0)) ((:) (Clause ((:) (Atom "sig2.u0" 0)
     ([])) (Atom "eq_sig2_hprop_iff.u0" 0)) ((:) (Clause ((:) (Atom
@@ -4795,38 +5006,46 @@ cs4 =
     ((:) (Atom "eq_sig2.u0" 0) ([])) (Atom "eq_sig2_nondep.u0" 0)) ((:)
     (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "rew_sig2.u0" 0)) ((:) (Clause
     ((:) (Atom "eq.u0" 0) ([])) (Atom "rew_sig2.u1" 0)) ((:) (Clause ((:)
-    (Atom "Coq.Init.Logic.9" 0) ([])) (Atom "rew_sig2.u1" 0)) ((:) (Clause
+    (Atom "Coq.Init.Logic.10" 0) ([])) (Atom "rew_sig2.u1" 0)) ((:) (Clause
     ((:) (Atom "sig2.u0" 0) ([])) (Atom "rew_sig2.u1" 0)) ((:) (Clause ((:)
     (Atom "Coq.Init.Specif.16" 0) ([])) (Atom "rew_sig2.u1" 0)) ((:) (Clause
     ((:) (Atom "sig_of_sig2.u0" 0) ([])) (Atom "rew_sig2.u1" 0)) ((:) (Clause
     ((:) (Atom "Coq.Init.Specif.21" 0) ([])) (Atom "rew_sig2.u1" 0)) ((:)
     (Clause ((:) (Atom "option.u0" 0) ([])) (Atom "Coq.Init.Specif.771" 0))
-    ((:) (Clause ((:) (Atom "well_founded_induction_type.u0" 0) ([])) (Atom
-    "Wf_Z.natlike_rec2.u0" 0)) ((:) (Clause ((:) (Atom "eq_rect_r.u1" 0)
-    ([])) (Atom "Wf_Z.natlike_rec2.u0" 0)) ((:) (Clause ((:) (Atom
-    "well_founded_induction_type.u0" 0) ([])) (Atom "Wf_Z.natlike_rec3.u0"
-    0)) ((:) (Clause ((:) (Atom "well_founded_induction_type.u0" 0) ([]))
-    (Atom "Wf_Z.Zlt_0_rec.u0" 0)) ((:) (Clause ((:) (Atom "Coq.Init.Logic.2"
-    0) ([])) (Atom "Wf_Z.Zlt_0_rec.u0" 0)) ((:) (Clause ((:) (Atom
-    "Wf_Z.Zlt_0_rec.u0" 0) ([])) (Atom "Wf_Z.Z_lt_rec.u0" 0)) ((:) (Clause
-    ((:) (Atom "Coq.Init.Logic.9" 0) ([])) (Atom
-    "Wf_Z.Zlt_lower_bound_rec.u0" 0)) ((:) (Clause ((:) (Atom
-    "Wf_Z.Zlt_0_rec.u0" 0) ([])) (Atom "Wf_Z.Zlt_lower_bound_rec.u0" 0)) ((:)
-    (Clause ((:) (Atom "Coq.Init.Wf.1" 0) ([])) (Atom "Coq.Arith.Wf_nat.1"
+    ((:) (Clause ((:) (Atom "eq_rect_r.u1" 0) ([])) (Atom
+    "Wf_Z.natlike_rec2.u0" 0)) ((:) (Clause ((:) (Atom "induction_ltof2.u0"
+    0) ([])) (Atom "Wf_Z.natlike_rec2.u0" 0)) ((:) (Clause ((:) (Atom
+    "induction_ltof2.u0" 0) ([])) (Atom "Wf_Z.natlike_rec3.u0" 0)) ((:)
+    (Clause ((:) (Atom "Coq.Init.Logic.2" 0) ([])) (Atom "Wf_Z.Zlt_0_rec.u0"
+    0)) ((:) (Clause ((:) (Atom "induction_ltof2.u0" 0) ([])) (Atom
+    "Wf_Z.Zlt_0_rec.u0" 0)) ((:) (Clause ((:) (Atom "Wf_Z.Zlt_0_rec.u0" 0)
+    ([])) (Atom "Wf_Z.Z_lt_rec.u0" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Init.Logic.10" 0) ([])) (Atom "Wf_Z.Zlt_lower_bound_rec.u0" 0)) ((:)
+    (Clause ((:) (Atom "Wf_Z.Zlt_0_rec.u0" 0) ([])) (Atom
+    "Wf_Z.Zlt_lower_bound_rec.u0" 0)) ((:) (Clause ((:) (Atom "Coq.Init.Wf.1"
+    0) ([])) (Atom "Coq.Arith.Wf_nat.1" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Init.Datatypes.11" 0) ([])) (Atom "Coq.Arith.Wf_nat.1" 0)) ((:)
+    (Clause ((:) (Atom "Coq.Init.Logic.2" 0) ([])) (Atom "induction_ltof1.u0"
     0)) ((:) (Clause ((:) (Atom "Coq.Init.Datatypes.11" 0) ([])) (Atom
-    "Coq.Arith.Wf_nat.1" 0)) ((:) (Clause ((:) (Atom "Coq.Init.Logic.2" 0)
-    ([])) (Atom "induction_ltof1.u0" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Init.Datatypes.11" 0) ([])) (Atom "induction_ltof1.u0" 0)) ((:)
-    (Clause ((:) (Atom "induction_ltof1.u0" 0) ([])) (Atom "lt_wf_rect1.u0"
-    0)) ((:) (Clause ((:) (Atom "well_founded_induction_type.u0" 0) ([]))
-    (Atom "lt_wf_rect.u0" 0)) ((:) (Clause ((:) (Atom "lt_wf_rect.u0" 0)
-    ([])) (Atom "lt_wf_double_rect.u0" 0)) ((:) (Clause ((:) (Atom "ex.u0" 0)
+    "induction_ltof1.u0" 0)) ((:) (Clause ((:) (Atom "induction_ltof1.u0" 0)
+    ([])) (Atom "induction_gtof1.u0" 0)) ((:) (Clause ((:) (Atom
+    "induction_gtof1.u0" 0) ([])) (Atom "induction_ltof1.u0" 0)) ((:) (Clause
+    ((:) (Atom "Coq.Init.Wf.2" 0) ([])) (Atom "induction_ltof2.u0" 0)) ((:)
+    (Clause ((:) (Atom "induction_ltof2.u0" 0) ([])) (Atom
+    "induction_gtof2.u0" 0)) ((:) (Clause ((:) (Atom "induction_gtof2.u0" 0)
+    ([])) (Atom "induction_ltof2.u0" 0)) ((:) (Clause ((:) (Atom
+    "induction_ltof1.u0" 0) ([])) (Atom "lt_wf_rect1.u0" 0)) ((:) (Clause
+    ((:) (Atom "induction_ltof2.u0" 0) ([])) (Atom "lt_wf_rect.u0" 0)) ((:)
+    (Clause ((:) (Atom "lt_wf_rect.u0" 0) ([])) (Atom "gt_wf_rect.u0" 0))
+    ((:) (Clause ((:) (Atom "gt_wf_rect.u0" 0) ([])) (Atom "lt_wf_rect.u0"
+    0)) ((:) (Clause ((:) (Atom "lt_wf_rect.u0" 0) ([])) (Atom
+    "lt_wf_double_rect.u0" 0)) ((:) (Clause ((:) (Atom "ex.u0" 0) ([])) (Atom
+    "has_unique_least_element.u0" 0)) ((:) (Clause ((:) (Atom "unique.u0" 0)
     ([])) (Atom "has_unique_least_element.u0" 0)) ((:) (Clause ((:) (Atom
-    "unique.u0" 0) ([])) (Atom "has_unique_least_element.u0" 0)) ((:) (Clause
-    ((:) (Atom "eq.u0" 0) ([])) (Atom "Zmisc.iter_nat_of_Z.u0" 0)) ((:)
-    (Clause ((:) (Atom "Pnat.Pos2Nat.inj_iter.u0" 0) ([])) (Atom
-    "Zmisc.iter_nat_of_Z.u0" 0)) ((:) (Clause ((:) (Atom "BinInt.Z.iter.u0"
-    0) ([])) (Atom "Zmisc.iter_nat_of_Z.u0" 0)) ((:) (Clause ((:) (Atom
+    "eq.u0" 0) ([])) (Atom "Zmisc.iter_nat_of_Z.u0" 0)) ((:) (Clause ((:)
+    (Atom "Pnat.Pos2Nat.inj_iter.u0" 0) ([])) (Atom "Zmisc.iter_nat_of_Z.u0"
+    0)) ((:) (Clause ((:) (Atom "BinInt.Z.iter.u0" 0) ([])) (Atom
+    "Zmisc.iter_nat_of_Z.u0" 0)) ((:) (Clause ((:) (Atom
     "Coq.Init.Datatypes.11" 0) ([])) (Atom "Zmisc.iter_nat_of_Z.u0" 0)) ((:)
     (Clause ((:) (Atom "Coq.Numbers.BinNums.1" 0) ([])) (Atom
     "BinNat.N.binary_rect.u0" 0)) ((:) (Clause ((:) (Atom
@@ -4866,7 +5085,7 @@ cs4 =
     "BinNat.N.iter_swap_gen.u1" 0)) ((:) (Clause ((:) (Atom
     "BinNat.N.iter.u0" 0) ([])) (Atom "BinNat.N.iter_swap_gen.u1" 0)) ((:)
     (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "BinNat.N.iter_swap.u0" 0))
-    ((:) (Clause ((:) (Atom "Coq.Init.Logic.10" 0) ([])) (Atom
+    ((:) (Clause ((:) (Atom "Coq.Init.Logic.11" 0) ([])) (Atom
     "BinNat.N.iter_swap.u0" 0)) ((:) (Clause ((:) (Atom "eq_ind_r.u0" 0)
     ([])) (Atom "BinNat.N.iter_swap.u0" 0)) ((:) (Clause ((:) (Atom
     "BinNat.N.iter_swap_gen.u0" 0) ([])) (Atom "BinNat.N.iter_swap.u0" 0))
@@ -4900,9 +5119,12 @@ cs4 =
     0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
     "BinPos.Pos.peano_rect_base.u0" 0)) ((:) (Clause ((:) (Atom
     "BinPos.Pos.peano_rect.u0" 0) ([])) (Atom "BinPos.Pos.peano_rect_base.u0"
-    0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
-    "BinPos.Pos.peano_equiv.u0" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Init.Logic.10" 0) ([])) (Atom "BinPos.Pos.peano_equiv.u0" 0)) ((:)
+    0)) ((:) (Clause ((:) (Atom "Coq.Logic.EqdepFacts.82" 0) ([])) (Atom
+    "BinPos.Pos.eq_dep_eq_positive.u0" 0)) ((:) (Clause ((:) (Atom
+    "BinPos.Pos.eq_dep_eq_positive.u0" 0) ([])) (Atom
+    "Coq.Logic.EqdepFacts.82" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([]))
+    (Atom "BinPos.Pos.peano_equiv.u0" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Init.Logic.11" 0) ([])) (Atom "BinPos.Pos.peano_equiv.u0" 0)) ((:)
     (Clause ((:) (Atom "BinPos.Pos.peano_rect.u0" 0) ([])) (Atom
     "BinPos.Pos.peano_equiv.u0" 0)) ((:) (Clause ((:) (Atom
     "BinPos.Pos.peano_rect_succ.u0" 0) ([])) (Atom
@@ -4915,7 +5137,7 @@ cs4 =
     (Clause ((:) (Atom "BinPos.Pos.iter.u0" 0) ([])) (Atom
     "BinPos.Pos.iter_swap_gen.u1" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0)
     ([])) (Atom "BinPos.Pos.iter_swap.u0" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Init.Logic.10" 0) ([])) (Atom "BinPos.Pos.iter_swap.u0" 0)) ((:)
+    "Coq.Init.Logic.11" 0) ([])) (Atom "BinPos.Pos.iter_swap.u0" 0)) ((:)
     (Clause ((:) (Atom "eq_ind_r.u0" 0) ([])) (Atom "BinPos.Pos.iter_swap.u0"
     0)) ((:) (Clause ((:) (Atom "BinPos.Pos.iter_swap_gen.u0" 0) ([])) (Atom
     "BinPos.Pos.iter_swap.u0" 0)) ((:) (Clause ((:) (Atom
@@ -4947,20 +5169,127 @@ cs4 =
     ([])) (Atom "BinPos.Pos.iter_op_succ.u0" 0)) ((:) (Clause ((:) (Atom
     "eq_ind_r.u0" 0) ([])) (Atom "BinPos.Pos.iter_op_succ.u0" 0)) ((:)
     (Clause ((:) (Atom "BinPos.Pos.iter_op.u0" 0) ([])) (Atom
-    "BinPos.Pos.iter_op_succ.u0" 0)) ((:) (Clause ((:) (Atom "Fin.case0.u1"
-    0) ([])) (Atom "Fin.case0.u0" 0)) ((:) (Clause ((:) (Atom "Fin.caseS'.u0"
-    0) ([])) (Atom "Fin.caseS.u0" 0)) ((:) (Clause ((:) (Atom "Fin.case0.u0"
-    0) ([])) (Atom "Fin.rectS.u0" 0)) ((:) (Clause ((:) (Atom "Fin.rectS.u1"
-    0) ([])) (Atom "Fin.rectS.u0" 0)) ((:) (Clause ((:) (Atom "Fin.caseS'.u0"
-    0) ([])) (Atom "Fin.rect2.u0" 0)) ((:) (Clause ((:) (Atom
+    "BinPos.Pos.iter_op_succ.u0" 0)) ((:) (Clause ((:) (Atom
     "Coq.Relations.Relation_Definitions.1" 0) ([])) (Atom
-    "Setoid.Seq_refl.u0" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Relations.Relation_Definitions.1" 0) ([])) (Atom "Setoid.Seq_sym.u0"
-    0)) ((:) (Clause ((:) (Atom "Coq.Relations.Relation_Definitions.1" 0)
-    ([])) (Atom "Setoid.Seq_trans.u0" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Relations.Relation_Definitions.1" 0) ([])) (Atom
-    "Coq.Numbers.Natural.Abstract.NAxioms.4" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Numbers.Natural.Abstract.NAxioms.3" 0) ([])) (Atom
+    "Coq.Lists.ListSet.1" 0)) ((:) (Clause ((:) (Atom
+    "Morphisms_Prop.all_iff_morphism_obligation_1.u0" 0) ([])) (Atom
+    "Coq.Lists.ListSet.1" 0)) ((:) (Clause ((:) (Atom "tuple_fst.u0" 0) ([]))
+    (Atom "Coq.Lists.ListSet.1" 0)) ((:) (Clause ((:) (Atom "tuple_snd.u0" 0)
+    ([])) (Atom "Coq.Lists.ListSet.1" 0)) ((:) (Clause ((:) (Atom
+    "app_nil_r.u0" 0) ([])) (Atom "Coq.Lists.ListSet.1" 0)) ((:) (Clause ((:)
+    (Atom "app_nil_r.u1" 0) ([])) (Atom "Coq.Lists.ListSet.1" 0)) ((:)
+    (Clause ((:) (Atom "app_assoc.u0" 0) ([])) (Atom "Coq.Lists.ListSet.1"
+    0)) ((:) (Clause ((:) (Atom "app_assoc.u1" 0) ([])) (Atom
+    "Coq.Lists.ListSet.1" 0)) ((:) (Clause ((:) (Atom "nth_split.u0" 0) ([]))
+    (Atom "Coq.Lists.ListSet.1" 0)) ((:) (Clause ((:) (Atom "nth_ext.u0" 0)
+    ([])) (Atom "Coq.Lists.ListSet.1" 0)) ((:) (Clause ((:) (Atom
+    "nth_error_split.u0" 0) ([])) (Atom "Coq.Lists.ListSet.1" 0)) ((:)
+    (Clause ((:) (Atom "remove_app.u0" 0) ([])) (Atom "Coq.Lists.ListSet.1"
+    0)) ((:) (Clause ((:) (Atom "notin_remove.u0" 0) ([])) (Atom
+    "Coq.Lists.ListSet.1" 0)) ((:) (Clause ((:) (Atom "Add_split.u0" 0) ([]))
+    (Atom "Coq.Lists.ListSet.1" 0)) ((:) (Clause ((:) (Atom "Add_split.u1" 0)
+    ([])) (Atom "Coq.Lists.ListSet.1" 0)) ((:) (Clause ((:) (Atom "ex.u0" 0)
+    ([])) (Atom "Coq.Lists.ListSet.1" 0)) ((:) (Clause ((:) (Atom "all.u0" 0)
+    ([])) (Atom "Coq.Lists.ListSet.1" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0)
+    ([])) (Atom "Coq.Lists.ListSet.1" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Init.Logic.11" 0) ([])) (Atom "Coq.Lists.ListSet.1" 0)) ((:) (Clause
+    ((:) (Atom "eq_ind_r.u0" 0) ([])) (Atom "Coq.Lists.ListSet.1" 0)) ((:)
+    (Clause ((:) (Atom "eq_rec_r.u0" 0) ([])) (Atom "Coq.Lists.ListSet.1" 0))
+    ((:) (Clause ((:) (Atom "eq_rect_r.u0" 0) ([])) (Atom
+    "Coq.Lists.ListSet.1" 0)) ((:) (Clause ((:) (Atom "eq_rect_r.u1" 0) ([]))
+    (Atom "Coq.Lists.ListSet.1" 0)) ((:) (Clause ((:) (Atom "sig.u0" 0) ([]))
+    (Atom "Coq.Lists.ListSet.1" 0)) ((:) (Clause ((:) (Atom "sigT.u0" 0)
+    ([])) (Atom "Coq.Lists.ListSet.1" 0)) ((:) (Clause ((:) (Atom "sigT.u1"
+    0) ([])) (Atom "Coq.Lists.ListSet.1" 0)) ((:) (Clause ((:) (Atom
+    "sumor.u0" 0) ([])) (Atom "Coq.Lists.ListSet.1" 0)) ((:) (Clause ((:)
+    (Atom "set_mem_ind2.u0" 0) ([])) (Atom "Coq.Lists.ListSet.1" 0)) ((:)
+    (Clause ((:) (Atom "set_fold_right.u1" 0) ([])) (Atom
+    "Coq.Lists.ListSet.1" 0)) ((:) (Clause ((:) (Atom "Coq.Init.Datatypes.11"
+    0) ([])) (Atom "Coq.Lists.ListSet.1" 0)) ((:) (Clause ((:) (Atom
+    "option.u0" 0) ([])) (Atom "Coq.Lists.ListSet.1" 0)) ((:) (Clause ((:)
+    (Atom "option_map.u0" 0) ([])) (Atom "Coq.Lists.ListSet.1" 0)) ((:)
+    (Clause ((:) (Atom "option_map.u1" 0) ([])) (Atom "Coq.Lists.ListSet.1"
+    0)) ((:) (Clause ((:) (Atom "prod.u0" 0) ([])) (Atom
+    "Coq.Lists.ListSet.1" 0)) ((:) (Clause ((:) (Atom "prod.u1" 0) ([]))
+    (Atom "Coq.Lists.ListSet.1" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Init.Datatypes.61" 0) ([])) (Atom "Coq.Lists.ListSet.1" 0)) ((:)
+    (Clause ((:) (Atom "Morphisms.rewrite_relation_eq_dom.u0" 0) ([])) (Atom
+    "Coq.Lists.ListSet.1" 0)) ((:) (Clause ((:) (Atom
+    "Morphisms.rewrite_relation_eq_dom.u1" 0) ([])) (Atom
+    "Coq.Lists.ListSet.1" 0)) ((:) (Clause ((:) (Atom
+    "Morphisms.eq_rewrite_relation.u0" 0) ([])) (Atom "Coq.Lists.ListSet.1"
+    0)) ((:) (Clause ((:) (Atom "Coq.Classes.Morphisms.51" 0) ([])) (Atom
+    "Coq.Lists.ListSet.1" 0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.1" 0)
+    ([])) (Atom "set_prod.u0" 0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.13"
+    0) ([])) (Atom "set_prod.u0" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Lists.List.44" 0) ([])) (Atom "set_prod.u0" 0)) ((:) (Clause ((:)
+    (Atom "Coq.Lists.List.280" 0) ([])) (Atom "set_prod.u0" 0)) ((:) (Clause
+    ((:) (Atom "split_combine.u0" 0) ([])) (Atom "set_prod.u0" 0)) ((:)
+    (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "set_prod.u0" 0)) ((:) (Clause
+    ((:) (Atom "Coq.Init.Logic.11" 0) ([])) (Atom "set_prod.u0" 0)) ((:)
+    (Clause ((:) (Atom "eq_ind_r.u0" 0) ([])) (Atom "set_prod.u0" 0)) ((:)
+    (Clause ((:) (Atom "Coq.Lists.ListSet.1" 0) ([])) (Atom "set_prod.u0" 0))
+    ((:) (Clause ((:) (Atom "prod.u0" 0) ([])) (Atom "set_prod.u0" 0)) ((:)
+    (Clause ((:) (Atom "Coq.Init.Datatypes.26" 0) ([])) (Atom "set_prod.u0"
+    0)) ((:) (Clause ((:) (Atom "list.u0" 0) ([])) (Atom "set_prod.u0" 0))
+    ((:) (Clause ((:) (Atom "length.u0" 0) ([])) (Atom "set_prod.u0" 0)) ((:)
+    (Clause ((:) (Atom "app.u0" 0) ([])) (Atom "set_prod.u0" 0)) ((:) (Clause
+    ((:) (Atom "Coq.Lists.List.1" 0) ([])) (Atom "set_prod.u1" 0)) ((:)
+    (Clause ((:) (Atom "Coq.Lists.List.13" 0) ([])) (Atom "set_prod.u1" 0))
+    ((:) (Clause ((:) (Atom "Coq.Lists.List.44" 0) ([])) (Atom "set_prod.u1"
+    0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.279" 0) ([])) (Atom
+    "set_prod.u1" 0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.280" 0) ([]))
+    (Atom "set_prod.u1" 0)) ((:) (Clause ((:) (Atom "split_combine.u0" 0)
+    ([])) (Atom "set_prod.u1" 0)) ((:) (Clause ((:) (Atom "ex.u0" 0) ([]))
+    (Atom "set_prod.u1" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
+    "set_prod.u1" 0)) ((:) (Clause ((:) (Atom "Coq.Init.Logic.11" 0) ([]))
+    (Atom "set_prod.u1" 0)) ((:) (Clause ((:) (Atom "eq_ind_r.u0" 0) ([]))
+    (Atom "set_prod.u1" 0)) ((:) (Clause ((:) (Atom "Coq.Lists.ListSet.1" 0)
+    ([])) (Atom "set_prod.u1" 0)) ((:) (Clause ((:) (Atom "prod.u1" 0) ([]))
+    (Atom "set_prod.u1" 0)) ((:) (Clause ((:) (Atom "Coq.Init.Datatypes.27"
+    0) ([])) (Atom "set_prod.u1" 0)) ((:) (Clause ((:) (Atom "list.u0" 0)
+    ([])) (Atom "set_prod.u1" 0)) ((:) (Clause ((:) (Atom "length.u0" 0)
+    ([])) (Atom "set_prod.u1" 0)) ((:) (Clause ((:) (Atom "app.u0" 0) ([]))
+    (Atom "set_prod.u1" 0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.280" 0)
+    ([])) (Atom "set_power.u0" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Lists.List.320" 0) ([])) (Atom "set_power.u0" 0)) ((:) (Clause ((:)
+    (Atom "Coq.Lists.List.321" 0) ([])) (Atom "set_power.u0" 0)) ((:) (Clause
+    ((:) (Atom "Coq.Lists.ListSet.1" 0) ([])) (Atom "set_power.u0" 0)) ((:)
+    (Clause ((:) (Atom "prod.u0" 0) ([])) (Atom "set_power.u0" 0)) ((:)
+    (Clause ((:) (Atom "list.u0" 0) ([])) (Atom "set_power.u0" 0)) ((:)
+    (Clause ((:) (Atom "Coq.Lists.List.279" 0) ([])) (Atom "set_power.u1" 0))
+    ((:) (Clause ((:) (Atom "Coq.Lists.List.280" 0) ([])) (Atom
+    "set_power.u1" 0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.320" 0) ([]))
+    (Atom "set_power.u1" 0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.321" 0)
+    ([])) (Atom "set_power.u1" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Lists.ListSet.1" 0) ([])) (Atom "set_power.u1" 0)) ((:) (Clause ((:)
+    (Atom "prod.u1" 0) ([])) (Atom "set_power.u1" 0)) ((:) (Clause ((:) (Atom
+    "list.u0" 0) ([])) (Atom "set_power.u1" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Lists.List.380" 0) ([])) (Atom "set_fold_left.u0" 0)) ((:) (Clause
+    ((:) (Atom "Coq.Lists.ListSet.1" 0) ([])) (Atom "set_fold_left.u0" 0))
+    ((:) (Clause ((:) (Atom "Coq.Lists.List.379" 0) ([])) (Atom
+    "set_fold_left.u1" 0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.384" 0)
+    ([])) (Atom "set_fold_right.u0" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Lists.ListSet.1" 0) ([])) (Atom "set_fold_right.u0" 0)) ((:) (Clause
+    ((:) (Atom "Coq.Lists.List.383" 0) ([])) (Atom "set_fold_right.u1" 0))
+    ((:) (Clause ((:) (Atom "Coq.Lists.ListSet.1" 0) ([])) (Atom "set_map.u0"
+    0)) ((:) (Clause ((:) (Atom "set_fold_right.u0" 0) ([])) (Atom
+    "set_map.u0" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
+    "set_map.u1" 0)) ((:) (Clause ((:) (Atom "Coq.Lists.ListSet.1" 0) ([]))
+    (Atom "set_map.u1" 0)) ((:) (Clause ((:) (Atom "Fin.case0.u1" 0) ([]))
+    (Atom "Fin.case0.u0" 0)) ((:) (Clause ((:) (Atom "Fin.caseS'.u1" 0) ([]))
+    (Atom "Fin.caseS'.u0" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
+    "Fin.caseS'.u0" 0) ([])) (Atom "Fin.caseS.u0" 0)) ((:) (Clause ((:) (Atom
+    "Fin.case0.u0" 0) ([])) (Atom "Fin.rectS.u0" 0)) ((:) (Clause ((:) (Atom
+    "Fin.rectS.u1" 0) ([])) (Atom "Fin.rectS.u0" 0)) ((:) (Clause ((:) (Atom
+    "Fin.caseS'.u0" 0) ([])) (Atom "Fin.rect2.u0" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Relations.Relation_Definitions.1" 0) ([])) (Atom "Seq_refl.u0" 0))
+    ((:) (Clause ((:) (Atom "Coq.Relations.Relation_Definitions.1" 0) ([]))
+    (Atom "Seq_sym.u0" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Relations.Relation_Definitions.1" 0) ([])) (Atom "Seq_trans.u0" 0))
+    ((:) (Clause ((:) (Atom "Coq.Relations.Relation_Definitions.1" 0) ([]))
+    (Atom "Coq.Numbers.Natural.Abstract.NAxioms.4" 0)) ((:) (Clause ((:)
+    (Atom "Coq.Numbers.Natural.Abstract.NAxioms.3" 0) ([])) (Atom
     "Coq.Numbers.Natural.Abstract.NAxioms.4" 0)) ((:) (Clause ((:) (Atom
     "eq.u0" 0) ([])) (Atom "Coq.Numbers.Natural.Abstract.NAxioms.6" 0)) ((:)
     (Clause ((:) (Atom "Coq.Numbers.Natural.Abstract.NAxioms.3" 0) ([]))
@@ -4977,41 +5306,66 @@ cs4 =
     ([])) (Atom "recursion_0.u0" 0)) ((:) (Clause ((:) (Atom
     "Coq.Relations.Relation_Definitions.1" 0) ([])) (Atom "recursion_succ.u0"
     0)) ((:) (Clause ((:) (Atom "recursion.u0" 0) ([])) (Atom
-    "recursion_succ.u0" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
-    "Coq.Vectors.VectorEq.1" 0)) ((:) (Clause ((:) (Atom "Coq.Init.Logic.10"
+    "recursion_succ.u0" 0)) ((:) (Clause ((:) (Atom "Coq.Init.Logic.2" 0)
+    ([])) (Atom "OddT_EvenT_rect.u0" 0)) ((:) (Clause ((:) (Atom
+    "OddT_EvenT_rect.u0" 0) ([])) (Atom "EvenT_OddT_rect.u0" 0)) ((:) (Clause
+    ((:) (Atom "OddT_EvenT_rect.u1" 0) ([])) (Atom "EvenT_OddT_rect.u1" 0))
+    ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "Coq.Vectors.VectorEq.1"
+    0)) ((:) (Clause ((:) (Atom "Coq.Init.Logic.11" 0) ([])) (Atom
+    "Coq.Vectors.VectorEq.1" 0)) ((:) (Clause ((:) (Atom "Vector.eqb_eq.u0"
     0) ([])) (Atom "Coq.Vectors.VectorEq.1" 0)) ((:) (Clause ((:) (Atom
-    "Vector.eqb_eq.u0" 0) ([])) (Atom "Coq.Vectors.VectorEq.1" 0)) ((:)
-    (Clause ((:) (Atom "Vector.t.u0" 0) ([])) (Atom "Coq.Vectors.VectorEq.1"
-    0)) ((:) (Clause ((:) (Atom "Vector.rect2.u0" 0) ([])) (Atom
-    "Coq.Vectors.VectorEq.1" 0)) ((:) (Clause ((:) (Atom "Vector.rect2.u1" 0)
-    ([])) (Atom "Coq.Vectors.VectorEq.1" 0)) ((:) (Clause ((:) (Atom
-    "Vector.cons_inj.u0" 0) ([])) (Atom "Coq.Vectors.VectorEq.1" 0)) ((:)
-    (Clause ((:) (Atom "Coq.Init.Logic.2" 0) ([])) (Atom "Vector.cast.u0" 0))
-    ((:) (Clause ((:) (Atom "Vector.t.u0" 0) ([])) (Atom "Vector.cast.u0" 0))
-    ((:) (Clause ((:) (Atom "ssrunder.Under_rel.Under_rel.u0" 0) ([])) (Atom
+    "Vector.t.u0" 0) ([])) (Atom "Coq.Vectors.VectorEq.1" 0)) ((:) (Clause
+    ((:) (Atom "Vector.rect2.u0" 0) ([])) (Atom "Coq.Vectors.VectorEq.1" 0))
+    ((:) (Clause ((:) (Atom "Vector.rect2.u1" 0) ([])) (Atom
+    "Coq.Vectors.VectorEq.1" 0)) ((:) (Clause ((:) (Atom "Vector.cons_inj.u0"
+    0) ([])) (Atom "Coq.Vectors.VectorEq.1" 0)) ((:) (Clause ((:) (Atom
+    "eq.u0" 0) ([])) (Atom "Vector.eqb_eq.u0" (Prelude.succ 0))) ((:) (Clause
+    ((:) (Atom "Coq.Init.Logic.2" 0) ([])) (Atom "Vector.cast.u0" 0)) ((:)
+    (Clause ((:) (Atom "Vector.t.u0" 0) ([])) (Atom "Vector.cast.u0" 0)) ((:)
+    (Clause ((:) (Atom "Vector.cast.u0" 0) ([])) (Atom "Vector.cast.u1" 0))
+    ((:) (Clause ((:) (Atom "Vector.cast.u1" 0) ([])) (Atom "Vector.cast.u0"
+    0)) ((:) (Clause ((:) (Atom "Coq.ssr.ssrunder.8" 0) ([])) (Atom
+    "ssrunder.Under_rel.Under_rel.u0" 0)) ((:) (Clause ((:) (Atom
+    "ssrunder.Under_rel.Under_rel.u0" 0) ([])) (Atom "Coq.ssr.ssrunder.8" 0))
+    ((:) (Clause ((:) (Atom "Coq.ssr.ssrunder.9" 0) ([])) (Atom
     "ssrunder.Under_rel.Under_rel_from_rel.u0" 0)) ((:) (Clause ((:) (Atom
-    "eq.u0" 0) ([])) (Atom "ssrunder.Under_rel.Under_relE.u0" 0)) ((:)
-    (Clause ((:) (Atom "ssrunder.Under_rel.Under_rel.u0" 0) ([])) (Atom
-    "ssrunder.Under_rel.Under_relE.u0" 0)) ((:) (Clause ((:) (Atom
-    "ssrunder.Under_rel.Under_rel.u0" 0) ([])) (Atom
+    "ssrunder.Under_rel.Under_rel_from_rel.u0" 0) ([])) (Atom
+    "Coq.ssr.ssrunder.9" 0)) ((:) (Clause ((:) (Atom "Coq.ssr.ssrunder.10" 0)
+    ([])) (Atom "ssrunder.Under_rel.Under_relE.u0" 0)) ((:) (Clause ((:)
+    (Atom "ssrunder.Under_rel.Under_relE.u0" 0) ([])) (Atom
+    "Coq.ssr.ssrunder.10" 0)) ((:) (Clause ((:) (Atom "Coq.ssr.ssrunder.8" 0)
+    ([])) (Atom "ssrunder.Under_rel.Over_rel.u0" 0)) ((:) (Clause ((:) (Atom
+    "ssrunder.Under_rel.Over_rel.u0" 0) ([])) (Atom "Coq.ssr.ssrunder.8" 0))
+    ((:) (Clause ((:) (Atom "Coq.ssr.ssrunder.8" 0) ([])) (Atom
     "ssrunder.Under_rel.over_rel.u0" 0)) ((:) (Clause ((:) (Atom
-    "ssrunder.Under_rel.Under_rel.u0" 0) ([])) (Atom
+    "Coq.ssr.ssrunder.8" 0) ([])) (Atom "ssrunder.Under_rel.over_rel_done.u0"
+    0)) ((:) (Clause ((:) (Atom "Coq.ssr.ssrclasses.1" 0) ([])) (Atom
     "ssrunder.Under_rel.over_rel_done.u0" 0)) ((:) (Clause ((:) (Atom
-    "Coq.ssr.ssrclasses.1" 0) ([])) (Atom
-    "ssrunder.Under_rel.over_rel_done.u0" 0)) ((:) (Clause ((:) (Atom
-    "ssrunder.Under_rel.Under_rel.u0" 0) ([])) (Atom
+    "Coq.ssr.ssrunder.8" 0) ([])) (Atom
     "ssrunder.Under_rel.under_rel_done.u0" 0)) ((:) (Clause ((:) (Atom
     "Coq.ssr.ssrclasses.1" 0) ([])) (Atom
     "ssrunder.Under_rel.under_rel_done.u0" 0)) ((:) (Clause ((:) (Atom
-    "BinPos.Pos.iter.u0" 0) ([])) (Atom "BinNat.N.iter.u0" 0)) ((:) (Clause
-    ((:) (Atom "BinPos.Pos.iter.u0" 0) ([])) (Atom "BinInt.Z.iter.u0" 0))
-    ((:) (Clause ((:) (Atom "option.u0" 0) ([])) (Atom "option_map.u0" 0))
-    ((:) (Clause ((:) (Atom "option.u0" 0) ([])) (Atom "option_map.u1" 0))
-    ((:) (Clause ((:) (Atom "prod.u0" 0) ([])) (Atom "Coq.Init.Datatypes.26"
-    0)) ((:) (Clause ((:) (Atom "prod.u1" 0) ([])) (Atom
-    "Coq.Init.Datatypes.27" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([]))
-    (Atom "surjective_pairing.u0" 0)) ((:) (Clause ((:) (Atom "prod.u0" 0)
-    ([])) (Atom "surjective_pairing.u0" 0)) ((:) (Clause ((:) (Atom
+    "Coq.ssr.ssrunder.8" 0) ([])) (Atom "Coq.ssr.ssrunder.9" 0)) ((:) (Clause
+    ((:) (Atom "eq.u0" 0) ([])) (Atom "Coq.ssr.ssrunder.10" 0)) ((:) (Clause
+    ((:) (Atom "Coq.ssr.ssrunder.8" 0) ([])) (Atom "Coq.ssr.ssrunder.10" 0))
+    ((:) (Clause ((:) (Atom "ssrunder.Under_rel.over_rel.u0" 0) ([])) (Atom
+    "Coq.ssr.ssrunder.11" 0)) ((:) (Clause ((:) (Atom "Coq.ssr.ssrunder.11"
+    0) ([])) (Atom "ssrunder.Under_rel.over_rel.u0" 0)) ((:) (Clause ((:)
+    (Atom "ssrunder.Under_rel.over_rel_done.u0" 0) ([])) (Atom
+    "Coq.ssr.ssrunder.12" 0)) ((:) (Clause ((:) (Atom "Coq.ssr.ssrunder.12"
+    0) ([])) (Atom "ssrunder.Under_rel.over_rel_done.u0" 0)) ((:) (Clause
+    ((:) (Atom "ssrunder.Under_rel.under_rel_done.u0" 0) ([])) (Atom
+    "Coq.ssr.ssrunder.13" 0)) ((:) (Clause ((:) (Atom "Coq.ssr.ssrunder.13"
+    0) ([])) (Atom "ssrunder.Under_rel.under_rel_done.u0" 0)) ((:) (Clause
+    ((:) (Atom "BinPos.Pos.iter.u0" 0) ([])) (Atom "BinNat.N.iter.u0" 0))
+    ((:) (Clause ((:) (Atom "BinPos.Pos.iter.u0" 0) ([])) (Atom
+    "BinInt.Z.iter.u0" 0)) ((:) (Clause ((:) (Atom "option.u0" 0) ([])) (Atom
+    "option_map.u0" 0)) ((:) (Clause ((:) (Atom "option.u0" 0) ([])) (Atom
+    "option_map.u1" 0)) ((:) (Clause ((:) (Atom "prod.u0" 0) ([])) (Atom
+    "Coq.Init.Datatypes.26" 0)) ((:) (Clause ((:) (Atom "prod.u1" 0) ([]))
+    (Atom "Coq.Init.Datatypes.27" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0)
+    ([])) (Atom "surjective_pairing.u0" 0)) ((:) (Clause ((:) (Atom "prod.u0"
+    0) ([])) (Atom "surjective_pairing.u0" 0)) ((:) (Clause ((:) (Atom
     "Coq.Init.Datatypes.26" 0) ([])) (Atom "surjective_pairing.u0" 0)) ((:)
     (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "surjective_pairing.u1" 0))
     ((:) (Clause ((:) (Atom "prod.u1" 0) ([])) (Atom "surjective_pairing.u1"
@@ -5052,34 +5406,39 @@ cs4 =
     "prod_curry_subdef.u1" 0)) ((:) (Clause ((:) (Atom "uncurry.u2" 0) ([]))
     (Atom "prod_curry_subdef.u2" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([]))
     (Atom "rew_pair.u0" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
-    "rew_pair.u1" 0)) ((:) (Clause ((:) (Atom "Coq.Init.Logic.9" 0) ([]))
+    "rew_pair.u1" 0)) ((:) (Clause ((:) (Atom "Coq.Init.Logic.10" 0) ([]))
     (Atom "rew_pair.u1" 0)) ((:) (Clause ((:) (Atom "prod.u0" 0) ([])) (Atom
     "rew_pair.u1" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
-    "rew_pair.u2" 0)) ((:) (Clause ((:) (Atom "Coq.Init.Logic.9" 0) ([]))
+    "rew_pair.u2" 0)) ((:) (Clause ((:) (Atom "Coq.Init.Logic.10" 0) ([]))
     (Atom "rew_pair.u2" 0)) ((:) (Clause ((:) (Atom "prod.u1" 0) ([])) (Atom
-    "rew_pair.u2" 0)) ((:) (Clause ((:) (Atom "list.u0" 0) ([])) (Atom
-    "length.u0" 0)) ((:) (Clause ((:) (Atom "list.u0" 0) ([])) (Atom "app.u0"
-    0)) ((:) (Clause ((:) (Atom "CompSpec.u0" 0) ([])) (Atom
-    "CompSpec2Type.u0" 0)) ((:) (Clause ((:) (Atom "CompSpecT.u0" 0) ([]))
-    (Atom "CompSpec2Type.u0" 0)) ((:) (Clause ((:) (Atom "ex.u0" 0) ([]))
-    (Atom "Decidable.dec_functional_relation.u1" 0)) ((:) (Clause ((:) (Atom
-    "eq.u0" 0) ([])) (Atom "Decidable.dec_functional_relation.u1" 0)) ((:)
-    (Clause ((:) (Atom "Coq.Init.Logic.10" 0) ([])) (Atom
+    "rew_pair.u2" 0)) ((:) (Clause ((:) (Atom "Coq.Lists.ListSet.1" 0) ([]))
+    (Atom "list.u0" 0)) ((:) (Clause ((:) (Atom "list.u0" 0) ([])) (Atom
+    "Coq.Lists.ListSet.1" 0)) ((:) (Clause ((:) (Atom "Coq.Lists.ListSet.1"
+    0) ([])) (Atom "length.u0" 0)) ((:) (Clause ((:) (Atom "length.u0" 0)
+    ([])) (Atom "Coq.Lists.ListSet.1" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Lists.ListSet.1" 0) ([])) (Atom "app.u0" 0)) ((:) (Clause ((:) (Atom
+    "app.u0" 0) ([])) (Atom "Coq.Lists.ListSet.1" 0)) ((:) (Clause ((:) (Atom
+    "CompSpec.u0" 0) ([])) (Atom "CompSpec2Type.u0" 0)) ((:) (Clause ((:)
+    (Atom "CompSpecT.u0" 0) ([])) (Atom "CompSpec2Type.u0" 0)) ((:) (Clause
+    ((:) (Atom "ex.u0" 0) ([])) (Atom "Decidable.dec_functional_relation.u1"
+    0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
     "Decidable.dec_functional_relation.u1" 0)) ((:) (Clause ((:) (Atom
-    "eq_ind_r.u0" 0) ([])) (Atom "Decidable.dec_functional_relation.u1" 0))
-    ((:) (Clause ((:) (Atom "unique.u0" 0) ([])) (Atom
+    "Coq.Init.Logic.11" 0) ([])) (Atom "Decidable.dec_functional_relation.u1"
+    0)) ((:) (Clause ((:) (Atom "eq_ind_r.u0" 0) ([])) (Atom
     "Decidable.dec_functional_relation.u1" 0)) ((:) (Clause ((:) (Atom
-    "ex.u0" 0) ([])) (Atom "Coq.Logic.Eqdep_dec.1" 0)) ((:) (Clause ((:)
-    (Atom "eq.u0" 0) ([])) (Atom "Coq.Logic.Eqdep_dec.1" 0)) ((:) (Clause
-    ((:) (Atom "Coq.Init.Logic.10" 0) ([])) (Atom "Coq.Logic.Eqdep_dec.1" 0))
-    ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
-    "Eqdep_dec.eq_proofs_unicity.u0" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Logic.Eqdep_dec.1" 0) ([])) (Atom "Eqdep_dec.eq_proofs_unicity.u0"
-    0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "Eqdep_dec.K_dec.u0"
-    0)) ((:) (Clause ((:) (Atom "Coq.Logic.Eqdep_dec.1" 0) ([])) (Atom
-    "Eqdep_dec.K_dec.u0" 0)) ((:) (Clause ((:) (Atom "ex.u0" 0) ([])) (Atom
-    "Eqdep_dec.inj_right_pair.u0" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0)
-    ([])) (Atom "Eqdep_dec.inj_right_pair.u0" 0)) ((:) (Clause ((:) (Atom
+    "unique.u0" 0) ([])) (Atom "Decidable.dec_functional_relation.u1" 0))
+    ((:) (Clause ((:) (Atom "ex.u0" 0) ([])) (Atom "Coq.Logic.Eqdep_dec.1"
+    0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
+    "Coq.Logic.Eqdep_dec.1" 0)) ((:) (Clause ((:) (Atom "Coq.Init.Logic.11"
+    0) ([])) (Atom "Coq.Logic.Eqdep_dec.1" 0)) ((:) (Clause ((:) (Atom
+    "eq.u0" 0) ([])) (Atom "Eqdep_dec.eq_proofs_unicity.u0" 0)) ((:) (Clause
+    ((:) (Atom "Coq.Logic.Eqdep_dec.1" 0) ([])) (Atom
+    "Eqdep_dec.eq_proofs_unicity.u0" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0)
+    ([])) (Atom "Eqdep_dec.K_dec.u0" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Logic.Eqdep_dec.1" 0) ([])) (Atom "Eqdep_dec.K_dec.u0" 0)) ((:)
+    (Clause ((:) (Atom "ex.u0" 0) ([])) (Atom "Eqdep_dec.inj_right_pair.u0"
+    0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
+    "Eqdep_dec.inj_right_pair.u0" 0)) ((:) (Clause ((:) (Atom
     "Coq.Logic.Eqdep_dec.1" 0) ([])) (Atom "Eqdep_dec.inj_right_pair.u0" 0))
     ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "Eqdep_dec.K_dec_type.u0"
     0)) ((:) (Clause ((:) (Atom "Eqdep_dec.K_dec.u0" 0) ([])) (Atom
@@ -5087,18 +5446,18 @@ cs4 =
     (Atom "Eqdep_dec.eq_rect_eq_dec.u0" 0)) ((:) (Clause ((:) (Atom
     "Eqdep_dec.K_dec_type.u0" 0) ([])) (Atom "Eqdep_dec.eq_rect_eq_dec.u0"
     0)) ((:) (Clause ((:) (Atom "Coq.Logic.EqdepFacts.46" 0) ([])) (Atom
-    "Eqdep_dec.eq_rect_eq_dec.u0" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0)
-    ([])) (Atom "Eqdep_dec.eq_rect_eq_dec.u1" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Init.Logic.9" 0) ([])) (Atom "Eqdep_dec.eq_rect_eq_dec.u1" 0)) ((:)
-    (Clause ((:) (Atom "EqdepFacts.Eq_rect_eq_on.u0" 0) ([])) (Atom
-    "Eqdep_dec.eq_rect_eq_dec.u1" 0)) ((:) (Clause ((:) (Atom
-    "EqdepFacts.Streicher_K_on__eq_rect_eq_on.u0" 0) ([])) (Atom
-    "Eqdep_dec.eq_rect_eq_dec.u1" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0)
-    ([])) (Atom "Eqdep_dec.eq_dep_eq_dec.u0" 0)) ((:) (Clause ((:) (Atom
+    "Eqdep_dec.eq_rect_eq_dec.u0" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Logic.EqdepFacts.81" 0) ([])) (Atom "Eqdep_dec.eq_rect_eq_dec.u1"
+    0)) ((:) (Clause ((:) (Atom "Eqdep_dec.eq_rect_eq_dec.u1" 0) ([])) (Atom
+    "Coq.Logic.EqdepFacts.81" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([]))
+    (Atom "Eqdep_dec.eq_dep_eq_dec.u0" 0)) ((:) (Clause ((:) (Atom
     "Eqdep_dec.eq_rect_eq_dec.u0" 0) ([])) (Atom "Eqdep_dec.eq_dep_eq_dec.u0"
     0)) ((:) (Clause ((:) (Atom "Coq.Logic.EqdepFacts.1" 0) ([])) (Atom
     "Eqdep_dec.eq_dep_eq_dec.u0" 0)) ((:) (Clause ((:) (Atom
     "Coq.Logic.EqdepFacts.46" 0) ([])) (Atom "Eqdep_dec.eq_dep_eq_dec.u0" 0))
+    ((:) (Clause ((:) (Atom "Coq.Logic.EqdepFacts.82" 0) ([])) (Atom
+    "Eqdep_dec.eq_dep_eq_dec.u1" 0)) ((:) (Clause ((:) (Atom
+    "Eqdep_dec.eq_dep_eq_dec.u1" 0) ([])) (Atom "Coq.Logic.EqdepFacts.82" 0))
     ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "Eqdep_dec.UIP_dec.u0" 0))
     ((:) (Clause ((:) (Atom "Eqdep_dec.eq_dep_eq_dec.u0" 0) ([])) (Atom
     "Eqdep_dec.UIP_dec.u0" 0)) ((:) (Clause ((:) (Atom
@@ -5115,7 +5474,25 @@ cs4 =
     "Coq.Logic.Eqdep_dec.14" 0)) ((:) (Clause ((:) (Atom
     "Coq.Logic.EqdepFacts.46" 0) ([])) (Atom "Coq.Logic.Eqdep_dec.14" 0))
     ((:) (Clause ((:) (Atom "Coq.Logic.EqdepFacts.71" 0) ([])) (Atom
-    "Coq.Logic.Eqdep_dec.14" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([]))
+    "Coq.Logic.Eqdep_dec.14" 0)) ((:) (Clause ((:) (Atom
+    "Eqdep_dec.eq_rect_eq_dec.u1" 0) ([])) (Atom "Coq.Logic.Eqdep_dec.15" 0))
+    ((:) (Clause ((:) (Atom "Coq.Logic.Eqdep_dec.15" 0) ([])) (Atom
+    "Eqdep_dec.eq_rect_eq_dec.u1" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Logic.EqdepFacts.82" 0) ([])) (Atom "Coq.Logic.Eqdep_dec.16" 0))
+    ((:) (Clause ((:) (Atom "Coq.Logic.Eqdep_dec.16" 0) ([])) (Atom
+    "Coq.Logic.EqdepFacts.82" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Logic.EqdepFacts.84" 0) ([])) (Atom "Coq.Logic.Eqdep_dec.17" 0))
+    ((:) (Clause ((:) (Atom "Coq.Logic.Eqdep_dec.17" 0) ([])) (Atom
+    "Coq.Logic.EqdepFacts.84" 0)) ((:) (Clause ((:) (Atom
+    "Eqdep_dec.eq_rect_eq_dec.u1" 0) ([])) (Atom "Coq.Logic.Eqdep_dec.18" 0))
+    ((:) (Clause ((:) (Atom "Coq.Logic.Eqdep_dec.18" 0) ([])) (Atom
+    "Eqdep_dec.eq_rect_eq_dec.u1" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Logic.EqdepFacts.82" 0) ([])) (Atom "Coq.Logic.Eqdep_dec.19" 0))
+    ((:) (Clause ((:) (Atom "Coq.Logic.Eqdep_dec.19" 0) ([])) (Atom
+    "Coq.Logic.EqdepFacts.82" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Logic.EqdepFacts.84" 0) ([])) (Atom "Coq.Logic.Eqdep_dec.20" 0))
+    ((:) (Clause ((:) (Atom "Coq.Logic.Eqdep_dec.20" 0) ([])) (Atom
+    "Coq.Logic.EqdepFacts.84" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([]))
     (Atom "Eqdep_dec.inj_pair2_eq_dec.u0" 0)) ((:) (Clause ((:) (Atom
     "sigT.u0" 0) ([])) (Atom "Eqdep_dec.inj_pair2_eq_dec.u0" 0)) ((:) (Clause
     ((:) (Atom "Eqdep_dec.eq_rect_eq_dec.u0" 0) ([])) (Atom
@@ -5123,40 +5500,75 @@ cs4 =
     "Coq.Logic.EqdepFacts.46" 0) ([])) (Atom "Eqdep_dec.inj_pair2_eq_dec.u0"
     0)) ((:) (Clause ((:) (Atom "Coq.Logic.EqdepFacts.71" 0) ([])) (Atom
     "Eqdep_dec.inj_pair2_eq_dec.u0" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Logic.EqdepFacts.84" 0) ([])) (Atom "Eqdep_dec.inj_pair2_eq_dec.u1"
+    0)) ((:) (Clause ((:) (Atom "Eqdep_dec.inj_pair2_eq_dec.u1" 0) ([]))
+    (Atom "Coq.Logic.EqdepFacts.84" 0)) ((:) (Clause ((:) (Atom
     "Coq.Relations.Relation_Definitions.1" 0) ([])) (Atom
-    "Coq.Classes.Morphisms.31" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([]))
-    (Atom "Coq.Classes.Morphisms.31" 0)) ((:) (Clause ((:) (Atom
-    "eq_ind_r.u0" 0) ([])) (Atom "Coq.Classes.Morphisms.31" 0)) ((:) (Clause
-    ((:) (Atom "Basics.compose.u0" 0) ([])) (Atom "Coq.Classes.Morphisms.31"
-    0)) ((:) (Clause ((:) (Atom "Basics.compose.u1" 0) ([])) (Atom
+    "Coq.Classes.Morphisms.1" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Classes.Morphisms.1" 0) ([])) (Atom
+    "Coq.Relations.Relation_Definitions.1" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Relations.Relation_Definitions.1" 0) ([])) (Atom
+    "Morphisms.pointwise_relation.u0" 0)) ((:) (Clause ((:) (Atom
+    "Morphisms.pointwise_relation.u0" 0) ([])) (Atom
+    "Coq.Relations.Relation_Definitions.1" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Relations.Relation_Definitions.1" 0) ([])) (Atom
+    "Morphisms.pointwise_relation.u1" 0)) ((:) (Clause ((:) (Atom
+    "Morphisms.pointwise_relation.u1" 0) ([])) (Atom
+    "Coq.Relations.Relation_Definitions.1" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Relations.Relation_Definitions.1" 0) ([])) (Atom
+    "Morphisms.rewrite_relation_pointwise.u0" 0)) ((:) (Clause ((:) (Atom
+    "Morphisms.pointwise_relation.u0" 0) ([])) (Atom
+    "Morphisms.rewrite_relation_pointwise.u0" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Relations.Relation_Definitions.1" 0) ([])) (Atom
+    "Morphisms.rewrite_relation_pointwise.u1" 0)) ((:) (Clause ((:) (Atom
+    "Morphisms.pointwise_relation.u1" 0) ([])) (Atom
+    "Morphisms.rewrite_relation_pointwise.u1" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Relations.Relation_Definitions.1" 0) ([])) (Atom
+    "Morphisms.rewrite_relation_eq_dom.u0" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Relations.Relation_Definitions.1" 0) ([])) (Atom
+    "Morphisms.rewrite_relation_eq_dom.u1" 0)) ((:) (Clause ((:) (Atom
+    "eq.u0" 0) ([])) (Atom "Morphisms.rewrite_relation_eq_dom.u1" 0)) ((:)
+    (Clause ((:) (Atom "Coq.Relations.Relation_Definitions.1" 0) ([])) (Atom
+    "Morphisms.eq_rewrite_relation.u0" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0)
+    ([])) (Atom "Morphisms.eq_rewrite_relation.u0" 0)) ((:) (Clause ((:)
+    (Atom "Coq.Relations.Relation_Definitions.1" 0) ([])) (Atom
     "Coq.Classes.Morphisms.31" 0)) ((:) (Clause ((:) (Atom
-    "Basics.compose.u2" 0) ([])) (Atom "Coq.Classes.Morphisms.31" 0)) ((:)
+    "Coq.Classes.Morphisms.31" 0) ([])) (Atom
+    "Coq.Relations.Relation_Definitions.1" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Relations.Relation_Definitions.1" 0) ([])) (Atom
+    "Coq.Classes.Morphisms.51" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([]))
+    (Atom "Coq.Classes.Morphisms.51" 0)) ((:) (Clause ((:) (Atom
+    "eq_ind_r.u0" 0) ([])) (Atom "Coq.Classes.Morphisms.51" 0)) ((:) (Clause
+    ((:) (Atom "Basics.compose.u0" 0) ([])) (Atom "Coq.Classes.Morphisms.51"
+    0)) ((:) (Clause ((:) (Atom "Basics.compose.u1" 0) ([])) (Atom
+    "Coq.Classes.Morphisms.51" 0)) ((:) (Clause ((:) (Atom
+    "Basics.compose.u2" 0) ([])) (Atom "Coq.Classes.Morphisms.51" 0)) ((:)
     (Clause ((:) (Atom "Basics.flip.u0" 0) ([])) (Atom
-    "Coq.Classes.Morphisms.31" 0)) ((:) (Clause ((:) (Atom "Basics.flip.u1"
-    0) ([])) (Atom "Coq.Classes.Morphisms.31" 0)) ((:) (Clause ((:) (Atom
-    "Basics.flip.u2" 0) ([])) (Atom "Coq.Classes.Morphisms.31" 0)) ((:)
+    "Coq.Classes.Morphisms.51" 0)) ((:) (Clause ((:) (Atom "Basics.flip.u1"
+    0) ([])) (Atom "Coq.Classes.Morphisms.51" 0)) ((:) (Clause ((:) (Atom
+    "Basics.flip.u2" 0) ([])) (Atom "Coq.Classes.Morphisms.51" 0)) ((:)
     (Clause ((:) (Atom "Coq.Relations.Relation_Definitions.1" 0) ([])) (Atom
     "Morphisms.proper_proper.u0" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([]))
     (Atom "Morphisms.proper_proper.u0" 0)) ((:) (Clause ((:) (Atom
     "Coq.Relations.Relation_Definitions.1" 0) ([])) (Atom
-    "Coq.Classes.Morphisms.76" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([]))
-    (Atom "Coq.Classes.Morphisms.76" 0)) ((:) (Clause ((:) (Atom
-    "Basics.flip.u0" 0) ([])) (Atom "Coq.Classes.Morphisms.76" 0)) ((:)
+    "Coq.Classes.Morphisms.95" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([]))
+    (Atom "Coq.Classes.Morphisms.95" 0)) ((:) (Clause ((:) (Atom
+    "Basics.flip.u0" 0) ([])) (Atom "Coq.Classes.Morphisms.95" 0)) ((:)
     (Clause ((:) (Atom "Basics.flip.u1" 0) ([])) (Atom
-    "Coq.Classes.Morphisms.76" 0)) ((:) (Clause ((:) (Atom
-    "Morphisms.proper_proper.u0" 0) ([])) (Atom "Coq.Classes.Morphisms.76"
+    "Coq.Classes.Morphisms.95" 0)) ((:) (Clause ((:) (Atom
+    "Morphisms.proper_proper.u0" 0) ([])) (Atom "Coq.Classes.Morphisms.95"
     0)) ((:) (Clause ((:) (Atom "Coq.Relations.Relation_Definitions.1" 0)
     ([])) (Atom "Morphisms.flip_arrow.u0" 0)) ((:) (Clause ((:) (Atom
     "Basics.flip.u0" 0) ([])) (Atom "Morphisms.flip_arrow.u0" 0)) ((:)
     (Clause ((:) (Atom "Basics.flip.u1" 0) ([])) (Atom
     "Morphisms.flip_arrow.u0" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Classes.Morphisms.76" 0) ([])) (Atom "Morphisms.flip_arrow.u0" 0))
+    "Coq.Classes.Morphisms.95" 0) ([])) (Atom "Morphisms.flip_arrow.u0" 0))
     ((:) (Clause ((:) (Atom "Coq.Relations.Relation_Definitions.1" 0) ([]))
     (Atom "Morphisms.flip_arrow.u1" 0)) ((:) (Clause ((:) (Atom
     "Basics.flip.u0" 0) ([])) (Atom "Morphisms.flip_arrow.u1" 0)) ((:)
     (Clause ((:) (Atom "Basics.flip.u1" 0) ([])) (Atom
     "Morphisms.flip_arrow.u1" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Classes.Morphisms.76" 0) ([])) (Atom "Morphisms.flip_arrow.u1" 0))
+    "Coq.Classes.Morphisms.95" 0) ([])) (Atom "Morphisms.flip_arrow.u1" 0))
     ((:) (Clause ((:) (Atom "Coq.Relations.Relation_Definitions.1" 0) ([]))
     (Atom "Morphisms.proper_sym_flip.u0" 0)) ((:) (Clause ((:) (Atom
     "Coq.Relations.Relation_Definitions.1" 0) ([])) (Atom
@@ -5176,6 +5588,10 @@ cs4 =
     "Coq.Relations.Relation_Definitions.1" 0) ([])) (Atom
     "Morphisms.proper_sym_impl_iff.u0" 0)) ((:) (Clause ((:) (Atom
     "Coq.Relations.Relation_Definitions.1" 0) ([])) (Atom
+    "Morphisms.proper_sym_impl_iff_2.u0" 0)) ((:) (Clause ((:) (Atom
+    "Morphisms.proper_sym_impl_iff_2.u0" 0) ([])) (Atom
+    "Coq.Relations.Relation_Definitions.1" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Relations.Relation_Definitions.1" 0) ([])) (Atom
     "Morphisms.proper_sym_impl_iff_2.u1" 0)) ((:) (Clause ((:) (Atom
     "Coq.Relations.Relation_Definitions.1" 0) ([])) (Atom
     "Morphisms.PartialOrder_proper.u0" 0)) ((:) (Clause ((:) (Atom
@@ -5188,13 +5604,13 @@ cs4 =
     "Morphisms.PartialOrder_proper.u0" 0)) ((:) (Clause ((:) (Atom
     "Coq.Relations.Relation_Definitions.1" 0) ([])) (Atom
     "Morphisms.PartialOrder_StrictOrder.u0" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Classes.Morphisms.31" 0) ([])) (Atom
+    "Coq.Classes.Morphisms.51" 0) ([])) (Atom
     "Morphisms.PartialOrder_StrictOrder.u0" 0)) ((:) (Clause ((:) (Atom
     "Morphisms.PartialOrder_proper.u0" 0) ([])) (Atom
     "Morphisms.PartialOrder_StrictOrder.u0" 0)) ((:) (Clause ((:) (Atom
     "Coq.Relations.Relation_Definitions.1" 0) ([])) (Atom
     "Morphisms.StrictOrder_PreOrder.u0" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Classes.Morphisms.31" 0) ([])) (Atom
+    "Coq.Classes.Morphisms.51" 0) ([])) (Atom
     "Morphisms.StrictOrder_PreOrder.u0" 0)) ((:) (Clause ((:) (Atom
     "Coq.Relations.Relation_Definitions.1" 0) ([])) (Atom
     "Morphisms.StrictOrder_PartialOrder.u0" 0)) ((:) (Clause ((:) (Atom
@@ -5209,25 +5625,27 @@ cs4 =
     "Vector.caseS.u1" 0)) ((:) (Clause ((:) (Atom "Vector.t.u0" 0) ([]))
     (Atom "Vector.caseS'.u0" 0)) ((:) (Clause ((:) (Atom "Vector.caseS'.u2"
     0) ([])) (Atom "Vector.caseS'.u0" 0)) ((:) (Clause ((:) (Atom
-    "Vector.t.u0" 0) ([])) (Atom "Vector.rect2.u0" 0)) ((:) (Clause ((:)
-    (Atom "Vector.t.u0" 0) ([])) (Atom "Vector.rect2.u1" 0)) ((:) (Clause
-    ((:) (Atom "Vector.case0.u0" 0) ([])) (Atom "Vector.rect2.u1" 0)) ((:)
-    (Clause ((:) (Atom "Vector.caseS'.u0" 0) ([])) (Atom "Vector.rect2.u1"
-    0)) ((:) (Clause ((:) (Atom "Vector.case0.u1" 0) ([])) (Atom
-    "Vector.rect2.u2" 0)) ((:) (Clause ((:) (Atom "Vector.caseS'.u1" 0) ([]))
-    (Atom "Vector.rect2.u2" 0)) ((:) (Clause ((:) (Atom "Vector.caseS.u0" 0)
-    ([])) (Atom "Vector.hd.u0" 0)) ((:) (Clause ((:) (Atom "Vector.caseS.u1"
-    0) ([])) (Atom "Vector.hd.u0" 0)) ((:) (Clause ((:) (Atom
-    "Vector.rectS.u0" 0) ([])) (Atom "Vector.last.u0" 0)) ((:) (Clause ((:)
-    (Atom "Vector.rectS.u1" 0) ([])) (Atom "Vector.last.u0" 0)) ((:) (Clause
-    ((:) (Atom "Coq.Init.Datatypes.11" 0) ([])) (Atom "Vector.const.u0" 0))
-    ((:) (Clause ((:) (Atom "Vector.t.u0" 0) ([])) (Atom "Vector.const.u0"
-    0)) ((:) (Clause ((:) (Atom "Vector.t.u0" 0) ([])) (Atom "Vector.nth.u0"
-    0)) ((:) (Clause ((:) (Atom "Vector.caseS.u0" 0) ([])) (Atom
-    "Vector.nth.u0" 0)) ((:) (Clause ((:) (Atom "Vector.caseS.u1" 0) ([]))
-    (Atom "Vector.nth.u0" 0)) ((:) (Clause ((:) (Atom "Vector.t.u0" 0) ([]))
-    (Atom "Vector.nth_order.u0" 0)) ((:) (Clause ((:) (Atom "Vector.nth.u0"
-    0) ([])) (Atom "Vector.nth_order.u0" 0)) ((:) (Clause ((:) (Atom
+    "Vector.caseS'.u2" 0) ([])) (Atom "Vector.caseS'.u1" (Prelude.succ 0)))
+    ((:) (Clause ((:) (Atom "Vector.t.u0" 0) ([])) (Atom "Vector.rect2.u0"
+    0)) ((:) (Clause ((:) (Atom "Vector.t.u0" 0) ([])) (Atom
+    "Vector.rect2.u1" 0)) ((:) (Clause ((:) (Atom "Vector.case0.u0" 0) ([]))
+    (Atom "Vector.rect2.u1" 0)) ((:) (Clause ((:) (Atom "Vector.caseS'.u0" 0)
+    ([])) (Atom "Vector.rect2.u1" 0)) ((:) (Clause ((:) (Atom
+    "Vector.case0.u1" 0) ([])) (Atom "Vector.rect2.u2" 0)) ((:) (Clause ((:)
+    (Atom "Vector.caseS'.u1" 0) ([])) (Atom "Vector.rect2.u2" 0)) ((:)
+    (Clause ((:) (Atom "Vector.caseS.u0" 0) ([])) (Atom "Vector.hd.u0" 0))
+    ((:) (Clause ((:) (Atom "Vector.caseS.u1" 0) ([])) (Atom "Vector.hd.u0"
+    0)) ((:) (Clause ((:) (Atom "Vector.rectS.u0" 0) ([])) (Atom
+    "Vector.last.u0" 0)) ((:) (Clause ((:) (Atom "Vector.rectS.u1" 0) ([]))
+    (Atom "Vector.last.u0" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Init.Datatypes.11" 0) ([])) (Atom "Vector.const.u0" 0)) ((:) (Clause
+    ((:) (Atom "Vector.t.u0" 0) ([])) (Atom "Vector.const.u0" 0)) ((:)
+    (Clause ((:) (Atom "Vector.t.u0" 0) ([])) (Atom "Vector.nth.u0" 0)) ((:)
+    (Clause ((:) (Atom "Vector.caseS.u0" 0) ([])) (Atom "Vector.nth.u0" 0))
+    ((:) (Clause ((:) (Atom "Vector.caseS.u1" 0) ([])) (Atom "Vector.nth.u0"
+    0)) ((:) (Clause ((:) (Atom "Vector.t.u0" 0) ([])) (Atom
+    "Vector.nth_order.u0" 0)) ((:) (Clause ((:) (Atom "Vector.nth.u0" 0)
+    ([])) (Atom "Vector.nth_order.u0" 0)) ((:) (Clause ((:) (Atom
     "Vector.t.u0" 0) ([])) (Atom "Vector.replace.u0" 0)) ((:) (Clause ((:)
     (Atom "Vector.caseS'.u0" 0) ([])) (Atom "Vector.replace.u0" 0)) ((:)
     (Clause ((:) (Atom "Vector.caseS'.u1" 0) ([])) (Atom "Vector.replace.u0"
@@ -5253,7 +5671,7 @@ cs4 =
     ([])) (Atom "Vector.shiftrepeat.u0" 0)) ((:) (Clause ((:) (Atom
     "Coq.Init.Logic.2" 0) ([])) (Atom "Vector.take.u0" 0)) ((:) (Clause ((:)
     (Atom "Vector.t.u0" 0) ([])) (Atom "Vector.take.u0" 0)) ((:) (Clause ((:)
-    (Atom "Coq.Init.Logic.9" 0) ([])) (Atom "Vector.trunc.u0" 0)) ((:)
+    (Atom "Coq.Init.Logic.10" 0) ([])) (Atom "Vector.trunc.u0" 0)) ((:)
     (Clause ((:) (Atom "eq_rect_r.u1" 0) ([])) (Atom "Vector.trunc.u0" 0))
     ((:) (Clause ((:) (Atom "Coq.Init.Datatypes.11" 0) ([])) (Atom
     "Vector.trunc.u0" 0)) ((:) (Clause ((:) (Atom "Vector.t.u0" 0) ([]))
@@ -5266,72 +5684,73 @@ cs4 =
     ((:) (Atom "Vector.hd.u0" 0) ([])) (Atom "Vector.splitat.u0" 0)) ((:)
     (Clause ((:) (Atom "Vector.tl.u0" 0) ([])) (Atom "Vector.splitat.u0" 0))
     ((:) (Clause ((:) (Atom "Vector.t.u0" 0) ([])) (Atom
-    "Vector.rev_append_tail.u0" 0)) ((:) (Clause ((:) (Atom "eq_rect_r.u1" 0)
-    ([])) (Atom "Vector.rev_append.u0" 0)) ((:) (Clause ((:) (Atom
-    "Vector.t.u0" 0) ([])) (Atom "Vector.rev_append.u0" 0)) ((:) (Clause ((:)
-    (Atom "Vector.rev_append_tail.u0" 0) ([])) (Atom "Vector.rev_append.u0"
-    0)) ((:) (Clause ((:) (Atom "eq_rect_r.u1" 0) ([])) (Atom "Vector.rev.u0"
-    0)) ((:) (Clause ((:) (Atom "Vector.t.u0" 0) ([])) (Atom "Vector.rev.u0"
-    0)) ((:) (Clause ((:) (Atom "Vector.rev_append.u0" 0) ([])) (Atom
-    "Vector.rev.u0" 0)) ((:) (Clause ((:) (Atom "Vector.t.u0" 0) ([])) (Atom
-    "Vector.map.u0" 0)) ((:) (Clause ((:) (Atom "Vector.t.u0" 0) ([])) (Atom
-    "Vector.map.u1" 0)) ((:) (Clause ((:) (Atom "Vector.t.u0" 0) ([])) (Atom
-    "Vector.map2.u0" 0)) ((:) (Clause ((:) (Atom "Vector.rect2.u0" 0) ([]))
-    (Atom "Vector.map2.u0" 0)) ((:) (Clause ((:) (Atom "Vector.t.u0" 0) ([]))
-    (Atom "Vector.map2.u1" 0)) ((:) (Clause ((:) (Atom "Vector.rect2.u1" 0)
-    ([])) (Atom "Vector.map2.u1" 0)) ((:) (Clause ((:) (Atom "Vector.t.u0" 0)
-    ([])) (Atom "Vector.map2.u2" 0)) ((:) (Clause ((:) (Atom
-    "Vector.rect2.u2" 0) ([])) (Atom "Vector.map2.u2" 0)) ((:) (Clause ((:)
-    (Atom "Vector.t.u0" 0) ([])) (Atom "Vector.fold_left.u0" 0)) ((:) (Clause
-    ((:) (Atom "Vector.t.u0" 0) ([])) (Atom "Vector.fold_right.u0" 0)) ((:)
-    (Clause ((:) (Atom "Vector.rect2.u0" 0) ([])) (Atom
-    "Vector.fold_right2.u0" 0)) ((:) (Clause ((:) (Atom "Vector.rect2.u1" 0)
-    ([])) (Atom "Vector.fold_right2.u1" 0)) ((:) (Clause ((:) (Atom
-    "Vector.rect2.u2" 0) ([])) (Atom "Vector.fold_right2.u2" 0)) ((:) (Clause
-    ((:) (Atom "Vector.case0.u1" 0) ([])) (Atom "Vector.fold_left2.u0" 0))
-    ((:) (Clause ((:) (Atom "Vector.caseS'.u1" 0) ([])) (Atom
-    "Vector.fold_left2.u0" 0)) ((:) (Clause ((:) (Atom "Vector.t.u0" 0) ([]))
-    (Atom "Vector.fold_left2.u1" 0)) ((:) (Clause ((:) (Atom "Vector.t.u0" 0)
-    ([])) (Atom "Vector.fold_left2.u2" 0)) ((:) (Clause ((:) (Atom
-    "Vector.case0.u0" 0) ([])) (Atom "Vector.fold_left2.u2" 0)) ((:) (Clause
-    ((:) (Atom "Vector.caseS'.u0" 0) ([])) (Atom "Vector.fold_left2.u2" 0))
-    ((:) (Clause ((:) (Atom "Vector.t.u0" 0) ([])) (Atom "Vector.Forall.u0"
+    "Vector.rev_append_tail.u0" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Init.Logic.10" 0) ([])) (Atom "Vector.rev_append.u0" 0)) ((:)
+    (Clause ((:) (Atom "Vector.t.u0" 0) ([])) (Atom "Vector.rev_append.u0"
+    0)) ((:) (Clause ((:) (Atom "Vector.rev_append_tail.u0" 0) ([])) (Atom
+    "Vector.rev_append.u0" 0)) ((:) (Clause ((:) (Atom "eq_rect_r.u1" 0)
+    ([])) (Atom "Vector.rev.u0" 0)) ((:) (Clause ((:) (Atom "Vector.t.u0" 0)
+    ([])) (Atom "Vector.rev.u0" 0)) ((:) (Clause ((:) (Atom
+    "Vector.rev_append.u0" 0) ([])) (Atom "Vector.rev.u0" 0)) ((:) (Clause
+    ((:) (Atom "Vector.t.u0" 0) ([])) (Atom "Vector.map.u0" 0)) ((:) (Clause
+    ((:) (Atom "Vector.t.u0" 0) ([])) (Atom "Vector.map.u1" 0)) ((:) (Clause
+    ((:) (Atom "Vector.t.u0" 0) ([])) (Atom "Vector.map2.u0" 0)) ((:) (Clause
+    ((:) (Atom "Vector.rect2.u0" 0) ([])) (Atom "Vector.map2.u0" 0)) ((:)
+    (Clause ((:) (Atom "Vector.t.u0" 0) ([])) (Atom "Vector.map2.u1" 0)) ((:)
+    (Clause ((:) (Atom "Vector.rect2.u1" 0) ([])) (Atom "Vector.map2.u1" 0))
+    ((:) (Clause ((:) (Atom "Vector.t.u0" 0) ([])) (Atom "Vector.map2.u2" 0))
+    ((:) (Clause ((:) (Atom "Vector.rect2.u2" 0) ([])) (Atom "Vector.map2.u2"
     0)) ((:) (Clause ((:) (Atom "Vector.t.u0" 0) ([])) (Atom
-    "Vector.Exists.u0" 0)) ((:) (Clause ((:) (Atom "Vector.t.u0" 0) ([]))
-    (Atom "Vector.In.u0" 0)) ((:) (Clause ((:) (Atom "Vector.t.u0" 0) ([]))
-    (Atom "Vector.Forall2.u0" 0)) ((:) (Clause ((:) (Atom "Vector.t.u0" 0)
-    ([])) (Atom "Vector.Forall2.u1" 0)) ((:) (Clause ((:) (Atom "Vector.t.u0"
-    0) ([])) (Atom "Vector.Exists2.u0" 0)) ((:) (Clause ((:) (Atom
-    "Vector.t.u0" 0) ([])) (Atom "Vector.Exists2.u1" 0)) ((:) (Clause ((:)
-    (Atom "list.u0" 0) ([])) (Atom "Vector.of_list.u0" 0)) ((:) (Clause ((:)
-    (Atom "length.u0" 0) ([])) (Atom "Vector.of_list.u0" 0)) ((:) (Clause
-    ((:) (Atom "Vector.t.u0" 0) ([])) (Atom "Vector.of_list.u0" 0)) ((:)
-    (Clause ((:) (Atom "list.u0" 0) ([])) (Atom "Vector.to_list.u0" 0)) ((:)
-    (Clause ((:) (Atom "Vector.t.u0" 0) ([])) (Atom "Vector.to_list.u0" 0))
-    ((:) (Clause ((:) (Atom "Vector.fold_right.u0" 0) ([])) (Atom
-    "Vector.to_list.u0" 0)) ((:) (Clause ((:) (Atom "Vector.fold_right.u1" 0)
-    ([])) (Atom "Vector.to_list.u0" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0)
+    "Vector.fold_left.u0" 0)) ((:) (Clause ((:) (Atom "Vector.t.u0" 0) ([]))
+    (Atom "Vector.fold_right.u0" 0)) ((:) (Clause ((:) (Atom
+    "Vector.rect2.u0" 0) ([])) (Atom "Vector.fold_right2.u0" 0)) ((:) (Clause
+    ((:) (Atom "Vector.rect2.u1" 0) ([])) (Atom "Vector.fold_right2.u1" 0))
+    ((:) (Clause ((:) (Atom "Vector.rect2.u2" 0) ([])) (Atom
+    "Vector.fold_right2.u2" 0)) ((:) (Clause ((:) (Atom "Vector.case0.u1" 0)
+    ([])) (Atom "Vector.fold_left2.u0" 0)) ((:) (Clause ((:) (Atom
+    "Vector.caseS'.u1" 0) ([])) (Atom "Vector.fold_left2.u0" 0)) ((:) (Clause
+    ((:) (Atom "Vector.t.u0" 0) ([])) (Atom "Vector.fold_left2.u1" 0)) ((:)
+    (Clause ((:) (Atom "Vector.t.u0" 0) ([])) (Atom "Vector.fold_left2.u2"
+    0)) ((:) (Clause ((:) (Atom "Vector.case0.u0" 0) ([])) (Atom
+    "Vector.fold_left2.u2" 0)) ((:) (Clause ((:) (Atom "Vector.caseS'.u0" 0)
+    ([])) (Atom "Vector.fold_left2.u2" 0)) ((:) (Clause ((:) (Atom
+    "Vector.t.u0" 0) ([])) (Atom "Vector.Forall.u0" 0)) ((:) (Clause ((:)
+    (Atom "Vector.t.u0" 0) ([])) (Atom "Vector.Exists.u0" 0)) ((:) (Clause
+    ((:) (Atom "Vector.t.u0" 0) ([])) (Atom "Vector.In.u0" 0)) ((:) (Clause
+    ((:) (Atom "Vector.t.u0" 0) ([])) (Atom "Vector.Forall2.u0" 0)) ((:)
+    (Clause ((:) (Atom "Vector.t.u0" 0) ([])) (Atom "Vector.Forall2.u1" 0))
+    ((:) (Clause ((:) (Atom "Vector.t.u0" 0) ([])) (Atom "Vector.Exists2.u0"
+    0)) ((:) (Clause ((:) (Atom "Vector.t.u0" 0) ([])) (Atom
+    "Vector.Exists2.u1" 0)) ((:) (Clause ((:) (Atom "list.u0" 0) ([])) (Atom
+    "Vector.of_list.u0" 0)) ((:) (Clause ((:) (Atom "length.u0" 0) ([]))
+    (Atom "Vector.of_list.u0" 0)) ((:) (Clause ((:) (Atom "Vector.t.u0" 0)
+    ([])) (Atom "Vector.of_list.u0" 0)) ((:) (Clause ((:) (Atom "list.u0" 0)
+    ([])) (Atom "Vector.to_list.u0" 0)) ((:) (Clause ((:) (Atom "Vector.t.u0"
+    0) ([])) (Atom "Vector.to_list.u0" 0)) ((:) (Clause ((:) (Atom
+    "Vector.fold_right.u0" 0) ([])) (Atom "Vector.to_list.u0" 0)) ((:)
+    (Clause ((:) (Atom "Vector.fold_right.u1" 0) ([])) (Atom
+    "Vector.to_list.u0" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
+    "Coq.micromega.Env.1" 0)) ((:) (Clause ((:) (Atom "Coq.Init.Logic.11" 0)
     ([])) (Atom "Coq.micromega.Env.1" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Init.Logic.10" 0) ([])) (Atom "Coq.micromega.Env.1" 0)) ((:) (Clause
-    ((:) (Atom "eq_ind_r.u0" 0) ([])) (Atom "Coq.micromega.Env.1" 0)) ((:)
-    (Clause ((:) (Atom "Coq.micromega.Tauto.49" 0) ([])) (Atom
-    "Coq.micromega.Env.1" 0)) ((:) (Clause ((:) (Atom "list.u0" 0) ([]))
-    (Atom "Refl.make_impl.u0" 0)) ((:) (Clause ((:) (Atom "list.u0" 0) ([]))
-    (Atom "Refl.make_impl_true.u0" 0)) ((:) (Clause ((:) (Atom
-    "Refl.make_impl.u0" 0) ([])) (Atom "Refl.make_impl_true.u0" 0)) ((:)
-    (Clause ((:) (Atom "Coq.Lists.List.277" 0) ([])) (Atom
-    "Refl.make_impl_map.u0" 0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.278"
+    "eq_ind_r.u0" 0) ([])) (Atom "Coq.micromega.Env.1" 0)) ((:) (Clause ((:)
+    (Atom "Coq.micromega.Tauto.49" 0) ([])) (Atom "Coq.micromega.Env.1" 0))
+    ((:) (Clause ((:) (Atom "list.u0" 0) ([])) (Atom "Refl.make_impl.u0" 0))
+    ((:) (Clause ((:) (Atom "list.u0" 0) ([])) (Atom "Refl.make_impl_true.u0"
+    0)) ((:) (Clause ((:) (Atom "Refl.make_impl.u0" 0) ([])) (Atom
+    "Refl.make_impl_true.u0" 0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.279"
     0) ([])) (Atom "Refl.make_impl_map.u0" 0)) ((:) (Clause ((:) (Atom
-    "prod.u0" 0) ([])) (Atom "Refl.make_impl_map.u0" 0)) ((:) (Clause ((:)
-    (Atom "Coq.Init.Datatypes.26" 0) ([])) (Atom "Refl.make_impl_map.u0" 0))
-    ((:) (Clause ((:) (Atom "list.u0" 0) ([])) (Atom "Refl.make_impl_map.u0"
-    0)) ((:) (Clause ((:) (Atom "Refl.make_impl.u0" 0) ([])) (Atom
-    "Refl.make_impl_map.u0" 0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.277"
-    0) ([])) (Atom "Refl.make_impl_map.u1" 0)) ((:) (Clause ((:) (Atom
-    "prod.u1" 0) ([])) (Atom "Refl.make_impl_map.u1" 0)) ((:) (Clause ((:)
-    (Atom "Coq.Init.Datatypes.27" 0) ([])) (Atom "Refl.make_impl_map.u1" 0))
-    ((:) (Clause ((:) (Atom "list.u0" 0) ([])) (Atom "Refl.make_impl_map.u1"
-    0)) ((:) (Clause ((:) (Atom "Refl.make_impl.u0" 0) ([])) (Atom
+    "Coq.Lists.List.280" 0) ([])) (Atom "Refl.make_impl_map.u0" 0)) ((:)
+    (Clause ((:) (Atom "prod.u0" 0) ([])) (Atom "Refl.make_impl_map.u0" 0))
+    ((:) (Clause ((:) (Atom "Coq.Init.Datatypes.26" 0) ([])) (Atom
+    "Refl.make_impl_map.u0" 0)) ((:) (Clause ((:) (Atom "list.u0" 0) ([]))
+    (Atom "Refl.make_impl_map.u0" 0)) ((:) (Clause ((:) (Atom
+    "Refl.make_impl.u0" 0) ([])) (Atom "Refl.make_impl_map.u0" 0)) ((:)
+    (Clause ((:) (Atom "Coq.Lists.List.279" 0) ([])) (Atom
+    "Refl.make_impl_map.u1" 0)) ((:) (Clause ((:) (Atom "prod.u1" 0) ([]))
+    (Atom "Refl.make_impl_map.u1" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Init.Datatypes.27" 0) ([])) (Atom "Refl.make_impl_map.u1" 0)) ((:)
+    (Clause ((:) (Atom "list.u0" 0) ([])) (Atom "Refl.make_impl_map.u1" 0))
+    ((:) (Clause ((:) (Atom "Refl.make_impl.u0" 0) ([])) (Atom
     "Refl.make_impl_map.u1" 0)) ((:) (Clause ((:) (Atom "list.u0" 0) ([]))
     (Atom "Refl.make_conj.u0" 0)) ((:) (Clause ((:) (Atom "list.u0" 0) ([]))
     (Atom "Refl.make_conj_cons.u0" 0)) ((:) (Clause ((:) (Atom
@@ -5369,30 +5788,30 @@ cs4 =
     (Clause ((:) (Atom "Refl.not_make_conj_cons.u0" 0) ([])) (Atom
     "Refl.not_make_conj_app.u0" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([]))
     (Atom "Coq.micromega.Tauto.8" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Init.Logic.10" 0) ([])) (Atom "Coq.micromega.Tauto.8" 0)) ((:)
+    "Coq.Init.Logic.11" 0) ([])) (Atom "Coq.micromega.Tauto.8" 0)) ((:)
     (Clause ((:) (Atom "eq_ind_r.u0" 0) ([])) (Atom "Coq.micromega.Tauto.8"
     0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
-    "Coq.micromega.Tauto.9" 0)) ((:) (Clause ((:) (Atom "Coq.Init.Logic.10"
+    "Coq.micromega.Tauto.9" 0)) ((:) (Clause ((:) (Atom "Coq.Init.Logic.11"
     0) ([])) (Atom "Coq.micromega.Tauto.9" 0)) ((:) (Clause ((:) (Atom
     "eq_ind_r.u0" 0) ([])) (Atom "Coq.micromega.Tauto.9" 0)) ((:) (Clause
     ((:) (Atom "eq.u0" 0) ([])) (Atom "Coq.micromega.Tauto.10" 0)) ((:)
-    (Clause ((:) (Atom "Coq.Init.Logic.10" 0) ([])) (Atom
+    (Clause ((:) (Atom "Coq.Init.Logic.11" 0) ([])) (Atom
     "Coq.micromega.Tauto.10" 0)) ((:) (Clause ((:) (Atom "eq_ind_r.u0" 0)
     ([])) (Atom "Coq.micromega.Tauto.10" 0)) ((:) (Clause ((:) (Atom
     "list.u0" 0) ([])) (Atom "Coq.micromega.Tauto.10" 0)) ((:) (Clause ((:)
     (Atom "app.u0" 0) ([])) (Atom "Coq.micromega.Tauto.10" 0)) ((:) (Clause
     ((:) (Atom "eq.u0" 0) ([])) (Atom "Coq.micromega.Tauto.11" 0)) ((:)
-    (Clause ((:) (Atom "Coq.Init.Logic.10" 0) ([])) (Atom
+    (Clause ((:) (Atom "Coq.Init.Logic.11" 0) ([])) (Atom
     "Coq.micromega.Tauto.11" 0)) ((:) (Clause ((:) (Atom "eq_ind_r.u0" 0)
     ([])) (Atom "Coq.micromega.Tauto.11" 0)) ((:) (Clause ((:) (Atom
     "option.u0" 0) ([])) (Atom "Coq.micromega.Tauto.11" 0)) ((:) (Clause ((:)
     (Atom "list.u0" 0) ([])) (Atom "Coq.micromega.Tauto.11" 0)) ((:) (Clause
     ((:) (Atom "Coq.Relations.Relation_Definitions.1" 0) ([])) (Atom
     "Tauto.rtyp.u0" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
-    "Tauto.rtyp.u0" 0)) ((:) (Clause ((:) (Atom "Coq.Init.Logic.10" 0) ([]))
+    "Tauto.rtyp.u0" 0)) ((:) (Clause ((:) (Atom "Coq.Init.Logic.11" 0) ([]))
     (Atom "Tauto.rtyp.u0" 0)) ((:) (Clause ((:) (Atom "eq_ind_r.u0" 0) ([]))
     (Atom "Tauto.rtyp.u0" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Classes.Morphisms.31" 0) ([])) (Atom "Tauto.rtyp.u0" 0)) ((:)
+    "Coq.Classes.Morphisms.51" 0) ([])) (Atom "Tauto.rtyp.u0" 0)) ((:)
     (Clause ((:) (Atom "Coq.micromega.Tauto.9" 0) ([])) (Atom "Tauto.rtyp.u0"
     0)) ((:) (Clause ((:) (Atom "Coq.micromega.Tauto.38" 0) ([])) (Atom
     "Tauto.rtyp.u0" 0)) ((:) (Clause ((:) (Atom "Tauto.TFormula.u0" 0) ([]))
@@ -5402,8 +5821,10 @@ cs4 =
     (Clause ((:) (Atom "Tauto.is_bool_inv.u0" 0) ([])) (Atom "Tauto.rtyp.u0"
     0)) ((:) (Clause ((:) (Atom "Tauto.xcnf.u0" 0) ([])) (Atom
     "Tauto.rtyp.u0" 0)) ((:) (Clause ((:) (Atom "Coq.micromega.Tauto.148" 0)
-    ([])) (Atom "Tauto.rtyp.u0" 0)) ((:) (Clause ((:) (Atom
-    "Coq.micromega.Tauto.8" 0) ([])) (Atom "Tauto.BFormula.u0" 0)) ((:)
+    ([])) (Atom "Tauto.rtyp.u0" 0)) ((:) (Clause ((:) (Atom "Tauto.rtyp.u0"
+    0) ([])) (Atom "Tauto.eKind.u0" 0)) ((:) (Clause ((:) (Atom
+    "Tauto.eKind.u0" 0) ([])) (Atom "Tauto.rtyp.u0" 0)) ((:) (Clause ((:)
+    (Atom "Coq.micromega.Tauto.8" 0) ([])) (Atom "Tauto.BFormula.u0" 0)) ((:)
     (Clause ((:) (Atom "Coq.micromega.Tauto.8" 0) ([])) (Atom
     "Coq.micromega.Tauto.36" 0)) ((:) (Clause ((:) (Atom
     "Coq.micromega.Tauto.8" 0) ([])) (Atom "Coq.micromega.Tauto.37" 0)) ((:)
@@ -5411,21 +5832,21 @@ cs4 =
     "Coq.micromega.Tauto.38" 0)) ((:) (Clause ((:) (Atom
     "Coq.micromega.Tauto.10" 0) ([])) (Atom "Coq.micromega.Tauto.39" 0)) ((:)
     (Clause ((:) (Atom "Coq.micromega.Tauto.11" 0) ([])) (Atom
-    "Coq.micromega.Tauto.40" 0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.277"
+    "Coq.micromega.Tauto.40" 0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.279"
     0) ([])) (Atom "Tauto.map_simpl.u0" 0)) ((:) (Clause ((:) (Atom "list.u0"
     0) ([])) (Atom "Tauto.map_simpl.u0" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Lists.List.278" 0) ([])) (Atom "Tauto.map_simpl.u1" 0)) ((:) (Clause
+    "Coq.Lists.List.280" 0) ([])) (Atom "Tauto.map_simpl.u1" 0)) ((:) (Clause
     ((:) (Atom "eq.u0" 0) ([])) (Atom "Tauto.map_simpl.u1" 0)) ((:) (Clause
     ((:) (Atom "list.u0" 0) ([])) (Atom "Tauto.map_simpl.u1" 0)) ((:) (Clause
     ((:) (Atom "Coq.micromega.Tauto.8" 0) ([])) (Atom
     "Coq.micromega.Tauto.50" 0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.247"
     0) ([])) (Atom "Coq.micromega.Tauto.51" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Lists.List.277" 0) ([])) (Atom "Coq.micromega.Tauto.51" 0)) ((:)
-    (Clause ((:) (Atom "Coq.Lists.List.377" 0) ([])) (Atom
-    "Coq.micromega.Tauto.51" 0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.378"
+    "Coq.Lists.List.279" 0) ([])) (Atom "Coq.micromega.Tauto.51" 0)) ((:)
+    (Clause ((:) (Atom "Coq.Lists.List.379" 0) ([])) (Atom
+    "Coq.micromega.Tauto.51" 0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.380"
     0) ([])) (Atom "Coq.micromega.Tauto.51" 0)) ((:) (Clause ((:) (Atom
     "eq.u0" 0) ([])) (Atom "Coq.micromega.Tauto.51" 0)) ((:) (Clause ((:)
-    (Atom "Coq.Init.Logic.10" 0) ([])) (Atom "Coq.micromega.Tauto.51" 0))
+    (Atom "Coq.Init.Logic.11" 0) ([])) (Atom "Coq.micromega.Tauto.51" 0))
     ((:) (Clause ((:) (Atom "eq_ind_r.u0" 0) ([])) (Atom
     "Coq.micromega.Tauto.51" 0)) ((:) (Clause ((:) (Atom "option.u0" 0) ([]))
     (Atom "Coq.micromega.Tauto.51" 0)) ((:) (Clause ((:) (Atom "sum.u0" 0)
@@ -5446,13 +5867,13 @@ cs4 =
     (Clause ((:) (Atom "Tauto.if_same.u0" 0) ([])) (Atom
     "Coq.micromega.Tauto.51" 0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.247"
     0) ([])) (Atom "Coq.micromega.Tauto.52" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Lists.List.277" 0) ([])) (Atom "Coq.micromega.Tauto.52" 0)) ((:)
-    (Clause ((:) (Atom "Coq.Lists.List.278" 0) ([])) (Atom
-    "Coq.micromega.Tauto.52" 0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.377"
+    "Coq.Lists.List.279" 0) ([])) (Atom "Coq.micromega.Tauto.52" 0)) ((:)
+    (Clause ((:) (Atom "Coq.Lists.List.280" 0) ([])) (Atom
+    "Coq.micromega.Tauto.52" 0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.379"
     0) ([])) (Atom "Coq.micromega.Tauto.52" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Lists.List.378" 0) ([])) (Atom "Coq.micromega.Tauto.52" 0)) ((:)
+    "Coq.Lists.List.380" 0) ([])) (Atom "Coq.micromega.Tauto.52" 0)) ((:)
     (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "Coq.micromega.Tauto.52" 0))
-    ((:) (Clause ((:) (Atom "Coq.Init.Logic.10" 0) ([])) (Atom
+    ((:) (Clause ((:) (Atom "Coq.Init.Logic.11" 0) ([])) (Atom
     "Coq.micromega.Tauto.52" 0)) ((:) (Clause ((:) (Atom "eq_ind_r.u0" 0)
     ([])) (Atom "Coq.micromega.Tauto.52" 0)) ((:) (Clause ((:) (Atom
     "option.u0" 0) ([])) (Atom "Coq.micromega.Tauto.52" 0)) ((:) (Clause ((:)
@@ -5520,7 +5941,7 @@ cs4 =
     "Coq.micromega.Tauto.127" 0) ([])) (Atom "Tauto.rxcnf.u1" 0)) ((:)
     (Clause ((:) (Atom "ex.u0" 0) ([])) (Atom "Coq.micromega.Tauto.148" 0))
     ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "Coq.micromega.Tauto.148"
-    0)) ((:) (Clause ((:) (Atom "Coq.Init.Logic.10" 0) ([])) (Atom
+    0)) ((:) (Clause ((:) (Atom "Coq.Init.Logic.11" 0) ([])) (Atom
     "Coq.micromega.Tauto.148" 0)) ((:) (Clause ((:) (Atom "eq_ind_r.u0" 0)
     ([])) (Atom "Coq.micromega.Tauto.148" 0)) ((:) (Clause ((:) (Atom
     "option.u0" 0) ([])) (Atom "Coq.micromega.Tauto.148" 0)) ((:) (Clause
@@ -5605,7 +6026,7 @@ cs4 =
     "Tauto.rxcnf_impl_xcnf.u1" 0) ([])) (Atom "Tauto.rxcnf_xcnf.u1" 0)) ((:)
     (Clause ((:) (Atom "Tauto.rxcnf_iff_xcnf.u1" 0) ([])) (Atom
     "Tauto.rxcnf_xcnf.u1" 0)) ((:) (Clause ((:) (Atom "list.u0" 0) ([]))
-    (Atom "Coq.micromega.Tauto.324" 0)) ((:) (Clause ((:) (Atom
+    (Atom "Coq.micromega.Tauto.391" 0)) ((:) (Clause ((:) (Atom
     "Coq.micromega.Tauto.8" 0) ([])) (Atom "Tauto.eval_bf.u0" 0)) ((:)
     (Clause ((:) (Atom "Tauto.BFormula.u0" 0) ([])) (Atom "Tauto.eval_bf.u0"
     0)) ((:) (Clause ((:) (Atom "Coq.micromega.Tauto.8" 0) ([])) (Atom
@@ -5626,18 +6047,18 @@ cs4 =
     "Coq.micromega.OrderedRing.21" 0) ([])) (Atom "Coq.micromega.ZCoeff.1"
     0)) ((:) (Clause ((:) (Atom "Coq.micromega.RingMicromega.1" 0) ([]))
     (Atom "Coq.micromega.ZCoeff.1" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Classes.Morphisms.31" 0) ([])) (Atom "Coq.micromega.ZCoeff.1" 0))
+    "Coq.Classes.Morphisms.51" 0) ([])) (Atom "Coq.micromega.ZCoeff.1" 0))
     ((:) (Clause ((:) (Atom "Coq.setoid_ring.Ring_theory.17" 0) ([])) (Atom
     "Coq.micromega.ZCoeff.1" 0)) ((:) (Clause ((:) (Atom
     "Coq.setoid_ring.Ring_theory.100" 0) ([])) (Atom "Coq.micromega.ZCoeff.1"
     0)) ((:) (Clause ((:) (Atom "Coq.Relations.Relation_Definitions.1" 0)
     ([])) (Atom "Coq.micromega.EnvRing.9" 0)) ((:) (Clause ((:) (Atom "eq.u0"
     0) ([])) (Atom "Coq.micromega.EnvRing.9" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Init.Logic.10" 0) ([])) (Atom "Coq.micromega.EnvRing.9" 0)) ((:)
+    "Coq.Init.Logic.11" 0) ([])) (Atom "Coq.micromega.EnvRing.9" 0)) ((:)
     (Clause ((:) (Atom "eq_ind_r.u0" 0) ([])) (Atom "Coq.micromega.EnvRing.9"
-    0)) ((:) (Clause ((:) (Atom "Setoid.Seq_refl.u0" 0) ([])) (Atom
+    0)) ((:) (Clause ((:) (Atom "Seq_refl.u0" 0) ([])) (Atom
     "Coq.micromega.EnvRing.9" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Classes.Morphisms.31" 0) ([])) (Atom "Coq.micromega.EnvRing.9" 0))
+    "Coq.Classes.Morphisms.51" 0) ([])) (Atom "Coq.micromega.EnvRing.9" 0))
     ((:) (Clause ((:) (Atom "Coq.micromega.Env.1" 0) ([])) (Atom
     "Coq.micromega.EnvRing.9" 0)) ((:) (Clause ((:) (Atom
     "EnvRing.env_morph.u0" 0) ([])) (Atom "Coq.micromega.EnvRing.9" 0)) ((:)
@@ -5660,22 +6081,20 @@ cs4 =
     "Coq.micromega.EnvRing.10" 0)) ((:) (Clause ((:) (Atom "Coq.Init.Wf.1" 0)
     ([])) (Atom "Coq.micromega.EnvRing.10" 0)) ((:) (Clause ((:) (Atom
     "Coq.Lists.List.1" 0) ([])) (Atom "Coq.micromega.EnvRing.10" 0)) ((:)
-    (Clause ((:) (Atom "Coq.Lists.List.13" 0) ([])) (Atom
+    (Clause ((:) (Atom "Coq.Lists.List.44" 0) ([])) (Atom
     "Coq.micromega.EnvRing.10" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Lists.List.44" 0) ([])) (Atom "Coq.micromega.EnvRing.10" 0)) ((:)
-    (Clause ((:) (Atom "Coq.Lists.List.277" 0) ([])) (Atom
+    "Coq.Lists.List.279" 0) ([])) (Atom "Coq.micromega.EnvRing.10" 0)) ((:)
+    (Clause ((:) (Atom "Coq.Lists.List.280" 0) ([])) (Atom
     "Coq.micromega.EnvRing.10" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Lists.List.278" 0) ([])) (Atom "Coq.micromega.EnvRing.10" 0)) ((:)
-    (Clause ((:) (Atom "Coq.Lists.List.378" 0) ([])) (Atom
+    "Coq.Lists.List.380" 0) ([])) (Atom "Coq.micromega.EnvRing.10" 0)) ((:)
+    (Clause ((:) (Atom "Coq.Lists.List.383" 0) ([])) (Atom
     "Coq.micromega.EnvRing.10" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Lists.List.381" 0) ([])) (Atom "Coq.micromega.EnvRing.10" 0)) ((:)
-    (Clause ((:) (Atom "Coq.Lists.List.382" 0) ([])) (Atom
-    "Coq.micromega.EnvRing.10" 0)) ((:) (Clause ((:) (Atom "ex.u0" 0) ([]))
-    (Atom "Coq.micromega.EnvRing.10" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0)
+    "Coq.Lists.List.384" 0) ([])) (Atom "Coq.micromega.EnvRing.10" 0)) ((:)
+    (Clause ((:) (Atom "ex.u0" 0) ([])) (Atom "Coq.micromega.EnvRing.10" 0))
+    ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "Coq.micromega.EnvRing.10"
+    0)) ((:) (Clause ((:) (Atom "Coq.Init.Logic.11" 0) ([])) (Atom
+    "Coq.micromega.EnvRing.10" 0)) ((:) (Clause ((:) (Atom "eq_ind_r.u0" 0)
     ([])) (Atom "Coq.micromega.EnvRing.10" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Init.Logic.10" 0) ([])) (Atom "Coq.micromega.EnvRing.10" 0)) ((:)
-    (Clause ((:) (Atom "eq_ind_r.u0" 0) ([])) (Atom
-    "Coq.micromega.EnvRing.10" 0)) ((:) (Clause ((:) (Atom
     "Coq.Arith.Wf_nat.1" 0) ([])) (Atom "Coq.micromega.EnvRing.10" 0)) ((:)
     (Clause ((:) (Atom "option.u0" 0) ([])) (Atom "Coq.micromega.EnvRing.10"
     0)) ((:) (Clause ((:) (Atom "prod.u0" 0) ([])) (Atom
@@ -5695,7 +6114,7 @@ cs4 =
     ((:) (Clause ((:) (Atom "Refl.make_conj_in.u0" 0) ([])) (Atom
     "Coq.micromega.EnvRing.10" 0)) ((:) (Clause ((:) (Atom
     "Coq.micromega.Tauto.51" 0) ([])) (Atom "Coq.micromega.EnvRing.10" 0))
-    ((:) (Clause ((:) (Atom "Coq.micromega.Tauto.324" 0) ([])) (Atom
+    ((:) (Clause ((:) (Atom "Coq.micromega.Tauto.391" 0) ([])) (Atom
     "Coq.micromega.EnvRing.10" 0)) ((:) (Clause ((:) (Atom "EnvRing.PExpr.u0"
     0) ([])) (Atom "Coq.micromega.EnvRing.10" 0)) ((:) (Clause ((:) (Atom
     "EnvRing.Pol.u0" 0) ([])) (Atom "Coq.micromega.EnvRing.10" 0)) ((:)
@@ -5704,7 +6123,11 @@ cs4 =
     "Coq.setoid_ring.Ring_theory.74" 0) ([])) (Atom
     "Coq.micromega.EnvRing.10" 0)) ((:) (Clause ((:) (Atom
     "Coq.setoid_ring.Ring_theory.97" 0) ([])) (Atom
-    "Coq.micromega.EnvRing.11" 0)) ((:) (Clause ((:) (Atom
+    "Coq.micromega.EnvRing.11" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([]))
+    (Atom "EnvRing.env_morph.u0" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
+    "eq.u0" 0) ([])) (Atom "EnvRing.Pjump_add.u0" (Prelude.succ 0))) ((:)
+    (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "EnvRing.Mphi_morph.u0"
+    (Prelude.succ 0))) ((:) (Clause ((:) (Atom
     "Coq.Relations.Relation_Definitions.1" 0) ([])) (Atom
     "ssrsetoid.compat_Reflexive.u0" 0)) ((:) (Clause ((:) (Atom
     "Coq.ssr.ssrclasses.1" 0) ([])) (Atom "ssrsetoid.compat_Reflexive.u0" 0))
@@ -5715,7 +6138,7 @@ cs4 =
     "Coq.Relations.Relation_Definitions.1" 0) ([])) (Atom
     "Relations.inverse_image_of_eq.u0" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0)
     ([])) (Atom "Relations.inverse_image_of_eq.u1" 0)) ((:) (Clause ((:)
-    (Atom "Coq.Init.Logic.10" 0) ([])) (Atom
+    (Atom "Coq.Init.Logic.11" 0) ([])) (Atom
     "Relations.inverse_image_of_eq.u1" 0)) ((:) (Clause ((:) (Atom
     "Coq.Relations.Relation_Definitions.1" 0) ([])) (Atom
     "Coq.setoid_ring.Ring_polynom.1" 0)) ((:) (Clause ((:) (Atom
@@ -5724,11 +6147,11 @@ cs4 =
     "Coq.setoid_ring.Ring_polynom.1" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0)
     ([])) (Atom "Coq.setoid_ring.Ring_polynom.1" 0)) ((:) (Clause ((:) (Atom
     "eq_ind_r.u0" 0) ([])) (Atom "Coq.setoid_ring.Ring_polynom.1" 0)) ((:)
-    (Clause ((:) (Atom "Setoid.Seq_refl.u0" 0) ([])) (Atom
+    (Clause ((:) (Atom "Seq_refl.u0" 0) ([])) (Atom
     "Coq.setoid_ring.Ring_polynom.1" 0)) ((:) (Clause ((:) (Atom "prod.u0" 0)
     ([])) (Atom "Coq.setoid_ring.Ring_polynom.1" 0)) ((:) (Clause ((:) (Atom
     "list.u0" 0) ([])) (Atom "Coq.setoid_ring.Ring_polynom.1" 0)) ((:)
-    (Clause ((:) (Atom "Coq.Classes.Morphisms.31" 0) ([])) (Atom
+    (Clause ((:) (Atom "Coq.Classes.Morphisms.51" 0) ([])) (Atom
     "Coq.setoid_ring.Ring_polynom.1" 0)) ((:) (Clause ((:) (Atom
     "Coq.setoid_ring.Ring_theory.1" 0) ([])) (Atom
     "Coq.setoid_ring.Ring_polynom.1" 0)) ((:) (Clause ((:) (Atom
@@ -5741,7 +6164,7 @@ cs4 =
     "Coq.Relations.Relation_Definitions.1" 0) ([])) (Atom
     "Coq.setoid_ring.Ring_polynom.2" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0)
     ([])) (Atom "Coq.setoid_ring.Ring_polynom.2" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Init.Logic.10" 0) ([])) (Atom "Coq.setoid_ring.Ring_polynom.2" 0))
+    "Coq.Init.Logic.11" 0) ([])) (Atom "Coq.setoid_ring.Ring_polynom.2" 0))
     ((:) (Clause ((:) (Atom "eq_ind_r.u0" 0) ([])) (Atom
     "Coq.setoid_ring.Ring_polynom.2" 0)) ((:) (Clause ((:) (Atom "option.u0"
     0) ([])) (Atom "Coq.setoid_ring.Ring_polynom.2" 0)) ((:) (Clause ((:)
@@ -5752,7 +6175,7 @@ cs4 =
     0)) ((:) (Clause ((:) (Atom "list.u0" 0) ([])) (Atom
     "Coq.setoid_ring.Ring_polynom.2" 0)) ((:) (Clause ((:) (Atom "app.u0" 0)
     ([])) (Atom "Coq.setoid_ring.Ring_polynom.2" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Classes.Morphisms.31" 0) ([])) (Atom
+    "Coq.Classes.Morphisms.51" 0) ([])) (Atom
     "Coq.setoid_ring.Ring_polynom.2" 0)) ((:) (Clause ((:) (Atom
     "Coq.setoid_ring.Ring_theory.1" 0) ([])) (Atom
     "Coq.setoid_ring.Ring_polynom.2" 0)) ((:) (Clause ((:) (Atom
@@ -5760,9 +6183,8 @@ cs4 =
     "Coq.setoid_ring.Ring_polynom.2" 0)) ((:) (Clause ((:) (Atom
     "Coq.setoid_ring.Ring_theory.97" 0) ([])) (Atom
     "Coq.setoid_ring.Ring_polynom.3" 0)) ((:) (Clause ((:) (Atom
-    "SetoidTactics.default_relation.u0" 0) ([])) (Atom
-    "Coq.setoid_ring.Field_theory.1" 0)) ((:) (Clause ((:) (Atom
-    "SetoidTactics.equivalence_default.u0" 0) ([])) (Atom
+    "default_relation.u0" 0) ([])) (Atom "Coq.setoid_ring.Field_theory.1" 0))
+    ((:) (Clause ((:) (Atom "equivalence_default.u0" 0) ([])) (Atom
     "Coq.setoid_ring.Field_theory.1" 0)) ((:) (Clause ((:) (Atom
     "Coq.Relations.Relation_Definitions.1" 0) ([])) (Atom
     "Coq.setoid_ring.Field_theory.1" 0)) ((:) (Clause ((:) (Atom
@@ -5771,13 +6193,13 @@ cs4 =
     "Coq.setoid_ring.InitialRing.70" 0) ([])) (Atom
     "Coq.setoid_ring.Field_theory.1" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0)
     ([])) (Atom "Coq.setoid_ring.Field_theory.1" 0)) ((:) (Clause ((:) (Atom
-    "Setoid.Seq_refl.u0" 0) ([])) (Atom "Coq.setoid_ring.Field_theory.1" 0))
-    ((:) (Clause ((:) (Atom "Setoid.Seq_sym.u0" 0) ([])) (Atom
+    "Seq_refl.u0" 0) ([])) (Atom "Coq.setoid_ring.Field_theory.1" 0)) ((:)
+    (Clause ((:) (Atom "Seq_sym.u0" 0) ([])) (Atom
     "Coq.setoid_ring.Field_theory.1" 0)) ((:) (Clause ((:) (Atom
-    "Setoid.Seq_trans.u0" 0) ([])) (Atom "Coq.setoid_ring.Field_theory.1" 0))
-    ((:) (Clause ((:) (Atom "list.u0" 0) ([])) (Atom
+    "Seq_trans.u0" 0) ([])) (Atom "Coq.setoid_ring.Field_theory.1" 0)) ((:)
+    (Clause ((:) (Atom "list.u0" 0) ([])) (Atom
     "Coq.setoid_ring.Field_theory.1" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Classes.Morphisms.31" 0) ([])) (Atom
+    "Coq.Classes.Morphisms.51" 0) ([])) (Atom
     "Coq.setoid_ring.Field_theory.1" 0)) ((:) (Clause ((:) (Atom
     "Coq.setoid_ring.Ring_polynom.1" 0) ([])) (Atom
     "Coq.setoid_ring.Field_theory.1" 0)) ((:) (Clause ((:) (Atom
@@ -5811,22 +6233,22 @@ cs4 =
     0)) ((:) (Clause ((:) (Atom "Coq.setoid_ring.Ring_theory.100" 0) ([]))
     (Atom "Field_theory.SF2AF.u0" 0)) ((:) (Clause ((:) (Atom
     "Coq.Relations.Relation_Definitions.1" 0) ([])) (Atom
-    "Coq.setoid_ring.Field_theory.428" 0)) ((:) (Clause ((:) (Atom
+    "Coq.setoid_ring.Field_theory.437" 0)) ((:) (Clause ((:) (Atom
     "Coq.setoid_ring.InitialRing.1" 0) ([])) (Atom
-    "Coq.setoid_ring.Field_theory.428" 0)) ((:) (Clause ((:) (Atom
+    "Coq.setoid_ring.Field_theory.437" 0)) ((:) (Clause ((:) (Atom
     "Coq.setoid_ring.InitialRing.32" 0) ([])) (Atom
-    "Coq.setoid_ring.Field_theory.428" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Classes.Morphisms.31" 0) ([])) (Atom
-    "Coq.setoid_ring.Field_theory.428" 0)) ((:) (Clause ((:) (Atom
+    "Coq.setoid_ring.Field_theory.437" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Classes.Morphisms.51" 0) ([])) (Atom
+    "Coq.setoid_ring.Field_theory.437" 0)) ((:) (Clause ((:) (Atom
     "Coq.setoid_ring.Field_theory.1" 0) ([])) (Atom
-    "Coq.setoid_ring.Field_theory.428" 0)) ((:) (Clause ((:) (Atom
+    "Coq.setoid_ring.Field_theory.437" 0)) ((:) (Clause ((:) (Atom
     "Coq.setoid_ring.Ring_theory.17" 0) ([])) (Atom
-    "Coq.setoid_ring.Field_theory.428" 0)) ((:) (Clause ((:) (Atom
+    "Coq.setoid_ring.Field_theory.437" 0)) ((:) (Clause ((:) (Atom
     "Coq.setoid_ring.Ring_theory.100" 0) ([])) (Atom
-    "Coq.setoid_ring.Field_theory.428" 0)) ((:) (Clause ((:) (Atom
+    "Coq.setoid_ring.Field_theory.437" 0)) ((:) (Clause ((:) (Atom
     "Coq.Relations.Relation_Definitions.1" 0) ([])) (Atom
     "Coq.setoid_ring.Ring_theory.1" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Classes.Morphisms.31" 0) ([])) (Atom "Coq.setoid_ring.Ring_theory.1"
+    "Coq.Classes.Morphisms.51" 0) ([])) (Atom "Coq.setoid_ring.Ring_theory.1"
     0)) ((:) (Clause ((:) (Atom "Coq.Relations.Relation_Definitions.1" 0)
     ([])) (Atom "Coq.setoid_ring.Ring_theory.17" 0)) ((:) (Clause ((:) (Atom
     "Coq.setoid_ring.Ring_theory.1" 0) ([])) (Atom
@@ -5838,14 +6260,19 @@ cs4 =
     (Clause ((:) (Atom "prod.u0" 0) ([])) (Atom
     "Coq.setoid_ring.Ring_theory.74" 0)) ((:) (Clause ((:) (Atom "prod.u1" 0)
     ([])) (Atom "Coq.setoid_ring.Ring_theory.74" 0)) ((:) (Clause ((:) (Atom
-    "SetoidTactics.default_relation.u0" 0) ([])) (Atom
-    "Coq.setoid_ring.Ring_theory.100" 0)) ((:) (Clause ((:) (Atom
-    "SetoidTactics.equivalence_default.u0" 0) ([])) (Atom
+    "default_relation.u0" 0) ([])) (Atom "Coq.setoid_ring.Ring_theory.100"
+    0)) ((:) (Clause ((:) (Atom "equivalence_default.u0" 0) ([])) (Atom
     "Coq.setoid_ring.Ring_theory.100" 0)) ((:) (Clause ((:) (Atom
     "Coq.Relations.Relation_Definitions.1" 0) ([])) (Atom
     "Coq.setoid_ring.Ring_theory.100" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0)
     ([])) (Atom "Coq.setoid_ring.Ring_theory.100" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Classes.Morphisms.31" 0) ([])) (Atom
+    "Morphisms.rewrite_relation_eq_dom.u0" 0) ([])) (Atom
+    "Coq.setoid_ring.Ring_theory.100" 0)) ((:) (Clause ((:) (Atom
+    "Morphisms.rewrite_relation_eq_dom.u1" 0) ([])) (Atom
+    "Coq.setoid_ring.Ring_theory.100" 0)) ((:) (Clause ((:) (Atom
+    "Morphisms.eq_rewrite_relation.u0" 0) ([])) (Atom
+    "Coq.setoid_ring.Ring_theory.100" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Classes.Morphisms.51" 0) ([])) (Atom
     "Coq.setoid_ring.Ring_theory.100" 0)) ((:) (Clause ((:) (Atom
     "Coq.setoid_ring.Ring_theory.17" 0) ([])) (Atom
     "Coq.setoid_ring.Ring_theory.100" 0)) ((:) (Clause ((:) (Atom
@@ -5870,7 +6297,7 @@ cs4 =
     "Coq.ZArith.Zcomplements.5" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([]))
     (Atom "Coq.Logic.EqdepFacts.1" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0)
     ([])) (Atom "Coq.Logic.EqdepFacts.2" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Init.Logic.9" 0) ([])) (Atom "Coq.Logic.EqdepFacts.2" 0)) ((:)
+    "Coq.Init.Logic.10" 0) ([])) (Atom "Coq.Logic.EqdepFacts.2" 0)) ((:)
     (Clause ((:) (Atom "eq_ind_r.u0" 0) ([])) (Atom "Coq.Logic.EqdepFacts.2"
     0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
     "EqdepFacts.eq_sigT_eq_dep.u0" 0)) ((:) (Clause ((:) (Atom "eq_ind_r.u0"
@@ -5934,8 +6361,8 @@ cs4 =
     ((:) (Atom "Coq.Init.Specif.22" 0) ([])) (Atom
     "EqdepFacts.eq_sigT_sig_eq.u0" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0)
     ([])) (Atom "EqdepFacts.eq_sigT_sig_eq.u1" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Init.Logic.9" 0) ([])) (Atom "EqdepFacts.eq_sigT_sig_eq.u1" 0)) ((:)
-    (Clause ((:) (Atom "sigT.u1" 0) ([])) (Atom
+    "Coq.Init.Logic.10" 0) ([])) (Atom "EqdepFacts.eq_sigT_sig_eq.u1" 0))
+    ((:) (Clause ((:) (Atom "sigT.u1" 0) ([])) (Atom
     "EqdepFacts.eq_sigT_sig_eq.u1" 0)) ((:) (Clause ((:) (Atom
     "Coq.Init.Specif.23" 0) ([])) (Atom "EqdepFacts.eq_sigT_sig_eq.u1" 0))
     ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
@@ -5953,7 +6380,7 @@ cs4 =
     (Clause ((:) (Atom "EqdepFacts.eq_sigT_fst.u0" 0) ([])) (Atom
     "EqdepFacts.eq_sigT_snd.u0" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([]))
     (Atom "EqdepFacts.eq_sigT_snd.u1" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Init.Logic.9" 0) ([])) (Atom "EqdepFacts.eq_sigT_snd.u1" 0)) ((:)
+    "Coq.Init.Logic.10" 0) ([])) (Atom "EqdepFacts.eq_sigT_snd.u1" 0)) ((:)
     (Clause ((:) (Atom "sigT.u1" 0) ([])) (Atom "EqdepFacts.eq_sigT_snd.u1"
     0)) ((:) (Clause ((:) (Atom "Coq.Init.Specif.23" 0) ([])) (Atom
     "EqdepFacts.eq_sigT_snd.u1" 0)) ((:) (Clause ((:) (Atom
@@ -5972,12 +6399,19 @@ cs4 =
     "Coq.Logic.EqdepFacts.1" 0) ([])) (Atom "Coq.Logic.EqdepFacts.46" 0))
     ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
     "EqdepFacts.Eq_rect_eq_on.u0" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Init.Logic.9" 0) ([])) (Atom "EqdepFacts.Eq_rect_eq_on.u0" 0)) ((:)
-    (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "EqdepFacts.Eq_dep_eq_on.u0"
-    0)) ((:) (Clause ((:) (Atom "Coq.Logic.EqdepFacts.2" 0) ([])) (Atom
-    "EqdepFacts.Eq_dep_eq_on.u0" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([]))
-    (Atom "EqdepFacts.eq_rect_eq_on__eq_dep1_eq_on.u0" 0)) ((:) (Clause ((:)
-    (Atom "Coq.Logic.EqdepFacts.2" 0) ([])) (Atom
+    "Coq.Init.Logic.10" 0) ([])) (Atom "EqdepFacts.Eq_rect_eq_on.u0" 0)) ((:)
+    (Clause ((:) (Atom "Coq.Logic.EqdepFacts.81" 0) ([])) (Atom
+    "EqdepFacts.Eq_rect_eq.u0" 0)) ((:) (Clause ((:) (Atom
+    "EqdepFacts.Eq_rect_eq.u0" 0) ([])) (Atom "Coq.Logic.EqdepFacts.81" 0))
+    ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
+    "EqdepFacts.Eq_dep_eq_on.u0" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Logic.EqdepFacts.2" 0) ([])) (Atom "EqdepFacts.Eq_dep_eq_on.u0" 0))
+    ((:) (Clause ((:) (Atom "Coq.Logic.EqdepFacts.82" 0) ([])) (Atom
+    "EqdepFacts.Eq_dep_eq.u0" 0)) ((:) (Clause ((:) (Atom
+    "EqdepFacts.Eq_dep_eq.u0" 0) ([])) (Atom "Coq.Logic.EqdepFacts.82" 0))
+    ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
+    "EqdepFacts.eq_rect_eq_on__eq_dep1_eq_on.u0" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Logic.EqdepFacts.2" 0) ([])) (Atom
     "EqdepFacts.eq_rect_eq_on__eq_dep1_eq_on.u0" 0)) ((:) (Clause ((:) (Atom
     "EqdepFacts.Eq_rect_eq_on.u0" 0) ([])) (Atom
     "EqdepFacts.eq_rect_eq_on__eq_dep1_eq_on.u0" 0)) ((:) (Clause ((:) (Atom
@@ -5988,7 +6422,7 @@ cs4 =
     "EqdepFacts.eq_rect_eq__eq_dep1_eq.u0" 0)) ((:) (Clause ((:) (Atom
     "EqdepFacts.eq_rect_eq_on__eq_dep1_eq_on.u0" 0) ([])) (Atom
     "EqdepFacts.eq_rect_eq__eq_dep1_eq.u0" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Init.Logic.10" 0) ([])) (Atom
+    "Coq.Init.Logic.11" 0) ([])) (Atom
     "EqdepFacts.eq_rect_eq_on__eq_dep_eq_on.u0" 0)) ((:) (Clause ((:) (Atom
     "Coq.Logic.EqdepFacts.2" 0) ([])) (Atom
     "EqdepFacts.eq_rect_eq_on__eq_dep_eq_on.u0" 0)) ((:) (Clause ((:) (Atom
@@ -5999,7 +6433,7 @@ cs4 =
     "EqdepFacts.eq_rect_eq_on__eq_dep1_eq_on.u0" 0) ([])) (Atom
     "EqdepFacts.eq_rect_eq_on__eq_dep_eq_on.u0" 0)) ((:) (Clause ((:) (Atom
     "eq.u0" 0) ([])) (Atom "EqdepFacts.Streicher_K_on__eq_rect_eq_on.u0" 0))
-    ((:) (Clause ((:) (Atom "Coq.Init.Logic.9" 0) ([])) (Atom
+    ((:) (Clause ((:) (Atom "Coq.Init.Logic.10" 0) ([])) (Atom
     "EqdepFacts.Streicher_K_on__eq_rect_eq_on.u0" 0)) ((:) (Clause ((:) (Atom
     "EqdepFacts.Eq_rect_eq_on.u0" 0) ([])) (Atom
     "EqdepFacts.Streicher_K_on__eq_rect_eq_on.u0" 0)) ((:) (Clause ((:) (Atom
@@ -6017,30 +6451,42 @@ cs4 =
     "Coq.Logic.EqdepFacts.71" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([]))
     (Atom "EqdepFacts.Inj_dep_pair_on.u0" 0)) ((:) (Clause ((:) (Atom
     "sigT.u1" 0) ([])) (Atom "EqdepFacts.Inj_dep_pair_on.u0" 0)) ((:) (Clause
-    ((:) (Atom "EqdepFacts.eq_sigT_eq_dep.u1" 0) ([])) (Atom
+    ((:) (Atom "Coq.Logic.EqdepFacts.84" 0) ([])) (Atom
+    "EqdepFacts.Inj_dep_pair.u0" 0)) ((:) (Clause ((:) (Atom
+    "EqdepFacts.Inj_dep_pair.u0" 0) ([])) (Atom "Coq.Logic.EqdepFacts.84" 0))
+    ((:) (Clause ((:) (Atom "EqdepFacts.eq_sigT_eq_dep.u1" 0) ([])) (Atom
     "EqdepFacts.eq_dep_eq_on__inj_pair2_on.u0" 0)) ((:) (Clause ((:) (Atom
     "EqdepFacts.Eq_dep_eq_on.u0" 0) ([])) (Atom
     "EqdepFacts.eq_dep_eq_on__inj_pair2_on.u0" 0)) ((:) (Clause ((:) (Atom
     "EqdepFacts.Inj_dep_pair_on.u0" 0) ([])) (Atom
     "EqdepFacts.eq_dep_eq_on__inj_pair2_on.u0" 0)) ((:) (Clause ((:) (Atom
     "eq.u0" 0) ([])) (Atom "Coq.Logic.EqdepFacts.78" 0)) ((:) (Clause ((:)
-    (Atom "eq.u0" 0) ([])) (Atom "Coq.Logic.EqdepFacts.80" 0)) ((:) (Clause
-    ((:) (Atom "Coq.Logic.EqdepFacts.1" 0) ([])) (Atom
+    (Atom "Coq.Logic.EqdepFacts.81" 0) ([])) (Atom "Coq.Logic.EqdepFacts.79"
+    0)) ((:) (Clause ((:) (Atom "Coq.Logic.EqdepFacts.79" 0) ([])) (Atom
+    "Coq.Logic.EqdepFacts.81" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([]))
+    (Atom "Coq.Logic.EqdepFacts.80" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Logic.EqdepFacts.1" 0) ([])) (Atom "Coq.Logic.EqdepFacts.80" 0))
+    ((:) (Clause ((:) (Atom "Coq.Logic.EqdepFacts.46" 0) ([])) (Atom
     "Coq.Logic.EqdepFacts.80" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Logic.EqdepFacts.46" 0) ([])) (Atom "Coq.Logic.EqdepFacts.80" 0))
-    ((:) (Clause ((:) (Atom "Coq.Logic.EqdepFacts.78" 0) ([])) (Atom
-    "Coq.Logic.EqdepFacts.80" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([]))
-    (Atom "Coq.Logic.EqdepFacts.82" 0)) ((:) (Clause ((:) (Atom
-    "Eqdep_dec.eq_rect_eq_dec.u1" 0) ([])) (Atom "Coq.Logic.EqdepFacts.82"
-    0)) ((:) (Clause ((:) (Atom "Coq.Logic.EqdepFacts.2" 0) ([])) (Atom
+    "Coq.Logic.EqdepFacts.78" 0) ([])) (Atom "Coq.Logic.EqdepFacts.80" 0))
+    ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "Coq.Logic.EqdepFacts.81"
+    0)) ((:) (Clause ((:) (Atom "Coq.Init.Logic.10" 0) ([])) (Atom
+    "Coq.Logic.EqdepFacts.81" 0)) ((:) (Clause ((:) (Atom
+    "EqdepFacts.Eq_rect_eq_on.u0" 0) ([])) (Atom "Coq.Logic.EqdepFacts.81"
+    0)) ((:) (Clause ((:) (Atom "EqdepFacts.Streicher_K_on__eq_rect_eq_on.u0"
+    0) ([])) (Atom "Coq.Logic.EqdepFacts.81" 0)) ((:) (Clause ((:) (Atom
+    "eq.u0" 0) ([])) (Atom "Coq.Logic.EqdepFacts.82" 0)) ((:) (Clause ((:)
+    (Atom "Coq.Logic.EqdepFacts.2" 0) ([])) (Atom "Coq.Logic.EqdepFacts.82"
+    0)) ((:) (Clause ((:) (Atom "EqdepFacts.Eq_dep_eq_on.u0" 0) ([])) (Atom
     "Coq.Logic.EqdepFacts.82" 0)) ((:) (Clause ((:) (Atom
-    "EqdepFacts.Eq_dep_eq_on.u0" 0) ([])) (Atom "Coq.Logic.EqdepFacts.82" 0))
-    ((:) (Clause ((:) (Atom "EqdepFacts.eq_rect_eq_on__eq_dep_eq_on.u0" 0)
-    ([])) (Atom "Coq.Logic.EqdepFacts.82" 0)) ((:) (Clause ((:) (Atom "eq.u0"
-    0) ([])) (Atom "Coq.Logic.EqdepFacts.83" 0)) ((:) (Clause ((:) (Atom
-    "sigT.u0" 0) ([])) (Atom "Coq.Logic.EqdepFacts.83" 0)) ((:) (Clause ((:)
-    (Atom "Coq.Logic.EqdepFacts.71" 0) ([])) (Atom "Coq.Logic.EqdepFacts.83"
-    0)) ((:) (Clause ((:) (Atom "Coq.Logic.EqdepFacts.80" 0) ([])) (Atom
+    "EqdepFacts.eq_rect_eq_on__eq_dep_eq_on.u0" 0) ([])) (Atom
+    "Coq.Logic.EqdepFacts.82" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Logic.EqdepFacts.81" 0) ([])) (Atom "Coq.Logic.EqdepFacts.82" 0))
+    ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "Coq.Logic.EqdepFacts.83"
+    0)) ((:) (Clause ((:) (Atom "sigT.u0" 0) ([])) (Atom
+    "Coq.Logic.EqdepFacts.83" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Logic.EqdepFacts.71" 0) ([])) (Atom "Coq.Logic.EqdepFacts.83" 0))
+    ((:) (Clause ((:) (Atom "Coq.Logic.EqdepFacts.80" 0) ([])) (Atom
     "Coq.Logic.EqdepFacts.83" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([]))
     (Atom "Coq.Logic.EqdepFacts.84" 0)) ((:) (Clause ((:) (Atom "sigT.u1" 0)
     ([])) (Atom "Coq.Logic.EqdepFacts.84" 0)) ((:) (Clause ((:) (Atom
@@ -6062,33 +6508,25 @@ cs4 =
     "Coq.Logic.EqdepFacts.2" 0) ([])) (Atom "EqdepFacts.f_eq_dep_non_dep.u1"
     0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
     "EqdepFacts.f_eq_dep_non_dep.u2" 0)) ((:) (Clause ((:) (Atom
-    "identity.u0" 0) ([])) (Atom "Coq.Init.Logic_Type.2" 0)) ((:) (Clause
-    ((:) (Atom "identity.u0" 0) ([])) (Atom "identity_ind_r.u0" 0)) ((:)
-    (Clause ((:) (Atom "Coq.Init.Logic_Type.2" 0) ([])) (Atom
-    "identity_ind_r.u0" 0)) ((:) (Clause ((:) (Atom "identity.u0" 0) ([]))
-    (Atom "identity_rec_r.u0" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Init.Logic_Type.2" 0) ([])) (Atom "identity_rec_r.u0" 0)) ((:)
-    (Clause ((:) (Atom "identity.u0" 0) ([])) (Atom "identity_rect_r.u0" 0))
-    ((:) (Clause ((:) (Atom "Coq.Init.Logic_Type.2" 0) ([])) (Atom
-    "identity_rect_r.u0" 0)) ((:) (Clause ((:) (Atom "ZifyClasses.InjTyp.u0"
-    0) ([])) (Atom "ZifyClasses.BinOp.u0" 0)) ((:) (Clause ((:) (Atom
-    "ZifyClasses.InjTyp.u0" 0) ([])) (Atom "ZifyClasses.BinOp.u1" 0)) ((:)
+    "ZifyClasses.InjTyp.u0" 0) ([])) (Atom "ZifyClasses.BinOp.u0" 0)) ((:)
     (Clause ((:) (Atom "ZifyClasses.InjTyp.u0" 0) ([])) (Atom
-    "ZifyClasses.BinOp.u2" 0)) ((:) (Clause ((:) (Atom
-    "ZifyClasses.InjTyp.u1" 0) ([])) (Atom "ZifyClasses.BinOp.u3" 0)) ((:)
+    "ZifyClasses.BinOp.u1" 0)) ((:) (Clause ((:) (Atom
+    "ZifyClasses.InjTyp.u0" 0) ([])) (Atom "ZifyClasses.BinOp.u2" 0)) ((:)
     (Clause ((:) (Atom "ZifyClasses.InjTyp.u1" 0) ([])) (Atom
-    "ZifyClasses.BinOp.u4" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
+    "ZifyClasses.BinOp.u3" 0)) ((:) (Clause ((:) (Atom
+    "ZifyClasses.InjTyp.u1" 0) ([])) (Atom "ZifyClasses.BinOp.u4" 0)) ((:)
+    (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "ZifyClasses.BinOp.u5" 0)) ((:)
+    (Clause ((:) (Atom "ZifyClasses.InjTyp.u1" 0) ([])) (Atom
     "ZifyClasses.BinOp.u5" 0)) ((:) (Clause ((:) (Atom
-    "ZifyClasses.InjTyp.u1" 0) ([])) (Atom "ZifyClasses.BinOp.u5" 0)) ((:)
+    "ZifyClasses.InjTyp.u0" 0) ([])) (Atom "ZifyClasses.UnOp.u0" 0)) ((:)
     (Clause ((:) (Atom "ZifyClasses.InjTyp.u0" 0) ([])) (Atom
-    "ZifyClasses.UnOp.u0" 0)) ((:) (Clause ((:) (Atom "ZifyClasses.InjTyp.u0"
-    0) ([])) (Atom "ZifyClasses.UnOp.u1" 0)) ((:) (Clause ((:) (Atom
-    "ZifyClasses.InjTyp.u1" 0) ([])) (Atom "ZifyClasses.UnOp.u2" 0)) ((:)
-    (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "ZifyClasses.UnOp.u3" 0)) ((:)
-    (Clause ((:) (Atom "ZifyClasses.InjTyp.u1" 0) ([])) (Atom
-    "ZifyClasses.UnOp.u3" 0)) ((:) (Clause ((:) (Atom "ZifyClasses.InjTyp.u0"
-    0) ([])) (Atom "ZifyClasses.CstOp.u0" 0)) ((:) (Clause ((:) (Atom "eq.u0"
-    0) ([])) (Atom "ZifyClasses.CstOp.u1" 0)) ((:) (Clause ((:) (Atom
+    "ZifyClasses.UnOp.u1" 0)) ((:) (Clause ((:) (Atom "ZifyClasses.InjTyp.u1"
+    0) ([])) (Atom "ZifyClasses.UnOp.u2" 0)) ((:) (Clause ((:) (Atom "eq.u0"
+    0) ([])) (Atom "ZifyClasses.UnOp.u3" 0)) ((:) (Clause ((:) (Atom
+    "ZifyClasses.InjTyp.u1" 0) ([])) (Atom "ZifyClasses.UnOp.u3" 0)) ((:)
+    (Clause ((:) (Atom "ZifyClasses.InjTyp.u0" 0) ([])) (Atom
+    "ZifyClasses.CstOp.u0" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
+    "ZifyClasses.CstOp.u1" 0)) ((:) (Clause ((:) (Atom
     "ZifyClasses.InjTyp.u1" 0) ([])) (Atom "ZifyClasses.CstOp.u1" 0)) ((:)
     (Clause ((:) (Atom "ZifyClasses.InjTyp.u0" 0) ([])) (Atom
     "ZifyClasses.BinRel.u0" 0)) ((:) (Clause ((:) (Atom
@@ -6110,9 +6548,10 @@ cs4 =
     ((:) (Clause ((:) (Atom "Vector.caseS.u0" 0) ([])) (Atom "Vector.eta.u0"
     0)) ((:) (Clause ((:) (Atom "Vector.hd.u0" 0) ([])) (Atom "Vector.eta.u0"
     0)) ((:) (Clause ((:) (Atom "Vector.tl.u0" 0) ([])) (Atom "Vector.eta.u0"
-    0)) ((:) (Clause ((:) (Atom "Coq.Init.Logic.10" 0) ([])) (Atom
-    "Vector.eq_nth_iff.u0" 0)) ((:) (Clause ((:) (Atom "Vector.t.u0" 0) ([]))
-    (Atom "Vector.eq_nth_iff.u0" 0)) ((:) (Clause ((:) (Atom
+    0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "Vector.eq_nth_iff.u0"
+    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "Coq.Init.Logic.11" 0) ([]))
+    (Atom "Vector.eq_nth_iff.u0" 0)) ((:) (Clause ((:) (Atom "Vector.t.u0" 0)
+    ([])) (Atom "Vector.eq_nth_iff.u0" 0)) ((:) (Clause ((:) (Atom
     "Vector.rect2.u0" 0) ([])) (Atom "Vector.eq_nth_iff.u0" 0)) ((:) (Clause
     ((:) (Atom "Vector.rect2.u1" 0) ([])) (Atom "Vector.eq_nth_iff.u0" 0))
     ((:) (Clause ((:) (Atom "Vector.nth.u0" 0) ([])) (Atom
@@ -6219,91 +6658,95 @@ cs4 =
     ((:) (Clause ((:) (Atom "Vector.tl.u0" 0) ([])) (Atom
     "Vector.replace_replace_eq.u0" 0)) ((:) (Clause ((:) (Atom
     "Vector.eta.u0" 0) ([])) (Atom "Vector.replace_replace_eq.u0" 0)) ((:)
-    (Clause ((:) (Atom "Coq.Init.Logic.10" 0) ([])) (Atom
-    "Vector.replace_replace_neq.u0" 0)) ((:) (Clause ((:) (Atom "Vector.t.u0"
-    0) ([])) (Atom "Vector.replace_replace_neq.u0" 0)) ((:) (Clause ((:)
-    (Atom "Vector.rectS.u0" 0) ([])) (Atom "Vector.replace_replace_neq.u0"
-    0)) ((:) (Clause ((:) (Atom "Vector.replace.u0" 0) ([])) (Atom
-    "Vector.replace_replace_neq.u0" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0)
-    ([])) (Atom "Vector.const_nth.u0" 0)) ((:) (Clause ((:) (Atom
-    "Vector.const.u0" 0) ([])) (Atom "Vector.const_nth.u0" 0)) ((:) (Clause
-    ((:) (Atom "Vector.nth.u0" 0) ([])) (Atom "Vector.const_nth.u0" 0)) ((:)
-    (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "Vector.map_id.u0" 0)) ((:)
-    (Clause ((:) (Atom "eq_ind_r.u0" 0) ([])) (Atom "Vector.map_id.u0" 0))
-    ((:) (Clause ((:) (Atom "Vector.t.u0" 0) ([])) (Atom "Vector.map_id.u0"
-    0)) ((:) (Clause ((:) (Atom "Vector.map.u0" 0) ([])) (Atom
-    "Vector.map_id.u0" 0)) ((:) (Clause ((:) (Atom "Vector.map.u1" 0) ([]))
-    (Atom "Vector.map_id.u0" 0)) ((:) (Clause ((:) (Atom "Vector.t.u0" 0)
-    ([])) (Atom "Vector.map_map.u0" 0)) ((:) (Clause ((:) (Atom
-    "Vector.map.u0" 0) ([])) (Atom "Vector.map_map.u0" 0)) ((:) (Clause ((:)
-    (Atom "Vector.map.u0" 0) ([])) (Atom "Vector.map_map.u1" 0)) ((:) (Clause
-    ((:) (Atom "Vector.map.u1" 0) ([])) (Atom "Vector.map_map.u1" 0)) ((:)
-    (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "Vector.map_map.u2" 0)) ((:)
-    (Clause ((:) (Atom "eq_ind_r.u0" 0) ([])) (Atom "Vector.map_map.u2" 0))
-    ((:) (Clause ((:) (Atom "Vector.t.u0" 0) ([])) (Atom "Vector.map_map.u2"
-    0)) ((:) (Clause ((:) (Atom "Vector.map.u1" 0) ([])) (Atom
-    "Vector.map_map.u2" 0)) ((:) (Clause ((:) (Atom "Vector.t.u0" 0) ([]))
-    (Atom "Vector.map_ext_in.u0" 0)) ((:) (Clause ((:) (Atom "Vector.map.u0"
-    0) ([])) (Atom "Vector.map_ext_in.u0" 0)) ((:) (Clause ((:) (Atom
-    "Vector.In.u0" 0) ([])) (Atom "Vector.map_ext_in.u0" 0)) ((:) (Clause
-    ((:) (Atom "eq.u0" 0) ([])) (Atom "Vector.map_ext_in.u1" 0)) ((:) (Clause
-    ((:) (Atom "eq_ind_r.u0" 0) ([])) (Atom "Vector.map_ext_in.u1" 0)) ((:)
-    (Clause ((:) (Atom "Vector.t.u0" 0) ([])) (Atom "Vector.map_ext_in.u1"
-    0)) ((:) (Clause ((:) (Atom "Vector.map.u1" 0) ([])) (Atom
-    "Vector.map_ext_in.u1" 0)) ((:) (Clause ((:) (Atom "Vector.t.u0" 0) ([]))
-    (Atom "Vector.map_ext.u0" 0)) ((:) (Clause ((:) (Atom "Vector.map.u0" 0)
-    ([])) (Atom "Vector.map_ext.u0" 0)) ((:) (Clause ((:) (Atom
-    "Vector.map_ext_in.u0" 0) ([])) (Atom "Vector.map_ext.u0" 0)) ((:)
-    (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "Vector.map_ext.u1" 0)) ((:)
-    (Clause ((:) (Atom "Vector.t.u0" 0) ([])) (Atom "Vector.map_ext.u1" 0))
-    ((:) (Clause ((:) (Atom "Vector.map.u1" 0) ([])) (Atom
-    "Vector.map_ext.u1" 0)) ((:) (Clause ((:) (Atom "Vector.map_ext_in.u1" 0)
-    ([])) (Atom "Vector.map_ext.u1" 0)) ((:) (Clause ((:) (Atom "Vector.t.u0"
-    0) ([])) (Atom "Vector.nth_map.u0" 0)) ((:) (Clause ((:) (Atom
-    "Vector.caseS.u0" 0) ([])) (Atom "Vector.nth_map.u0" 0)) ((:) (Clause
-    ((:) (Atom "Vector.nth.u0" 0) ([])) (Atom "Vector.nth_map.u0" 0)) ((:)
-    (Clause ((:) (Atom "Vector.map.u0" 0) ([])) (Atom "Vector.nth_map.u0" 0))
-    ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "Vector.nth_map.u1" 0))
-    ((:) (Clause ((:) (Atom "Vector.nth.u0" 0) ([])) (Atom
-    "Vector.nth_map.u1" 0)) ((:) (Clause ((:) (Atom "Vector.map.u1" 0) ([]))
-    (Atom "Vector.nth_map.u1" 0)) ((:) (Clause ((:) (Atom "Vector.t.u0" 0)
+    (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "Vector.replace_replace_neq.u0"
+    (Prelude.succ 0))) ((:) (Clause ((:) (Atom "Coq.Init.Logic.11" 0) ([]))
+    (Atom "Vector.replace_replace_neq.u0" 0)) ((:) (Clause ((:) (Atom
+    "Vector.t.u0" 0) ([])) (Atom "Vector.replace_replace_neq.u0" 0)) ((:)
+    (Clause ((:) (Atom "Vector.rectS.u0" 0) ([])) (Atom
+    "Vector.replace_replace_neq.u0" 0)) ((:) (Clause ((:) (Atom
+    "Vector.replace.u0" 0) ([])) (Atom "Vector.replace_replace_neq.u0" 0))
+    ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "Vector.const_nth.u0" 0))
+    ((:) (Clause ((:) (Atom "Vector.const.u0" 0) ([])) (Atom
+    "Vector.const_nth.u0" 0)) ((:) (Clause ((:) (Atom "Vector.nth.u0" 0)
+    ([])) (Atom "Vector.const_nth.u0" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0)
+    ([])) (Atom "Vector.map_id.u0" 0)) ((:) (Clause ((:) (Atom "eq_ind_r.u0"
+    0) ([])) (Atom "Vector.map_id.u0" 0)) ((:) (Clause ((:) (Atom
+    "Vector.t.u0" 0) ([])) (Atom "Vector.map_id.u0" 0)) ((:) (Clause ((:)
+    (Atom "Vector.map.u0" 0) ([])) (Atom "Vector.map_id.u0" 0)) ((:) (Clause
+    ((:) (Atom "Vector.map.u1" 0) ([])) (Atom "Vector.map_id.u0" 0)) ((:)
+    (Clause ((:) (Atom "Vector.t.u0" 0) ([])) (Atom "Vector.map_map.u0" 0))
+    ((:) (Clause ((:) (Atom "Vector.map.u0" 0) ([])) (Atom
+    "Vector.map_map.u0" 0)) ((:) (Clause ((:) (Atom "Vector.map.u0" 0) ([]))
+    (Atom "Vector.map_map.u1" 0)) ((:) (Clause ((:) (Atom "Vector.map.u1" 0)
+    ([])) (Atom "Vector.map_map.u1" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0)
+    ([])) (Atom "Vector.map_map.u2" 0)) ((:) (Clause ((:) (Atom "eq_ind_r.u0"
+    0) ([])) (Atom "Vector.map_map.u2" 0)) ((:) (Clause ((:) (Atom
+    "Vector.t.u0" 0) ([])) (Atom "Vector.map_map.u2" 0)) ((:) (Clause ((:)
+    (Atom "Vector.map.u1" 0) ([])) (Atom "Vector.map_map.u2" 0)) ((:) (Clause
+    ((:) (Atom "Vector.t.u0" 0) ([])) (Atom "Vector.map_ext_in.u0" 0)) ((:)
+    (Clause ((:) (Atom "Vector.map.u0" 0) ([])) (Atom "Vector.map_ext_in.u0"
+    0)) ((:) (Clause ((:) (Atom "Vector.In.u0" 0) ([])) (Atom
+    "Vector.map_ext_in.u0" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
+    "Vector.map_ext_in.u1" 0)) ((:) (Clause ((:) (Atom "eq_ind_r.u0" 0) ([]))
+    (Atom "Vector.map_ext_in.u1" 0)) ((:) (Clause ((:) (Atom "Vector.t.u0" 0)
+    ([])) (Atom "Vector.map_ext_in.u1" 0)) ((:) (Clause ((:) (Atom
+    "Vector.map.u1" 0) ([])) (Atom "Vector.map_ext_in.u1" 0)) ((:) (Clause
+    ((:) (Atom "Vector.t.u0" 0) ([])) (Atom "Vector.map_ext.u0" 0)) ((:)
+    (Clause ((:) (Atom "Vector.map.u0" 0) ([])) (Atom "Vector.map_ext.u0" 0))
+    ((:) (Clause ((:) (Atom "Vector.map_ext_in.u0" 0) ([])) (Atom
+    "Vector.map_ext.u0" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
+    "Vector.map_ext.u1" 0)) ((:) (Clause ((:) (Atom "Vector.t.u0" 0) ([]))
+    (Atom "Vector.map_ext.u1" 0)) ((:) (Clause ((:) (Atom "Vector.map.u1" 0)
+    ([])) (Atom "Vector.map_ext.u1" 0)) ((:) (Clause ((:) (Atom
+    "Vector.map_ext_in.u1" 0) ([])) (Atom "Vector.map_ext.u1" 0)) ((:)
+    (Clause ((:) (Atom "Vector.t.u0" 0) ([])) (Atom "Vector.nth_map.u0" 0))
+    ((:) (Clause ((:) (Atom "Vector.caseS.u0" 0) ([])) (Atom
+    "Vector.nth_map.u0" 0)) ((:) (Clause ((:) (Atom "Vector.nth.u0" 0) ([]))
+    (Atom "Vector.nth_map.u0" 0)) ((:) (Clause ((:) (Atom "Vector.map.u0" 0)
+    ([])) (Atom "Vector.nth_map.u0" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0)
+    ([])) (Atom "Vector.nth_map.u1" 0)) ((:) (Clause ((:) (Atom
+    "Vector.nth.u0" 0) ([])) (Atom "Vector.nth_map.u1" 0)) ((:) (Clause ((:)
+    (Atom "Vector.map.u1" 0) ([])) (Atom "Vector.nth_map.u1" 0)) ((:) (Clause
+    ((:) (Atom "Vector.t.u0" 0) ([])) (Atom "Vector.nth_map2.u0" 0)) ((:)
+    (Clause ((:) (Atom "Vector.rect2.u0" 0) ([])) (Atom "Vector.nth_map2.u0"
+    0)) ((:) (Clause ((:) (Atom "Vector.nth.u0" 0) ([])) (Atom
+    "Vector.nth_map2.u0" 0)) ((:) (Clause ((:) (Atom "Vector.map2.u0" 0)
     ([])) (Atom "Vector.nth_map2.u0" 0)) ((:) (Clause ((:) (Atom
-    "Vector.rect2.u0" 0) ([])) (Atom "Vector.nth_map2.u0" 0)) ((:) (Clause
-    ((:) (Atom "Vector.nth.u0" 0) ([])) (Atom "Vector.nth_map2.u0" 0)) ((:)
-    (Clause ((:) (Atom "Vector.map2.u0" 0) ([])) (Atom "Vector.nth_map2.u0"
-    0)) ((:) (Clause ((:) (Atom "Vector.t.u0" 0) ([])) (Atom
-    "Vector.nth_map2.u1" 0)) ((:) (Clause ((:) (Atom "Vector.rect2.u1" 0)
-    ([])) (Atom "Vector.nth_map2.u1" 0)) ((:) (Clause ((:) (Atom
-    "Vector.nth.u0" 0) ([])) (Atom "Vector.nth_map2.u1" 0)) ((:) (Clause ((:)
-    (Atom "Vector.map2.u1" 0) ([])) (Atom "Vector.nth_map2.u1" 0)) ((:)
-    (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "Vector.nth_map2.u2" 0)) ((:)
-    (Clause ((:) (Atom "Vector.nth.u0" 0) ([])) (Atom "Vector.nth_map2.u2"
-    0)) ((:) (Clause ((:) (Atom "Vector.map2.u2" 0) ([])) (Atom
-    "Vector.nth_map2.u2" 0)) ((:) (Clause ((:) (Atom "eq_ind_r.u0" 0) ([]))
-    (Atom "Vector.fold_left_right_assoc_eq.u0" 0)) ((:) (Clause ((:) (Atom
+    "Vector.t.u0" 0) ([])) (Atom "Vector.nth_map2.u1" 0)) ((:) (Clause ((:)
+    (Atom "Vector.rect2.u1" 0) ([])) (Atom "Vector.nth_map2.u1" 0)) ((:)
+    (Clause ((:) (Atom "Vector.nth.u0" 0) ([])) (Atom "Vector.nth_map2.u1"
+    0)) ((:) (Clause ((:) (Atom "Vector.map2.u1" 0) ([])) (Atom
+    "Vector.nth_map2.u1" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
+    "Vector.nth_map2.u2" 0)) ((:) (Clause ((:) (Atom "Vector.nth.u0" 0) ([]))
+    (Atom "Vector.nth_map2.u2" 0)) ((:) (Clause ((:) (Atom "Vector.map2.u2"
+    0) ([])) (Atom "Vector.nth_map2.u2" 0)) ((:) (Clause ((:) (Atom "eq.u0"
+    0) ([])) (Atom "Vector.fold_left_right_assoc_eq.u0" (Prelude.succ 0)))
+    ((:) (Clause ((:) (Atom "eq_ind_r.u0" 0) ([])) (Atom
+    "Vector.fold_left_right_assoc_eq.u0" 0)) ((:) (Clause ((:) (Atom
     "Vector.fold_left.u1" 0) ([])) (Atom "Vector.fold_left_right_assoc_eq.u0"
     0)) ((:) (Clause ((:) (Atom "Vector.fold_right.u1" 0) ([])) (Atom
-    "Vector.fold_left_right_assoc_eq.u0" 0)) ((:) (Clause ((:) (Atom
-    "Vector.t.u0" 0) ([])) (Atom "Vector.fold_left_right_assoc_eq.u1" 0))
-    ((:) (Clause ((:) (Atom "Vector.fold_left.u0" 0) ([])) (Atom
+    "Vector.fold_left_right_assoc_eq.u0" 0)) ((:) (Clause ((:) (Atom "eq.u0"
+    0) ([])) (Atom "Vector.fold_left_right_assoc_eq.u1" (Prelude.succ 0)))
+    ((:) (Clause ((:) (Atom "Vector.t.u0" 0) ([])) (Atom
     "Vector.fold_left_right_assoc_eq.u1" 0)) ((:) (Clause ((:) (Atom
-    "Vector.fold_right.u0" 0) ([])) (Atom
+    "Vector.fold_left.u0" 0) ([])) (Atom "Vector.fold_left_right_assoc_eq.u1"
+    0)) ((:) (Clause ((:) (Atom "Vector.fold_right.u0" 0) ([])) (Atom
     "Vector.fold_left_right_assoc_eq.u1" 0)) ((:) (Clause ((:) (Atom "eq.u0"
     0) ([])) (Atom "Vector.take_O.u0" 0)) ((:) (Clause ((:) (Atom
     "Vector.t.u0" 0) ([])) (Atom "Vector.take_O.u0" 0)) ((:) (Clause ((:)
     (Atom "Vector.take.u0" 0) ([])) (Atom "Vector.take_O.u0" 0)) ((:) (Clause
     ((:) (Atom "eq.u0" 0) ([])) (Atom "Vector.take_idem.u0" 0)) ((:) (Clause
-    ((:) (Atom "Coq.Init.Logic.10" 0) ([])) (Atom "Vector.take_idem.u0" 0))
+    ((:) (Atom "Coq.Init.Logic.11" 0) ([])) (Atom "Vector.take_idem.u0" 0))
     ((:) (Clause ((:) (Atom "Vector.t.u0" 0) ([])) (Atom
     "Vector.take_idem.u0" 0)) ((:) (Clause ((:) (Atom "Vector.take.u0" 0)
     ([])) (Atom "Vector.take_idem.u0" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0)
     ([])) (Atom "Vector.take_app.u0" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Init.Logic.10" 0) ([])) (Atom "Vector.take_app.u0" 0)) ((:) (Clause
+    "Coq.Init.Logic.11" 0) ([])) (Atom "Vector.take_app.u0" 0)) ((:) (Clause
     ((:) (Atom "Vector.t.u0" 0) ([])) (Atom "Vector.take_app.u0" 0)) ((:)
     (Clause ((:) (Atom "Vector.take.u0" 0) ([])) (Atom "Vector.take_app.u0"
     0)) ((:) (Clause ((:) (Atom "Vector.append.u0" 0) ([])) (Atom
     "Vector.take_app.u0" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
-    "Vector.take_prf_irr.u0" 0)) ((:) (Clause ((:) (Atom "Coq.Init.Logic.10"
+    "Vector.take_prf_irr.u0" 0)) ((:) (Clause ((:) (Atom "Coq.Init.Logic.11"
     0) ([])) (Atom "Vector.take_prf_irr.u0" 0)) ((:) (Clause ((:) (Atom
     "Vector.t.u0" 0) ([])) (Atom "Vector.take_prf_irr.u0" 0)) ((:) (Clause
     ((:) (Atom "Vector.take.u0" 0) ([])) (Atom "Vector.take_prf_irr.u0" 0))
@@ -6325,9 +6768,10 @@ cs4 =
     "Vector.t.u0" 0) ([])) (Atom "Vector.splitat_append.u0" 0)) ((:) (Clause
     ((:) (Atom "Vector.append.u0" 0) ([])) (Atom "Vector.splitat_append.u0"
     0)) ((:) (Clause ((:) (Atom "Vector.splitat.u0" 0) ([])) (Atom
-    "Vector.splitat_append.u0" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Init.Logic.10" 0) ([])) (Atom "Vector.append_splitat.u0" 0)) ((:)
-    (Clause ((:) (Atom "eq_ind_r.u0" 0) ([])) (Atom
+    "Vector.splitat_append.u0" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([]))
+    (Atom "Vector.append_splitat.u0" (Prelude.succ 0))) ((:) (Clause ((:)
+    (Atom "Coq.Init.Logic.11" 0) ([])) (Atom "Vector.append_splitat.u0" 0))
+    ((:) (Clause ((:) (Atom "eq_ind_r.u0" 0) ([])) (Atom
     "Vector.append_splitat.u0" 0)) ((:) (Clause ((:) (Atom "prod.u0" 0) ([]))
     (Atom "Vector.append_splitat.u0" 0)) ((:) (Clause ((:) (Atom "prod.u1" 0)
     ([])) (Atom "Vector.append_splitat.u0" 0)) ((:) (Clause ((:) (Atom
@@ -6345,7 +6789,7 @@ cs4 =
     ([])) (Atom "Vector.append_splitat.u0" 0)) ((:) (Clause ((:) (Atom
     "Vector.append_comm_cons.u0" 0) ([])) (Atom "Vector.append_splitat.u0"
     0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
-    "Vector.Forall_impl.u0" 0)) ((:) (Clause ((:) (Atom "Coq.Init.Logic.10"
+    "Vector.Forall_impl.u0" 0)) ((:) (Clause ((:) (Atom "Coq.Init.Logic.11"
     0) ([])) (Atom "Vector.Forall_impl.u0" 0)) ((:) (Clause ((:) (Atom
     "eq_ind_r.u0" 0) ([])) (Atom "Vector.Forall_impl.u0" 0)) ((:) (Clause
     ((:) (Atom "sigT.u1" 0) ([])) (Atom "Vector.Forall_impl.u0" 0)) ((:)
@@ -6354,7 +6798,7 @@ cs4 =
     "Vector.Forall_impl.u0" 0)) ((:) (Clause ((:) (Atom
     "Coq.Logic.EqdepFacts.84" 0) ([])) (Atom "Vector.Forall_impl.u0" 0)) ((:)
     (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "Vector.Forall_forall.u0" 0))
-    ((:) (Clause ((:) (Atom "Coq.Init.Logic.10" 0) ([])) (Atom
+    ((:) (Clause ((:) (Atom "Coq.Init.Logic.11" 0) ([])) (Atom
     "Vector.Forall_forall.u0" 0)) ((:) (Clause ((:) (Atom "eq_ind_r.u0" 0)
     ([])) (Atom "Vector.Forall_forall.u0" 0)) ((:) (Clause ((:) (Atom
     "sigT.u1" 0) ([])) (Atom "Vector.Forall_forall.u0" 0)) ((:) (Clause ((:)
@@ -6365,7 +6809,7 @@ cs4 =
     "Coq.Logic.EqdepFacts.84" 0) ([])) (Atom "Vector.Forall_forall.u0" 0))
     ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
     "Vector.Forall_nth_order.u0" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Init.Logic.10" 0) ([])) (Atom "Vector.Forall_nth_order.u0" 0)) ((:)
+    "Coq.Init.Logic.11" 0) ([])) (Atom "Vector.Forall_nth_order.u0" 0)) ((:)
     (Clause ((:) (Atom "eq_ind_r.u0" 0) ([])) (Atom
     "Vector.Forall_nth_order.u0" 0)) ((:) (Clause ((:) (Atom "sigT.u1" 0)
     ([])) (Atom "Vector.Forall_nth_order.u0" 0)) ((:) (Clause ((:) (Atom
@@ -6384,7 +6828,7 @@ cs4 =
     ((:) (Clause ((:) (Atom "Vector.nth_order_tl.u0" 0) ([])) (Atom
     "Vector.Forall_nth_order.u0" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([]))
     (Atom "Vector.Forall2_nth_order.u0" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Init.Logic.10" 0) ([])) (Atom "Vector.Forall2_nth_order.u0" 0)) ((:)
+    "Coq.Init.Logic.11" 0) ([])) (Atom "Vector.Forall2_nth_order.u0" 0)) ((:)
     (Clause ((:) (Atom "eq_ind_r.u0" 0) ([])) (Atom
     "Vector.Forall2_nth_order.u0" 0)) ((:) (Clause ((:) (Atom "sigT.u1" 0)
     ([])) (Atom "Vector.Forall2_nth_order.u0" 0)) ((:) (Clause ((:) (Atom
@@ -6403,26 +6847,28 @@ cs4 =
     "Vector.Forall2_nth_order.u0" 0)) ((:) (Clause ((:) (Atom
     "Vector.nth_order_hd.u0" 0) ([])) (Atom "Vector.Forall2_nth_order.u0" 0))
     ((:) (Clause ((:) (Atom "Vector.nth_order_tl.u0" 0) ([])) (Atom
-    "Vector.Forall2_nth_order.u0" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Init.Logic.10" 0) ([])) (Atom "Vector.to_list_of_list_opp.u0" 0))
-    ((:) (Clause ((:) (Atom "list.u0" 0) ([])) (Atom
-    "Vector.to_list_of_list_opp.u0" 0)) ((:) (Clause ((:) (Atom "length.u0"
-    0) ([])) (Atom "Vector.to_list_of_list_opp.u0" 0)) ((:) (Clause ((:)
-    (Atom "Vector.t.u0" 0) ([])) (Atom "Vector.to_list_of_list_opp.u0" 0))
-    ((:) (Clause ((:) (Atom "Vector.of_list.u0" 0) ([])) (Atom
+    "Vector.Forall2_nth_order.u0" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0)
+    ([])) (Atom "Vector.to_list_of_list_opp.u0" (Prelude.succ 0))) ((:)
+    (Clause ((:) (Atom "Coq.Init.Logic.11" 0) ([])) (Atom
+    "Vector.to_list_of_list_opp.u0" 0)) ((:) (Clause ((:) (Atom "list.u0" 0)
+    ([])) (Atom "Vector.to_list_of_list_opp.u0" 0)) ((:) (Clause ((:) (Atom
+    "length.u0" 0) ([])) (Atom "Vector.to_list_of_list_opp.u0" 0)) ((:)
+    (Clause ((:) (Atom "Vector.t.u0" 0) ([])) (Atom
     "Vector.to_list_of_list_opp.u0" 0)) ((:) (Clause ((:) (Atom
-    "Vector.to_list.u0" 0) ([])) (Atom "Vector.to_list_of_list_opp.u0" 0))
-    ((:) (Clause ((:) (Atom "length.u0" 0) ([])) (Atom
-    "Vector.length_to_list.u0" 0)) ((:) (Clause ((:) (Atom "Vector.t.u0" 0)
-    ([])) (Atom "Vector.length_to_list.u0" 0)) ((:) (Clause ((:) (Atom
-    "Vector.to_list.u0" 0) ([])) (Atom "Vector.length_to_list.u0" 0)) ((:)
-    (Clause ((:) (Atom "Coq.Init.Logic.9" 0) ([])) (Atom
-    "Vector.of_list_to_list_opp.u0" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Init.Logic.10" 0) ([])) (Atom "Vector.of_list_to_list_opp.u0" 0))
-    ((:) (Clause ((:) (Atom "eq_ind_r.u0" 0) ([])) (Atom
-    "Vector.of_list_to_list_opp.u0" 0)) ((:) (Clause ((:) (Atom
-    "map_subst_map.u1" 0) ([])) (Atom "Vector.of_list_to_list_opp.u0" 0))
-    ((:) (Clause ((:) (Atom "map_subst_map.u3" 0) ([])) (Atom
+    "Vector.of_list.u0" 0) ([])) (Atom "Vector.to_list_of_list_opp.u0" 0))
+    ((:) (Clause ((:) (Atom "Vector.to_list.u0" 0) ([])) (Atom
+    "Vector.to_list_of_list_opp.u0" 0)) ((:) (Clause ((:) (Atom "length.u0"
+    0) ([])) (Atom "Vector.length_to_list.u0" 0)) ((:) (Clause ((:) (Atom
+    "Vector.t.u0" 0) ([])) (Atom "Vector.length_to_list.u0" 0)) ((:) (Clause
+    ((:) (Atom "Vector.to_list.u0" 0) ([])) (Atom "Vector.length_to_list.u0"
+    0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
+    "Vector.of_list_to_list_opp.u0" (Prelude.succ 0))) ((:) (Clause ((:)
+    (Atom "Coq.Init.Logic.10" 0) ([])) (Atom "Vector.of_list_to_list_opp.u0"
+    0)) ((:) (Clause ((:) (Atom "Coq.Init.Logic.11" 0) ([])) (Atom
+    "Vector.of_list_to_list_opp.u0" 0)) ((:) (Clause ((:) (Atom "eq_ind_r.u0"
+    0) ([])) (Atom "Vector.of_list_to_list_opp.u0" 0)) ((:) (Clause ((:)
+    (Atom "map_subst_map.u1" 0) ([])) (Atom "Vector.of_list_to_list_opp.u0"
+    0)) ((:) (Clause ((:) (Atom "map_subst_map.u3" 0) ([])) (Atom
     "Vector.of_list_to_list_opp.u0" 0)) ((:) (Clause ((:) (Atom "list.u0" 0)
     ([])) (Atom "Vector.of_list_to_list_opp.u0" 0)) ((:) (Clause ((:) (Atom
     "length.u0" 0) ([])) (Atom "Vector.of_list_to_list_opp.u0" 0)) ((:)
@@ -6465,7 +6911,7 @@ cs4 =
     (Clause ((:) (Atom "Vector.eta.u0" 0) ([])) (Atom
     "Vector.to_list_last.u0" 0)) ((:) (Clause ((:) (Atom
     "Vector.to_list_cons.u0" 0) ([])) (Atom "Vector.to_list_last.u0" 0)) ((:)
-    (Clause ((:) (Atom "Coq.Lists.List.857" 0) ([])) (Atom
+    (Clause ((:) (Atom "Coq.Lists.List.886" 0) ([])) (Atom
     "Vector.to_list_const.u0" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([]))
     (Atom "Vector.to_list_const.u0" 0)) ((:) (Clause ((:) (Atom "list.u0" 0)
     ([])) (Atom "Vector.to_list_const.u0" 0)) ((:) (Clause ((:) (Atom
@@ -6495,14 +6941,15 @@ cs4 =
     (Atom "Vector.tl.u0" 0) ([])) (Atom "Vector.to_list_tl.u0" 0)) ((:)
     (Clause ((:) (Atom "Vector.to_list.u0" 0) ([])) (Atom
     "Vector.to_list_tl.u0" 0)) ((:) (Clause ((:) (Atom "Vector.eta.u0" 0)
-    ([])) (Atom "Vector.to_list_tl.u0" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Init.Logic.10" 0) ([])) (Atom "Vector.to_list_append.u0" 0)) ((:)
-    (Clause ((:) (Atom "list.u0" 0) ([])) (Atom "Vector.to_list_append.u0"
-    0)) ((:) (Clause ((:) (Atom "app.u0" 0) ([])) (Atom
-    "Vector.to_list_append.u0" 0)) ((:) (Clause ((:) (Atom "Vector.t.u0" 0)
-    ([])) (Atom "Vector.to_list_append.u0" 0)) ((:) (Clause ((:) (Atom
-    "Vector.append.u0" 0) ([])) (Atom "Vector.to_list_append.u0" 0)) ((:)
-    (Clause ((:) (Atom "Vector.to_list.u0" 0) ([])) (Atom
+    ([])) (Atom "Vector.to_list_tl.u0" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0)
+    ([])) (Atom "Vector.to_list_append.u0" (Prelude.succ 0))) ((:) (Clause
+    ((:) (Atom "Coq.Init.Logic.11" 0) ([])) (Atom "Vector.to_list_append.u0"
+    0)) ((:) (Clause ((:) (Atom "list.u0" 0) ([])) (Atom
+    "Vector.to_list_append.u0" 0)) ((:) (Clause ((:) (Atom "app.u0" 0) ([]))
+    (Atom "Vector.to_list_append.u0" 0)) ((:) (Clause ((:) (Atom
+    "Vector.t.u0" 0) ([])) (Atom "Vector.to_list_append.u0" 0)) ((:) (Clause
+    ((:) (Atom "Vector.append.u0" 0) ([])) (Atom "Vector.to_list_append.u0"
+    0)) ((:) (Clause ((:) (Atom "Vector.to_list.u0" 0) ([])) (Atom
     "Vector.to_list_append.u0" 0)) ((:) (Clause ((:) (Atom
     "Vector.to_list_cons.u0" 0) ([])) (Atom "Vector.to_list_append.u0" 0))
     ((:) (Clause ((:) (Atom "Coq.Lists.List.247" 0) ([])) (Atom
@@ -6518,8 +6965,8 @@ cs4 =
     0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.247" 0) ([])) (Atom
     "Vector.to_list_rev_append.u0" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0)
     ([])) (Atom "Vector.to_list_rev_append.u0" 0)) ((:) (Clause ((:) (Atom
-    "eq_ind_r.u0" 0) ([])) (Atom "Vector.to_list_rev_append.u0" 0)) ((:)
-    (Clause ((:) (Atom "eq_rect_r.u1" 0) ([])) (Atom
+    "Coq.Init.Logic.10" 0) ([])) (Atom "Vector.to_list_rev_append.u0" 0))
+    ((:) (Clause ((:) (Atom "eq_ind_r.u0" 0) ([])) (Atom
     "Vector.to_list_rev_append.u0" 0)) ((:) (Clause ((:) (Atom "list.u0" 0)
     ([])) (Atom "Vector.to_list_rev_append.u0" 0)) ((:) (Clause ((:) (Atom
     "Vector.t.u0" 0) ([])) (Atom "Vector.to_list_rev_append.u0" 0)) ((:)
@@ -6541,37 +6988,38 @@ cs4 =
     0)) ((:) (Clause ((:) (Atom "Vector.to_list.u0" 0) ([])) (Atom
     "Vector.to_list_rev.u0" 0)) ((:) (Clause ((:) (Atom
     "Vector.to_list_rev_append.u0" 0) ([])) (Atom "Vector.to_list_rev.u0" 0))
-    ((:) (Clause ((:) (Atom "Coq.Lists.List.277" 0) ([])) (Atom
+    ((:) (Clause ((:) (Atom "Coq.Lists.List.279" 0) ([])) (Atom
     "Vector.to_list_map.u0" 0)) ((:) (Clause ((:) (Atom "list.u0" 0) ([]))
     (Atom "Vector.to_list_map.u0" 0)) ((:) (Clause ((:) (Atom "Vector.t.u0"
     0) ([])) (Atom "Vector.to_list_map.u0" 0)) ((:) (Clause ((:) (Atom
     "Vector.map.u0" 0) ([])) (Atom "Vector.to_list_map.u0" 0)) ((:) (Clause
     ((:) (Atom "Vector.to_list.u0" 0) ([])) (Atom "Vector.to_list_map.u0" 0))
-    ((:) (Clause ((:) (Atom "Coq.Lists.List.278" 0) ([])) (Atom
-    "Vector.to_list_map.u1" 0)) ((:) (Clause ((:) (Atom "Coq.Init.Logic.10"
-    0) ([])) (Atom "Vector.to_list_map.u1" 0)) ((:) (Clause ((:) (Atom
-    "list.u0" 0) ([])) (Atom "Vector.to_list_map.u1" 0)) ((:) (Clause ((:)
-    (Atom "Vector.t.u0" 0) ([])) (Atom "Vector.to_list_map.u1" 0)) ((:)
-    (Clause ((:) (Atom "Vector.map.u1" 0) ([])) (Atom "Vector.to_list_map.u1"
-    0)) ((:) (Clause ((:) (Atom "Vector.to_list.u0" 0) ([])) (Atom
-    "Vector.to_list_map.u1" 0)) ((:) (Clause ((:) (Atom "Coq.Lists.List.377"
-    0) ([])) (Atom "Vector.to_list_fold_left.u0" 0)) ((:) (Clause ((:) (Atom
-    "eq.u0" 0) ([])) (Atom "Vector.to_list_fold_left.u0" 0)) ((:) (Clause
-    ((:) (Atom "Vector.fold_left.u1" 0) ([])) (Atom
-    "Vector.to_list_fold_left.u0" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Lists.List.378" 0) ([])) (Atom "Vector.to_list_fold_left.u1" 0))
+    ((:) (Clause ((:) (Atom "Coq.Lists.List.280" 0) ([])) (Atom
+    "Vector.to_list_map.u1" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([]))
+    (Atom "Vector.to_list_map.u1" (Prelude.succ 0))) ((:) (Clause ((:) (Atom
+    "Coq.Init.Logic.11" 0) ([])) (Atom "Vector.to_list_map.u1" 0)) ((:)
+    (Clause ((:) (Atom "list.u0" 0) ([])) (Atom "Vector.to_list_map.u1" 0))
     ((:) (Clause ((:) (Atom "Vector.t.u0" 0) ([])) (Atom
-    "Vector.to_list_fold_left.u1" 0)) ((:) (Clause ((:) (Atom
+    "Vector.to_list_map.u1" 0)) ((:) (Clause ((:) (Atom "Vector.map.u1" 0)
+    ([])) (Atom "Vector.to_list_map.u1" 0)) ((:) (Clause ((:) (Atom
+    "Vector.to_list.u0" 0) ([])) (Atom "Vector.to_list_map.u1" 0)) ((:)
+    (Clause ((:) (Atom "Coq.Lists.List.379" 0) ([])) (Atom
+    "Vector.to_list_fold_left.u0" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0)
+    ([])) (Atom "Vector.to_list_fold_left.u0" 0)) ((:) (Clause ((:) (Atom
+    "Vector.fold_left.u1" 0) ([])) (Atom "Vector.to_list_fold_left.u0" 0))
+    ((:) (Clause ((:) (Atom "Coq.Lists.List.380" 0) ([])) (Atom
+    "Vector.to_list_fold_left.u1" 0)) ((:) (Clause ((:) (Atom "Vector.t.u0"
+    0) ([])) (Atom "Vector.to_list_fold_left.u1" 0)) ((:) (Clause ((:) (Atom
     "Vector.fold_left.u0" 0) ([])) (Atom "Vector.to_list_fold_left.u1" 0))
     ((:) (Clause ((:) (Atom "Vector.to_list.u0" 0) ([])) (Atom
     "Vector.to_list_fold_left.u1" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Lists.List.381" 0) ([])) (Atom "Vector.to_list_fold_right.u0" 0))
+    "Coq.Lists.List.383" 0) ([])) (Atom "Vector.to_list_fold_right.u0" 0))
     ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
     "Vector.to_list_fold_right.u0" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Init.Logic.10" 0) ([])) (Atom "Vector.to_list_fold_right.u0" 0))
+    "Coq.Init.Logic.11" 0) ([])) (Atom "Vector.to_list_fold_right.u0" 0))
     ((:) (Clause ((:) (Atom "Vector.fold_right.u1" 0) ([])) (Atom
     "Vector.to_list_fold_right.u0" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Lists.List.382" 0) ([])) (Atom "Vector.to_list_fold_right.u1" 0))
+    "Coq.Lists.List.384" 0) ([])) (Atom "Vector.to_list_fold_right.u1" 0))
     ((:) (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom
     "Vector.to_list_fold_right.u1" 0)) ((:) (Clause ((:) (Atom "list.u0" 0)
     ([])) (Atom "Vector.to_list_fold_right.u1" 0)) ((:) (Clause ((:) (Atom
@@ -6579,10 +7027,10 @@ cs4 =
     (Clause ((:) (Atom "Vector.fold_right.u0" 0) ([])) (Atom
     "Vector.to_list_fold_right.u1" 0)) ((:) (Clause ((:) (Atom
     "Vector.to_list.u0" 0) ([])) (Atom "Vector.to_list_fold_right.u1" 0))
-    ((:) (Clause ((:) (Atom "Coq.Lists.List.702" 0) ([])) (Atom
+    ((:) (Clause ((:) (Atom "Coq.Lists.List.711" 0) ([])) (Atom
     "Vector.to_list_Forall.u0" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([]))
     (Atom "Vector.to_list_Forall.u0" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Init.Logic.10" 0) ([])) (Atom "Vector.to_list_Forall.u0" 0)) ((:)
+    "Coq.Init.Logic.11" 0) ([])) (Atom "Vector.to_list_Forall.u0" 0)) ((:)
     (Clause ((:) (Atom "eq_ind_r.u0" 0) ([])) (Atom
     "Vector.to_list_Forall.u0" 0)) ((:) (Clause ((:) (Atom "list.u0" 0) ([]))
     (Atom "Vector.to_list_Forall.u0" 0)) ((:) (Clause ((:) (Atom
@@ -6590,9 +7038,9 @@ cs4 =
     ((:) (Atom "Vector.Forall.u0" 0) ([])) (Atom "Vector.to_list_Forall.u0"
     0)) ((:) (Clause ((:) (Atom "Vector.to_list.u0" 0) ([])) (Atom
     "Vector.to_list_Forall.u0" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Lists.List.702" 0) ([])) (Atom "Vector.to_list_Exists.u0" 0)) ((:)
+    "Coq.Lists.List.711" 0) ([])) (Atom "Vector.to_list_Exists.u0" 0)) ((:)
     (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "Vector.to_list_Exists.u0" 0))
-    ((:) (Clause ((:) (Atom "Coq.Init.Logic.10" 0) ([])) (Atom
+    ((:) (Clause ((:) (Atom "Coq.Init.Logic.11" 0) ([])) (Atom
     "Vector.to_list_Exists.u0" 0)) ((:) (Clause ((:) (Atom "eq_ind_r.u0" 0)
     ([])) (Atom "Vector.to_list_Exists.u0" 0)) ((:) (Clause ((:) (Atom
     "list.u0" 0) ([])) (Atom "Vector.to_list_Exists.u0" 0)) ((:) (Clause ((:)
@@ -6607,10 +7055,10 @@ cs4 =
     ([])) (Atom "Vector.to_list_In.u0" 0)) ((:) (Clause ((:) (Atom
     "Vector.In.u0" 0) ([])) (Atom "Vector.to_list_In.u0" 0)) ((:) (Clause
     ((:) (Atom "Vector.to_list.u0" 0) ([])) (Atom "Vector.to_list_In.u0" 0))
-    ((:) (Clause ((:) (Atom "Coq.Lists.List.821" 0) ([])) (Atom
+    ((:) (Clause ((:) (Atom "Coq.Lists.List.850" 0) ([])) (Atom
     "Vector.to_list_Forall2.u0" 0)) ((:) (Clause ((:) (Atom "eq.u0" 0) ([]))
     (Atom "Vector.to_list_Forall2.u0" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Init.Logic.10" 0) ([])) (Atom "Vector.to_list_Forall2.u0" 0)) ((:)
+    "Coq.Init.Logic.11" 0) ([])) (Atom "Vector.to_list_Forall2.u0" 0)) ((:)
     (Clause ((:) (Atom "eq_ind_r.u0" 0) ([])) (Atom
     "Vector.to_list_Forall2.u0" 0)) ((:) (Clause ((:) (Atom "list.u0" 0)
     ([])) (Atom "Vector.to_list_Forall2.u0" 0)) ((:) (Clause ((:) (Atom
@@ -6618,9 +7066,9 @@ cs4 =
     ((:) (Atom "Vector.Forall2.u0" 0) ([])) (Atom "Vector.to_list_Forall2.u0"
     0)) ((:) (Clause ((:) (Atom "Vector.to_list.u0" 0) ([])) (Atom
     "Vector.to_list_Forall2.u0" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Lists.List.821" 0) ([])) (Atom "Vector.to_list_Forall2.u1" 0)) ((:)
+    "Coq.Lists.List.850" 0) ([])) (Atom "Vector.to_list_Forall2.u1" 0)) ((:)
     (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "Vector.to_list_Forall2.u1" 0))
-    ((:) (Clause ((:) (Atom "Coq.Init.Logic.10" 0) ([])) (Atom
+    ((:) (Clause ((:) (Atom "Coq.Init.Logic.11" 0) ([])) (Atom
     "Vector.to_list_Forall2.u1" 0)) ((:) (Clause ((:) (Atom "eq_ind_r.u0" 0)
     ([])) (Atom "Vector.to_list_Forall2.u1" 0)) ((:) (Clause ((:) (Atom
     "list.u0" 0) ([])) (Atom "Vector.to_list_Forall2.u1" 0)) ((:) (Clause
@@ -6634,12 +7082,12 @@ cs4 =
     "Vector.to_list.u0" 0) ([])) (Atom "Vector.to_list_Forall2.u1" 0)) ((:)
     (Clause ((:) (Atom "Vector.eta.u0" 0) ([])) (Atom
     "Vector.to_list_Forall2.u1" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Lists.List.381" 0) ([])) (Atom "ZMicromega.cnf_of_list.u0" 0)) ((:)
+    "Coq.Lists.List.383" 0) ([])) (Atom "ZMicromega.cnf_of_list.u0" 0)) ((:)
     (Clause ((:) (Atom "prod.u1" 0) ([])) (Atom "ZMicromega.cnf_of_list.u0"
     0)) ((:) (Clause ((:) (Atom "list.u0" 0) ([])) (Atom
     "ZMicromega.cnf_of_list.u0" 0)) ((:) (Clause ((:) (Atom
     "Coq.micromega.Tauto.52" 0) ([])) (Atom "ZMicromega.cnf_of_list.u0" 0))
-    ((:) (Clause ((:) (Atom "Coq.Lists.List.381" 0) ([])) (Atom
+    ((:) (Clause ((:) (Atom "Coq.Lists.List.383" 0) ([])) (Atom
     "ZMicromega.cnf_of_list_correct.u0" 0)) ((:) (Clause ((:) (Atom "prod.u1"
     0) ([])) (Atom "ZMicromega.cnf_of_list_correct.u0" 0)) ((:) (Clause ((:)
     (Atom "list.u0" 0) ([])) (Atom "ZMicromega.cnf_of_list_correct.u0" 0))
@@ -6768,9 +7216,8 @@ cs4 =
     "Equivalence.pointwise_equivalence.u1" 0)) ((:) (Clause ((:) (Atom
     "Equivalence.pointwise_transitive.u1" 0) ([])) (Atom
     "Equivalence.pointwise_equivalence.u1" 0)) ((:) (Clause ((:) (Atom
-    "SetoidTactics.default_relation.u0" 0) ([])) (Atom
-    "Coq.Structures.Equalities.1" 0)) ((:) (Clause ((:) (Atom
-    "SetoidTactics.equivalence_default.u0" 0) ([])) (Atom
+    "default_relation.u0" 0) ([])) (Atom "Coq.Structures.Equalities.1" 0))
+    ((:) (Clause ((:) (Atom "equivalence_default.u0" 0) ([])) (Atom
     "Coq.Structures.Equalities.1" 0)) ((:) (Clause ((:) (Atom
     "Coq.Relations.Relation_Definitions.1" 0) ([])) (Atom
     "Coq.Structures.Equalities.1" 0)) ((:) (Clause ((:) (Atom
@@ -6789,7 +7236,7 @@ cs4 =
     "ex.u0" 0) ([])) (Atom "Coq.Structures.Equalities.1" 0)) ((:) (Clause
     ((:) (Atom "all.u0" 0) ([])) (Atom "Coq.Structures.Equalities.1" 0)) ((:)
     (Clause ((:) (Atom "eq.u0" 0) ([])) (Atom "Coq.Structures.Equalities.1"
-    0)) ((:) (Clause ((:) (Atom "Coq.Init.Logic.10" 0) ([])) (Atom
+    0)) ((:) (Clause ((:) (Atom "Coq.Init.Logic.11" 0) ([])) (Atom
     "Coq.Structures.Equalities.1" 0)) ((:) (Clause ((:) (Atom "eq_ind_r.u0"
     0) ([])) (Atom "Coq.Structures.Equalities.1" 0)) ((:) (Clause ((:) (Atom
     "Basics.flip.u0" 0) ([])) (Atom "Coq.Structures.Equalities.1" 0)) ((:)
@@ -6797,136 +7244,18 @@ cs4 =
     "Coq.Structures.Equalities.1" 0)) ((:) (Clause ((:) (Atom "CompSpec.u0"
     0) ([])) (Atom "Coq.Structures.Equalities.1" 0)) ((:) (Clause ((:) (Atom
     "CompSpec2Type.u0" 0) ([])) (Atom "Coq.Structures.Equalities.1" 0)) ((:)
-    (Clause ((:) (Atom "Coq.Classes.Morphisms.31" 0) ([])) (Atom
+    (Clause ((:) (Atom "Morphisms.rewrite_relation_eq_dom.u0" 0) ([])) (Atom
     "Coq.Structures.Equalities.1" 0)) ((:) (Clause ((:) (Atom
-    "Morphisms.proper_sym_impl_iff.u0" 0) ([])) (Atom
+    "Morphisms.rewrite_relation_eq_dom.u1" 0) ([])) (Atom
     "Coq.Structures.Equalities.1" 0)) ((:) (Clause ((:) (Atom
+    "Morphisms.eq_rewrite_relation.u0" 0) ([])) (Atom
+    "Coq.Structures.Equalities.1" 0)) ((:) (Clause ((:) (Atom
+    "Coq.Classes.Morphisms.51" 0) ([])) (Atom "Coq.Structures.Equalities.1"
+    0)) ((:) (Clause ((:) (Atom "Morphisms.proper_sym_impl_iff.u0" 0) ([]))
+    (Atom "Coq.Structures.Equalities.1" 0)) ((:) (Clause ((:) (Atom
     "Morphisms.proper_sym_impl_iff_2.u1" 0) ([])) (Atom
-    "Coq.Structures.Equalities.1" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Relations.Relation_Definitions.1" 0) ([])) (Atom
-    "Coq.Classes.RelationClasses.1" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Classes.RelationClasses.1" 0) ([])) (Atom
-    "Coq.Relations.Relation_Definitions.1" 0)) ((:) (Clause ((:) (Atom
-    "RelationClasses.binary_operation.u0" 0) ([])) (Atom
-    "RelationClasses.Tlist.u0" 0)) ((:) (Clause ((:) (Atom
-    "RelationClasses.Tlist.u0" 0) ([])) (Atom
-    "RelationClasses.binary_operation.u0" 0)) ((:) (Clause ((:) (Atom
-    "RelationClasses.binary_operation.u0" 0) ([])) (Atom
-    "RelationClasses.arrows.u0" 0)) ((:) (Clause ((:) (Atom
-    "RelationClasses.arrows.u0" 0) ([])) (Atom
-    "RelationClasses.binary_operation.u0" 0)) ((:) (Clause ((:) (Atom
-    "RelationClasses.binary_operation.u0" 0) ([])) (Atom
-    "RelationClasses.arrows.u1" 0)) ((:) (Clause ((:) (Atom
-    "RelationClasses.arrows.u1" 0) ([])) (Atom
-    "RelationClasses.binary_operation.u0" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Relations.Relation_Definitions.1" 0) ([])) (Atom
-    "RelationClasses.binary_operation.u0" 0)) ((:) (Clause ((:) (Atom
-    "RelationClasses.binary_operation.u0" 0) ([])) (Atom
-    "Coq.Relations.Relation_Definitions.1" 0)) ((:) (Clause ((:) (Atom
-    "RelationClasses.binary_operation.u0" 0) ([])) (Atom
-    "RelationClasses.binary_relation.u0" 0)) ((:) (Clause ((:) (Atom
-    "RelationClasses.binary_relation.u0" 0) ([])) (Atom
-    "RelationClasses.binary_operation.u0" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Relations.Relation_Definitions.1" 0) ([])) (Atom
-    "Coq.Classes.RelationClasses.67" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Classes.RelationClasses.67" 0) ([])) (Atom
-    "Coq.Relations.Relation_Definitions.1" 0)) ((:) (Clause ((:) (Atom
-    "Coq.micromega.EnvRing.10" 0) ([])) (Atom "Coq.micromega.RingMicromega.2"
-    0)) ((:) (Clause ((:) (Atom "Coq.micromega.RingMicromega.2" 0) ([]))
-    (Atom "Coq.micromega.EnvRing.10" 0)) ((:) (Clause ((:) (Atom
-    "induction_ltof1.u0" 0) ([])) (Atom "induction_gtof1.u0" 0)) ((:) (Clause
-    ((:) (Atom "induction_gtof1.u0" 0) ([])) (Atom "induction_ltof1.u0" 0))
-    ((:) (Clause ((:) (Atom "well_founded_induction_type.u0" 0) ([])) (Atom
-    "induction_ltof2.u0" 0)) ((:) (Clause ((:) (Atom "induction_ltof2.u0" 0)
-    ([])) (Atom "well_founded_induction_type.u0" 0)) ((:) (Clause ((:) (Atom
-    "well_founded_induction_type.u0" 0) ([])) (Atom "induction_gtof2.u0" 0))
-    ((:) (Clause ((:) (Atom "induction_gtof2.u0" 0) ([])) (Atom
-    "well_founded_induction_type.u0" 0)) ((:) (Clause ((:) (Atom
-    "lt_wf_rect.u0" 0) ([])) (Atom "gt_wf_rect.u0" 0)) ((:) (Clause ((:)
-    (Atom "gt_wf_rect.u0" 0) ([])) (Atom "lt_wf_rect.u0" 0)) ((:) (Clause
-    ((:) (Atom "Coq.Logic.EqdepFacts.82" 0) ([])) (Atom
-    "BinPos.Pos.eq_dep_eq_positive.u0" 0)) ((:) (Clause ((:) (Atom
-    "BinPos.Pos.eq_dep_eq_positive.u0" 0) ([])) (Atom
-    "Coq.Logic.EqdepFacts.82" 0)) ((:) (Clause ((:) (Atom "Vector.cast.u0" 0)
-    ([])) (Atom "Vector.cast.u1" 0)) ((:) (Clause ((:) (Atom "Vector.cast.u1"
-    0) ([])) (Atom "Vector.cast.u0" 0)) ((:) (Clause ((:) (Atom
-    "ssrunder.Under_rel.Under_rel.u0" 0) ([])) (Atom
-    "ssrunder.Under_rel.Over_rel.u0" 0)) ((:) (Clause ((:) (Atom
-    "ssrunder.Under_rel.Over_rel.u0" 0) ([])) (Atom
-    "ssrunder.Under_rel.Under_rel.u0" 0)) ((:) (Clause ((:) (Atom
-    "ssrunder.Under_rel.Under_rel.u0" 0) ([])) (Atom "Coq.ssr.ssrunder.8" 0))
-    ((:) (Clause ((:) (Atom "Coq.ssr.ssrunder.8" 0) ([])) (Atom
-    "ssrunder.Under_rel.Under_rel.u0" 0)) ((:) (Clause ((:) (Atom
-    "ssrunder.Under_rel.Under_rel_from_rel.u0" 0) ([])) (Atom
-    "Coq.ssr.ssrunder.9" 0)) ((:) (Clause ((:) (Atom "Coq.ssr.ssrunder.9" 0)
-    ([])) (Atom "ssrunder.Under_rel.Under_rel_from_rel.u0" 0)) ((:) (Clause
-    ((:) (Atom "ssrunder.Under_rel.Under_relE.u0" 0) ([])) (Atom
-    "Coq.ssr.ssrunder.10" 0)) ((:) (Clause ((:) (Atom "Coq.ssr.ssrunder.10"
-    0) ([])) (Atom "ssrunder.Under_rel.Under_relE.u0" 0)) ((:) (Clause ((:)
-    (Atom "ssrunder.Under_rel.over_rel.u0" 0) ([])) (Atom
-    "Coq.ssr.ssrunder.11" 0)) ((:) (Clause ((:) (Atom "Coq.ssr.ssrunder.11"
-    0) ([])) (Atom "ssrunder.Under_rel.over_rel.u0" 0)) ((:) (Clause ((:)
-    (Atom "ssrunder.Under_rel.over_rel_done.u0" 0) ([])) (Atom
-    "Coq.ssr.ssrunder.12" 0)) ((:) (Clause ((:) (Atom "Coq.ssr.ssrunder.12"
-    0) ([])) (Atom "ssrunder.Under_rel.over_rel_done.u0" 0)) ((:) (Clause
-    ((:) (Atom "ssrunder.Under_rel.under_rel_done.u0" 0) ([])) (Atom
-    "Coq.ssr.ssrunder.13" 0)) ((:) (Clause ((:) (Atom "Coq.ssr.ssrunder.13"
-    0) ([])) (Atom "ssrunder.Under_rel.under_rel_done.u0" 0)) ((:) (Clause
-    ((:) (Atom "Coq.Logic.EqdepFacts.82" 0) ([])) (Atom
-    "Eqdep_dec.eq_dep_eq_dec.u1" 0)) ((:) (Clause ((:) (Atom
-    "Eqdep_dec.eq_dep_eq_dec.u1" 0) ([])) (Atom "Coq.Logic.EqdepFacts.82" 0))
-    ((:) (Clause ((:) (Atom "Eqdep_dec.eq_rect_eq_dec.u1" 0) ([])) (Atom
-    "Coq.Logic.Eqdep_dec.15" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Logic.Eqdep_dec.15" 0) ([])) (Atom "Eqdep_dec.eq_rect_eq_dec.u1" 0))
-    ((:) (Clause ((:) (Atom "Coq.Logic.EqdepFacts.82" 0) ([])) (Atom
-    "Coq.Logic.Eqdep_dec.16" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Logic.Eqdep_dec.16" 0) ([])) (Atom "Coq.Logic.EqdepFacts.82" 0))
-    ((:) (Clause ((:) (Atom "Coq.Logic.EqdepFacts.84" 0) ([])) (Atom
-    "Coq.Logic.Eqdep_dec.17" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Logic.Eqdep_dec.17" 0) ([])) (Atom "Coq.Logic.EqdepFacts.84" 0))
-    ((:) (Clause ((:) (Atom "Eqdep_dec.eq_rect_eq_dec.u1" 0) ([])) (Atom
-    "Coq.Logic.Eqdep_dec.18" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Logic.Eqdep_dec.18" 0) ([])) (Atom "Eqdep_dec.eq_rect_eq_dec.u1" 0))
-    ((:) (Clause ((:) (Atom "Coq.Logic.EqdepFacts.82" 0) ([])) (Atom
-    "Coq.Logic.Eqdep_dec.19" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Logic.Eqdep_dec.19" 0) ([])) (Atom "Coq.Logic.EqdepFacts.82" 0))
-    ((:) (Clause ((:) (Atom "Coq.Logic.EqdepFacts.84" 0) ([])) (Atom
-    "Coq.Logic.Eqdep_dec.20" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Logic.Eqdep_dec.20" 0) ([])) (Atom "Coq.Logic.EqdepFacts.84" 0))
-    ((:) (Clause ((:) (Atom "Coq.Logic.EqdepFacts.84" 0) ([])) (Atom
-    "Eqdep_dec.inj_pair2_eq_dec.u1" 0)) ((:) (Clause ((:) (Atom
-    "Eqdep_dec.inj_pair2_eq_dec.u1" 0) ([])) (Atom "Coq.Logic.EqdepFacts.84"
-    0)) ((:) (Clause ((:) (Atom "Coq.Relations.Relation_Definitions.1" 0)
-    ([])) (Atom "Coq.Classes.Morphisms.1" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Classes.Morphisms.1" 0) ([])) (Atom
-    "Coq.Relations.Relation_Definitions.1" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Relations.Relation_Definitions.1" 0) ([])) (Atom
-    "Coq.Classes.Morphisms.11" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Classes.Morphisms.11" 0) ([])) (Atom
-    "Coq.Relations.Relation_Definitions.1" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Relations.Relation_Definitions.1" 0) ([])) (Atom
-    "Morphisms.proper_sym_impl_iff_2.u0" 0)) ((:) (Clause ((:) (Atom
-    "Morphisms.proper_sym_impl_iff_2.u0" 0) ([])) (Atom
-    "Coq.Relations.Relation_Definitions.1" 0)) ((:) (Clause ((:) (Atom
-    "Tauto.rtyp.u0" 0) ([])) (Atom "Tauto.eKind.u0" 0)) ((:) (Clause ((:)
-    (Atom "Tauto.eKind.u0" 0) ([])) (Atom "Tauto.rtyp.u0" 0)) ((:) (Clause
-    ((:) (Atom "Coq.Logic.EqdepFacts.81" 0) ([])) (Atom
-    "EqdepFacts.Eq_rect_eq.u0" 0)) ((:) (Clause ((:) (Atom
-    "EqdepFacts.Eq_rect_eq.u0" 0) ([])) (Atom "Coq.Logic.EqdepFacts.81" 0))
-    ((:) (Clause ((:) (Atom "Coq.Logic.EqdepFacts.82" 0) ([])) (Atom
-    "EqdepFacts.Eq_dep_eq.u0" 0)) ((:) (Clause ((:) (Atom
-    "EqdepFacts.Eq_dep_eq.u0" 0) ([])) (Atom "Coq.Logic.EqdepFacts.82" 0))
-    ((:) (Clause ((:) (Atom "Coq.Logic.EqdepFacts.84" 0) ([])) (Atom
-    "EqdepFacts.Inj_dep_pair.u0" 0)) ((:) (Clause ((:) (Atom
-    "EqdepFacts.Inj_dep_pair.u0" 0) ([])) (Atom "Coq.Logic.EqdepFacts.84" 0))
-    ((:) (Clause ((:) (Atom "Coq.Logic.EqdepFacts.81" 0) ([])) (Atom
-    "Coq.Logic.EqdepFacts.79" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Logic.EqdepFacts.79" 0) ([])) (Atom "Coq.Logic.EqdepFacts.81" 0))
-    ((:) (Clause ((:) (Atom "Eqdep_dec.eq_rect_eq_dec.u1" 0) ([])) (Atom
-    "Coq.Logic.EqdepFacts.81" 0)) ((:) (Clause ((:) (Atom
-    "Coq.Logic.EqdepFacts.81" 0) ([])) (Atom "Eqdep_dec.eq_rect_eq_dec.u1"
-    0))
-    ([]))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))
+    "Coq.Structures.Equalities.1" 0))
+    ([])))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))
 
 coq_types_ex_f :: Frontier
 coq_types_ex_f =
@@ -6937,9 +7266,9 @@ vars'4 =
   nodup ((Prelude.==) :: Prelude.String -> Prelude.String -> Prelude.Bool)
     (vars cs4)
 
-coq_types_ex :: Prelude.Bool -> Ex_lfp_geq -> Ex_lfp_geq
-coq_types_ex debug x =
-  thm_32 (length vars'4) (length vars'4) cs4 vars'4 ([]) coq_types_ex_f x debug
+coq_types_ex :: Ex_lfp_geq -> Ex_lfp_geq
+coq_types_ex x =
+  thm_32 (length vars'4) (length vars'4) cs4 vars'4 ([]) coq_types_ex_f x
 
 cs5 :: ([]) Clause0
 cs5 =
@@ -6958,7 +7287,7 @@ vars'5 =
 
 thesis_ex_1 :: Ex_lfp_geq -> Ex_lfp_geq
 thesis_ex_1 x =
-  thm_32 (length vars'5) (length vars'5) cs5 vars'5 ([]) thesis_ex_1_f x Prelude.True
+  thm_32 (length vars'5) (length vars'5) cs5 vars'5 ([]) thesis_ex_1_f x
 
 cs6 :: ([]) Clause0
 cs6 =
@@ -6979,40 +7308,5 @@ vars'6 =
 
 thesis_ex_2 :: Ex_lfp_geq -> Ex_lfp_geq
 thesis_ex_2 x =
-  thm_32 (length vars'6) (length vars'6) cs6 vars'6 ([]) thesis_ex_2_f x Prelude.True
+  thm_32 (length vars'6) (length vars'6) cs6 vars'6 ([]) thesis_ex_2_f x
 
-printAligned :: Prelude.String -> [(Prelude.String, Prelude.String)] -> Prelude.IO ()
-printAligned sep xs =
-  Prelude.mapM_ Prelude.putStrLn $ align xs
-    where
-      maxStrLength =
-        Prelude.maximum $ map (Prelude.length . Prelude.fst) xs
-      align =
-        map (\(s, i) -> s ++ Prelude.replicate (maxStrLength Prelude.- Prelude.length s) ' ' ++ sep ++ i)
-
-
-frequencyPercentages :: Prelude.Show a => [(Prelude.String, a)] -> [(Prelude.String, Prelude.String)]
-frequencyPercentages xs =
-  map (\l -> (Prelude.head l, Text.Printf.printf "%.2f%%" ((Prelude.fromRational (Prelude.fromIntegral (Prelude.length l) Data.Ratio.% Prelude.fromIntegral (Prelude.length xs)) Prelude.* 100 :: Prelude.Double)))) grouped
-    where
-      grouped =
-        Data.List.group . Data.List.sort $ map (Prelude.show . Prelude.snd) xs
-
-compareTuples :: Prelude.Ord a => ([Prelude.Char], a) -> ([Prelude.Char], a) -> Prelude.Ordering
-compareTuples (a1, b1) (a2, b2)
-  | compareB Prelude.== Prelude.EQ = compareA
-  | Prelude.otherwise = compareB
-  where
-    compareA = Prelude.compare (map Data.Char.toLower a1) (map Data.Char.toLower a2)
-    compareB = Prelude.flip Prelude.compare b1 b2
-
-main :: Prelude.IO ()
-main = do
-    let f = (coq_types_ex Prelude.False) coq_types_ex_f
-    let output = Data.List.sortBy compareTuples $ map (\var -> (var, f var)) vars'4
-    printAligned " = " $ map (\(x,y) -> (x, Prelude.show y)) output
-    let output2 = frequencyPercentages output
-    Prelude.putStrLn ""
-    Prelude.putStrLn "Frequency percentages:"
-    Prelude.putStrLn $ Prelude.replicate 90 '-'
-    printAligned ": " output2

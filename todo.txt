@@ -46,3 +46,16 @@ FINALLY
 - triple-check red text
 - write aknowledgements
 - proofread
+
+
+--------------------------------------------------------------------------------------------------
+
+NOTES MEETING 26.05:
+
+1. er resultater riktig? ikke så mye teorem 3.2., utvide.
+
+2. er det mulig å få til, feasible, gjennomførbart
+3. er det verdt det, hva får vi ut av det, verdien, what is added value
+    - større sikkerhet
+    - en prototyp-algoritme
+    - kvalitet opp, formal method, se mail for kilde
