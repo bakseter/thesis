@@ -81,8 +81,8 @@ Every semilattice expression is equal to a term over $V$.
 The atoms are of the form $x + k$, where $x \in V, k \in \mathbb{N}$.
 We call this special form of Horn clauses simply \emph{clauses}.
 
-A relation is an equation $s = t$, where $s$ and $t$ are terms over $V$.
-A constraint (relation), like $a \lor b = c^+$ (with $a, b, c \in V$), expresses a relation between the generators (variables) $a, b, c$.
+A constraint is an equation $s = t$, where $s$ and $t$ are terms over $V$.
+A constraint,  like $a \lor b = c^+$ (with $a, b, c \in V$), expresses a relation between the variables $a, b, c$.
 For each constraint $s = t$, we generate clauses by replacing join by conjunction, denoted by ",", and $\geq$ by implication.
 E.g. for the constraint $a \lor b = c^+$, we first derive $a \lor b \geq c^+$ and $c^+ \geq a \lor b$.
 From $a \lor b \geq c^+$, we generate the clause $a, b \rightarrow c^+$.

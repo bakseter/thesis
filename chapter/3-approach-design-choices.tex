@@ -29,11 +29,9 @@ constructive part of the proof, and are not used in the extracted algorithm in a
 (we will expand on how most logical lemmas are removed by extraction in \Cref{ssec:ex_lfp_geq}).
 As long as these lemmas are true, the correctness of the extracted algorithm is not in danger,
 even though not formally proved.
-
 As we will see later in this section, this is mainly due to
 very complex or difficult-to-prove formal proofs of lemmas in our set implementation
 being trivial when proving the same lemma informally.
-
 The formal proofs of these lemmas are however not very interesting,
 which is why we have not spent too much time on them.
 
@@ -133,7 +131,7 @@ Qed.
 \end{minipage}
 
 We will omit showing the Ltac terms (i.e. the actual proof) for proofs that are longer than a few lines in the rest of this thesis,
-and we will usually denote  with \lstinline{(* ... *)}.
+which we will usually denote by \lstinline{(* ... *)}.
 Proofs as in \Cref{lst:string_eq_dec} are often given for the standard types in Coq such as \lstinline{nat},
 \lstinline{bool} and \lstinline{string}.
 As such, they can just be passed as arguments.

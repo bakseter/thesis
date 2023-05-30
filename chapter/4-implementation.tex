@@ -267,7 +267,7 @@ and are not needed when actually computing something using the extracted code.
 Informative objects, on the other hand, are kept when extracting, and can be used to compute something.
 This is why we define \lstinline{ex_lfp_geq} with \lstinline{Set}.
 
-An important thing to we need to keep in mind is to avoid \emph{universe inconsistencies}.
+An important thing we also need to keep in mind is to avoid \emph{universe inconsistencies}.
 These can occur by unwise use of \lstinline{Type}.
 We will not elaborate much on what type universes are, but we will give a brief explanation of how they work in Coq.
 In Coq, all objects of type \lstinline{Prop} also live in the universe \lstinline{Set}, and all objects of type \lstinline{Set}
@@ -329,7 +329,7 @@ a special case, as we saw in \Cref{sec:relevant_parts_of_the_paper}.
 We also need this lemma to be able to prove \Cref{thm:3.2} in Coq.
 As explained in \Cref{ssec:leaving_out_the_formal_proof_of_lem_33},
 we will only give a formal definition of the lemma in Coq,
-leave out the proof. By using the Coq command \lstinline{Admitted},
+but leave out the actual proof. By using the Coq command \lstinline{Admitted},
 we can leave out a full proof of a lemma, but still be able to use the lemma in other Coq proofs.
 We define \Cref{lem:3.3} in Coq using \lstinline{pre_thm}, as follows:
 
@@ -394,7 +394,7 @@ We start the inductive case of \lstinline{n} by doing a new induction on \lstinl
 
 \subsubsection{Base case of \lstinline{m}}
 
-The second base case is similar to the first base case of \lstinline{n}.
+The base case of \lstinline{m} is similar to the base case of \lstinline{n}.
 We again want to prove
 
 \tabto{2em}

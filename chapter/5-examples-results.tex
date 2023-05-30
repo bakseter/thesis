@@ -186,8 +186,8 @@ was detected by Coq's own universe-constraint checking algorithm;
 we can also use our algorithm to detect these universe inconsistencies.
 
 Using the Coq command \lstinline{Print Universes} we can see the current state of the universe hierarchy for any Coq file.
-Doing this at the bottom of our file \lstinline{Main.v}, after our proof of \Cref{thm:3.2},
-we get the following output (truncated):
+Doing this at the bottom of our file \lstinline{Main.v} (which is where the main proofs are located),
+after the formal proof of \Cref{thm:3.2}, we get the following output:
 
 \begin{minipage}{\linewidth}
 \begin{lstlisting}[language=Coq, label={lst:universe_hierarchy}, caption={Universe hierarchy in \lstinline{Main.v}}]
