@@ -138,6 +138,42 @@ would return for that variable, which is always \lstinline{Fin 0} in this case
 (since in our example the frontier is \lstinline{frontier_fin_0},
 which is a constant function that always returns \lstinline{Fin 0}).
 
+\subsection{Example of loop-checking}
+
+In the previous example, the algorithm found a minimal model for the set of clauses \lstinline{Cs}.
+We can also use the algorithm to check for loops in a set of clauses.
+
+\begin{minipage}{\linewidth}
+\begin{lstlisting}[language=Coq, label={lst:loop_checking_example}, caption={Loop-checking example}]
+Example Cs := [
+  ["a" & 0] ~> "a" & 1
+].
+Example thesis_ex_2_f := frontier_fin_0.
+Example vars' := nodup string_dec (vars Cs).
+
+Example thesis_ex_2 :=
+thm_32
+  (Datatypes.length vars')
+  (Datatypes.length vars')
+  Cs
+  vars'
+  []
+  thesis_ex_2_f.
+\end{lstlisting}
+\end{minipage}
+
+\begin{minipage}{\linewidth}
+\begin{lstlisting}[language=bash, label={lst:loop_checking_example_output}, caption={Loop-checking example output}]
+ghci> (thesis_ex_2 thesis_ex_2_f) "a"
+Infty
+ghci> (thesis_ex_2 thesis_ex_2_f) "x"
+Fin 0
+\end{lstlisting}
+\end{minipage}
+
+\lstinline{Infty} for any variable means that the algorithm has detected a loop in the set of clauses.
+For any other variable we get the usual result of \lstinline{Fin 0}, since the frontier is constant.
+
 \section{Real world example}
 \label{sec:real_world_example}
 
@@ -255,17 +291,17 @@ Example Cs := [
   ["c" & 2] ~> "d" & 3
 ].
 
-Example thesis_ex_2_f := frontier_fin_0.
+Example thesis_ex_3_f := frontier_fin_0.
 Example vars' := nodup string_dec (vars Cs).
 
-Example thesis_ex_2 :=
+Example thesis_ex_3 :=
   thm_32
   (Datatypes.length vars')
   (Datatypes.length vars')
   Cs
   vars'
   []
-  thesis_ex_2_f.
+  thesis_ex_3_f.
 \end{lstlisting}
 \end{minipage}
 
@@ -274,7 +310,7 @@ we will always encounter a runtime exception:
 
 \begin{minipage}{\linewidth}
 \begin{lstlisting}[language=bash, label={lst:thm_32_haskell_output_extended}, caption={Output of \lstinline{thm_32} example extended}]
-ghci> (thesis_ex_2 thesis_ex_2_f) "a"
+ghci> (thesis_ex_3 thesis_ex_3_f) "a"
 *** Exception: absurd case
 CallStack (from HasCallStack):
   error, called at ex.hs:13:3 in main:Ex
@@ -291,7 +327,7 @@ Doing so, we get the following output (truncated for brevity):
 
 \begin{minipage}{\linewidth}
 \begin{lstlisting}[language=bash, label={lst:thm_32_haskell_output_extended_debug}, caption={Output of \lstinline{thm_32} example extended, with debug}]
-ghci> (thesis_ex_2 thesis_ex_2_f) "a"
+ghci> (thesis_ex_3 thesis_ex_3_f) "a"
 IHn: n = 3, m = 4, V = ["a","b","c","d"], W = []
 
 ...

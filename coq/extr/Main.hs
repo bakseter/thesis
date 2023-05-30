@@ -284,13 +284,13 @@ vars_clause c =
         (vars_set_atom conds)}}
 
 vars :: (Set Clause0) -> Set Prelude.String
-vars cs7 =
-  flat_map vars_clause cs7
+vars cs8 =
+  flat_map vars_clause cs8
 
 sub_vars_improvable :: (Set Clause0) -> (Set Prelude.String) -> (Set
                        Prelude.String) -> Frontier -> Set Prelude.String
-sub_vars_improvable cs7 v w f =
-  case cs7 of {
+sub_vars_improvable cs8 v w f =
+  case cs8 of {
    ([]) -> ([]);
    (:) c t ->
     case c of {
@@ -342,8 +342,8 @@ ex_lfp_geq_nodup_iff _ _ _ =
 
 sub_forward :: (Set Clause0) -> (Set Prelude.String) -> (Set Prelude.String)
                -> Frontier -> (,) (Set Prelude.String) Frontier
-sub_forward cs7 v w f =
-  let {x = sub_vars_improvable cs7 v w f} in
+sub_forward cs8 v w f =
+  let {x = sub_vars_improvable cs8 v w f} in
   let {
    f' = \v0 ->
     case set_mem
@@ -366,13 +366,13 @@ lem_33 _ _ _ _ _ x =
 thm_32 :: Prelude.Integer -> Prelude.Integer -> (Set Clause0) -> (Set
           Prelude.String) -> (Set Prelude.String) -> Frontier -> Ex_lfp_geq
           -> Prelude.Bool -> Ex_lfp_geq
-thm_32 n m cs7 v w f x debug =
-  nat_rect (\_ cs8 v0 _ f0 _ _ _ _ ->
-    eq_rec_r ([]) (ex_lfp_geq_empty cs8 f0)
+thm_32 n m cs8 v w f x debug =
+  nat_rect (\_ cs9 v0 _ f0 _ _ _ _ ->
+    eq_rec_r ([]) (ex_lfp_geq_empty cs9 f0)
       (nodup
         ((Prelude.==) :: Prelude.String -> Prelude.String -> Prelude.Bool)
         v0)) (\n0 iHn m0 ->
-        (if debug then
+         (if debug then
               Debug.Trace.trace
               ("IHn: n = " ++ Prelude.show n0 ++ ", m = " ++ Prelude.show m0 ++
               ", V = " ++ (Prelude.show v) ++ ", W = " ++ (Prelude.show w) ++
@@ -380,15 +380,15 @@ thm_32 n m cs7 v w f x debug =
               "")
             else Prelude.id)
               $
-    nat_rect (\cs8 v0 w0 f0 _ _ _ h2 ->
-      ex_lfp_geq_incl cs8
+    nat_rect (\cs9 v0 w0 f0 _ _ _ h2 ->
+      ex_lfp_geq_incl cs9
         (nodup
           ((Prelude.==) :: Prelude.String -> Prelude.String -> Prelude.Bool)
           v0)
         (nodup
           ((Prelude.==) :: Prelude.String -> Prelude.String -> Prelude.Bool)
-          w0) f0 h2) (\m1 iHm cs8 v0 w0 f0 _ _ _ h2 ->
-          (if debug then
+          w0) f0 h2) (\m1 iHm cs9 v0 w0 f0 _ _ _ h2 ->
+           (if debug then
               Debug.Trace.trace
                ("IHm: n = " ++ Prelude.show (Prelude.succ n0) ++ ", m = " ++ Prelude.show m1 ++
                ", V = " ++ (Prelude.show v0) ++ ", W = " ++ (Prelude.show w0) ++
@@ -397,23 +397,23 @@ thm_32 n m cs7 v w f x debug =
             else Prelude.id)
                $
       let {
-          h3 = le_lt_eq_dec
-                  (length
-                    (set_diff
-                      ((Prelude.==) :: Prelude.String -> Prelude.String -> Prelude.Bool)
-                      (nodup
-                        ((Prelude.==) :: Prelude.String -> Prelude.String -> Prelude.Bool)
-                        v0)
-                      (nodup
-                        ((Prelude.==) :: Prelude.String -> Prelude.String -> Prelude.Bool)
-                        w0))) (Prelude.succ m1)}
+       h3 = le_lt_eq_dec
+              (length
+                (set_diff
+                  ((Prelude.==) :: Prelude.String -> Prelude.String -> Prelude.Bool)
+                  (nodup
+                    ((Prelude.==) :: Prelude.String -> Prelude.String -> Prelude.Bool)
+                    v0)
+                  (nodup
+                    ((Prelude.==) :: Prelude.String -> Prelude.String -> Prelude.Bool)
+                    w0))) (Prelude.succ m1)}
       in
       case h3 of {
-       Prelude.True -> iHm cs8 v0 w0 f0 __ __ __ h2;
+       Prelude.True -> iHm cs9 v0 w0 f0 __ __ __ h2;
        Prelude.False ->
-        let {h5 = iHn n0 cs8 w0 ([]) f0 __ __ __ f0} in
+        let {h5 = iHn n0 cs9 w0 ([]) f0 __ __ __ f0} in
         let {
-         h = lem_33 cs8 v0
+         h = lem_33 cs9 v0
                (nodup
                  ((Prelude.==) :: Prelude.String -> Prelude.String -> Prelude.Bool)
                  w0) f0 (\cs' v' w' f' m2 _ _ _ h9 ->
@@ -430,7 +430,7 @@ thm_32 n m cs7 v w f x debug =
         in
         sig_rec (\h0 _ ->
           let {
-           p = sub_forward cs8
+           p = sub_forward cs9
                  (nodup
                    ((Prelude.==) :: Prelude.String -> Prelude.String -> Prelude.Bool)
                    v0)
@@ -441,7 +441,7 @@ thm_32 n m cs7 v w f x debug =
           case p of {
            (,) a b ->
             eq_rect
-              (sub_vars_improvable cs8
+              (sub_vars_improvable cs9
                 (nodup
                   ((Prelude.==) :: Prelude.String -> Prelude.String -> Prelude.Bool)
                   v0)
@@ -452,7 +452,7 @@ thm_32 n m cs7 v w f x debug =
                 case set_mem
                        ((Prelude.==) :: Prelude.String -> Prelude.String -> Prelude.Bool)
                        v1
-                       (sub_vars_improvable cs8
+                       (sub_vars_improvable cs9
                          (nodup
                            ((Prelude.==) :: Prelude.String -> Prelude.String -> Prelude.Bool)
                            v0)
@@ -479,23 +479,23 @@ thm_32 n m cs7 v w f x debug =
                    case s of {
                     Prelude.True -> update_infty_V v0 f0;
                     Prelude.False ->
-                     ex_lfp_geq_monotone cs8
+                     ex_lfp_geq_monotone cs9
                        (nodup
                          ((Prelude.==) :: Prelude.String -> Prelude.String -> Prelude.Bool)
                          v0) b f0
-                       (iHm cs8 v0
+                       (iHm cs9 v0
                          (nodup
                            ((Prelude.==) :: Prelude.String -> Prelude.String -> Prelude.Bool)
                            (set_union
                              ((Prelude.==) :: Prelude.String -> Prelude.String -> Prelude.Bool)
                              w0 a)) b __ __ __
-                         (iHn n0 cs8
+                         (iHn n0 cs9
                            (nodup
                              ((Prelude.==) :: Prelude.String -> Prelude.String -> Prelude.Bool)
                              (set_union
                                ((Prelude.==) :: Prelude.String -> Prelude.String -> Prelude.Bool)
                                w0 a)) ([]) b __ __ __ b))}}) b) a __}) h}) m0)
-    n m cs7 v w f __ __ __ x
+    n m cs8 v w f __ __ __ x
 
 cs :: ([]) Clause0
 cs =
@@ -7330,11 +7330,7 @@ thesis_ex_1 x =
 
 cs6 :: ([]) Clause0
 cs6 =
-  (:) (Clause ((:) (Atom "a" 0) ([])) (Atom "b" (Prelude.succ 0))) ((:)
-    (Clause ((:) (Atom "b" (Prelude.succ 0)) ([])) (Atom "c" (Prelude.succ
-    (Prelude.succ 0)))) ((:) (Clause ((:) (Atom "c" (Prelude.succ
-    (Prelude.succ 0))) ([])) (Atom "d" (Prelude.succ (Prelude.succ
-    (Prelude.succ 0))))) ([])))
+  (:) (Clause ((:) (Atom "a" 0) ([])) (Atom "a" (Prelude.succ 0))) ([])
 
 thesis_ex_2_f :: Frontier
 thesis_ex_2_f =
@@ -7349,6 +7345,27 @@ thesis_ex_2 :: Ex_lfp_geq -> Ex_lfp_geq
 thesis_ex_2 x =
   thm_32 (length vars'6) (length vars'6) cs6 vars'6 ([]) thesis_ex_2_f x Prelude.True
 
+cs7 :: ([]) Clause0
+cs7 =
+  (:) (Clause ((:) (Atom "a" 0) ([])) (Atom "b" (Prelude.succ 0))) ((:)
+    (Clause ((:) (Atom "b" (Prelude.succ 0)) ([])) (Atom "c" (Prelude.succ
+    (Prelude.succ 0)))) ((:) (Clause ((:) (Atom "c" (Prelude.succ
+    (Prelude.succ 0))) ([])) (Atom "d" (Prelude.succ (Prelude.succ
+    (Prelude.succ 0))))) ([])))
+
+thesis_ex_3_f :: Frontier
+thesis_ex_3_f =
+  frontier_fin_0
+
+vars'7 :: ([]) Prelude.String
+vars'7 =
+  nodup ((Prelude.==) :: Prelude.String -> Prelude.String -> Prelude.Bool)
+    (vars cs7)
+
+thesis_ex_3 :: Ex_lfp_geq -> Ex_lfp_geq
+thesis_ex_3 x =
+  thm_32 (length vars'7) (length vars'7) cs7 vars'7 ([]) thesis_ex_3_f x Prelude.True
+
 printAligned :: Prelude.String -> [(Prelude.String, Prelude.String)] -> Prelude.IO ()
 printAligned sep xs =
   Prelude.mapM_ Prelude.putStrLn $ align xs
@@ -7357,7 +7374,6 @@ printAligned sep xs =
         Prelude.maximum $ map (Prelude.length . Prelude.fst) xs
       align =
         map (\(s, i) -> s ++ Prelude.replicate (maxStrLength Prelude.- Prelude.length s) ' ' ++ sep ++ i)
-
 
 frequencyPercentages :: Prelude.Show a => [(Prelude.String, a)] -> [(Prelude.String, Prelude.String)]
 frequencyPercentages xs =

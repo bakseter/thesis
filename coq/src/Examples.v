@@ -5336,11 +5336,8 @@ Module ThesisEx1.
 End ThesisEx1.
 
 Module ThesisEx2.
-
   Example Cs := [
-    ["a" & 0] ~> "b" & 1;
-    ["b" & 1] ~> "c" & 2;
-    ["c" & 2] ~> "d" & 3
+    ["a" & 0] ~> "a" & 1
   ].
   Example thesis_ex_2_f := frontier_fin_0.
   Example vars' := nodup string_dec (vars Cs).
@@ -5355,6 +5352,27 @@ Module ThesisEx2.
       thesis_ex_2_f.
 
 End ThesisEx2.
+
+Module ThesisEx3.
+
+  Example Cs := [
+    ["a" & 0] ~> "b" & 1;
+    ["b" & 1] ~> "c" & 2;
+    ["c" & 2] ~> "d" & 3
+  ].
+  Example thesis_ex_3_f := frontier_fin_0.
+  Example vars' := nodup string_dec (vars Cs).
+
+  Example thesis_ex_3 :=
+    thm_32
+      (Datatypes.length vars')
+      (Datatypes.length vars')
+      Cs
+      vars'
+      []
+      thesis_ex_3_f.
+
+End ThesisEx3.
 
 Extraction Language Haskell.
 
@@ -5372,4 +5390,5 @@ Extraction "/home/andreas/Projects/thesis/coq/extr/Main.hs"
   FailEx4.fail_ex_4
   CoqTypesEx.coq_types_ex
   ThesisEx1.thesis_ex_1
-  ThesisEx2.thesis_ex_2.
+  ThesisEx2.thesis_ex_2
+  ThesisEx3.thesis_ex_3.
