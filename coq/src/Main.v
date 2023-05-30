@@ -35,6 +35,76 @@ Definition pre_thm (n m : nat) (Cs : set Clause) (V W : set string) (f : Frontie
   ex_lfp_geq Cs (nodup string_dec W) (nodup string_dec W) f ->
   ex_lfp_geq Cs (nodup string_dec V) (nodup string_dec V) f.
 
+Definition ex_v_V_infty (V : set string) (f : Frontier) : Set :=
+  sig (fun v : string => In v V /\ f v = infty).
+
+Lemma ex_v_V_infty_dec (V : set string) (f : Frontier) :
+  sum (ex_v_V_infty V f) (ex_v_V_infty V f -> False).
+Proof.
+  unfold ex_v_V_infty. induction V as [|h t].
+  - right. unfold not. intros. destruct H. destruct a.
+    inversion H.
+  - destruct IHt.
+    + left. destruct s. exists x. destruct a. split.
+      * right. assumption.
+      * assumption.
+    + destruct (f h) eqn:Hh.
+      * left. exists h. split.
+        -- left. reflexivity.
+        -- assumption.
+      * right. unfold not. intros. destruct H. destruct a.
+        -- inversion H.
+           ++ subst. rewrite Hh in H0. discriminate.
+           ++ apply f0. exists x. destruct H. split;
+              assumption. split; assumption.
+Qed.
+
+Fixpoint elim_atoms (l : set Atom) (v : string) :=
+  match l with
+  | [] => []
+  | h :: t =>
+      match h with
+      | x & k =>
+          if string_dec x v
+          then elim_atoms t v
+          else h :: elim_atoms t v
+      end
+  end.
+
+Fixpoint elim_clauses (Cs : set Clause) (v : string) :=
+  match Cs with
+  | [] => []
+  | (conds ~> conc) :: t =>
+      match conc with
+      | x & k =>
+          if string_dec x v
+          then elim_clauses t v
+          else (elim_atoms conds v ~> conc) :: elim_clauses t v
+      end
+  end.
+
+Definition elim_clauses_V (Cs : set Clause) (v : string) :
+  (set Clause) * (set string) :=
+    let Cs' := elim_clauses Cs v in
+    let V' := vars Cs' in
+    (Cs', V').
+
+Lemma elim_clauses_incl_V :
+  forall Cs : set Clause,
+  forall V : set string,
+  forall v : string,
+    V = vars Cs ->
+    incl (vars (elim_clauses Cs v)) V.
+Admitted.
+
+Lemma V_not_incl_elim_clauses :
+  forall Cs : set Clause,
+  forall V : set string,
+  forall v : string,
+    V = vars Cs ->
+    ~(incl V (vars (elim_clauses Cs v))).
+Admitted.
+
 Lemma lem_33 :
   forall Cs : set Clause,
   forall V W : set string,
@@ -48,7 +118,48 @@ Lemma lem_33 :
     incl W V ->
     ex_lfp_geq Cs (nodup string_dec W) (nodup string_dec W) f ->
     ex_lfp_geq Cs (nodup string_dec V) (nodup string_dec W) f.
+Proof.
+  intros.
+  destruct (ex_v_V_infty_dec V f); unfold ex_v_V_infty in *.
+  elim e. intros.
+  destruct (elim_clauses_V Cs x) as [Cs' V'] eqn:Helim.
+  - unfold pre_thm in X.
+    assert (ex_lfp_geq Cs' (nodup string_dec V') (nodup string_dec V') f).
+    { 
+      apply (X Cs' V' [] f 0).
+      + apply incl_nil_l.
+      + simpl. rewrite sub_1_r.
+        apply lt_le_pred. apply strict_subset_lt_length.
+        unfold strict_subset. inversion Helim. split.
+        * apply elim_clauses_incl_V. admit.
+        * apply V_not_incl_elim_clauses. admit.
+      + simpl. apply conj; try lia.
+        admit.
+      + simpl. apply ex_lfp_geq_empty.
+    }
 Admitted.
+
+(* informal proof sketch, cf. TCS note.
+Given Cs, V, W, and f, distinguish the following cases:
+
+1. Some v in V has f(v)=Infty. Then we can simplify Cs
+by eliminating all clauses with v in the conclusion, and
+simplifying clauses by eliminating atoms with v in the premiss.
+It may be that the premiss of a clause becomes empty, in which
+case we know that also the variable in the conclusion is Infty.
+We continue this process until the clause set cannot be simplified
+any more. Call the remaining clause set Cs', with variables in V',
+which is a strict subset of V. Now apply the first condition of
+lem33 to Cs', V'and W' empty to get a model of Cs' restricted to V'.
+Then we can extend this with value Infty for variables in V\V'
+to a model of Cs restricted to V.
+
+2. Not 1, so f: V->N. Now we can apply the method from the TCS note
+and termination is guaranteed since variables in V-W have values in N
+which do not change, and "bound" clauses having such a variable in
+the premiss.
+
+Matthieu Sozeau has a formal proof of termination in this case. *)
 
 Theorem thm_32 :
   forall n m : nat,
