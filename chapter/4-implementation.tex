@@ -1,4 +1,4 @@
-\chapter{Implementation of Logical Notions}
+\chapter{Implementation of Case-Specific Notions}
 \label{chap:implementation}
 
 \section{Data types}
@@ -32,7 +32,7 @@ are functions that are models of a set of clauses.
 We implement this in Coq using two types, \lstinline{Ninfty} and \lstinline{Frontier}.
 \lstinline{Ninfty} has two constructors; \lstinline{infty} represents $\infty$,
 and \lstinline{fin n} represents a natural number $n$.
-\lstinline{Frontier} is a function from a string (variable) to \lstinline{Ninfty}.
+\lstinline{Frontier} is a function from strings (variables) to \lstinline{Ninfty}.
 In the context of our formalization, we will refer to a function of this
 type as a \emph{frontier}.
 
@@ -47,7 +47,7 @@ Definition Frontier := string -> Ninfty.
 \end{minipage}
 
 Using these definitions of \lstinline{Atom}, \lstinline{Clause} and \lstinline{Frontier},
-we can define functions that check whether any given atom or clause is satisfied for any frontier.
+we can define functions that check whether any given atom or clause is satisfied a given frontier.
 
 \begin{minipage}{\linewidth}
 \begin{lstlisting}[language=Coq, label={lst:atom_clause_true_def}, caption={\lstinline{atom_true} and \lstinline{clause_true} in Coq}]
@@ -114,6 +114,10 @@ Definition all_shifts_true (c : Clause) (f : Frontier) : bool :=
 \end{lstlisting}
 \end{minipage}
 
+The idea is to shift the clause up by the smallest shift that makes the conclusion false
+and then to check that this shifted clause is still true
+(because one of the atoms in the condition also has become false).
+
 \section{Semantic functions and predicates}
 
 \subsection{The function \lstinline{sub_model}}
@@ -128,7 +132,7 @@ between three different sets of clauses when talking about frontiers as models;
 $\overline{S_C}$, $\overline{S_C}\mid W$ and $\overline{S_C}\downarrow W$.
 These are represented by
 \lstinline{sub_model Cs V V f}, \lstinline{sub_model Cs W W f} and \lstinline{sub_model Cs V W f},
-respectively.
+respectively, where \lstinline{V} is the set of all variables.
 
 We have two additional arguments \lstinline{V} and \lstinline{W}:
 \lstinline{V} is the the set of variables (strings) from the set of clauses \lstinline{Cs},
@@ -183,7 +187,7 @@ Fixpoint sub_vars_improvable (Cs : set Clause) (V W : set string) (f : Frontier)
 \end{lstlisting}
 \end{minipage}
 
-We then define a new function \lstinline{sub_forward} that take these improvable variables
+We then define a new function \lstinline{sub_forward} that takes these improvable variables
 and a frontier \lstinline{f}, and defines a new frontier \lstinline{f'}
 that increments the value that \lstinline{f} assigns to each variable.
 The return type of \lstinline{sub_forward} is a pair of a set of strings and a frontier,
@@ -226,7 +230,7 @@ Fixpoint geq (V : set string) (g f : Frontier) : bool :=
 \end{lstlisting}
 \end{minipage}
 
-\subsection{The predicate \lstinline{ex_lfp_geq}}
+\subsection{The predicate \lstinline{ex_lfp_geq} with \lstinline{Prop} and \lstinline{Set}}
 \label{ssec:ex_lfp_geq}
 
 We can now combine \lstinline{sub_model} and \lstinline{geq} to construct a predicate
@@ -249,7 +253,7 @@ When defined with \lstinline{Set}, we define it as a type,
 using the \lstinline{sig} type constructor in place of \lstinline{exists}.
 \lstinline{sig} denotes the $\Sigma$-type, which we explained in \Cref{ssec:dependent_types}.
 
-The reason for defining \lstinline{ex_lfp_geq} with \lstinline{Set}, is that we can then use
+The reason for defining \lstinline{ex_lfp_geq} with \lstinline{Set}, is that we then can use
 Coq's extraction feature to generate Haskell code from the Coq definitions.
 As briefly mentioned in \Cref{ssec:propositions_as_types}, a proof can often be used to compute something.
 In this case, we want to compute the actual frontier \lstinline{g} that satisfies the above predicate.
@@ -263,10 +267,13 @@ and are not needed when actually computing something using the extracted code.
 Informative objects, on the other hand, are kept when extracting, and can be used to compute something.
 This is why we define \lstinline{ex_lfp_geq} with \lstinline{Set}.
 
-Another important thing to we need to keep in mind when doing proofs with extraction in mind is to avoid \emph{universe inconsistencies}.
+An important thing to we need to keep in mind is to avoid \emph{universe inconsistencies}.
+These can occur by unwise use of \lstinline{Type}.
 We will not elaborate much on what type universes are, but we will give a brief explanation of how they work in Coq.
-In Coq, all objects of type \lstinline{Prop} live in the universe \lstinline{Set}, and all objects of type \lstinline{Set}
-live in the universe \lstinline{Type}. The universe hierarchy extends infinitely past \lstinline{Type}, but we will not
+In Coq, all objects of type \lstinline{Prop} also live in the universe \lstinline{Set}, and all objects of type \lstinline{Set}
+also live in the universe \lstinline{Type}.
+Moreover, \lstinline{Prop : Set} and \lstinline{Set : Type}.
+The cumulative universe hierarchy extends infinitely past \lstinline{Type}, but we will not
 need to go further than that.
 When defining a type, we can only refer to objects in universes lower than the universe of the type we are defining.
 Here is an example to illustrate this:
@@ -277,11 +284,11 @@ Here is an example to illustrate this:
 (* type signature of sig *)
 sig : forall A : Type, (A -> Prop) -> Type
 
-(* Prop <= Set, OK *)
-Definition invalid_def (A : Prop) : Set :=
+(* Set <= Set, OK *)
+Definition valid_def (A : Set) : Set :=
   sig (fun x : A => x = x).
 
-(* Set <= Prop, universe inconsistency! *)
+(* Set > Prop, universe inconsistency! *)
 Fail Definition invalid_def (A : Set) : Prop :=
   sig (fun x : A => x = x).
 \end{lstlisting}
@@ -367,11 +374,11 @@ Qed.
 \end{lstlisting}
 \end{minipage}
 
-The proof of \Cref{thm:3.2} is based on a primary induction on \lstinline{n} and a secondary induction on \lstinline{m}.
+The proof of \Cref{thm:3.2} is by primary induction on \lstinline{n} and secondary induction on \lstinline{m}.
 
 \subsubsection{Base case of \lstinline{n}}
 
-The first base case is simple. We want to prove
+The first base case is simple. We directly prove the conclusion of \lstinline{pre_thm}:
 
 (1) \tabto{2em}
 \lstinline{ex_lfp_geq Cs (nodup string_dec V) (nodup string_dec V) f}.
@@ -387,12 +394,14 @@ We start the inductive case of \lstinline{n} by doing a new induction on \lstinl
 
 \subsubsection{Base case of \lstinline{m}}
 
-The first base case is similar to the first base case of \lstinline{n}.
+The second base case is similar to the first base case of \lstinline{n}.
 We again want to prove
 
 \tabto{2em}
 \lstinline{ex_lfp_geq Cs (nodup string_dec V) (nodup string_dec V) f}.
 
+But now we have as assumption this same statement with \lstinline{W},
+and \lstinline{incl V W} since \lstinline{m = 0}.
 We now apply the lemma \lstinline{ex_lfp_geq_incl}, which states that
 
 \tabto{2em}
@@ -428,8 +437,8 @@ The goal $(2)$ is proven by an existing hypothesis.
 \subsubsection{Inductive case of \lstinline{m}}
 \label{sssec:inductive_case_m}
 
-The inductive case of \lstinline{m} by far the largest part of the proof (see lines 17-199 of \Cref{lst:thm_32_full_proof}).
-As it is very complex and does not follow the paper too closely,
+The inductive case of \lstinline{m} is by far the largest part of the proof (see lines 17-199 of \Cref{lst:thm_32_full_proof}).
+As it is very complex and does not follow the informal proof in \cite{mbezem} too closely,
 we will go through a more "high-level" explanation of the reasoning
 we followed when constructing the formalized proof.
 We will sometimes use mathematical notation to explain the proof instead of Coq code,
@@ -437,7 +446,7 @@ for the sake of being terse and clear.
 
 Assume $W \subseteq V$, $\lvert V \rvert \leq n + 1$, $\lvert V - W \rvert \leq m + 1 \leq n + 1$.
 If $\lvert V - W \rvert \leq m$ then we can apply the secondary induction hypothesis, and we are done.
-Hence, we can assume $\lvert V - W \rvert = m + 1$, meaning $\lvert W \rvert \leq n$.
+Hence, we can assume $\lvert V - W \rvert = m + 1$, implying $\lvert W \rvert \leq n$.
 To prove \lstinline{ex_lfp_geq Cs V V f}, we assert \lstinline{(W, g) = sub_forward Cs V V f}.
 This gives us three cases to consider:
 
@@ -445,10 +454,13 @@ This gives us three cases to consider:
   \item $W = \emptyset$, and we are done.
   \item $W = V$, meaning all variables in $V$ map to $\infty$, and we are done.
   \item $\emptyset \subset W \subset V$. Then $\lvert W \rvert \leq n$ and $\lvert V - W \rvert \leq m$.
-      So by the primary induction hypothesis, we get \lstinline{ex_lfp_geq Cs W W f}.
-      Then by the second induction hypothesis, we get \lstinline{ex_lfp_geq Cs V V f}, and we are done.
+      So by the primary induction hypothesis, we get \lstinline{ex_lfp_geq Cs W W f}
+      (line 31 of \Cref{lst:thm_32_full_proof}).
+      Then by the second induction hypothesis and the application of \Cref{lem:3.3} (line 40 of \Cref{lst:thm_32_full_proof}),
+      we get \lstinline{ex_lfp_geq Cs V V f}, and we are done.
 \end{enumerate}
 
+A complete formal proof of \Cref{thm:3.2} can be found in \Cref{lst:thm_32_full_proof}.
 
 \section{Extraction to Haskell}
 

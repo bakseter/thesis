@@ -12,7 +12,7 @@ encountering any problems, and we can thus be very confident that the informal p
 \section{Feasibility of formalization}
 \label{sec:feasibility_of_formalization}
 
-The formalization of the proof of \Cref{thm:3.2} from \cite{mbezem} took us \~12 months of work.
+The formalization of the proof of \Cref{thm:3.2} from \cite{mbezem} took us about 12 months of work.
 This includes the time spent on learning Coq and the time spent on the formalization of the proof
 and related lemmas/definitions.
 We have shown that a formalization of the proof of \Cref{thm:3.2} is feasible,
@@ -23,8 +23,6 @@ The project was also not a full-time effort, and other work and studies have bee
 Given more extensive knowledge of Coq (or another other proof assistant),
 and possibly more effort or man-power devoted to the project,
 we believe that a formalization of a proof of a similar complexity would be a feasible task.
-
-\textcolor{red}{I assume "we" here means "me"? you (Marc) did know Coq}
 
 \section{Value of formalization \& extracted algorithm}
 
@@ -41,8 +39,8 @@ All these examples show that formalization has provided great value for mission-
 systems where correctness is of utmost importance.
 If we imagine our correct algorithm as a starting point for further development
 and for eventual use in the Coq proof assistant for checking universe constraints,
-one could argue about whether or not our case is as mission-critical as these,
-as any fault in Coq as a proof assistant would taint the correctness of anything proven using it.
+one could argue about whether or not our case is as mission-critical as these.
+However, any fault in Coq as a proof assistant would taint the correctness of anything proven using it.
 
 As seen in \Cref{sec:real_world_example}, the extracted algorithm is useful in practice,
 however, the efficiency is not very good.

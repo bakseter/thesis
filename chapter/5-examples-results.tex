@@ -35,7 +35,11 @@ pre_thm
 \end{minipage}
 
 We see that \lstinline{pre_thm} returns an object in \lstinline{Set}.
-This object is the proposition defined in \Cref{lst:pre_thm_def},
+This object is the proposition
+\footnote{When we use the term "proposition", we refer to the colloquial usage of a true or false statement,
+not necessarily the Coq notion of a proposition, i.e. an object in \lstinline{Prop}.
+We will therefore sometimes refer to an object in \lstinline{Set} as a proposition, since it is still a proposition in the colloquial sense.}
+defined in \Cref{lst:pre_thm_def},
 where all the variables are the arguments given to \lstinline{pre_thm}, i.e. the variables quantified in \lstinline{thm_32}.
 This proposition states some logical assumptions, and concludes with a definition of \lstinline{ex_lfp_geq}.
 By the notion of propositions as types, this proposition is a function
@@ -176,6 +180,24 @@ Definition Cs := [
     ["Morphisms.proper_sym_impl_iff_2.u1" & 0]
         ~> "Coq.Structures.Equalities.1" & 0
 ].
+\end{lstlisting}
+\end{minipage}
+
+Not shown above are constraints of the form \lstinline{x < y} and \lstinline{x = y},
+which are translated like this:
+
+\begin{minipage}{\linewidth}
+\begin{lstlisting}[language=Coq, label={lst:constraints_to_clauses_trans}, caption={Other forms of constraints translated to clauses}]
+(* x < y *)
+Example Cs1 := [
+    ["y" & 0] ~> "x" & 1;
+];
+
+(* x = y *)
+Example Cs2 := [
+    ["y" & 0] ~> "x" & 0;
+    ["x" & 0] ~> "y" & 0;
+];
 \end{lstlisting}
 \end{minipage}
 

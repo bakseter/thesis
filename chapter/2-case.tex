@@ -1,13 +1,13 @@
 \chapter{The Case in Question}
 \label{ch:the_case_in_question}
 
-\section{Overview}
+\section{Overview \& research questions}
 \label{sec:overview}
 
 Recall the three questions posed in the abstract.
-Firstly, we want to use the Coq proof assistant to formalize parts of the proofs of the following paper, by \citeauthor{mbezem} \cite{mbezem}.
+Firstly, we want to use the Coq proof assistant to formalize parts of the proofs of the paper, \citeauthor{mbezem} \cite{mbezem}.
 This paper solves two problems that occur in dependent type systems where typings depend
-on universe-level constraints, and the two problems can be summarized as follows:
+on universe-level constraints, and the results can be summarized as follows:
 
 \begin{enumerate}
     \item The uniform word problem for an an equational theory of semilattices
@@ -25,13 +25,14 @@ whether a given relation is provable from $E$ in $T$.
 \end{quote}
 In our case, the equational theory $T$ is the theory of join-semilattices
 with one inflationary endomorphism.
-This problem is shown in \cite{mbezem} to be solved in polynomial time,
-and provability in our case of a semilattice theory is shown to be equivalent to
+This problem is shown in \cite{mbezem} to be solvable in polynomial time,
+and provability in semilattice theory is shown to be equivalent to
 provability in Horn clauses.
-We will explain in more detail in the next subsection what join-semilattices
-inflationary endomorphisms and Horn clauses are.
+We will explain in more detail in the next subsection what join-semilattices,
+inflationary endomorphisms, and Horn clauses are.
 Loop-checking, in our case, means determining if a set of constraints
-on some set of variables generate an infinite loop between constraints.
+on some set of variables generate an infinite loop, that is,
+a term $t$ such that $t \geq t^+$ is provable from the constraints.
 This is important for algorithms such as a type-checking algorithm where
 type universe levels have to be determined, and the algorithm has to be decidable.
 We have focused on formalizing the proof of \Cref{thm:3.2} from \cite{mbezem}.
@@ -64,14 +65,15 @@ An \emph{inflationary endomorphism}, in our case, is a function
 that maps an element to itself or to a greater element in the ordered set.
 We denote the inflationary endomorphism as $^+$, for every lattice element $x$,
 $x^+$ is also called the successor of $x$.
-The fact that $x$ is an endomorphism means that we get the following properties:
+The fact that $x$ is an inflationary endomorphism means that we get the following properties:
 $(x \lor y)^+ = x^+ \lor y^+$ and $x \lor x^+ = x^+$.
+The latter is also denoted as $x \leq x^+$.
 
 
 A \emph{semilattice presentation} consists of a set $V$ of \emph{generators}
 (also called \emph{variables}) and a set $C$ of \emph{relations}
 (also called \emph{constraints}).
-For a semilattice $t$ and $k \in \mathbb{N}$, $t + k$ denotes the k-fold successor of $t$, thus making $t + 0 = t$ and $t + 1 = t^+$.
+For a semilattice term $t$ and $k \in \mathbb{N}$, $t + k$ denotes the k-fold successor of $t$, thus making $t + 0 = t$ and $t + 1 = t^+$.
 A term over $V$ has the form $x_1 + k_1 \lor \ldots \lor x_m + k_m$, where $x_i \in V$ and $k_i \in \mathbb{N}$.
 Every semilattice expression is equal to a term over $V$.
 
@@ -92,25 +94,27 @@ We define $S_C$ as the union of all $S_{s=t}$, where $s = t$ is a constraint in 
 From the axiom $x \lor x^+ = x^+$, we can derive the following clauses:
 $x, x^+ \rightarrow x^+$,
 $x^+ \rightarrow x^+$ and $x^+ \rightarrow x$.
-We are only interested in the last one, which we call a \emph{predecessor clause}.
+Since the first two are tautological,
+we are only interested in the last one, which we call a \emph{predecessor clause}.
 A predecessor clauses ensures that any atom $x + k$ that is true in a model,
 also has $x + k - 1$ true in that model.
 
-% Predecessor clauses are derived from the axiom $x \; \lor \; x^{+} = x^{+}$ and have the form
-% $x + k + 1 \rightarrow x + k$, where $(x \in V, k \in \mathbb{N})$
-
 In \cite[Theorem 2.2,~p.~3]{mbezem} it is proven that provability in the semilattice theory
 is equivalent to Horn clause provability, making it so that we can continue with the latter in the rest of this thesis.
+Downward closure of the set of atoms validates the predecessor clauses
+coming from $x \leq x^+$.
 
 We define closure under shifting upwards as follows:
 if $A \rightarrow b$ is in the set of clauses, then so must $A + 1 \rightarrow b + 1$ be.
 $A + 1$ denotes the set of atoms of the form $a + 1$, where $a \in A$.
 Given a finite semilattice presentation $(V, C)$,
 and a subset $W \subseteq V$, we denote by
-$\overline{S_C}$ the smallest set of clauses that is closed under shifting upwards,
+$\overline{S_C}$ the smallest subset of $S_C$ that is closed under shifting upwards,
 by $\overline{S_C} \mid W$ the set of clauses in $\overline{S_C}$
 mentioning only variables in $W$, and by $\overline{S_C} \downarrow W$
 the set of clauses in $\overline{S_C}$ with conclusion over $W$.
+Closure under shifting upwards is the Horn clause equivalent of
+$(x \lor y)^+ = x^+ \lor y^+$.
 
 A function $f : V \rightarrow \mathbb{N}^{\infty}$ specifies a downward closed set of atoms,
 namely $\{v + k \mid v \in V, k \in \mathbb{N}, k \le f(v)\}$,
@@ -133,7 +137,8 @@ The proof of \Cref{lem:3.1} demonstrates that the problem $P$
 is decidable, meaning we can indeed write an algorithm that
 determines whether or not the problem holds for all $k \in N$.
 \Cref{lem:3.1} is also crucial for making case distinctions
-in further proofs, since we know that any $S_C$ is finite.
+in further proofs, since we know that any $S_C$ is finite,
+whereas $\overline{S_C}$ is not.
 
 \begin{customthm}{Theorem 3.2}[{\cite[p.~3]{mbezem}}]
 \label{thm:3.2}
@@ -142,7 +147,7 @@ For any $f : V \rightarrow \mathbb{N}^{\infty}$
 we can compute the least $g \ge f$ that is a model of $\overline{S_C}$.
 \end{customthm}
 
-\Cref{thm:3.2} has a special case that is solved by an additional lemma:
+The proof of \Cref{thm:3.2} has a special case that is solved by an additional lemma:
 
 \begin{customlem}{Lemma 3.3}[{\cite[p.~3]{mbezem}}]
 \label{lem:3.3}

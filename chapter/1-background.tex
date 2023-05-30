@@ -1,7 +1,7 @@
 \chapter{Background}
 \label{ch:background}
 
-\section{Proofs \& formalization}
+\section{Proofs, verification \& formalization}
 \label{sec:proofs_formalization}
 
 When solving mathematical problems, we often use proofs
@@ -9,30 +9,30 @@ to either \textbf{justify} a claim or to \textbf{explain} why the claim is true.
 We can distinguish between two types of proofs; \emph{informal} and \emph{formal} proofs.
 
 An informal proof is often written in a natural language, and the proof is adequate if most
-readers are convinced by the proof \cite{bpierce}. Such proofs rely heavily on the reader's intuition
-and often omit logical steps to make them easier to understand for humans \cite{ams:formal-proof}.
+readers are convinced by the proof \cite[ch.~2]{bpierce}. Such proofs rely heavily on the reader's intuition
+and often omit logical steps to make them easier to understand for humans \cite[p.~1371]{ams:formal-proof}.
 As these proofs grow larger and more complex, they become harder for humans to follow,
 which can ultimately lead to errors in the proofs' logic. This might cause the whole proof
-to be incorrect \cite{rkhamsi}, and even the claim justified by the proof might be wrong.
+to be incorrect \cite{rkhamsi}, and even the claim "justified" by the proof might be wrong.
 
 A formal proof is written in a formal language, and can be compared to a computer program
 written in a programming language. Writing a formal proof is more difficult than writing an informal proof.
-Formal proofs include every logical step, and nothing is left for the reader to assume.
-This can formal proofs extremely verbose, but the amount of logical errors is reduced \cite{ams:formal-proof}.
+Formal proofs include every logical step, and nothing is left for the reader (often a computer) to assume.
+This can make formal proofs extremely verbose, but the amount of logical errors is reduced \cite[p.~1371]{ams:formal-proof}.
 The only possible errors in formalized proofs are false assumptions and/or flawed verification software.
 When we talk about \emph{formalization}, we mean the process of translating an informal proof into a formal proof.
 
 \section{Type theory}
 \label{sec:type_theory}
 
-Type theory is a foundation for mathematics \cite{typetheorystan}
-where every mathematical object is viewed as being a member of a certain type.
+Type theory is a foundation of mathematics \cite{typetheorystan}
+in which every mathematical object is viewed as being a member of a certain type.
 We can say that the object $a$ is a member of the type $A$,
 or, that $a$ has type $A$, denoted by $a : A$.
 For any type $A$, we must know how to construct an element $a$ of that type \cite[p.~76]{lof1}.
 A simple example would be the type of natural numbers, $\mathbb{N}$.
 Any object $n : \mathbb{N}$ would be a natural number,
-which we can easily provide.
+which we can easily provide by iterating a successor function on the constant $O$.
 Type theory gives us a framework to work with and manipulate objects and types
 by providing us with rules of inference for objects and their types.
 There are several different type theories, where each one have their own rules.
@@ -46,9 +46,9 @@ e.g. the data type \texttt{bool} is usually used to represent a boolean value.
 \subsection{Propositions as types}
 \label{ssec:propositions_as_types}
 
-The concepts of proposition as types sees any proposition $P$ as representing a type,
-and every proof $p$ of $P$ is an element of the type of $P$, or $p : P$.
-Thus, if we can construct an element of the type of $P$, we can prove $P$,
+The concept of proposition as types sees any proposition $P$ as representing a type,
+and every proof $p$ of $P$ is an element of the type $P$, or $p : P$.
+Thus, if we can construct an element of the type $P$, we can prove $P$,
 and vice versa; if we can prove $P$, we can construct an element of the type of $P$.
 For example, to prove a proposition $P$ which states "all natural numbers are the sum of four squares",
 we must construct a value of the type $P$ that shows that this is true for all natural numbers.
@@ -59,7 +59,7 @@ We can use this correspondence to model a proof as a typed computer program.
 The power of this concept comes from the fact that we can use a type checker to verify that
 our program is typed correctly, and thus that the corresponding proof is valid.
 Often, the proof can be used to compute something, i.e., the numbers $a, b, c, d$ mentioned above
-\cite{pwadler}.
+\cite{pwadler} \cite{lof2}.
 
 \subsection{Dependent types}
 \label{ssec:dependent_types}
@@ -102,11 +102,16 @@ This type is the type of all pairs $(x, y)$ where
 $x : A$ and $y : B(a)$ \cite[p.~79]{lof1}.
 Again, in the case for $P$, $A$ would be $\mathbb{N}$,
 and the element $a$ would be a natural number, corresponding to the variable $a$ in $P$.
-A proof of $\prod_{n : \mathbb{N}} \, \sum{a : \mathbb{N}} \, (\exists b \, \exists c \, \exists d \, (n = a^2 + b^2 + c^2 + d^2)$
+A proof of $\prod_{n : \mathbb{N}} \, \sum_{a : \mathbb{N}} \, (\exists b \, \exists c \, \exists d \, (n = a^2 + b^2 + c^2 + d^2)$
 is a pair $(x, y)$, where $x$ is evidence of $P$
 and $y$ is a proof of $P$.
 Hence, any evidence of $P$ is provided with its proof,
 modeling existential quantification.
+The other existential quantifiers are likewise replaced by $\Sigma$'s:
+$$
+\prod_{n : \mathbb{N}} \, \sum_{a : \mathbb{N}} \, \sum_{b : \mathbb{N}} \, \sum_{c : \mathbb{N}} \, \sum_{d : \mathbb{N}} \, (n = a^2 + b^2 + c^2 + d^2)
+$$
+The proposition $n = a^2 + b^2 + c^2 + d^2$ is a type dependent on the five values $n, a, b, c, d$.
 
 As we have just shown by representing universal and existential quantification,
 the concept of dependent types is important for propositions as types
@@ -136,8 +141,7 @@ This definition gives us a type with two constructors:
                             where both are given to the constructor as arguments.
 \end{itemize}
 
-In this scenario, the length of a \lstinline{vector} is fixed by the argument \lstinline{n : nat}
-and the term \lstinline{vector A n -> vector A (S n)}.
+In this scenario, the length of an object of the type \lstinline{vector n} is fixed by the argument \lstinline{n : nat}.
 Any definition of a \lstinline{vector} must adhere to this term, and is checked at compile time.
 An example of a valid and invalid definition is:
 
@@ -185,6 +189,10 @@ Inductive nat : Type :=
   | O
   | S : nat -> nat.
 
+Inductive le (n : nat) : nat -> Prop :=
+  | le_n : n <= n
+  | le_S : forall m : nat, n <= m -> n <= S m.
+
 Definition lt_n_S_n :=
   (fun n : nat => le_n (S n)) : forall n : nat, n < S n.
 \end{lstlisting}
@@ -209,7 +217,7 @@ This matches the type of our function, and the proof is complete.
 Proving theorems like this is not really intuitive for a human prover,
 and that is why Coq gives us the \emph{Ltac} meta-language for writing proofs.
 Ltac provides us with tactics, which are a kind of shorthand syntax for defining Gallina terms \cite{cltac}.
-Using Ltac, we can rewrite the proof from \ref{lst:gallina_ex} as such:
+Using Ltac, we can rewrite the proof from \Cref{lst:gallina_ex} as such:
 
 \begin{minipage}{\linewidth}
 \begin{lstlisting}[language=Coq, label={lst:ltac_ex}, caption={Example of Ltac syntax}]
@@ -219,6 +227,24 @@ Proof.
   - apply le_n.
   - apply le_n_S. apply le_n.
 Qed.
+\end{lstlisting}
+\end{minipage}
+
+If we check the Gallina terms generated by Ltac for this theorem using the \lstinline{Print} command,
+we can see that they are the same as in \Cref{lst:gallina_ex},
+but more verbose as every function is "unfolded" into its definition.
+
+\begin{minipage}{\linewidth}
+\begin{lstlisting}[language=Coq, label={lst:ltac_ex_printed}, caption={Gallina terms generated by Ltac example}]
+Print lt_n_S_n.
+
+lt_n_S_n =
+  fun n : nat =>
+  match n as n0 return (n0 < S n0) with
+  | 0 => le_n 1
+  | S n0 => (fun n1 : nat => le_n_S (S n1) (S n1) (le_n (S n1))) n0
+  end
+   : forall n : nat, n < S n
 \end{lstlisting}
 \end{minipage}
 
@@ -254,8 +280,9 @@ Like Coq, Lean is also based on the type theory of CIC
 \subsection{Extraction of programs from verified proofs}
 \label{ssec:extraction_of_programs_from_verified_proofs}
 
-By the the notion of propositions as types, we can use a proof assistant to
-prove the correctness of a program. However, we can also extract a program from
-a proof of its correctness. This type of code extraction is a common feature of proof assistants.
+By the notion of propositions as types, we can use a proof assistant to
+prove the correctness of a program \cite[Preface]{bpierce}. However, we can also extract a program from
+a proof of its correctness. This type of program extraction is a common feature of proof assistants.
 The extracted program is guaranteed to be correct by the type system of the proof assistant,
-and the resulting code can be extracted to several programming languages, such as Haskell and OCaml (as is the case for Coq) \cite{cintro}.
+and the code for the program can be given as source code
+in several programming languages, such as Haskell and OCaml (as is the case for Coq) \cite{cintro}.

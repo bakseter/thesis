@@ -1,4 +1,4 @@
-personal_ws-1.1 en 93 
+personal_ws-1.1 en 94 
 Agda
 Andreas
 AtomEq
@@ -26,6 +26,7 @@ Håkon
 IHm
 IHn
 Init
+Jafu
 ListSet
 Ltac
 Löf's
