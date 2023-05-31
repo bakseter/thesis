@@ -142,7 +142,7 @@ which is a constant function that always returns \lstinline{Fin 0}).
 
 In the previous example, the algorithm found a minimal model for the set of clauses \lstinline{Cs}.
 We can also use the algorithm to check for loops in a set of clauses.
-As mentioned in \Cref{sec:overview}, a loop is a term $t$ such that $t \leq t^+$
+As mentioned in \Cref{sec:overview}, a loop is a term $t$ such that $t \geq t^+$
 can be provable from the set of constraints.
 We give the simplest example, which is just the above definition of a loop
 translated to our Coq notation:
