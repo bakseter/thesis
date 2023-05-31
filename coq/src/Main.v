@@ -39,24 +39,24 @@ Definition ex_v_V_infty (V : set string) (f : Frontier) : Set :=
   sig (fun v : string => In v V /\ f v = infty).
 
 Lemma ex_v_V_infty_dec (V : set string) (f : Frontier) :
-  sum (ex_v_V_infty V f) (ex_v_V_infty V f -> False).
+  (ex_v_V_infty V f) + (ex_v_V_infty V f -> False).
 Proof.
   unfold ex_v_V_infty. induction V as [|h t].
-  - right. unfold not. intros. destruct H. destruct a.
-    inversion H.
+  - right. unfold not. intros.
+    destruct H. destruct a. inversion H.
   - destruct IHt.
     + left. destruct s. exists x. destruct a. split.
       * right. assumption.
       * assumption.
     + destruct (f h) eqn:Hh.
-      * left. exists h. split.
-        -- left. reflexivity.
-        -- assumption.
+      * left. exists h. split;
+        try assumption.
+        left. reflexivity.
       * right. unfold not. intros. destruct H. destruct a.
-        -- inversion H.
-           ++ subst. rewrite Hh in H0. discriminate.
-           ++ apply f0. exists x. destruct H. split;
-              assumption. split; assumption.
+         inversion H.
+         -- subst. rewrite Hh in H0. discriminate.
+         -- apply f0. exists x. destruct H. split;
+            assumption. split; assumption.
 Qed.
 
 Fixpoint elim_atoms (l : set Atom) (v : string) :=
@@ -102,8 +102,20 @@ Lemma V_not_incl_elim_clauses :
   forall V : set string,
   forall v : string,
     V = vars Cs ->
+    V <> [] ->
     ~(incl V (vars (elim_clauses Cs v))).
 Admitted.
+
+Lemma exists_In_cons {A : Type} (V : set A) :
+  (exists v, In v V) <-> V <> [].
+Proof.
+  split.
+  - intros. elim H. intros. unfold not.
+    intros. subst. inversion H0.
+  - intros. destruct V.
+    + contradiction.
+    + exists a. left. reflexivity.
+Qed.
 
 Lemma lem_33 :
   forall Cs : set Clause,
@@ -132,7 +144,9 @@ Proof.
         apply lt_le_pred. apply strict_subset_lt_length.
         unfold strict_subset. inversion Helim. split.
         * apply elim_clauses_incl_V. admit.
-        * apply V_not_incl_elim_clauses. admit.
+        * apply V_not_incl_elim_clauses.
+          -- admit.
+          -- apply exists_In_cons. exists x. apply p.
       + simpl. apply conj; try lia.
         admit.
       + simpl. apply ex_lfp_geq_empty.
