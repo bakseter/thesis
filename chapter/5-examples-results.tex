@@ -142,6 +142,10 @@ which is a constant function that always returns \lstinline{Fin 0}).
 
 In the previous example, the algorithm found a minimal model for the set of clauses \lstinline{Cs}.
 We can also use the algorithm to check for loops in a set of clauses.
+As mentioned in \Cref{sec:overview}, a loop is a term $t$ such that $t \leq t^+$
+can be provable from the set of constraints.
+We give the simplest example, which is just the above definition of a loop
+translated to our Coq notation:
 
 \begin{minipage}{\linewidth}
 \begin{lstlisting}[language=Coq, label={lst:loop_checking_example}, caption={Loop-checking example}]
@@ -171,8 +175,10 @@ Fin 0
 \end{lstlisting}
 \end{minipage}
 
-\lstinline{Infty} for any variable means that the algorithm has detected a loop in the set of clauses.
-For any other variable we get the usual result of \lstinline{Fin 0}, since the frontier is constant.
+For a model defined by a frontier \lstinline{f},
+any variable that maps to \lstinline{Infty} part of a loop.
+For any other variable we get the usual result of \lstinline{Fin 0},
+since the given frontier is constant.
 
 \section{Real world example}
 \label{sec:real_world_example}
@@ -242,6 +248,7 @@ This minimal model is a function that assigns to each type universe a natural nu
 which corresponds to its universe level. It is minimal in the sense that no other mapping from
 type universes to universe levels that satisfies the constraints in \lstinline{Cs} has a lower
 universe level for any given type universe.
+If the algorithm had detected a loop, it would constitute a universe inconsistency.
 Even though we have not given a formal proof of \Cref{lem:3.3},
 this "real world" example still gives a correct minimal model for the type universe constraints from Coq.
 

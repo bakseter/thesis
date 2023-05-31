@@ -1,4 +1,4 @@
-personal_ws-1.1 en 94 
+personal_ws-1.1 en 95 
 Agda
 Andreas
 AtomEq
@@ -78,6 +78,7 @@ mbezem
 mem
 minimality
 msetweaklist
+myplainnat
 nat
 negb
 ninfty

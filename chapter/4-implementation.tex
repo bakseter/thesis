@@ -169,7 +169,7 @@ and check again if the clause is satisfied.
 We start by first determining such "improvable" variables with the function \lstinline{sub_vars_improvable}:
 
 \begin{minipage}{\linewidth}
-\begin{lstlisting}[language=Coq, label={lst:sub_vars_improvable_def}, caption={The function \lstinline{sub_vars_improvable}}]
+\begin{lstlisting}[language=Coq, label={lst:sub_vars_improvable_def}, caption={The function \lstinline{sub_vars_improvable} in Coq}]
 Fixpoint sub_vars_improvable (Cs : set Clause) (V W : set string) (f : Frontier)
     : set string :=
   match Cs with
@@ -194,7 +194,7 @@ The return type of \lstinline{sub_forward} is a pair of a set of strings and a f
 where the set of strings is the set of improvable variables.
 
 \begin{minipage}{\linewidth}
-\begin{lstlisting}[language=Coq, label={lst:sub_forward_def}, caption={The function \lstinline{sub_forward}}]
+\begin{lstlisting}[language=Coq, label={lst:sub_forward_def}, caption={The function \lstinline{sub_forward} in Coq}]
 Definition sub_forward (Cs : set Clause) (V W : set string) (f : Frontier)
     : set string * Frontier :=
   let X := sub_vars_improvable Cs V W f in

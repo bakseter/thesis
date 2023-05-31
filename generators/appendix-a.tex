@@ -40,8 +40,8 @@ Proof.
           }
           assert (H': incl W V) by assumption.
           apply (nodup_incl2 string_dec) in H.
-          apply (lem_33 Cs V (nodup string_dec W) f) in H.
-          elim H. intros h [H8 H9].
+          apply (lem_33 Cs V (nodup string_dec W) f) in H;
+          try assumption. elim H. intros h [H8 H9].
           destruct
             (sub_forward
               Cs

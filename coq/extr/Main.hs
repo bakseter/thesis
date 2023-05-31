@@ -218,6 +218,7 @@ update_infty_V v f x =
 
 data Atom0 =
    Atom Prelude.String Prelude.Integer
+   deriving (Prelude.Show)
 
 atom_true :: Atom0 -> Frontier -> Prelude.Bool
 atom_true a f =
@@ -234,6 +235,7 @@ shift_atom n a =
 
 data Clause0 =
    Clause (Set Atom0) Atom0
+   deriving (Prelude.Show)
 
 clause_true :: Clause0 -> Frontier -> Prelude.Bool
 clause_true c f =

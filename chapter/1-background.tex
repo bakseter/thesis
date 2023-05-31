@@ -123,10 +123,11 @@ finite list with a fixed length, which is the value on which the type depends, a
 
 \begin{minipage}{\linewidth}
 \begin{lstlisting}[language=Coq, label={lst:dep_type_vec}, caption={\lstinline{vector} in Coq, using dependent types}]
-Inductive vector (A : Type) : nat -> Type :=
-  | Vnil : vector A 0
+(* brackets around 'A : Type' indicate that its type should be inferred *)
+Inductive vector {A : Type} : nat -> Type :=
+  | Vnil : vector 0
   (* 'forall' is an instance of a dependent function type *)
-  | Vcons : forall (h : A) (n : nat), vector A n -> vector A (S n).
+  | Vcons : forall (h : A) (n : nat), vector n -> vector (S n).
 \end{lstlisting}
 \end{minipage}
 
@@ -134,9 +135,9 @@ This definition gives us a type with two constructors:
 
 \begin{itemize}
     \item
-        \lstinline{Vnil} has the type of \lstinline{vector A 0}, and represents the empty vector.
+        \lstinline{Vnil} has the type of \lstinline{vector 0}, and represents the empty vector.
     \item
-        \lstinline{Vcons} has type of \lstinline{forall (h : A) (n : nat) vector A (S n)}, where \lstinline{h}
+        \lstinline{Vcons} has type of \lstinline{forall (h : A) (n : nat) vector (S n)}, where \lstinline{h}
                             is the head of the vector and \lstinline{n} is the length of the vector,
                             where both are given to the constructor as arguments.
 \end{itemize}
@@ -148,11 +149,11 @@ An example of a valid and invalid definition is:
 \begin{minipage}{\linewidth}
 \begin{lstlisting}[language=Coq, label={lst:dep_type_vec_ex}, caption={Examples of vectors in Coq}]
 (* valid definition; (S 0) equal to 1  *)
-Definition vec_valid : vector string 2 :=
-    Vcons string "b" 1 (Vcons string "a" 0 (Vnil string)).
+Definition vec_valid : vector 2 :=
+    Vcons "b" 1 (Vcons "a" 0 (Vnil)).
 (* invalid definition; (S 0) not equal to 2 *)
-Fail Definition vec_invalid : vector string 2 :=
-    Vcons string "b" 2 (Vcons string "a" 0 (Vnil string)).
+Fail Definition vec_invalid : vector 2 :=
+    Vcons "b" 2 (Vcons "a" 0 (Vnil)).
 \end{lstlisting}
 \end{minipage}
 
