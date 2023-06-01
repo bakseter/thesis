@@ -2,7 +2,9 @@
 
 ## Thesis
 
-See `.tex-build/main.pdf`.
+LaTeX code for template taken from https://github.com/echo-uib/master-latex-template.
+
+See `.tex-build/main.pdf` for pdf.
 
 ## Formalization
 
