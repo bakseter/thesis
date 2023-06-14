@@ -51,6 +51,35 @@ Module Sets.
     simpl. rewrite Hdec. apply IHt' in H. rewrite H. reflexivity.
   Qed.
 
+  Lemma incl_l_nil_false {A : Type} (l : set A) :
+    l <> [] <-> ~(incl l []).
+  Proof.
+    split; intros; intro H1; apply H.
+    - apply incl_l_nil in H1. assumption.
+    - unfold incl. intros. rewrite H1 in H0.
+      assumption.
+  Qed.
+
+  Lemma In_incl_singleton {A : Type} (a : A) (V : set A) :
+    In a V <-> incl [a] V.
+  Proof.
+    split; induction V.
+    - intros. contradiction.
+    - simpl in *. intros. destruct H.
+      + rewrite H. apply incl_cons.
+        * simpl. auto.
+        * apply incl_nil_l.
+      + apply incl_cons.
+        * simpl. right. assumption.
+        * apply incl_nil_l.
+    - intros. apply incl_l_nil_false in H. contradiction.
+      discriminate.
+    - intros. simpl in *. destruct (H a).
+      + simpl. left. reflexivity.
+      + left. assumption.
+      + right. assumption.
+  Qed.
+
   Lemma incl_set_add_reduce {A : Type} (dec : forall x y, {x = y} + {x <> y}) (x : A) (s1 s2 : set A) :
     incl (set_add dec x s1) s2 ->
     incl s1 s2.
@@ -62,6 +91,36 @@ Module Sets.
     + simpl in *. destruct (dec x h); apply incl_cons_inv in H.
       * apply H.
       * apply IHt. apply H.
+  Qed.
+
+  Lemma incl_set_add_reduce2 {A : Type} (dec : forall x y : A, {x = y} + {x <> y}) (w : A) (V W : set A) :
+    incl V W ->
+    incl V (set_add dec w W).
+  Proof.
+    intros. induction V as [|v V]; try apply incl_nil_l.
+    apply incl_cons_inv in H. destruct H.
+    apply incl_cons.
+    - apply set_add_intro1. assumption.
+    - apply IHV. assumption.
+  Qed.
+
+  Lemma incl_set_add_reduce3 {A : Type} (dec : forall x y, {x = y} + {x <> y}) (s1 s2 : set A) (a : A) :
+    incl s1 (set_add dec a s2) ->
+    incl (set_add dec a s1) (set_add dec a s2).
+  Proof.
+    generalize dependent s2. induction s1 as [|h t]; intros.
+    - simpl. destruct s2 as [|h' t'].
+      + simpl. apply incl_refl.
+      + simpl. destruct (dec a h').
+        * subst. apply In_incl_singleton.
+          left. reflexivity.
+        * apply In_incl_singleton.
+          right. apply set_add_intro.
+          left. reflexivity.
+    - simpl. destruct (dec a h); try assumption.
+      apply incl_cons_inv in H. destruct H.
+      apply incl_cons; try assumption.
+      apply IHt. assumption.
   Qed.
 
   Lemma length_set_add_reduce {A : Type} (dec : forall x y, {x = y} + {x <> y}) (h : A) (t V : set A) :
@@ -168,33 +227,24 @@ Module Sets.
     simpl in *. apply set_add_not_empty in H0. contradiction.
   Qed.
 
-  Lemma incl_l_nil_false {A : Type} (l : set A) :
-    l <> [] <-> ~(incl l []).
+  Lemma incl_V_singleton {A : Type} (dec : forall x y: A, {x = y} + {x <> y}) :
+    forall (V : set A) (a : A),
+    incl V [a] ->
+    (nodup dec V) = [a] \/ V = [].
   Proof.
-    split; intros; intro H1; apply H.
-    - apply incl_l_nil in H1. assumption.
-    - unfold incl. intros. rewrite H1 in H0.
-      assumption.
-  Qed.
-
-  Lemma In_incl_singleton {A : Type} (a : A) (V : set A) :
-    In a V <-> incl [a] V.
-  Proof.
-    split; induction V.
-    - intros. contradiction.
-    - simpl in *. intros. destruct H.
-      + rewrite H. apply incl_cons.
-        * simpl. auto.
-        * apply incl_nil_l.
-      + apply incl_cons.
-        * simpl. right. assumption.
-        * apply incl_nil_l.
-    - intros. apply incl_l_nil_false in H. contradiction.
-      discriminate.
-    - intros. simpl in *. destruct (H a).
-      + simpl. left. reflexivity.
-      + left. assumption.
-      + right. assumption.
+    induction V as [|h t]; intros.
+    - right. reflexivity.
+    - apply incl_cons_inv in H.
+      destruct H. assert (H1 := H0).
+      apply IHt in H0. destruct H0.
+      + simpl. destruct (in_dec dec h t).
+        * left. assumption.
+        * simpl in H. destruct H; try contradiction.
+          subst. rewrite <- (nodup_In dec) in n.
+          rewrite H0 in n. exfalso. apply n.
+          left. reflexivity.
+      + subst. simpl in *. destruct H; try contradiction.
+        subst. left. reflexivity.
   Qed.
 
   Lemma set_add_cons {A : Type} (dec : forall x y : A, {x = y} + {x <> y}) (t : set A) :
@@ -854,17 +904,6 @@ Module Sets.
     incl V (set_union dec W []).
   Proof.
     intros. induction W as [|h t]; simpl; try assumption.
-  Qed.
-
-  Lemma incl_set_add_reduce2 {A : Type} (dec : forall x y : A, {x = y} + {x <> y}) (w : A) (V W : set A) :
-    incl V W ->
-    incl V (set_add dec w W).
-  Proof.
-    intros. induction V as [|v V]; try apply incl_nil_l.
-    apply incl_cons_inv in H. destruct H.
-    apply incl_cons.
-    - apply set_add_intro1. assumption.
-    - apply IHV. assumption.
   Qed.
 
   Lemma incl_set_union_nil_l {A : Type} (dec : forall x y : A, {x = y} + {x <> y}) (V W : set A) :

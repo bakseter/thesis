@@ -71,6 +71,16 @@ Fixpoint elim_atoms (l : set Atom) (v : string) :=
       end
   end.
 
+Lemma elim_atoms_incl_vars_set_atom (l : set Atom) (v : string) :
+  incl (vars_set_atom (elim_atoms l v)) (vars_set_atom l).
+Proof.
+  induction l as [|h t]; simpl; try apply incl_refl.
+  destruct h. destruct (string_dec s v).
+  - apply incl_set_add_reduce2. assumption.
+  - simpl. apply incl_set_add_reduce3.
+    apply incl_set_add_reduce2. assumption.
+Qed.
+
 Fixpoint elim_clauses (Cs : set Clause) (v : string) :=
   match Cs with
   | [] => []
@@ -89,19 +99,49 @@ Definition elim_clauses_V (Cs : set Clause) (v : string) :
     let V' := vars Cs' in
     (Cs', V').
 
+Lemma nodup_nil {A : Type} (dec : forall x y, {x = y} + {x <> y}) (l : list A) :
+  nodup dec l = [] -> l = [].
+Proof.
+  induction l; intros; try reflexivity.
+  simpl in H. destruct (in_dec dec a l).
+  - apply IHl in H. subst. contradiction.
+  - discriminate.
+Qed.
+
+Lemma app_empty {A : Type} (l1 l2 : list A) :
+  l1 ++ l2 = [] -> l1 = [].
+Proof.
+  intros. apply app_eq_nil in H.
+  apply H.
+Qed.
+
 Lemma elim_clauses_incl_V :
   forall Cs : set Clause,
   forall V : set string,
   forall v : string,
-    V = vars Cs ->
+    nodup string_dec V = vars Cs ->
     incl (vars (elim_clauses Cs v)) V.
+Proof.
+  induction V; intros.
+  - destruct Cs.
+    + simpl. apply incl_refl.
+    + simpl. simpl in H.
+      destruct c. destruct a. simpl in H.
+      symmetry in H. assert (set_add string_dec s0 (vars_set_atom s) <> []).
+      apply set_add_not_empty. unfold vars in H.
+      simpl in H. apply nodup_nil in H. apply app_empty in H. contradiction.
+  - destruct Cs.
+    + simpl. apply incl_nil_l.
+    + rewrite <- (nodup_incl string_dec).
+      simpl. destruct c. destruct a0.
+      destruct (string_dec s0 v) eqn:Hs0v.
+      * destruct (in_dec string_dec a V).
 Admitted.
 
 Lemma V_not_incl_elim_clauses :
   forall Cs : set Clause,
   forall V : set string,
   forall v : string,
-    V = vars Cs ->
     V <> [] ->
     ~(incl V (vars (elim_clauses Cs v))).
 Admitted.
@@ -131,13 +171,12 @@ Lemma lem_33 :
     ex_lfp_geq Cs (nodup string_dec W) (nodup string_dec W) f ->
     ex_lfp_geq Cs (nodup string_dec V) (nodup string_dec W) f.
 Proof.
-  intros.
-  destruct (ex_v_V_infty_dec V f); unfold ex_v_V_infty in *.
-  elim e. intros.
-  destruct (elim_clauses_V Cs x) as [Cs' V'] eqn:Helim.
-  - unfold pre_thm in X.
+  intros. destruct (ex_v_V_infty_dec V f);
+  unfold ex_v_V_infty in *; unfold pre_thm in X.
+  - elim e. intros.
+    destruct (elim_clauses_V Cs x) as [Cs' V'] eqn:Helim.
     assert (ex_lfp_geq Cs' (nodup string_dec V') (nodup string_dec V') f).
-    { 
+    {
       apply (X Cs' V' [] f 0).
       + apply incl_nil_l.
       + simpl. rewrite sub_1_r.
@@ -145,10 +184,15 @@ Proof.
         unfold strict_subset. inversion Helim. split.
         * apply elim_clauses_incl_V. admit.
         * apply V_not_incl_elim_clauses.
+          admit.
+      + simpl. apply conj; try lia. rewrite set_diff_nil.
+        apply le_0_r. apply length_zero_iff_nil.
+        induction V' as [|h' t']; try reflexivity.
+        simpl. destruct (in_dec string_dec h' t').
+        * apply IHt'. inversion Helim. apply tuple_destruct.
+          -- reflexivity.
           -- admit.
-          -- apply exists_In_cons. exists x. apply p.
-      + simpl. apply conj; try lia.
-        admit.
+        * admit.
       + simpl. apply ex_lfp_geq_empty.
     }
 Admitted.
@@ -222,18 +266,8 @@ Proof.
               (nodup string_dec V)
               (nodup string_dec V)
               h) as [U h'] eqn:Hforward.
-          assert
-            (sub_forward
-              Cs
-              (nodup string_dec V)
-              (nodup string_dec V)
-              h = (U, h')) by assumption.
-          assert
-            (sub_forward
-              Cs
-              (nodup string_dec V)
-              (nodup string_dec V)
-              h = (U, h')) by assumption.
+          assert (H6 := Hforward).
+          assert (H7 := Hforward).
           rewrite nodup_rm in H9.
           apply
             (sub_forward_incl_set_diff

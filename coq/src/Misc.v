@@ -36,4 +36,10 @@ Module Misc.
     n <= S m -> pred n <= m.
   Proof. induction n; lia. Qed.
 
+  Lemma tuple_destruct {A B : Type} (a a' : A) (b b' : B) :
+    a = a' ->
+    b = b' ->
+    (a, b) = (a', b').
+  Proof. intros. subst. reflexivity. Qed.
+
 End Misc.

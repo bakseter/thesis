@@ -111,14 +111,17 @@ Module Vars.
   Proof. discriminate. Qed.
 
   Definition vars (Cs : set Clause) : set string :=
-    flat_map vars_clause Cs.
+    nodup string_dec (flat_map vars_clause Cs).
 
-  Lemma vars_cons (c : Clause) (Cs : set Clause) :
-    vars (c :: Cs) = vars_clause c ++ vars Cs.
-  Proof. unfold vars. reflexivity. Qed.
+  Lemma vars_NoDup (Cs : set Clause) :
+    NoDup (vars Cs).
+  Proof.
+    induction Cs; simpl; try constructor.
+    unfold vars. apply NoDup_nodup.
+  Qed.
 
   Example vars_test1 :
-    vars [clause_x0y1_x2; clause_x0_x1] = [y_str; x_str; x_str].
+    vars [clause_x0y1_x2; clause_x0_x1] = [y_str; x_str].
   Proof. simpl. reflexivity. Qed.
 
   Example vars_test2 :
@@ -126,7 +129,7 @@ Module Vars.
   Proof. discriminate. Qed.
 
   Example vars_test3 :
-    vars [clause_x0y1_x2; clause_x0_x1] = [y_str; x_str; x_str].
+    vars [clause_x0y1_x2; clause_x0_x1] = [y_str; x_str].
   Proof. reflexivity. Qed.
 
 End Vars.

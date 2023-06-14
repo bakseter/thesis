@@ -75,15 +75,20 @@ Module Model.
     unfold model; unfold sub_model; rewrite Aaf;
     fold sub_model; fold model; erewrite IHCs.
     - simpl. rewrite orb_true_r. simpl. reflexivity.
-    - simpl in Incl. apply incl_app_inv in Incl. apply Incl.
-    - rewrite vars_cons in Incl. apply incl_app_inv in Incl.
+    - unfold vars in Incl. apply nodup_incl2 in Incl.
+      simpl in Incl. apply incl_app_inv in Incl.
+      unfold vars. apply nodup_incl2. apply Incl.
+    - unfold vars in Incl. apply nodup_incl2 in Incl.
+      simpl in Incl. apply incl_app_inv in Incl.
       destruct Incl as [Incl Incl']. assert (incl (vars_clause (l ~> (x & k))) W) by assumption.
       rewrite vars_set_atom_incl_fold.
       + simpl. destruct (x € W) eqn:Hxw; try reflexivity.
         * apply set_mem_complete1 in Hxw.
           apply vars_clause_incl_In in H. contradiction.
       + apply vars_clause_incl_vars_set_atom in H. assumption.
-    - simpl in Incl. apply incl_app_inv in Incl. apply Incl.
+    - simpl in Incl. unfold vars in Incl. apply nodup_incl2 in Incl.
+      simpl in Incl. apply incl_app_inv in Incl.
+      unfold vars. apply nodup_incl2. apply Incl.
   Qed.
 
   Lemma sub_model_monotone_false (Cs : set Clause) (f : Frontier) :
