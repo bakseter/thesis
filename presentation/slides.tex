@@ -1,0 +1,140 @@
+%\documentclass[handout]{beamer}
+\documentclass[slides]{beamer}
+% Vary the color applet  (try out your own if you like)
+%\colorlet{structure}{red!20!black}
+%\beamertemplateshadingbackground{yellow!20}{white}
+%\usepackage{beamerthemeshadow}
+%\usepackage[utf8x]{inputenc} CONFLICT!
+%\usepackage[english,norsk,nynorsk]{babel}
+\usepackage{tikz}
+%\usetikzlibrary{trees}
+\usepackage{bm}
+\usepackage{caption}
+\usepackage{multicol}
+\usepackage{graphicx}
+\graphicspath{ {./} }
+\usepackage{listings}
+%\usepackage{enumitem}
+
+%\usepackage[all]{xy}
+%\usepackage{multicol}
+
+%\setbeamertemplate{navigation symbols}{}++++++
+%\setbeamertemplate{footline}[frame number]
+\usetheme{Montpellier}
+
+\title{A Case Study in Dependent Type Theory:\\ Extracting a Certified Program from the Formal Proof of its Specification}
+\author{Andreas Salhus Bakseter}
+\institute{Department of Informatics\\University of Bergen}
+
+\begin{document}
+
+\frame{\titlepage}
+
+\section{Overview}
+
+\frame {
+    \frametitle{Overview}
+
+    \begin{enumerate}
+        \item Background
+        \item The Case
+        \item Approach \& Design Choices
+        \item Implementation
+        \item Examples \& Results
+        \item Evaluation
+        \item Related \& Future Work
+        \item Conclusion
+    \end{enumerate}
+}
+
+\section{Background}
+\subsection{Proofs}
+
+\frame {
+    \frametitle{Proofs}
+
+    \begin{itemize}
+        \item<1-> proofs are an important part of mathematics
+        \item<2-> two kinds of proofs:
+            \begin{itemize}
+                \item<3-> \textbf{informal proofs}, natural language, by humans for humans
+                \item<4-> \textbf{formal proofs}, formal language, hard for humans easy for computers
+            \end{itemize}
+        \item<5-> we can tranfsorm informal proofs into formal proofs (formalization)
+        \item<6-> using computers \& proof assistants we can check formal proofs (verification)
+        \item<7-> we can also extract programs from formal proofs
+    \end{itemize}
+}
+
+\subsection{(Dependent) Type Theory \& Propositions as Types}
+
+\frame{
+    \frametitle{(Dependent) Type Theory \& Propositions as Types}
+
+    \begin{itemize}
+        \item<1-> foundation of mathematics
+        \item<2-> every object has a type, $a : A$, must know its construction
+        \item<4-> provides us with rules of inference for manipulating types \& objects
+        \item<5->\textbf{propositions as types}:
+            \begin{itemize}
+                \item<6-> propositions are types
+                \item<7-> proofs are objects
+                \item<8-> proof of a proposition is an object of that type
+            \end{itemize}
+
+        \item<9-> \textbf{dependent types}:
+            \begin{itemize}
+                \item<10-> gives us more expressive types
+                \item<11-> $\Sigma$-types to model existential quantification
+                \item<12-> $\Pi$-types to model universal quantification
+            \end{itemize}
+    \end{itemize}
+}
+
+\subsection{Proof Assistants}
+
+\frame{
+    \frametitle{Proof Assistants}
+
+    \begin{itemize}
+        \item<1-> software tools for constructing \& verifying formal proofs
+        \item<2-> based on type theory, propositions as types
+        \item<3-> \textbf{Coq}:
+            \begin{itemize}
+                \item<4-> based on the type theory \textit{Calculus of Inductive Constructions}
+                \item<5-> uses \textit{Gallina} as its specification language
+                \item<6-> uses \textit{Ltac} as its tactic language, for ease of use
+                \item<6-> supports extraction of programs
+            \end{itemize}
+    \end{itemize}
+}
+
+\section{The Case in Question}
+\subsection{Overview of case}
+
+\frame{
+    \frametitle{Overview of case}
+
+    \begin{itemize}
+        \item<1->two problems in lattice theory solved by Bezem \& Coquand
+        \item<2->we want to answer these questions:
+            \begin{itemize}
+                \item<3->are the results from Bezem \& Coquand correct?
+                \item<4->is it feasible to formalize complex proofs, such as these?
+                \item<5->is the formalization process worth the effort?
+            \end{itemize}
+    \end{itemize}
+}
+
+\frame{
+    \frametitle{Relevant parts of the paper}
+
+    \begin{itemize}
+        \item<1->join-semilattices: partially ordered set where any two elements have a least upper bound,
+            called their join, denoted $\lor$
+        \item<2->
+    \end{itemize}
+}
+
+\end{document}
