@@ -1032,4 +1032,20 @@ Module Sets.
       assumption.
   Qed.
 
+  Lemma nodup_nil {A : Type} (dec : forall x y, {x = y} + {x <> y}) (l : list A) :
+    nodup dec l = [] -> l = [].
+  Proof.
+    induction l; intros; try reflexivity.
+    simpl in H. destruct (in_dec dec a l).
+    - apply IHl in H. subst. contradiction.
+    - discriminate.
+  Qed.
+
+  Lemma app_empty {A : Type} (l1 l2 : list A) :
+    l1 ++ l2 = [] -> l1 = [].
+  Proof.
+    intros. apply app_eq_nil in H.
+    apply H.
+  Qed.
+
 End Sets.

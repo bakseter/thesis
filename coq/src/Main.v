@@ -81,6 +81,20 @@ Proof.
     apply incl_set_add_reduce2. assumption.
 Qed.
 
+Lemma elim_atoms_incl_V (l : set Atom) (v : string) :
+  In v (vars_set_atom l) ->
+  Datatypes.length (vars_set_atom (elim_atoms l v)) (vars_set_atom l).
+Proof.
+  induction l as [|h t]; intros; simpl in *; try contradiction.
+  destruct h. destruct (string_dec s v).
+  - subst. unfold strict_subset. split.
+    + apply incl_set_add_reduce2.
+      apply elim_atoms_incl_vars_set_atom.
+    + unfold not. intros.
+  - simpl. apply incl_set_add_reduce3.
+      apply incl_set_add_reduce2. assumption.
+
+
 Fixpoint elim_clauses (Cs : set Clause) (v : string) :=
   match Cs with
   | [] => []
@@ -93,58 +107,42 @@ Fixpoint elim_clauses (Cs : set Clause) (v : string) :=
       end
   end.
 
+Open Scope string_scope.
+
+Example V := ["d"; "e"; "f"].
+Example l := ["a" & 0; "b" & 1; "c" & 0].
+Compute elim_atoms l "a".
+
+Example Cs := [["a" & 0] ~> "b" & 1; ["b" & 0] ~> "c" & 0; ["c" & 1] ~> "a" & 1].
+Compute elim_clauses Cs "d".
+Compute elim_clauses Cs "e".
+Compute vars (elim_clauses Cs "d").
+Compute vars (elim_clauses Cs "e").
+
+Lemma elim_clauses_incl_vars (Cs : set Clause) (v : string) :
+  incl (vars (elim_clauses Cs v)) (vars Cs).
+Proof.
+  induction Cs as [|c Cs]; simpl; try apply incl_refl.
+  destruct c as [conds conc]. destruct conc as [x k].
+  destruct (string_dec x v).
+  - subst. unfold vars in *. rewrite nodup_incl.
+    rewrite <- nodup_incl2. rewrite nodup_incl in IHCs.
+    rewrite <- nodup_incl2 in IHCs. simpl.
+    apply incl_appr. assumption.
+  - unfold vars in *. rewrite nodup_incl.
+    rewrite <- nodup_incl2. rewrite nodup_incl in IHCs.
+    rewrite <- nodup_incl2 in IHCs. simpl.
+    apply incl_app_app; try assumption.
+    apply incl_set_add_reduce3. apply incl_set_add_reduce2.
+    apply elim_atoms_incl_vars_set_atom.
+Qed.
+
+
 Definition elim_clauses_V (Cs : set Clause) (v : string) :
   (set Clause) * (set string) :=
     let Cs' := elim_clauses Cs v in
     let V' := vars Cs' in
     (Cs', V').
-
-Lemma nodup_nil {A : Type} (dec : forall x y, {x = y} + {x <> y}) (l : list A) :
-  nodup dec l = [] -> l = [].
-Proof.
-  induction l; intros; try reflexivity.
-  simpl in H. destruct (in_dec dec a l).
-  - apply IHl in H. subst. contradiction.
-  - discriminate.
-Qed.
-
-Lemma app_empty {A : Type} (l1 l2 : list A) :
-  l1 ++ l2 = [] -> l1 = [].
-Proof.
-  intros. apply app_eq_nil in H.
-  apply H.
-Qed.
-
-Lemma elim_clauses_incl_V :
-  forall Cs : set Clause,
-  forall V : set string,
-  forall v : string,
-    nodup string_dec V = vars Cs ->
-    incl (vars (elim_clauses Cs v)) V.
-Proof.
-  induction V; intros.
-  - destruct Cs.
-    + simpl. apply incl_refl.
-    + simpl. simpl in H.
-      destruct c. destruct a. simpl in H.
-      symmetry in H. assert (set_add string_dec s0 (vars_set_atom s) <> []).
-      apply set_add_not_empty. unfold vars in H.
-      simpl in H. apply nodup_nil in H. apply app_empty in H. contradiction.
-  - destruct Cs.
-    + simpl. apply incl_nil_l.
-    + rewrite <- (nodup_incl string_dec).
-      simpl. destruct c. destruct a0.
-      destruct (string_dec s0 v) eqn:Hs0v.
-      * destruct (in_dec string_dec a V).
-Admitted.
-
-Lemma V_not_incl_elim_clauses :
-  forall Cs : set Clause,
-  forall V : set string,
-  forall v : string,
-    V <> [] ->
-    ~(incl V (vars (elim_clauses Cs v))).
-Admitted.
 
 Lemma exists_In_cons {A : Type} (V : set A) :
   (exists v, In v V) <-> V <> [].

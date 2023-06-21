@@ -60,6 +60,14 @@ Module Vars.
           assumption.
   Qed.
 
+  Lemma vars_set_atom_nodup (s : set Atom) :
+    NoDup (vars_set_atom s).
+  Proof.
+    induction s; simpl; try constructor.
+    destruct a as [x k]. apply set_add_nodup.
+    assumption.
+  Qed.
+
   Example vars_set_atom_test1 :
     vars_set_atom [atom_x0; atom_y1] = [y_str; x_str].
   Proof. reflexivity. Qed.
@@ -101,6 +109,19 @@ Module Vars.
     apply incl_set_add_reduce in H.
     assumption.
   Qed.
+
+  Lemma vars_clause_NoDup (s : set Atom) (x : string) (k : nat) :
+    NoDup (vars_clause (s ~> (x & k))).
+  Proof.
+    induction s; simpl.
+    - constructor; try auto.
+      constructor.
+    - destruct a as [y m].
+      simpl in IHs.
+      apply set_add_nodup.
+      apply set_add_nodup.
+      apply (set_remove_nodup string_dec x) in IHs.
+      simpl in *.
 
   Example vars_clause_test1 :
     vars_clause clause_x1_x2 = vars_clause clause_x0_x1.
