@@ -1,0 +1,157 @@
+
+- Overview
+    + Background
+    + The Case
+    + Approach & Design Choices
+    + Implementation
+    + Examples  Results
+    + Evaluation
+    + Related & Future Work
+    + Conclusion
+
+- Background
+    + Proofs
+        proofs are an important part of mathematics
+        two kinds of proofs:
+            informal proofs, natural language, by humans for humans
+            formal proofs, formal language, hard for humans easy for computers
+        we can tranfsorm informal proofs into formal proofs (formalization)
+        using computers  proof assistants we can check formal proofs (verification)
+        we can also extract programs from formal proofs
+
+
+    + Type Theory
+        foundation of mathematics
+        every object has a type, must know its construction!
+        provides us with rules of inference for manipulating types  objects
+
+    + Propositions as types
+        everything can be a type, including propositions
+        since we must know the construction of a type, we must know the construction of a proposition
+        proofs are objects of a proposition type
+        also means that proofs are programs, i.e. they can be executed
+
+    + Dependent types
+        types can depend on objects
+        gives us more expressive power, especially when using propositions as types
+        we can model existential and universal quantification from First Order Logic
+
+    + Proof assistants
+        software tools for constructing and verifying formal proofs
+        based on concepts from type theory, propositions as types
+        Coq:
+            based on the type theory Calculus of Inductive Constructions
+            uses Gallina as its specification language, i.e. for writing types/programs/proofs
+            uses Ltac as its tactic language, i.e. for actually proving things
+            supports extraction of programs
+
+- The Case in Question
+
+    + Overview of the case
+        two problems in lattice theory solved by Bezem & Coquand, summarized:
+            * the uniform word problem for an equational theory of semilattices with
+              one inflationary endomorphism can be solved in polynomial time
+            * loop-checking in a type system with universe-level constratins can be done
+              in polynomial time
+        given this, we want to answer these questions:
+            1. are the results from Bezem & Coquand correct?
+            2. is it feasible to formalize such complex proofs as in Bezem & Coquand?
+            3. is the formalization process worth the effort, i.e. what do we gain from it?
+
+- Relevant parts of the paper
+
+    Theory:
+        join-semilattices:
+            partially ordered set where any two elements have a least upper bound,
+            called their join, denoted $lor$
+        inflationary endomorphism:
+            function that maps an element to itself or to a greater element in the ordered set,
+            denoted $_^x$
+        semilattice p1:
+            set V of variables and set C of constratins.
+            for a semilattice term t and k in N, t + 0 = t and t + 1 = t^+.
+            a term over V has the form x_1 + k_1 v ... v x_m + k_m.
+        Horn clauses:
+            propositional clauses A -> b with a non-empty body A
+            and a conclusion b. Atom are of the form x + k.
+        semilattice p2:
+            a constraint over V has the form s = t, where s and t are terms over V.
+            for a constraint s = t, we can generate Horn claues by replacing join by conjuction
+            , denoted "," and >= by implication.
+            EXAMPLE HERE
+            the set of all generated clauses from a constraint is denoted S_s=t
+
+        since provability in semilattice theoy is shown to be equivalent to provability
+        in Horn clauses, we can continue with Horn clauses moving forward.
+
+        we define closure under shifitng upwards as follows:
+            if A -> b is in a set of clauses, then so is
+            A + 1 -> b + 1, where A + 1 is every atom in A shifted upwards by 1.
+
+        S_C' is the smalles subset of S_C that is closed under shifting upwards
+        S_C'|W is the set of clauses in S_C' that contain only variables from W
+        S_C'vW is the set of clauses in S_C' with conclusion over W
+
+        A model of a set of clauses S_C' is defined by a function f from V to Ninfty
+
+    Lemma 3.1: makes provability in semilattice theory decidable
+
+    Theorem 3.2: we can compute the least model of a set of clauses S_C'
+
+    Lemma 3.3: solves special case of Theorem 3.2
+
+
+- Approach & Design Choices
+    + Simplifications for the sake of time
+        incomplete formal proofs:
+            purely logical, not interesting,
+            mosly use for sets since they are a pain to work with
+        leaving out formal proof for Lemma 3.3:
+            we only give formulation
+            proof is long and complex
+            is still sufficent for many cases
+        proof of minimality of least model:
+            we do not prove minimality of our model
+            our model is however minimal but not formally proven to be
+
+    + Modeling finite sets in Coq
+        + List & ListSet
+            traditional approach using lists
+            type polymorphic
+            obvious problems due to lists being ordered and having duplicates
+            we can combat this with NoDup and set functions from ListSet
+            some of these functions require decidability proof, usually ez af
+
+        + MSetWeakList
+            a lot more complicated
+            gives a functor which transforms a given module where some properties of a type are needed to be specified
+                and gives back a module with a set of functions for that type
+            is a lot of work if we need to use it for multiple different types
+            probably the way to go if you are better with Coq
+
+        + Ensembles
+            only has inductive propositions about if an element is in a set or not
+            cannot actually "build" a set, only determine if a given element is in a set
+            thus, cannot reason about length of a set, ergo useless
+
+- Implementation
+
+    + Data types
+        Atom, Clause, Ninfty, Frontier
+        atom_true, clause_true
+        shift_atom, shfit_clause
+        all_shifts_true (possible by Lemma 3.1, since it is decidable)
+
+    + Functions
+        sub_model, models different kinds of S_C
+        sub_vars_improvale, gives us variables that can be shifted if not satisfied by conditions of sub_model
+        sub_forward, actually shifts these variables from sub_vars_impovable
+        geq, determines if a frontier is greater than or equal to another frontier
+
+
+
+
+
+
+
+
