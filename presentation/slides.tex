@@ -12,9 +12,144 @@
 \usepackage{caption}
 \usepackage{multicol}
 \usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{soul}
+\makeatletter
+\let\HL\hl
+\renewcommand\hl{%
+  \let\set@color\beamerorig@set@color
+  \let\reset@color\beamerorig@reset@color
+  \HL}
+\makeatother
+\usepackage{mathtools}
 \graphicspath{ {./} }
 \usepackage{listings}
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{ltblue}{rgb}{0,0.4,0.4}
+\definecolor{dkviolet}{rgb}{0.3,0,0.5}
+\definecolor{dkblue}{rgb}{0,0,0.5}
+\definecolor{dkred}{rgb}{0.5,0,0}
 %\usepackage{enumitem}
+\lstdefinelanguage{Coq}{
+    tabsize=1,
+    % Anything betweeen $ becomes LaTeX math mode
+    mathescape=true,
+    % Comments may or not include Latex commands
+    texcl=false,
+    % Vernacular commands
+    morekeywords=[1]{Section, Module, End, Require, Import, Export,
+        Variable, Variables, Parameter, Parameters, Axiom, Hypothesis,
+        Hypotheses, Notation, Local, Tactic, Reserved, Scope, Open, Close,
+        Bind, Delimit, Definition, Let, Ltac, Fixpoint, CoFixpoint, Add,
+        Morphism, Relation, Implicit, Arguments, Unset, Contextual,
+        Strict, Prenex, Implicits, Inductive, CoInductive, Record, Fail,
+        Structure, Canonical, Coercion, Context, Class, Global, Instance,
+        Program, Infix, Theorem, Lemma, Corollary, Proposition, Fact,
+        Remark, Example, Proof, Goal, Save, Qed, Defined, Hint, Resolve,
+        Rewrite, View, Search, Show, Print, Printing, All, Eval, Check,
+        Projections, inside, outside, Def, Extract, Extraction, Constant},
+    % Gallina
+    morekeywords=[2]{forall, exists, exists2, fun, fix, cofix, struct,
+        match, with, end, as, in, return, let, if, is, then, else, for, of,
+        nosimpl, when},
+    % Sorts
+    morekeywords=[3]{Type, Prop, Set, true, false, option},
+    % Various tactics, some are std Coq subsumed by ssr, for the manual purpose
+    morekeywords=[4]{pose, set, move, case, elim, apply, eapply, clear, hnf,
+        intro, intros, generalize, rename, pattern, after, destruct,
+        induction, using, refine, inversion, injection, rewrite, congr,
+        unlock, compute, ring, field, fourier, replace, fold, unfold,
+        change, cutrewrite, simpl, have, suff, wlog, suffices, without,
+        loss, nat_norm, assert, cut, trivial, revert, bool_congr, nat_congr,
+        symmetry, transitivity, auto, split, left, right, autorewrite},
+    % Terminators
+    morekeywords=[5]{by, done, exact, reflexivity, tauto, romega, omega,
+        assumption, solve, contradiction, discriminate},
+    % Control
+    morekeywords=[6]{do, last, first, try, idtac, repeat},
+    % Comments delimiters, we do turn this off for the manual
+    morecomment=[s]{(*}{*)},
+    % Spaces are not displayed as a special character
+    showstringspaces=false,
+    % String delimiters
+    morestring=[b]",
+    morestring=[d],
+    % Size of tabulations
+    tabsize=2,
+    % Enables ASCII chars 128 to 255
+    extendedchars=false,
+    % Case sensitivity
+    sensitive=true,
+    % Automatic breaking of long lines
+    breaklines=false,
+    % Default style fors listings
+    basicstyle=\small,
+    % Position of captions is bottom
+    captionpos=b,
+    % flexible columns
+    columns=[l]flexible,
+    % Style for (listings') identifiers
+    identifierstyle={\ttfamily\color{black}},
+    % Style for declaration keywords
+    keywordstyle=[1]{\ttfamily\color{dkviolet}},
+    % Style for gallina keywords
+    keywordstyle=[2]{\ttfamily\color{dkgreen}},
+    % Style for sorts keywords
+    keywordstyle=[3]{\ttfamily\color{ltblue}},
+    % Style for tactics keywords
+    keywordstyle=[4]{\ttfamily\color{dkblue}},
+    % Style for terminators keywords
+    keywordstyle=[5]{\ttfamily\color{dkred}},
+    %Style for iterators
+    %keywordstyle=[6]{\ttfamily\color{dkpink}},
+    % Style for strings
+    stringstyle=\ttfamily,
+    % Style for comments
+    commentstyle={\ttfamily\color{dkgreen}},
+    %moredelim=**[is][\ttfamily\color{red}]{/&}{&/},
+    literate=
+    {\\forall}{{\color{dkgreen}{$\forall\;$}}}1
+    {<-}{{$\leftarrow\;$}}1
+    {=>}{{$\Rightarrow\;$}}1
+    {==}{{\code{==}\;}}1
+    {==>}{{\code{==>}\;}}1
+    %    {:>}{{\code{:>}\;}}1
+    {->}{{$\rightarrow\;$}}1
+    {–>}{{$\rightarrow\;$}}1
+    {<->}{{$\leftrightarrow\;$}}1
+    {<==}{{$\leq\;$}}1
+    {\#}{{$^\star$}}1
+    {\\o}{{$\circ\;$}}1
+    {\@}{{$\cdot$}}1
+    {\/\\}{{$\wedge\;$}}1
+    {\\\/}{{$\vee\;$}}1
+    {++}{{$++\;$}}1
+    {+++}{{$+++\;$}}1
+    {--}{{- - }}1
+    {---}{{- - - }}1
+    {\@\@}{{$@$}}1
+    {\\mapsto}{{$\mapsto\;$}}1
+    {\\hline}{{\rule{\linewidth}{0.5pt}}}1
+    {~>}{{$\leadsto\;$}}1
+    {<=}{{$\leq\;$}}1
+    {~}{{$\sim$}}1
+    %
+}[keywords,comments,strings]
+
+\lstset{
+    basicstyle=\linespread{0.8}\footnotesize\ttfamily,
+    keywordstyle=\color{red},
+    showstringspaces=false,
+    stringstyle=\color{blue},
+    commentstyle=\color{gray},
+    breakatwhitespace=true,
+    breaklines=true,
+    postbreak=\mbox{\textcolor{violet}{$\hookrightarrow$}\space},
+    tabsize=4,
+    language=Coq,
+    xleftmargin=0.5cm,
+    abovecaptionskip=0.5cm
+}
 
 %\usepackage[all]{xy}
 %\usepackage{multicol}
@@ -51,45 +186,65 @@
 \section{Background}
 \subsection{Proofs}
 
-\frame {
+\begin{frame}[fragile]
     \frametitle{Proofs}
 
     \begin{itemize}
-        \item<1-> proofs are an important part of mathematics
-        \item<2-> two kinds of proofs:
-            \begin{itemize}
-                \item<3-> \textbf{informal proofs}, natural language, by humans for humans
-                \item<4-> \textbf{formal proofs}, formal language, hard for humans easy for computers
-            \end{itemize}
-        \item<5-> we can tranfsorm informal proofs into formal proofs (formalization)
-        \item<6-> using computers \& proof assistants we can check formal proofs (verification)
-        \item<7-> we can also extract programs from formal proofs
+        \item Important part of mathematics
+        \item
+            \textbf{Informal proof}: written in a natural language, for humans.
+
+            \begin{quote}
+              "Any natural number $n \in \mathbb{N}$ is either even or odd."
+            \end{quote}
+
+        \item \textbf{Formal proof}: written in a formal language, for computers.
+            \begin{lstlisting}
+Theorem even_or_odd :
+    forall n : nat,
+    exists k : nat, n = 2 * k \\/ n = 2 * k + 1.
+            \end{lstlisting}
+    \end{itemize}
+\end{frame}
+
+\subsection{Type Theory}
+
+\frame{
+    \frametitle{Type Theory}
+
+    \begin{itemize}
+        \item A foundation of mathematics
+        \item Every mathematical object has a type, $a : A$
+        \item We must know the construction of every elemtent of a type
+        \item Provides us with rules of inference for manipulating types \& objects
     \end{itemize}
 }
 
-\subsection{(Dependent) Type Theory \& Propositions as Types}
+\subsection{Propositions as types}
 
 \frame{
-    \frametitle{(Dependent) Type Theory \& Propositions as Types}
+    \frametitle{Propositions as types}
 
     \begin{itemize}
-        \item<1-> foundation of mathematics
-        \item<2-> every object has a type, $a : A$, must know its construction
-        \item<4-> provides us with rules of inference for manipulating types \& objects
-        \item<5->\textbf{propositions as types}:
-            \begin{itemize}
-                \item<6-> propositions are types
-                \item<7-> proofs are objects
-                \item<8-> proof of a proposition is an object of that type
-            \end{itemize}
-
-        \item<9-> \textbf{dependent types}:
-            \begin{itemize}
-                \item<10-> gives us more expressive types
-                \item<11-> $\Sigma$-types to model existential quantification
-                \item<12-> $\Pi$-types to model universal quantification
-            \end{itemize}
+        \item Propositions are also types, and their elements are proofs
+        \item Since we know the construction of any element of a type,
+            we know the construction of any proof of a proposition
+        \item Also means that proofs are programs, i.e. they can be executed
     \end{itemize}
+}
+
+\subsection{Dependent types}
+
+\frame{
+    \frametitle{Dependent types}
+
+    \begin{itemize}
+        \item Types can depend on objects
+        \item Gives us more expressive power, especially when defining propositions using types
+        \item Using $\Sigma$-types we can model existential quantification
+        \item Using $\Pi$-types we can model universal quantification
+    \end{itemize}
+
 }
 
 \subsection{Proof Assistants}
@@ -98,14 +253,14 @@
     \frametitle{Proof Assistants}
 
     \begin{itemize}
-        \item<1-> software tools for constructing \& verifying formal proofs
-        \item<2-> based on type theory, propositions as types
-        \item<3-> \textbf{Coq}:
+        \item Software tools for constructing \& verifying formal proofs
+        \item Based on concepts from type theory, propositions as types
+        \item \textbf{Coq}:
             \begin{itemize}
-                \item<4-> based on the type theory \textit{Calculus of Inductive Constructions}
-                \item<5-> uses \textit{Gallina} as its specification language
-                \item<6-> uses \textit{Ltac} as its tactic language, for ease of use
-                \item<6-> supports extraction of programs
+                \item based on the type theory \textit{Calculus of Inductive Constructions}
+                \item uses \textit{Gallina} as its specification language
+                \item uses \textit{Ltac} as its tactic language
+                \item supports extraction of programs
             \end{itemize}
     \end{itemize}
 }
@@ -116,15 +271,28 @@
 \frame{
     \frametitle{Overview of case}
 
-    \begin{itemize}
-        \item<1->two problems in lattice theory solved by Bezem \& Coquand
-        \item<2->we want to answer these questions:
-            \begin{itemize}
-                \item<3->are the results from Bezem \& Coquand correct?
-                \item<4->is it feasible to formalize complex proofs, such as these?
-                \item<5->is the formalization process worth the effort?
-            \end{itemize}
-    \end{itemize}
+    Two problems in lattice theory soled by Bezem \& Coquand:
+
+    \begin{enumerate}
+        \item the uniform word problem for an equational theory of semilattices with
+            one inflationary endomorphism can be solved in polynomial time
+        \item loop-checking in a type system with universe-level constratins can be done
+            in polynomial time
+    \end{enumerate}
+}
+
+\subsection{Research questions}
+
+\frame{
+    \frametitle{Research questions}
+
+    We want to answer the following questions:
+
+    \begin{enumerate}
+        \item Are the results from Bezem \& Coquand correct?
+        \item Is it feasible to formalize such complex proofs as in Bezem \& Coquand?
+        \item Is the formalization process worth the effort, i.e. what do we gain from it?
+    \end{enumerate}
 }
 
 \subsection{Relevant parts of the paper}
@@ -132,10 +300,378 @@
     \frametitle{Relevant parts of the paper}
 
     \begin{itemize}
-        \item<1->join-semilattices: partially ordered set where any two elements have a least upper bound,
+
+        \item \textbf{join-semilattices}:
+            partially ordered set where any two elements have a least upper bound,
             called their join, denoted $\lor$
-        \item<2->
+        \item \textbf{inflationary endomorphism}:
+            function that maps an element to itself or to a greater element in the ordered set,
+            denoted $\_^+$
+        \item \textbf{semilattice presentation p1}:
+            Set $V$ of variables and set $C$ of constraints.
+            For a semilattice term $t \in V$ and $k \in \mathbb{N}$, $t + 0 = t$ and $t + 1 = t^+$.
+            A term over $V$ has the form $x_1 + k_1 \lor ... \lor x_m + k_m$, where $x_i \in V$ and $k_i \in \mathbb{N}$.
     \end{itemize}
+}
+
+\frame{
+    \frametitle{Relevant parts of the paper}
+
+    \begin{itemize}
+        \item \textbf{Horn clauses}:
+            Propositional clauses $A \rightarrow b$ with a non-empty body
+            of atoms $A$ and a conclusion $b$. Atoms are of the form $x + k$,
+            where $x \in V$ and $k \in \mathbb{N}$.
+        \item \textbf{semilattice presentation p2}:
+            A constraint over $V$ has the form $s = t$, where $s$ and $t$ are terms over $V$.
+            For a constraint s = t, we can generate Horn clauses by replacing join by conjuction,
+            denoted by "," and $\leq$ by implication.
+            The set of all generated clauses from a constraint is denoted by $S_{s=t}$.
+            For a set of constraints $C$, we define $S_C = \bigcup_{s=t \in C} S_{s=t}$.
+    \end{itemize}
+}
+
+\frame{
+    \frametitle{Relevant parts of the paper}
+
+    \textbf{Example of generating clauses from constraints}:
+        \begin{enumerate}
+            \item
+                $a \lor b = c^+ \xRightarrow{\text{axiom}}$
+                $a \lor b \leq c^+$ and $c^+ \leq a \lor b$.
+            \begin{enumerate}
+                \item
+                    $a \lor b \leq c^+ \xRightarrow{\text{generate}}$ \hl{$a, b \rightarrow c^+$}
+                \item
+                    $c^+ \leq a \lor b \xRightarrow{\text{axiom}} c^+ \leq a$ and $c^+ \leq b$.
+
+                    \begin{enumerate}
+                        \item
+                            $c^+ \leq a \xRightarrow{\text{generate}}$ \hl{$c^+ \rightarrow a$}
+
+                        \item
+                            $c^+ \leq b \xRightarrow{\text{generate}}$ \hl{$c^+ \rightarrow b$}
+                    \end{enumerate}
+            \end{enumerate}
+        \end{enumerate}
+
+    We are then left with $S_{a \lor b = c^+} = \{a, b \rightarrow c^+, c^+ \rightarrow a, c^+ \rightarrow b\}$.
+}
+
+\frame{
+    \frametitle{Relevant parts of the paper}
+
+    \begin{itemize}
+        \item
+            Horn clause provability $\Longleftrightarrow$ semilattice provaibility
+
+        \item
+            \textbf{closure under shifting upwards}:
+            if $A \rightarrow b$ is in a set of clauses, then so is
+            $A + 1 \rightarrow b + 1$, where $A + 1$ is every atom in $A$ shifted upwards by $1$.
+
+        \item
+            $\bm{\overline{S_C}}$: the smallest subset of $S_C$ that is closed under shifting upwards.
+        \item
+            $\bm{\overline{S_C}\mid W}$: the set of clauses in $\overline{S_C}$ with only variables from $W$.
+        \item
+            $\bm{\overline{S_C}\downarrow W}$: the set of clauses in $\overline{S_C}$ with conclusion over $W$.
+
+        \item
+            A model of a set of clauses $\overline{S_C}$ is defined by a function $f : V \rightarrow \mathbb{N}^\infty$,
+            where $\mathbb{N}^\infty$ is the set of natural numbers extended with $\infty$.
+    \end{itemize}
+}
+
+\frame{
+    \frametitle{Relevant parts of the paper}
+
+    \begin{itemize}
+        \item
+            \textbf{Lemma 3.1}: provability of Horn clauses is decidable
+        \item
+            \textbf{Theorem 3.2}: we can compute the least model of a set of clauses $\overline{S_C}$
+        \item
+            \textbf{Lemma 3.3}: given some assumptions, we can compute the least models of $\overline{S_C}\mid W$ and $\overline{S_C}\downarrow W$
+
+    \end{itemize}
+}
+
+\section{Approach \& Design Choices}
+\subsection{Simplifications}
+
+\frame{
+    \frametitle{Simplifications}
+
+    \begin{enumerate}
+        \item
+            incomplete formal proofs
+        \item
+            leaving out formal proof for Lemma 3.3
+        \item
+            proof of minimality of least model
+    \end{enumerate}
+}
+
+
+\subsection{Modeling sets in Coq}
+
+\frame{
+    \frametitle{Modeling sets in Coq}
+
+    \begin{itemize}
+        \item
+            \lstinline{List} \& \lstinline{ListSet}
+            \begin{itemize}
+                \item
+                    uses lists, familiar and easy, inductive
+                \item
+                    has order and duplicates, can be combatted
+                \item
+                    type polymorphic, requires decidable equality
+            \end{itemize}
+        \item
+            \lstinline{MSetWeakList}
+            \begin{itemize}
+                \item
+                    a lot more complicated, module functor
+                \item
+                    requires boilerplate code for each type
+            \end{itemize}
+        \item
+            \lstinline{Ensembles}
+            \begin{itemize}
+                \item
+                    uses inductive propositions, i.e.: $x \in A \Rightarrow x \in A \cup B$
+                \item
+                    cannot reason about set size, ergo useless for us
+            \end{itemize}
+    \end{itemize}
+
+    We went with \lstinline{List} \& \lstinline{ListSet}.
+}
+
+\section{Implementation}
+\subsection{Data types}
+
+\begin{frame}[fragile]
+    \frametitle{Data types}
+
+    \begin{itemize}
+        \item
+            \textbf{Atom}: \lstinline[language=Coq]{string -> nat -> Atom}, e.g. \lstinline[language=Coq]{"x" & 0}
+        \item
+            \textbf{Clause}: \lstinline[language=Coq]{set Atom -> Atom -> Clause}, e.g. \lstinline[language=Coq]{["x" & 0; "y" & 1] ~> "z" & 2]}
+        \item
+            \textbf{Ninfty}: either a natural number \lstinline{fin n} or infinity \lstinline{infty}
+        \item
+            \textbf{Frontier}: \lstinline{string -> Ninfty}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Data types}
+
+    \begin{itemize}
+        \item
+            \textbf{check if satisfied by frontier}: \lstinline{atom_true}, \lstinline{clause_true}
+        \item
+            \textbf{shift by n upwards}: \lstinline{shift_atom}, \lstinline{shift_clause}
+        \item
+            \textbf{satisfied for all shifts}: \lstinline{all_shfits_true}
+            \begin{itemize}
+                \item
+                    possible by Lemma 3.1
+                \item
+                    will be used to determine model
+            \end{itemize}
+    \end{itemize}
+\end{frame}
+
+\subsection{Functions \& predicates}
+
+\begin{frame}[fragile]
+    \frametitle{Functions \& predicates}
+
+    \begin{itemize}
+        \item \begin{minipage}{\linewidth}\lstinline{sub_model Cs V W f : bool}\end{minipage}
+            For each clause in \lstinline{Cs}, checks three conditions:
+            \begin{enumerate}
+                \item
+                    variable in conclusion of clause is not in \lstinline{W}
+                \item
+                    some variable in the premise of the clause is not in \lstinline{V}
+                \item
+                    the clause is true for all shifts
+            \end{enumerate}
+            If any of these are true for all clauses, \lstinline{f} is a model of \lstinline{Cs}.
+
+            Can represent either $\overline{S_C}$, $\overline{S_C}\mid W$ or $\overline{S_C}\downarrow W$.
+        \item \begin{minipage}{\linewidth}\lstinline{sub_forward Cs V W f : set string * Frontier}\end{minipage}
+            For each clause in \lstinline{Cs}, checks the same as \lstinline{sub_model},
+            and adds variable in conclusion to set of "improvable" variables if all are false.
+            Returns tuple where first value is the set of improvable variables,
+            and the second value is a new frontier that is incremented by one for each variable in the set.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Functions \& predicates}
+
+    \begin{itemize}
+        \item \begin{minipage}{\linewidth}\lstinline{geq V g f : bool}\end{minipage}
+            Checks if frontier \lstinline{g} is greater than or equal to frontier \lstinline{f} for all variables in \lstinline{V}.
+        \item \begin{minipage}{\linewidth}\lstinline{ex_lfp_geq Cs V W f : Set :=}\end{minipage}
+              \begin{minipage}{\linewidth}\lstinline{    exists g : Frontier, geq V g f /\ sub_model Cs V W g.}\end{minipage}
+    \end{itemize}
+\end{frame}
+
+\subsection{Theorem 3.2}
+
+\begin{frame}[fragile]
+    \frametitle{Theorem 3.2}
+
+    \begin{minipage}{\linewidth}\lstinline{Theorem thm_32 :}\end{minipage}
+    \begin{minipage}{\linewidth}\lstinline{  forall n m Cs V W f,}\end{minipage}
+    \begin{minipage}{\linewidth}\lstinline{    incl W V ->}\end{minipage}
+    \begin{minipage}{\linewidth}\lstinline{    Datatypes.length (nodup string_dec V) <= n ->}\end{minipage}
+    \begin{minipage}{\linewidth}\lstinline{    Datatypes.length}\end{minipage}
+    \begin{minipage}{\linewidth}\lstinline{      (set_diff string_dec}\end{minipage}
+    \begin{minipage}{\linewidth}\lstinline{        (nodup string_dec V)}\end{minipage}
+    \begin{minipage}{\linewidth}\lstinline{        (nodup string_dec W)}\end{minipage}
+    \begin{minipage}{\linewidth}\lstinline{    ) <= m <= n ->}\end{minipage}
+    \begin{minipage}{\linewidth}\lstinline{    ex_lfp_geq Cs (nodup string_dec W) (nodup string_dec W) f ->}\end{minipage}
+    \begin{minipage}{\linewidth}\lstinline{    ex_lfp_geq Cs (nodup string_dec V) (nodup string_dec V).}\end{minipage}
+\end{frame}
+
+\subsection{Theorem 3.2 proof overview}
+\frame{
+    \frametitle{Theorem 3.2 proof overview}
+
+    \begin{itemize}
+        \item
+            proof by primary induction on \lstinline{n} (length of \lstinline{V}),
+            and secondary induction on \lstinline{m} (length of \lstinline{W}).
+            Both base cases and induction step of \lstinline{n} relatively easy,
+            induction step of \lstinline{m} by far most complex.
+
+        \item
+            In induction step of \lstinline{m}, we distinguish between three cases:
+            \begin{enumerate}
+                \item
+                    $W = \emptyset$
+                \item
+                    $W = V$
+                \item
+                    $\emptyset \subset W \subset V$,
+                    apply primary and secondary induction hypotheses,
+                    and apply Lemma 3.3
+            \end{enumerate}
+    \end{itemize}
+}
+
+\section{Examples \& Results}
+\subsection{Extraction and output}
+
+\frame{
+    \frametitle{Extraction and output}
+
+    \begin{itemize}
+        \item
+            We can extract formal proofs to Haskell code,
+            and run Theorem 3.2 on a set of clauses.
+        \item
+            \begin{minipage}{\linewidth}\lstinline{Example Cs := [ ["a" & 0] ~> "b" & 1; ["b" & 1] ~> "c" & 2 ]}\end{minipage}
+            \begin{minipage}{\linewidth}\lstinline{thm_32 Cs "a" => Fin 0}\end{minipage}
+            \begin{minipage}{\linewidth}\lstinline{thm_32 Cs "b" => Fin 1}\end{minipage}
+            \begin{minipage}{\linewidth}\lstinline{thm_32 Cs "c" => Fin 2}\end{minipage}
+        \item
+            \begin{minipage}{\linewidth}\lstinline{Example Cs_loop := [ ["a" & 0] ~> "a" & 1 ]}\end{minipage}
+            \begin{minipage}{\linewidth}\lstinline{thm_32 Cs_loop "a" => Infty}\end{minipage}
+    \end{itemize}
+}
+
+\subsection{Real-world example \& limitations}
+
+\frame{
+    \frametitle{Real-world example \& limitations}
+
+    \begin{itemize}
+        \item
+            We can use Theorem 3.2 algorithm to check type universe level consistency in Coq,
+            which Coq does when interpreting/compiling.
+        \item
+            The Coq Command \lstinline{Print Universes} gives us a list of universe constraints,
+            can be translated to our syntax. In testing this produced correct
+            type universe levels for over 5000 constraints.
+        \item
+            Algorithm does not always work due to Lemma 3.3 not formally proven,
+            i.e. fails when extending previous example with
+            \begin{minipage}{\linewidth}\lstinline{Example Cs := [ (*...*) ["c" & 2] ~> "d" & 3 ].}\end{minipage}
+    \end{itemize}
+}
+
+\section{Evalution}
+
+\frame{
+    \frametitle{Evalution}
+
+    \begin{enumerate}
+        \item Are the results correct?
+            \begin{itemize}
+                \item we have not formalized every part of results,
+                    and we have simplified some proofs
+                \item but, with a full formal proof of Theorem 3.2, we can be very confident that the results are correct
+            \end{itemize}
+        \item Is it feasible to formalize such complex proofs?
+            \begin{itemize}
+                \item by our effort, yes
+                \item could be done faster and/or better with more experience
+            \end{itemize}
+        \item Is the formalization process worth the effort?
+            \begin{itemize}
+                \item
+                    we gain a useable protoype
+                \item
+                    can be used as a starting point for more efficient implementations
+            \end{itemize}
+    \end{enumerate}
+}
+
+\section{Related \& Future Work}
+\subsection{Related work}
+
+\frame{
+    \frametitle{Related work}
+
+    Ongoing effort by Matthieu Sozeau, Coq Team to implement version of algorithm for use
+    in universe consitencty checking in Coq.
+    Main focus on speed, and only supports clauses of the form
+    $x + k \geq y$, where $k \in \{0, 1\}$.
+
+}
+
+\subsection{Future work}
+
+\frame{
+    \frametitle{Future work}
+
+    \begin{enumerate}
+        \item
+            Complete proofs of remaining logical lemmas
+        \item
+            Formal proof of Lemma 3.3
+        \item
+            Prove minimality of model in Theorem 3.2
+    \end{enumerate}
+}
+
+\section{Conclusion}
+
+\frame{
+    \frametitle{Conclusion}
+
+
 }
 
 \end{document}
