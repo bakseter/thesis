@@ -24,6 +24,10 @@
         foundation of mathematics
         every object has a type, must know its construction!
         provides us with rules of inference for manipulating types  objects
+        dependent types:
+        types can depend on objects
+        gives us more expressive power, especially when using propositions as types
+        we can model existential and universal quantification from First Order Logic
 
     + Propositions as types
         everything can be a type, including propositions
@@ -31,19 +35,11 @@
         proofs are objects of a proposition type
         also means that proofs are programs, i.e. they can be executed
 
-    + Dependent types
-        types can depend on objects
-        gives us more expressive power, especially when using propositions as types
-        we can model existential and universal quantification from First Order Logic
-
     + Proof assistants
         software tools for constructing and verifying formal proofs
         based on concepts from type theory, propositions as types
-        Coq:
-            based on the type theory Calculus of Inductive Constructions
-            uses Gallina as its specification language, i.e. for writing types/programs/proofs
-            uses Ltac as its tactic language, i.e. for actually proving things
-            supports extraction of programs
+        Coq, Agda, Lean, etc.
+        extraction of programs
 
 - The Case in Question
 
@@ -51,7 +47,7 @@
         two problems in lattice theory solved by Bezem & Coquand, summarized:
             * the uniform word problem for an equational theory of semilattices with
               one inflationary endomorphism can be solved in polynomial time
-            * loop-checking in a type system with universe-level constratins can be done
+            * loop-checking in a type system with universe-level constraints can be done
               in polynomial time
         given this, we want to answer these questions:
             1. are the results from Bezem & Coquand correct?
@@ -78,7 +74,6 @@
             a constraint over V has the form s = t, where s and t are terms over V.
             for a constraint s = t, we can generate Horn claues by replacing join by conjuction
             , denoted "," and >= by implication.
-            EXAMPLE HERE
             the set of all generated clauses from a constraint is denoted S_s=t
 
         since provability in semilattice theoy is shown to be equivalent to provability
@@ -135,23 +130,139 @@
             thus, cannot reason about length of a set, ergo useless
 
 - Implementation
-
     + Data types
-        Atom, Clause, Ninfty, Frontier
-        atom_true, clause_true
-        shift_atom, shfit_clause
-        all_shifts_true (possible by Lemma 3.1, since it is decidable)
 
-    + Functions
-        sub_model, models different kinds of S_C
-        sub_vars_improvale, gives us variables that can be shifted if not satisfied by conditions of sub_model
-        sub_forward, actually shifts these variables from sub_vars_impovable
-        geq, determines if a frontier is greater than or equal to another frontier
+        Atom:
+        Clause:
+        Ninfty: either a natural number fin n or infinity infty
+        Frontier: string -> Ninfty
 
 
+        check if satisfied by frontier: atom_true, clause_true
+        shift by n upwards: shift_atom, shift_clause
+        satisfied for all shifts: all_shifts_true
+
+                                    decidable by Lemma 3.1
+                                    will be used later to determine model
+                
+Functions  predicates
+
+[fragile]
+    Implementation – Functions  predicates
+
+    
+        sub_model Cs V W f : bool            For each clause in Cs, checks three conditions:
+            
+                                    variable in conclusion of clause is not in W
+                                    some variable in the premise of the clause is not in V
+                                    the clause is true for all shifts
+                        If any of these are true for all clauses, f is a model of Cs.
+
+            Can handle all of ,  and .
+        sub_forward Cs V W f : set string * Frontier            For each clause in Cs, checks the same as sub_model,
+            and adds variable in conclusion to set of "improvable" variables if 1,2,3 are all false.
+            Returns tuple where first value is the set of improvable variables,
+            and the second value is a new frontier that is incremented by one for each variable in the set.
+    
+[fragile]
+    Implementation – Functions  predicates
+
+    
+        geq V g f : bool            Checks if frontier g is greater than or equal to frontier f for all variables in V.
+        ex_lfp_geq Cs V W f : Set :=                  exists g : Frontier, geq V g f / sub_model Cs V W g.    
+Theorem 3.2
+
+[fragile]
+    Implementation – Theorem 3.2
+
+    Theorem thm_32 :      forall n m Cs V W f,        incl W V ->        Datatypes.length (nodup string_dec V) <= n ->        Datatypes.length          (set_diff string_dec            (nodup string_dec V)            (nodup string_dec W)        ) <= m <= n ->        ex_lfp_geq Cs (nodup string_dec W) (nodup string_dec W) f ->        ex_lfp_geq Cs (nodup string_dec V) (nodup string_dec V).
+Theorem 3.2 proof overview
+
+    Implementation – Theorem 3.2 proof overview
+
+    
+                    Proof by primary induction on n (length of V),
+            and secondary induction on m (length of V - W).
+            Both base cases and induction step of n relatively easy,
+            induction step of m by far most complex.
+
+                    In induction step of m, we distinguish between three cases:
+            
+                                    
+                                    
+                                    ,
+                    apply primary and secondary induction hypotheses,
+                    and apply Lemma 3.3
+                
+
+Examples  Results
+Extraction and output
+
+
+    Extraction and output examples
+
+    
+                    We can extract formal proofs to Haskell code,
+            and run Theorem 3.2 on a set of clauses.
+                    :
+            Example Cs := [ ["a" & 0]  > "b" & 1; ["b" & 1]  > "c" & 2 ]            thm_32 Cs "a" => Fin 0            thm_32 Cs "b" => Fin 1            thm_32 Cs "c" => Fin 2                    :
+            Example Cs_loop := [ ["a" & 0]  > "a" & 1 ]            thm_32 Cs_loop "a" => Infty    
+
+Real-world example  limitations
+
+
+    Real-world example  limitations
+
+    
+                    We can use Theorem 3.2 algorithm to check type universe level consistency in Coq,
+            which Coq does when type-checking.
+                    The Coq Command Print Universes gives us a list of universe constraints,
+            can be translated to our syntax. In testing this produced correct
+            type universe levels for over 5000 constraints.
+                    Algorithm does not always work due to Lemma 3.3 not formally proven,
+            e.g. fails when extending first example with
+            Example Cs := [ (*...*) ["c" & 2]  > "d" & 3 ].    
+
+Related  Future Work
+Related work
+
+
+    Related work
+
+    Ongoing effort by Matthieu Sozeau, Coq Team to implement version of algorithm for use
+    in universe consistency checking in Coq.
+    Main focus on speed, and only supports clauses of the form
+    , where .
 
 
 
+- Future work
 
 
+
+    
+                    Complete proofs of remaining logical lemmas
+                    Formal proof of Lemma 3.3
+                    Prove minimality of model in Theorem 3.2
+    
+
+Evaluation  Conclusion
+
+
+    Evaluation  Conclusion
+
+    
+        Are the results correct?
+            
+                we have not formalized every part of results,
+                    and we have simplified some proofs
+                but, with a full formal proof of Theorem 3.2, we can be very confident that the results are correct
+                    Is it feasible to formalize such complex proofs?
+            
+                by our effort, yes
+                could be done faster and/or better with more experience
+                    Is the formalization process worth the effort?
+            
+                                    we gain a usable prototype
+                                    can be used as a starting point for more efficient implementations
 
