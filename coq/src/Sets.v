@@ -68,12 +68,21 @@ Module Sets.
     Datatypes.length (set_add dec h t) <= Datatypes.length V ->
     Datatypes.length t <= Datatypes.length V.
   Proof.
-    induction t; intros.
-    - simpl. lia.
-    - simpl in H. destruct (dec h a).
-      + simpl in *. assumption.
-      + simpl in *.
-  Admitted.
+    intros.
+    induction H.
+    - induction t.
+      + simpl; lia.
+      + destruct (dec h a) as [e | n].
+        rewrite <- e.
+        unfold set_add.
+        destruct (dec h h).
+        * apply le_n.
+        * destruct n; apply eq_refl.
+        * unfold set_add.
+          destruct (dec h a). apply le_n.
+          apply le_n_S; assumption.
+    - lia.
+Qed.
 
   Lemma incl_set_add_cons_reduce {A : Type} (dec : forall x y, {x = y} + {x <> y}) (x : A) (s1 s2 : set A) :
     incl s1 s2 -> incl (set_add dec x s1) (x :: s2).
