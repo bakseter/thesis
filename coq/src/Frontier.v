@@ -3,7 +3,7 @@ From Coq Require Import Lists.List.
 From Coq Require Import Lists.ListSet.
 From Coq Require Import Logic.FunctionalExtensionality.
 Require Import Misc. Import Misc.
-Require Import Sets. Import Sets. Import StringSetsNotation.
+Require Import Sets. Import Sets.
 Require Import Ninfty. Import Ninfty.
 
 Module Frontier.
@@ -20,6 +20,6 @@ Module Frontier.
   Proof. apply functional_extensionality. intros. reflexivity. Qed.
 
   Definition update_infty_V (V : set string) (f : Frontier) : Frontier :=
-    fun x : string => if x € V then infty else f x.
+    fun x : string => if set_mem string_dec x V then infty else f x.
 
 End Frontier.

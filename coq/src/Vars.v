@@ -10,7 +10,7 @@ Require Import Clause. Import Clause.
 Require Import Frontier. Import Frontier.
 Require Import Ninfty. Import Ninfty.
 Require Import Misc. Import Misc.
-Require Import Sets. Import Sets. Import StringSetsNotation.
+Require Import Sets. Import Sets.
 
 Module Vars.
 
@@ -23,7 +23,8 @@ Module Vars.
     end.
 
   Lemma vars_set_atom_cons (x : string) (t : set Atom) (k : nat) (W : set string) :
-    incl (vars_set_atom ((x & k) :: t)) W -> incl (vars_set_atom t) W.
+    incl (vars_set_atom ((x & k) :: t)) W ->
+    incl (vars_set_atom t) W.
   Proof.
     intros. induction t as [|h t']; try apply incl_nil_l.
     destruct h as [y k']. simpl in *.
@@ -31,7 +32,8 @@ Module Vars.
   Qed.
 
   Lemma incl_vars_set_atom_In (s : set Atom) (W : set string) (x : string) (k : nat) :
-    incl (vars_set_atom ((x & k) :: s)) W -> In x W.
+    incl (vars_set_atom ((x & k) :: s)) W ->
+    In x W.
   Proof.
     intros. induction W as [|h t].
     - eapply incl_l_nil_false in H; try contradiction.
@@ -41,18 +43,19 @@ Module Vars.
   Qed.
 
   Lemma vars_set_atom_incl_fold (s : set Atom) (W : set string) :
-    incl (vars_set_atom s) W -> (fold_right andb true (map (fun x : string => x € W) (vars_set_atom s))) = true.
+    incl (vars_set_atom s) W ->
+    (fold_right andb true (map (fun x : string => set_mem string_dec x W) (vars_set_atom s))) = true.
   Proof.
     intros. induction s as [|h t]; try reflexivity.
     simpl. destruct h as [x k] eqn:Hxk.
-    - destruct (x € vars_set_atom t) eqn:Ht.
+    - destruct (set_mem string_dec x (vars_set_atom t)) eqn:Ht.
       + apply vars_set_atom_cons in H. apply IHt in H.
         apply (set_add_mem_true string_dec) in Ht.
         rewrite Ht. assumption.
       + apply set_add_mem_false in Ht. rewrite Ht.
         assert (H': incl (vars_set_atom ((x & k) :: t)) W) by assumption.
         apply vars_set_atom_cons in H. apply IHt in H. rewrite map_app.
-        assert (map (fun x0: string => x0 € W) [x] = [x € W]) by reflexivity.
+        assert (map (fun x0: string => set_mem string_dec x0 W) [x] = [set_mem string_dec x W]) by reflexivity.
         rewrite H0. rewrite fold_right_app. simpl. rewrite andb_true_intro.
         * assumption.
         * split; try reflexivity.
@@ -87,14 +90,16 @@ Module Vars.
   Qed.
 
   Lemma vars_clause_incl_In (s : set Atom) (x : string) (k : nat) (W : set string) :
-    incl (vars_clause (s ~> (x & k))) W -> In x W.
+    incl (vars_clause (s ~> (x & k))) W ->
+    In x W.
   Proof.
     intros. induction W as [|h t];
     apply H; apply vars_clause_In_conc.
   Qed.
 
   Lemma vars_clause_incl_vars_set_atom (s : set Atom) (W : set string) (x : string) (k : nat) :
-    incl (vars_clause (s ~> (x & k))) W -> incl (vars_set_atom s) W.
+    incl (vars_clause (s ~> (x & k))) W ->
+    incl (vars_set_atom s) W.
   Proof.
     intros. destruct s as [|h t]; try apply incl_nil_l.
     simpl in *. destruct h as [y m].

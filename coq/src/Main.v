@@ -1,19 +1,11 @@
-Set Warnings "-notation-overridden,-parsing,-deprecated-hint-without-locality".
 From Coq Require Import Bool.Bool.
-From Coq Require Import Init.Nat.
 From Coq Require Import Arith.Arith.
-From Coq Require Import Arith.Minus.
 From Coq Require Import Arith.EqNat. Import Nat.
 From Coq Require Import Lia.
 From Coq Require Import Lists.List. Import ListNotations.
 From Coq Require Import Lists.ListSet.
 From Coq Require Import Strings.String.
-From Coq Require Import Setoids.Setoid.
-From Coq Require Import ExtrHaskellBasic.
-From Coq Require Import ExtrHaskellNatNum.
-From Coq Require Import ExtrHaskellString.
-From Coq Require Import FunctionalExtensionality.
-Require Import Sets. Import Sets. Import StringSetsNotation.
+Require Import Sets. Import Sets.
 Require Import Clause. Import Clause.
 Require Import Atom. Import Atom.
 Require Import Frontier. Import Frontier.
@@ -58,16 +50,16 @@ Theorem thm_32 :
     pre_thm n m Cs V W f.
 Proof.
   unfold pre_thm. induction n as [|n IHn].
-  - intros. apply le_0_r in H0.
+  - intros m Cs V W f H H0 H1 H2. apply le_0_r in H0.
     apply length_zero_iff_nil in H0.
     rewrite H0. apply ex_lfp_geq_empty.
-  - induction m as [|m IHm]; intros.
+  - induction m as [|m IHm]; intros Cs V W f H H0 H1 H2.
     + apply (ex_lfp_geq_incl Cs (nodup string_dec V) (nodup string_dec W));
-      try assumption. destruct H1. apply le_0_r in H1.
+      try assumption. destruct H1 as [H1 H3]. apply le_0_r in H1.
       apply length_zero_iff_nil in H1.
       apply set_diff_nil_incl in H1. assumption.
-    + inversion H1.
-      apply le_lt_eq_dec in H3. destruct H3.
+    + inversion H1 as [H3 H4].
+      apply le_lt_eq_dec in H3. destruct H3 as [l|e].
       * apply (IHm Cs V W f); try assumption. lia.
       * apply (ex_lfp_geq_nodup_iff) in H2.
         assert (Datatypes.length (nodup string_dec W) <= n).
@@ -97,18 +89,7 @@ Proof.
               (nodup string_dec V)
               (nodup string_dec V)
               h) as [U h'] eqn:Hforward.
-          assert
-            (sub_forward
-              Cs
-              (nodup string_dec V)
-              (nodup string_dec V)
-              h = (U, h')) by assumption.
-          assert
-            (sub_forward
-              Cs
-              (nodup string_dec V)
-              (nodup string_dec V)
-              h = (U, h')) by assumption.
+          assert (H6 := Hforward). assert (H7 := Hforward).
           rewrite nodup_rm in H9.
           apply
             (sub_forward_incl_set_diff
@@ -122,7 +103,8 @@ Proof.
           inversion Hforward. apply sub_forward_incl in Hforward.
           destruct U as [|u U'] eqn:Hu.
           -- apply sub_forward_empty in H7.
-             destruct H7. unfold ex_lfp_geq. exists h.
+             destruct H7 as [H7 H10].
+             unfold ex_lfp_geq. exists h.
              split; assumption.
           -- destruct
               (incl_dec
@@ -130,7 +112,7 @@ Proof.
                 V
                 (nodup
                   string_dec
-                  (set_union string_dec (nodup string_dec W) U))).
+                  (set_union string_dec (nodup string_dec W) U))) as [i|i].
              ++ unfold ex_lfp_geq. exists (update_infty_V V f). split.
                 ** apply geq_nodup_true. apply geq_update_infty_V.
                 ** rewrite <- sub_model_nodup. apply sub_model_update_infty_V.
@@ -154,7 +136,8 @@ Proof.
                     eapply NoDup_incl_length. apply NoDup_nodup.
                     apply nodup_incl. assumption.
                   }
-                  apply le_lt_eq_dec in H13. destruct H13; try assumption.
+                  apply le_lt_eq_dec in H13. destruct H13 as [l|n0];
+                  try assumption.
                   assert
                     (strict_subset
                       (nodup string_dec (set_union string_dec W U))
@@ -162,7 +145,7 @@ Proof.
                   {
                     unfold strict_subset. split.
                     - apply nodup_incl. assumption.
-                    - unfold not. intros. apply n0.
+                    - unfold not. intros. apply i.
                       apply nodup_incl2 in H13.
                       assert
                         (incl
@@ -175,10 +158,11 @@ Proof.
                   }
                   apply (strict_subset_lt_length string_dec).
                   unfold strict_subset in H13.
-                  destruct H13. unfold strict_subset. split.
+                  destruct H13 as [H13 H14].
+                  unfold strict_subset. split.
                   - apply nodup_incl in H13.
                     apply nodup_incl2 in H13. assumption.
-                  - unfold not. intros. apply n0.
+                  - unfold not. intros. apply i.
                     rewrite (incl_set_union_nodup_l string_dec).
                     apply nodup_incl. assumption.
                 }
@@ -199,7 +183,7 @@ Proof.
                 eapply (IHm Cs V (nodup string_dec (set_union string_dec W U)) h');
                 try assumption.
                 ** apply conj; try lia. inversion H14.
-                   apply le_lt_eq_dec in H16. destruct H16;
+                   apply le_lt_eq_dec in H16. destruct H16 as [l|l];
                    rewrite nodup_rm; rewrite set_diff_nodup_eq in *;
                    rewrite <- length_set_diff_set_union_nodup_l;
                    lia.

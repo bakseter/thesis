@@ -6,7 +6,7 @@ From Coq Require Import Lists.List. Import ListNotations.
 From Coq Require Import Lists.ListSet.
 From Coq Require Import Strings.String.
 From Coq Require Import Logic.FunctionalExtensionality.
-Require Import Sets. Import Sets. Import StringSetsNotation.
+Require Import Sets. Import Sets.
 Require Import Clause. Import Clause.
 Require Import Atom. Import Atom.
 Require Import Frontier. Import Frontier.
@@ -35,13 +35,15 @@ Module Forward.
     try reflexivity. destruct (f h) as [| k] eqn:Hfh.
     - simpl. destruct (string_dec h h) eqn:Hdec.
       destruct (Sinfty (f h)) eqn:Hsinfty.
-      + simpl. rewrite f_is_f; assumption.
+      + rewrite f_is_f; assumption.
       + rewrite Hfh. rewrite Hfh in Hsinfty.
         unfold Sinfty in Hsinfty. discriminate.
       + contradiction.
-    - unfold geq. rewrite Hfh. destruct (h € h :: t); unfold Sinfty; simpl; fold geq;
+    - unfold geq. rewrite Hfh. destruct (set_mem string_dec h (h :: t));
+      unfold Sinfty; simpl; fold geq;
       apply andb_true_intro; split; try apply leb_le; try lia;
-      eapply geq_trans with (fun v : string => if v € t then Sinfty (f v) else f v);
+      eapply geq_trans with
+        (fun v : string => if set_mem string_dec v t then Sinfty (f v) else f v);
       try apply geq_Sinfty_f; try assumption.
   Qed.
 
@@ -52,7 +54,7 @@ Module Forward.
     intros. unfold sub_forward in H.
     assert ((sub_vars_improvable (a :: Cs) V W f,
        fun v : string =>
-       if v € sub_vars_improvable (a :: Cs) V W f then Sinfty (f v) else f v) = (
+       if set_mem string_dec v (sub_vars_improvable (a :: Cs) V W f) then Sinfty (f v) else f v) = (
       [], g)) by assumption.
     apply tuple_fst in H.
     unfold sub_forward.
@@ -76,9 +78,9 @@ Module Forward.
       + unfold sub_vars_improvable in H1. fold sub_vars_improvable in H1.
         destruct (all_shifts_true (l ~> x & k) f).
         * apply orb_true_r.
-        * rewrite orb_false_r in H1. destruct (negb (x € W));
+        * rewrite orb_false_r in H1. destruct (negb (set_mem string_dec x W));
           try reflexivity. simpl in *. rewrite orb_false_r.
-           destruct (negb (fold_right andb true (map (fun x : string => x € V) (vars_set_atom l))));
+           destruct (negb (fold_right andb true (map (fun x : string => set_mem string_dec x V) (vars_set_atom l))));
            try reflexivity. apply set_add_not_empty in H1. contradiction.
       + eapply IHCs.
         * apply (sub_forward_cons_empty (l ~> x & k)). assumption.
@@ -121,7 +123,7 @@ Module Forward.
       unfold sub_vars_improvable in H0.
       fold sub_vars_improvable in H0.
       apply pair_equal_spec in H0. destruct H0.
-      destruct (negb (x € V)) eqn:HxV.
+      destruct (negb (set_mem string_dec x V)) eqn:HxV.
       + rewrite orb_true_l in *. apply (IHt g f).
         assumption. apply pair_equal_spec.
         split; assumption.
@@ -131,20 +133,20 @@ Module Forward.
           apply (IHt g f). assumption.
           apply pair_equal_spec. split; assumption.
         * rewrite orb_false_r in *.
-          destruct (negb (fold_right andb true (map (fun x0 : string => x0 € V) (vars_set_atom l)))) eqn:Hfold.
+          destruct (negb (fold_right andb true (map (fun x0 : string => set_mem string_dec x0 V) (vars_set_atom l)))) eqn:Hfold.
           -- clear H. apply (IHt g f). assumption.
              apply pair_equal_spec. split; assumption.
           -- rewrite orb_false_r in *.
-             apply (IHt (fun v : string => if v € sub_vars_improvable t V V f then Sinfty (f v) else f v) f);
+             apply (IHt (fun v : string => if set_mem string_dec v (sub_vars_improvable t V V f) then Sinfty (f v) else f v) f);
              try assumption. apply pair_equal_spec.
              split; try reflexivity.
              (* stuck *)
   Admitted.
 
   Lemma negb_nodup_set_mem (V : set string) (x : string) :
-    negb (x € nodup string_dec V) = negb (x € V).
+    negb (set_mem string_dec x (nodup string_dec V)) = negb (set_mem string_dec x V).
   Proof.
-    f_equal. destruct (x € V) eqn:HxV.
+    f_equal. destruct (set_mem string_dec x V) eqn:HxV.
     - apply set_mem_correct1 in HxV.
       rewrite <- (nodup_In string_dec) in HxV.
       apply (set_mem_correct2 string_dec) in HxV.
@@ -156,10 +158,11 @@ Module Forward.
   Qed.
 
   Lemma f_equal_negb (V : set string) (l : set Atom) :
-    (negb (fold_right andb true (map (fun x0 : string => x0 € V) (vars_set_atom l)))) =
-    (negb (fold_right andb true (map (fun x0 : string => x0 € nodup string_dec V) (vars_set_atom l)))).
+    (negb (fold_right andb true (map (fun x0 : string => set_mem string_dec x0 V) (vars_set_atom l)))) =
+    (negb (fold_right andb true (map (fun x0 : string => set_mem string_dec x0 (nodup string_dec V)) (vars_set_atom l)))).
   Proof.
-    f_equal. destruct (fold_right andb true (map (fun x0 : string => x0 € V) (vars_set_atom l))) eqn:HlV.
+    f_equal.
+    destruct (fold_right andb true (map (fun x0 : string => set_mem string_dec x0 V) (vars_set_atom l))) eqn:HlV.
     - symmetry. rewrite <- fold_right_andb_true_map_incl_iff.
       rewrite <- fold_right_andb_true_map_incl_iff in HlV.
       apply nodup_incl. assumption.
@@ -174,7 +177,7 @@ Module Forward.
 
   Example forward_test2 :
     forward [clause_x0y1_x2] frontier_fin_1 =
-    ([x_str], fun v => if v € [x_str] then fin 2 else fin 1).
+    ([x_str], fun v => if set_mem string_dec v [x_str] then fin 2 else fin 1).
   Proof. reflexivity. Qed.
 
   Example forward_test3 :
@@ -183,7 +186,7 @@ Module Forward.
 
   Example forward_test4 :
     forward [clause_x0y1_x2] frontier_fin_2 =
-    ([x_str], fun v => if v € [x_str] then fin 3 else fin 2).
+    ([x_str], fun v => if set_mem string_dec v [x_str] then fin 3 else fin 2).
   Proof. reflexivity. Qed.
 
   Example forward_test5 :
@@ -193,7 +196,7 @@ Module Forward.
 
   Example forward_test6 :
     forward [clause_x0y1_x2; clause_y1_y2] frontier_fin_1 =
-    ([y_str; x_str], fun v => if v € [y_str; x_str] then fin 2 else fin 1).
+    ([y_str; x_str], fun v => if set_mem string_dec v [y_str; x_str] then fin 2 else fin 1).
   Proof. reflexivity. Qed.
 
 End Forward.

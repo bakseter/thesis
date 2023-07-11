@@ -1,9 +1,11 @@
 From Coq Require Import Bool.Bool.
-From Coq Require Import Lists.List. Import ListNotations. From Coq Require Import Lists.ListSet. From Coq Require Import Strings.String.
+From Coq Require Import Lists.List. Import ListNotations.
+From Coq Require Import Lists.ListSet.
+From Coq Require Import Strings.String.
 Require Import Clause. Import Clause.
 Require Import Atom. Import Atom.
 Require Import Frontier. Import Frontier.
-Require Import Sets. Import Sets. Import StringSetsNotation.
+Require Import Sets. Import Sets.
 Require Import Vars. Import Vars.
 Require Import Model. Import Model.
 
@@ -38,8 +40,8 @@ Module VarsImp.
     - simpl. apply NoDup_nil.
     - unfold sub_vars_improvable. destruct h as [l [x k]].
       fold sub_vars_improvable.
-      destruct (negb (x € W)
-                || negb (fold_right andb true (map (fun x0 : string => x0 € V) (vars_set_atom l)))
+      destruct (negb (set_mem string_dec x W)
+                || negb (fold_right andb true (map (fun x0 : string => set_mem string_dec x0 V) (vars_set_atom l)))
                 || all_shifts_true (l ~> x & k) f).
     + apply IHt. apply NoDup_cons_iff in H. destruct H. assumption.
     + apply set_add_nodup. apply IHt. apply NoDup_cons_iff in H.
@@ -60,17 +62,17 @@ Module VarsImp.
       fold sub_vars_improvable. (* candidate for tactic *)
       unfold incl; intros. rewrite orb_false_r in H.
       (* key *) destruct (string_dec a x).
-      + subst. destruct (negb (x € W)) eqn:HxW.
+      + subst. destruct (negb (set_mem string_dec x W)) eqn:HxW.
         * simpl in H. eapply incl_tran. apply IHt.
           apply incl_refl. assumption.
-        * simpl in H. destruct (negb (fold_right andb true (map (fun x : string => x € V) (vars_set_atom l)))).
+        * simpl in H. destruct (negb (fold_right andb true (map (fun x : string => set_mem string_dec x V) (vars_set_atom l)))).
           -- eapply incl_tran. apply IHt. apply incl_refl. assumption.
           -- apply negb_false_iff in HxW. apply set_mem_correct1 in HxW.
              assumption.
-      + destruct (negb (x € W)) eqn:HxW.
+      + destruct (negb (set_mem string_dec x W)) eqn:HxW.
         * simpl in H. eapply incl_tran. apply IHt. apply incl_refl.
           assumption.
-        * destruct (negb (fold_right andb true (map (fun x : string => x € V) (vars_set_atom l)))).
+        * destruct (negb (fold_right andb true (map (fun x : string => set_mem string_dec x V) (vars_set_atom l)))).
           -- simpl in H. eapply incl_tran. apply IHt. apply incl_refl.
              assumption.
           -- simpl in H. apply negb_false_iff in HxW.
@@ -96,25 +98,25 @@ Module VarsImp.
       rewrite Hhtf'. rewrite orb_true_r in *.
       rewrite orb_false_r in *. assumption.
     - rewrite orb_true_r in *. rewrite orb_false_r in H.
-      destruct (negb (x € W)) eqn:HxW.
+      destruct (negb (set_mem string_dec x W)) eqn:HxW.
       + simpl in H. rewrite <- H.
         unfold sub_vars_improvable. fold sub_vars_improvable.
-        destruct (negb (x' € W)); try reflexivity.
+        destruct (negb (set_mem string_dec x' W)); try reflexivity.
         rewrite orb_false_l.
-        destruct (negb (fold_right andb true (map (fun x : string => x € V) (vars_set_atom l'))));
+        destruct (negb (fold_right andb true (map (fun x : string => set_mem string_dec x V) (vars_set_atom l'))));
         try reflexivity. rewrite orb_false_l. rewrite Hhtf'.
         reflexivity.
       + rewrite orb_false_l in H.
-        destruct (negb (fold_right andb true (map (fun x : string => x € V) (vars_set_atom l)))).
+        destruct (negb (fold_right andb true (map (fun x : string => set_mem string_dec x V) (vars_set_atom l)))).
         * unfold sub_vars_improvable. fold sub_vars_improvable.
           rewrite Hhtf'. rewrite orb_true_r. assumption.
         * apply set_add_not_empty in H. contradiction.
     - unfold sub_vars_improvable. fold sub_vars_improvable.
       rewrite Hhtf'. rewrite orb_false_r in *.
-      destruct (negb (x' € W));
+      destruct (negb (set_mem string_dec x' W));
       simpl; simpl in H; try rewrite orb_false_r in H;
-      destruct (negb (x € W)); simpl in H; try assumption;
-      destruct (negb (fold_right andb true (map (fun x : string => x € V) (vars_set_atom l))));
+      destruct (negb (set_mem string_dec x W)); simpl in H; try assumption;
+      destruct (negb (fold_right andb true (map (fun x : string => set_mem string_dec x V) (vars_set_atom l))));
       try assumption; apply set_add_not_empty in H; contradiction.
   Qed.
 

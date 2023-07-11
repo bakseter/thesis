@@ -1,7 +1,9 @@
 From Coq Require Import Lists.List. Import ListNotations.
 From Coq Require Import Lists.ListSet.
 From Coq Require Import Strings.String.
-From Coq Require Import Lia.
+From Coq Require Import ExtrHaskellBasic.
+From Coq Require Import ExtrHaskellNatNum.
+From Coq Require Import ExtrHaskellString.
 Require Import Frontier. Import Frontier.
 Require Import Clause. Import Clause.
 Require Import Atom. Import Atom.

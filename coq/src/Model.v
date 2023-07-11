@@ -7,7 +7,7 @@ From Coq Require Import Lia.
 From Coq Require Import Arith.Arith.
 From Coq Require Import Arith.EqNat. Import Nat.
 From Coq Require Import Logic.FunctionalExtensionality.
-Require Import Sets. Import Sets. Import StringSetsNotation.
+Require Import Sets. Import Sets.
 Require Import Clause. Import Clause.
 Require Import Atom. Import Atom.
 Require Import Frontier. Import Frontier.
@@ -35,7 +35,7 @@ Module Model.
 
   Lemma fold_right_andb_true_map_incl_iff (V W : set string) :
     incl W V <->
-    fold_right andb true (map (fun x => x € V) W) = true.
+    fold_right andb true (map (fun x => set_mem string_dec x V) W) = true.
   Proof.
     split; intros; induction W as [|h t];
     try reflexivity; try apply incl_nil_l.
@@ -51,7 +51,7 @@ Module Model.
 
   Lemma fold_right_andb_false_map_not_incl_iff (V W : set string) :
     ~ incl W V <->
-    fold_right andb true (map (fun x => x € V) W) = false.
+    fold_right andb true (map (fun x => set_mem string_dec x V) W) = false.
   Proof.
     rewrite fold_right_andb_true_map_incl_iff.
     split; intros.
@@ -79,7 +79,7 @@ Module Model.
     - rewrite vars_cons in Incl. apply incl_app_inv in Incl.
       destruct Incl as [Incl Incl']. assert (incl (vars_clause (l ~> (x & k))) W) by assumption.
       rewrite vars_set_atom_incl_fold.
-      + simpl. destruct (x € W) eqn:Hxw; try reflexivity.
+      + simpl. destruct (set_mem string_dec x W) eqn:Hxw; try reflexivity.
         * apply set_mem_complete1 in Hxw.
           apply vars_clause_incl_In in H. contradiction.
       + apply vars_clause_incl_vars_set_atom in H. assumption.
@@ -101,7 +101,7 @@ Module Model.
       + apply orb_false_iff in H1. destruct H1.
         apply orb_false_iff in H1. destruct H1.
         apply negb_false_iff in H1. apply set_mem_correct1 in H1.
-        assert ((x € Y') = true).
+        assert ((set_mem string_dec x Y') = true).
         * apply set_mem_correct2. apply H0. assumption.
         * left. rewrite H4. simpl. simpl in H2.
            rewrite Hfx in H2. rewrite H2. rewrite orb_false_r.
@@ -123,7 +123,7 @@ Module Model.
     - simpl in H1. rewrite Hfx in H1.
       apply andb_true_iff in H1. destruct H1.
       simpl. rewrite Hfx. apply andb_true_iff. split.
-      + destruct (x € Y) eqn:HxY; destruct (x € Y') eqn:HxY'; try reflexivity.
+      + destruct (set_mem string_dec x Y) eqn:HxY; destruct (set_mem string_dec x Y') eqn:HxY'; try reflexivity.
         * simpl in *. apply orb_true_iff. apply orb_true_iff in H1.
           destruct H1.
           -- left. apply negb_true_iff. apply negb_true_iff in H1.
@@ -152,28 +152,28 @@ Module Model.
   Proof.
     induction Cs as [|h t]; try reflexivity.
     unfold sub_model. fold sub_model. destruct h as [l [x k]].
-    rewrite IHt. assert ((negb (x € V)) = (negb (x € nodup string_dec V))).
+    rewrite IHt. assert ((negb (set_mem string_dec x V)) = (negb (set_mem string_dec x (nodup string_dec V)))).
     - destruct V; try reflexivity.
       simpl. destruct (string_dec x s); destruct (in_dec string_dec s V).
       + simpl. symmetry. apply negb_false_iff. apply (set_mem_correct2 string_dec).
         rewrite <- (nodup_In string_dec) in i. subst. assumption.
       + simpl. subst. destruct (string_dec s s); try reflexivity.
         contradiction.
-      + f_equal. destruct (x € V) eqn:HxV; symmetry.
+      + f_equal. destruct (set_mem string_dec x V) eqn:HxV; symmetry.
         * apply set_mem_correct2. unfold set_In. apply set_mem_correct1 in HxV.
           unfold set_In in HxV. rewrite nodup_In. assumption.
         * apply set_mem_complete2. unfold set_In. apply set_mem_complete1 in HxV.
           unfold set_In in HxV. rewrite nodup_In. assumption.
       + simpl. destruct (string_dec x s); subst; try contradiction.
-        f_equal. destruct (x € V) eqn:HxV; symmetry.
+        f_equal. destruct (set_mem string_dec x V) eqn:HxV; symmetry.
         * apply set_mem_correct2. unfold set_In. apply set_mem_correct1 in HxV.
           unfold set_In in HxV. rewrite nodup_In. assumption.
         * apply set_mem_complete2. unfold set_In. apply set_mem_complete1 in HxV.
           unfold set_In in HxV. rewrite nodup_In. assumption.
     - rewrite H. assert (incl V (nodup string_dec V)).
       apply nodup_incl. apply incl_refl.
-      assert (negb (fold_right andb true (map (fun x0 : string => x0 € nodup string_dec V) (vars_set_atom l))) = (negb (fold_right andb true (map (fun x : string => x € V) (vars_set_atom l))))).
-      + destruct (negb (fold_right andb true (map (fun x0 : string => x0 € nodup string_dec V) (vars_set_atom l)))) eqn:HndV.
+      assert (negb (fold_right andb true (map (fun x0 : string => set_mem string_dec x0 (nodup string_dec V)) (vars_set_atom l))) = (negb (fold_right andb true (map (fun x : string => set_mem string_dec x V) (vars_set_atom l))))).
+      + destruct (negb (fold_right andb true (map (fun x0 : string => set_mem string_dec x0 (nodup string_dec V)) (vars_set_atom l)))) eqn:HndV.
         * symmetry. apply negb_true_iff. apply negb_true_iff in HndV.
           eapply incl_fold_right_andb_false. apply H0. assumption.
         * symmetry. rewrite negb_false_iff in *.
@@ -191,8 +191,8 @@ Module Model.
     induction Cs as [|c Cs]; intros; try reflexivity.
     destruct c as [l [x k]]. unfold sub_model. fold sub_model.
     apply andb_true_iff. split; try apply IHCs.
-    repeat rewrite orb_true_iff. destruct (negb (x € V)) eqn:HxV;
-    destruct (negb (fold_right andb true (map (fun x0 : string => x0 € V) (vars_set_atom l)))) eqn:Hfold;
+    repeat rewrite orb_true_iff. destruct (negb (set_mem string_dec x V)) eqn:HxV;
+    destruct (negb (fold_right andb true (map (fun x0 : string => set_mem string_dec x0 V) (vars_set_atom l)))) eqn:Hfold;
     destruct (all_shifts_true (l ~> x & k) (update_infty_V V f)) eqn:Hast;
     try auto.
   Admitted.
@@ -220,14 +220,14 @@ Module Model.
         destruct c as [l [x k]]. unfold sub_model. fold sub_model.
         apply andb_true_iff. split.
         * repeat rewrite orb_true_iff.
-          destruct (negb (x € h :: t)) eqn:Hxht; try reflexivity.
+          destruct (negb (set_mem string_dec x (h :: t))) eqn:Hxht; try reflexivity.
           -- left. left. reflexivity.
           -- assert (Hxht' := Hxht).
              apply negb_false_iff in Hxht'.
              apply set_mem_correct1 in Hxht'.
              unfold set_In in *.
              right. apply In_incl_singleton in Hxht'.
-             assert (sub_model ([l ~> x & k]) [x] [x] (fun x0: string => if x0 € h :: t then infty else f x0) = true).
+             assert (sub_model ([l ~> x & k]) [x] [x] (fun x0: string => if set_mem string_dec x0 (h :: t) then infty else f x0) = true).
              ++ eapply sub_model_monotone.
                 ** apply Hxht'.
                 ** apply Hxht'.

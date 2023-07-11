@@ -8,12 +8,6 @@ Require Import Misc. Import Misc.
 
 (* Set-related lemmas and definitions *)
 
-Module StringSetsNotation.
-
-  Notation "s € S" := (set_mem string_dec s S) (at level 80).
-
-End StringSetsNotation.
-
 Module Sets.
 
   Lemma nodup_rm (A : Type) (dec : forall x y : A, {x = y} + {x <> y}) (l : set A) :

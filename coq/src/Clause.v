@@ -34,16 +34,16 @@ Module Clause.
 
   Definition clause_true (c : Clause) (f : Frontier) : bool :=
     match c with
-    | (conds ~> conc) =>
+    | conds ~> conc =>
       if fold_right andb true (map (fun a => atom_true a f) conds)
-      then (atom_true conc f)
+      then atom_true conc f
       else true
     end.
 
   Definition shift_clause (n : nat) (c : Clause) : Clause :=
     match c with
     | conds ~> conc =>
-      (map (shift_atom n) conds) ~> (shift_atom n conc)
+      map (shift_atom n) conds ~> shift_atom n conc
     end.
 
   Lemma shift_clause_0 (c : Clause) :
@@ -85,22 +85,20 @@ Module Clause.
     atom_true (conc c) f = false ->
     clause_true c f = true ->
     clause_true (shift_clause n c) f = true.
-  Proof with simpl.
+  Proof.
     intros H H'. destruct c. simpl in H.
     induction s as [| h conds IHconds].
-    - destruct a as [x k]... simpl in H, H'.
-      destruct (f x) as [|n']; try reflexivity...
-      rewrite H in H'. discriminate.
-    - destruct a as [x k]... simpl in H, H', IHconds.
+    - destruct a as [x k]. simpl in *.
+      destruct (f x) as [|n']; try reflexivity.
+      simpl. rewrite H in H'. discriminate.
+    - destruct a as [x k]. simpl in *.
       destruct (f x) as [|n']; try apply if_true_then_true_true.
       destruct (atom_true h f) eqn:athf.
-      + simpl in H', IHconds. apply IHconds in H'.
-        destruct (atom_true (shift_atom n h) f)...
-        * assumption.
-        * reflexivity.
+      + simpl in *. apply IHconds in H'.
+        destruct (atom_true (shift_atom n h) f); auto.
       + assert (atom_true (shift_atom n h) f = false).
         { apply atom_false_shift_atom_false. assumption. }
-        rewrite H0... reflexivity.
+        rewrite H0. reflexivity.
   Qed.
 
   Lemma conc_false_clause_true_shift_true' (c : Clause) (f : Frontier) (n: nat) :
@@ -124,9 +122,9 @@ Module Clause.
 
   Definition all_shifts_true (c : Clause) (f : Frontier) : bool :=
     match c with
-    | (conds ~> conc) =>
+    | conds ~> conc =>
         match conc with
-        | (x & k) =>
+        | x & k =>
             match f x with
             | infty => true
             | fin n => clause_true (shift_clause (n + 1 - k) c) f
@@ -141,16 +139,15 @@ Module Clause.
   Lemma all_shifts_true_sound (c : Clause) (f : Frontier) (n : nat) :
      all_shifts_true c f = true ->
      clause_true (shift_clause n c) f = true.
-  Proof with simpl.
+  Proof.
     destruct c as [conds conc].
     destruct conc as [x k].
     unfold all_shifts_true.
     destruct (f x) as [| n'] eqn:infty_fin_n.
-    - destruct n.
-      + intro. clear H.
-        rewrite shift_clause_0...
+    - destruct n; intro.
+      + clear H. rewrite shift_clause_0. simpl.
         rewrite infty_fin_n. apply if_true_then_true_true.
-      + intro... rewrite infty_fin_n. apply if_true_then_true_true.
+      + simpl. rewrite infty_fin_n. apply if_true_then_true_true.
     - destruct (n' + 1 - k) as [| m] eqn:n'1k; intros.
       + apply conc_false_clause_true_shift_true.
         * assert (L1 : ~ k <= n'). { lia. } simpl.
@@ -197,12 +194,14 @@ Module Clause.
   (* the next definition is probably more useful *)
 
   Definition all_shifts_func (c : Clause) (f : Frontier) : unit + nat :=
-    match c with conds ~> x & k =>
-      match f x with
-      | infty => inl tt
-      | fin n => if clause_true (shift_clause (n + 1 - k) c) f
-                 then inl tt else inr (n + 1 - k)
-      end
+    match c with
+    | conds ~> x & k =>
+        match f x with
+        | infty => inl tt
+        | fin n => if clause_true (shift_clause (n + 1 - k) c) f
+                   then inl tt
+                   else inr (n + 1 - k)
+        end
     end.
 
   Lemma all_shifts_func_tt_sound (c : Clause) (f : Frontier) :
@@ -221,8 +220,9 @@ Module Clause.
   Qed.
 
   Lemma all_shifts_func_n_sound (c : Clause) (f : Frontier) :
-    forall n, all_shifts_func c f = inr n ->
-    clause_true (shift_clause n c) f = false.
+    forall n,
+      all_shifts_func c f = inr n ->
+      clause_true (shift_clause n c) f = false.
   Proof.
     intros n H. destruct c as [conds [x k]].
     unfold all_shifts_func in H.

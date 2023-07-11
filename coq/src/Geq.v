@@ -9,7 +9,7 @@ From Coq Require Import Logic.FunctionalExtensionality.
 Require Import Frontier. Import Frontier.
 Require Import Clause. Import Clause.
 Require Import Ninfty. Import Ninfty.
-Require Import Sets. Import StringSetsNotation.
+Require Import Sets.
 Require Import Atom. Import Atom.
 Require Import Vars. Import Vars.
 Require Import Model. Import Model.
@@ -53,23 +53,23 @@ Module Geq.
       if
         if string_dec v h
         then true
-        else v € t
+        else set_mem string_dec v t
       then Sinfty (f v)
       else f v) =
     (fun v : string =>
-      if v € t
+      if set_mem string_dec v t
       then Sinfty (f v)
       else f v).
   Proof.
     intros. apply functional_extensionality. intros.
     destruct (string_dec x h) eqn:Hxh; try reflexivity.
-    destruct (x € t) eqn:Hxt; try reflexivity.
+    destruct (set_mem string_dec x t) eqn:Hxt; try reflexivity.
     assert (f x = infty). { rewrite e. assumption. }
     rewrite e. rewrite H. reflexivity.
   Qed.
 
   Lemma geq_bool (h : string) (t : set string) (f g : Frontier) :
-    (forall v, (v € (h :: t)) = true -> ninfty_geq (f v) (g v) = true)
+    (forall v, (set_mem string_dec v (h :: t)) = true -> ninfty_geq (f v) (g v) = true)
       <-> geq (h :: t) f g = true.
   Proof.
     split; induction (h :: t); try auto; try discriminate.
@@ -223,28 +223,28 @@ Module Geq.
      if
       if string_dec v h
       then true
-      else v € t
+      else set_mem string_dec v t
      then Sinfty (f v)
      else f v)
-    (fun v : string => if v € t then Sinfty (f v) else f v)
+    (fun v : string => if set_mem string_dec v t then Sinfty (f v) else f v)
     = true.
   Proof.
     destruct t as [| h' t]; try reflexivity.
     apply geq_bool. intros. simpl. destruct (string_dec v h);
     destruct (string_dec v h'); try apply ninfty_geq_refl;
-    destruct (v € t); try apply ninfty_geq_refl.
+    destruct (set_mem string_dec v t); try apply ninfty_geq_refl.
     apply ninfty_geq_Sinfty.
   Qed.
 
   Lemma geq_Sinfty_f2 (Cs : set Clause) (t : set string) (f: Frontier) :
     geq
       t
-      (fun v : string => if v € sub_vars_improvable Cs t t f then Sinfty (f v) else f v)
+      (fun v : string => if set_mem string_dec v (sub_vars_improvable Cs t t f) then Sinfty (f v) else f v)
       f
     = true.
   Proof.
     destruct t as [| h t]; try reflexivity.
-    apply geq_bool. intros. simpl. destruct (v € sub_vars_improvable Cs (h :: t) (h :: t) f); try apply ninfty_geq_refl.
+    apply geq_bool. intros. simpl. destruct (set_mem string_dec v (sub_vars_improvable Cs (h :: t) (h :: t) f)); try apply ninfty_geq_refl.
     apply ninfty_geq_Sinfty.
   Qed.
 
@@ -285,13 +285,13 @@ Module Geq.
     unfold geq. fold geq.
     destruct (update_infty_V (h :: t) f h) eqn:HuiV.
     - unfold update_infty_V in *. simpl in HuiV.
-      erewrite <- (geq_conditional_infty_true t f (_ € h :: t)).
+      erewrite <- (geq_conditional_infty_true t f (set_mem string_dec _ (h :: t))).
       f_equal. apply functional_extensionality. intros.
       simpl. instantiate (1 := h). destruct (string_dec x h).
       destruct (string_dec h h); try reflexivity; try contradiction.
       destruct (string_dec h h); try reflexivity; try contradiction.
-      destruct (x € t) eqn:HxT; try reflexivity.
-      erewrite <- (geq_conditional_infty_true t f (x € t)) in IHt.
+      destruct (set_mem string_dec x t) eqn:HxT; try reflexivity.
+      erewrite <- (geq_conditional_infty_true t f (set_mem string_dec x t)) in IHt.
       simpl. admit.
     - destruct (f h) eqn:Hfh.
       + unfold update_infty_V in HuiV. simpl in HuiV.
